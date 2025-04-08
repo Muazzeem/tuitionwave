@@ -1,19 +1,38 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Star } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 
-const ReviewItem = ({ name, location, content }: { name: string; location: string; content: string }) => (
+interface ReviewItemProps {
+  name: string;
+  location: string;
+  content: string;
+  rating: number;
+  date: string;
+}
+
+const ReviewItem = ({ name, location, content, rating, date }: ReviewItemProps) => (
   <div className="py-6 border-b">
-    <div className="flex">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <svg key={star} className="w-5 h-5 star-filled" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-        </svg>
-      ))}
+    <div className="flex justify-between items-center mb-2">
+      <div className="flex items-center gap-1">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <Star 
+            key={index} 
+            size={16} 
+            className={index < rating ? "text-yellow-500 fill-yellow-500" : "text-gray-300"}
+          />
+        ))}
+        <span className="ml-1 text-sm text-gray-600">{rating}.0</span>
+      </div>
+      <span className="text-sm text-gray-500">{date}</span>
     </div>
+    
     <p className="my-4 text-gray-700">{content}</p>
+    
     <div className="flex items-center">
-      <div className="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 font-bold">
+      <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
         {name.charAt(0)}
       </div>
       <div className="ml-3">
@@ -26,33 +45,36 @@ const ReviewItem = ({ name, location, content }: { name: string; location: strin
 
 const RatingsSummary = () => (
   <div className="p-6 bg-gray-50 rounded-lg">
-    <div className="flex items-center justify-between mb-4">
+    <div className="flex items-center justify-between mb-2">
       <h3 className="text-xl font-bold">4.7 Rating</h3>
-      <div className="flex">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <svg key={star} className="w-5 h-5 star-filled" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-          </svg>
-        ))}
-      </div>
+      <Badge variant="outline" className="text-yellow-500 bg-yellow-50 border-yellow-200 px-2 py-1">
+        Top Rated
+      </Badge>
     </div>
+    
+    <div className="flex mb-4">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <Star 
+          key={index} 
+          size={20} 
+          className="text-yellow-500 fill-yellow-500"
+        />
+      ))}
+    </div>
+    
     <p className="text-sm text-gray-500 mb-6">Based on 54+ Reviews</p>
     
     {[5, 4, 3, 2, 1].map((rating) => (
-      <div key={rating} className="flex items-center mb-2">
-        <span className="w-3 text-gray-600">{rating}</span>
-        <div className="flex-1 h-2 mx-2 bg-gray-200 rounded">
-          <div 
-            className="star-rating-bar" 
-            style={{ 
-              width: rating === 5 ? '90%' : 
-                     rating === 4 ? '7%' : 
-                     rating === 3 ? '2%' : 
-                     rating === 2 ? '0%' : '1%' 
-            }}
-          ></div>
-        </div>
-        <span className="w-6 text-right text-xs text-gray-600">
+      <div key={rating} className="flex items-center mb-3">
+        <span className="w-3 text-gray-600 mr-2">{rating}</span>
+        <Progress 
+          className="h-2 flex-1 bg-gray-200" 
+          value={rating === 5 ? 90 : 
+                 rating === 4 ? 7 : 
+                 rating === 3 ? 2 : 
+                 rating === 2 ? 0 : 1} 
+        />
+        <span className="w-8 text-right text-xs text-gray-600 ml-2">
           {rating === 5 ? '50' : 
            rating === 4 ? '04' : 
            rating === 3 ? '00' : 
@@ -60,6 +82,19 @@ const RatingsSummary = () => (
         </span>
       </div>
     ))}
+    
+    <div className="mt-6 pt-6 border-t">
+      <div className="grid grid-cols-2 gap-4">
+        <div className="text-center bg-white p-3 rounded-md">
+          <p className="text-xl font-bold text-blue-600">39</p>
+          <p className="text-sm text-gray-500">Total hours</p>
+        </div>
+        <div className="text-center bg-white p-3 rounded-md">
+          <p className="text-xl font-bold text-blue-600">12</p>
+          <p className="text-sm text-gray-500">Students</p>
+        </div>
+      </div>
+    </div>
   </div>
 );
 
@@ -68,7 +103,7 @@ const ReviewSection: React.FC = () => {
     <div className="container mx-auto px-4 py-12">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2">
-          <Tabs defaultValue="description">
+          <Tabs defaultValue="reviews">
             <TabsList className="border-b w-full justify-start rounded-none bg-transparent p-0">
               <TabsTrigger 
                 value="description" 
@@ -95,11 +130,15 @@ const ReviewSection: React.FC = () => {
                 name="Abdur Rahman" 
                 location="Dhaka, Bangladesh" 
                 content="Shakib has been an incredible tutor for my son. He's patient, understanding, and has a unique ability to explain complex concepts in a way that's easy to understand. I highly recommend him to any parent looking for a dedicated and reliable tutor!"
+                rating={5}
+                date="March 12, 2025"
               />
               <ReviewItem 
-                name="Abdur Rahman" 
-                location="Dhaka, Bangladesh" 
-                content="Shakib has been an incredible tutor for my son. He's patient, understanding, and has a unique ability to explain complex concepts in a way that's easy to understand. I highly recommend him to any parent looking for a dedicated and reliable tutor!"
+                name="Sarah Johnson" 
+                location="Chittagong, Bangladesh" 
+                content="I've been taking English lessons with Shakib for about 3 months now, and my improvement has been remarkable. He tailors his teaching style to match my learning pace, and always provides constructive feedback."
+                rating={4}
+                date="February 28, 2025"
               />
             </TabsContent>
           </Tabs>
