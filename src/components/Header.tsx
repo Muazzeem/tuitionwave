@@ -11,14 +11,14 @@ const Header: React.FC = () => {
           Tuition Wave
         </Link>
         <nav className="hidden md:flex space-x-6">
-          <Link to="/" className="text-gray-700 hover:text-blue-600">
+          <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium">
             Home
           </Link>
-          <Link to="/job-preparation" className="text-gray-700 hover:text-blue-600">
+          <Link to="/job-preparation" className="text-gray-700 hover:text-blue-600 font-medium">
             Job Preparation
           </Link>
         </nav>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full">
+        <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6">
           Tutor Zone
         </Button>
       </div>

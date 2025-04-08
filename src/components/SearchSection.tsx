@@ -1,13 +1,19 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Select } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 
 const SearchSection: React.FC = () => {
   return (
-    <div className="search-section text-white py-16 md:py-24">
-      <div className="container mx-auto px-4">
+    <div className="search-section text-white py-16 md:py-24 relative">
+      <div className="absolute inset-0 bg-blue-900 z-0">
+        <img 
+          src="/lovable-uploads/295ad78b-d35b-4792-bd5b-f75958ab09b8.png" 
+          alt="Tutor helping student" 
+          className="w-full h-full object-cover opacity-30 mix-blend-overlay"
+        />
+      </div>
+      <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">QUICK SEARCH FOR TUTORS</h1>
           <p className="text-xl">FIND A RIGHT TUTOR IN YOUR AREA.</p>
@@ -51,7 +57,7 @@ const SearchSection: React.FC = () => {
                 <span className="text-gray-600">Male</span>
               </label>
               <label className="flex items-center space-x-2">
-                <input type="radio" name="gender" checked className="h-4 w-4" />
+                <input type="radio" name="gender" className="h-4 w-4" />
                 <span className="text-gray-600">Female</span>
               </label>
             </div>
