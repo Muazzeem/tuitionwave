@@ -1,0 +1,157 @@
+
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
+
+const LoginPage: React.FC = () => {
+  const [step, setStep] = useState<1 | 2>(1);
+  const [userType, setUserType] = useState<'tutor' | 'guardian'>('guardian');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleContinue = () => {
+    setStep(2);
+  };
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle login logic here
+    console.log('Logging in as', userType, 'with', email, password);
+  };
+
+  return (
+    <div className="flex h-screen w-full">
+      {/* Left section with image */}
+      <div className="hidden md:flex md:w-1/2 bg-gray-300 relative">
+        <img 
+          src="/lovable-uploads/56c05a63-4266-4a9d-ad96-7c9d83120840.png" 
+          alt="Mother and child studying" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/20" />
+        
+        {/* Logo */}
+        <div className="absolute top-6 left-6">
+          <h1 className="text-2xl font-bold text-black">Tuition Wave</h1>
+        </div>
+        
+        {/* Welcome message */}
+        <div className="absolute bottom-20 left-10 text-white">
+          <h2 className="text-3xl font-bold mb-1">Welcome Back !</h2>
+          <p className="text-sm">Manage Your Perfect Tuition Effortlessly</p>
+        </div>
+      </div>
+
+      {/* Right section with form */}
+      <div className="w-full md:w-1/2 flex items-center justify-center">
+        <div className="w-full max-w-md p-8">
+          {step === 1 ? (
+            <div className="bg-white rounded-lg p-6 shadow-sm border">
+              <h2 className="text-2xl font-bold text-center mb-6">Login as {userType === 'tutor' ? 'Tutor' : 'Guardian'}</h2>
+              
+              <RadioGroup 
+                defaultValue="guardian" 
+                className="flex justify-center gap-8 mb-8"
+                onValueChange={(value) => setUserType(value as 'tutor' | 'guardian')}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="tutor" id="tutor" />
+                  <Label htmlFor="tutor">Tutor</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="guardian" id="guardian" />
+                  <Label htmlFor="guardian">Guardian</Label>
+                </div>
+              </RadioGroup>
+              
+              <Button 
+                className="w-full bg-blue-600 hover:bg-blue-700" 
+                onClick={handleContinue}
+              >
+                Log in
+              </Button>
+              
+              <div className="text-center mt-4 text-sm">
+                Don't have an account? <Link to="/signup" className="text-blue-600 hover:underline font-medium">Sign Up</Link>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg p-6 shadow-sm border">
+              <h2 className="text-2xl font-bold mb-2">Log in to {userType === 'tutor' ? 'Tutor' : 'Guardian'} Panel</h2>
+              <p className="text-gray-500 mb-6">Welcome! Please enter your details.</p>
+              
+              <form onSubmit={handleLogin}>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="email">Email Address</Label>
+                    <div className="mt-1 relative">
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="guardian@gmail.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="password">Password</Label>
+                    <div className="mt-1 relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="w-full pr-10"
+                      />
+                      <button
+                        type="button"
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <EyeOffIcon className="h-5 w-5 text-gray-400" />
+                        ) : (
+                          <EyeIcon className="h-5 w-5 text-gray-400" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-blue-600 hover:bg-blue-700 mt-2"
+                  >
+                    Log in
+                  </Button>
+                  
+                  <div className="text-center text-sm">
+                    <button 
+                      type="button" 
+                      className="text-blue-600 hover:underline"
+                      onClick={() => setStep(1)}
+                    >
+                      Back to user selection
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LoginPage;
