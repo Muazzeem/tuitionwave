@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 const Footer: React.FC = () => {
   return (
     <footer className="bg-white pt-16 pb-8">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      <div className="container mx-auto px-2">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           <div>
             <div className="mb-6 flex items-center">
               <span className="text-blue-600 font-bold mr-1">
@@ -22,7 +22,7 @@ const Footer: React.FC = () => {
               Tuitionwave is a platform where parents, students and tutors can easily connect with each other. We provide qualified Home/Online tutors to help your child with studies and helping them perform better in exams. We are a group of 2,50,000+ Tutors and 30,000+ satisfied parents/students in Dhaka, Chattogram, Rajshahi, Sylhet, Khulna, Barishal, Rangpur, Mymensingh cities for different academic and professional subjects.
             </p>
           </div>
-          
+          {/* <div></div> */}
           <div>
             <h3 className="font-medium mb-4">Short links</h3>
             <ul className="space-y-2">
@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
               <li><Link to="/testimonial" className="text-gray-600 hover:text-blue-600">Testimonial</Link></li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="font-medium mb-4">Other pages</h3>
             <ul className="space-y-2">
@@ -43,7 +43,7 @@ const Footer: React.FC = () => {
             </ul>
           </div>
         </div>
-        
+
         <div className="border-t pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
             <ul className="flex space-x-6">
