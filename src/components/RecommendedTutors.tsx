@@ -1,23 +1,83 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import TutorCard from './TutorCard';
+import { Tutor, TutorListResponse } from '@/types/tutor';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Card } from './ui/card';
 
 const RecommendedTutors: React.FC = () => {
+  const [tutors, setTutors] = useState<Tutor[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchTutors = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://127.0.0.1:8000/api/tutors');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch tutors');
+        }
+        
+        const data: TutorListResponse = await response.json();
+        // For recommendations, we'll just use the same data but limit to 4
+        setTutors(data.results.slice(0, 4));
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching recommended tutors:', err);
+        setError('Failed to load recommended tutors.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTutors();
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-10">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Recommended Tutor</h2>
-        <Link to="/holidays" className="text-blue-600 flex items-center hover:underline">
-          View all holidays <ArrowRight size={16} className="ml-1" />
+        <h2 className="text-2xl font-bold text-gray-800">Recommended Tutors</h2>
+        <Link to="/all-tutors" className="text-blue-600 flex items-center hover:underline">
+          View all tutors <ArrowRight size={16} className="ml-1" />
         </Link>
       </div>
 
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+          {error}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-        {[...Array(4)].map((_, index) => (
-          <TutorCard key={index} />
-        ))}
+        {loading ? (
+          // Loading skeletons
+          [...Array(4)].map((_, index) => (
+            <Card key={index}>
+              <div className="p-3">
+                <Skeleton className="h-48 w-full mb-3" />
+                <Skeleton className="h-5 w-1/3 mb-2" />
+                <Skeleton className="h-8 w-2/3 mb-2" />
+                <Skeleton className="h-6 w-full mb-2" />
+                <Skeleton className="h-6 w-full mb-4" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            </Card>
+          ))
+        ) : tutors.length > 0 ? (
+          // Display tutors
+          tutors.map((tutor) => (
+            <TutorCard key={tutor.id} tutor={tutor} />
+          ))
+        ) : (
+          // No tutors found
+          <div className="col-span-full text-center py-10">
+            <p className="text-gray-500">No recommended tutors found.</p>
+          </div>
+        )}
       </div>
     </div>
   );
