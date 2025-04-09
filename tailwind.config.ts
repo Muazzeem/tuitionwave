@@ -61,6 +61,14 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				tuitionwave: {
+					blue: '#1a73e8',
+					lightblue: '#e8f0fe',
+					red: '#ea4335',
+					yellow: '#fbbc04',
+					green: '#34a853',
+					gray: '#f1f3f4',
 				}
 			},
 			borderRadius: {
