@@ -23,3 +23,24 @@ export interface TutorListResponse {
   previous: string | null;
   results: Tutor[];
 }
+
+export interface ProfileFormData {
+  fullName: string;
+  address: string;
+  gender: string;
+  birthDate: Date | undefined;
+  linkedinProfile: string;
+  profilePicture: File | null;
+  education: EducationData[];
+  tuitionDetails: {
+    teachingRate: number;
+    teachingType: string;
+    subjects: string[];
+  };
+}
+
+export interface EducationData {
+  degree: string;
+  institution: string;
+  year: string;
+}
