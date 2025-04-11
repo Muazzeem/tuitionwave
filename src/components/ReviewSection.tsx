@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Star } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardHeader } from './ui/card';
+import { Card } from './ui/card';
+import { useParams } from 'react-router-dom';
 
 interface ReviewItemProps {
   name: string;
@@ -87,6 +88,22 @@ const RatingsSummary = () => (
 );
 
 const ReviewSection: React.FC = () => {
+  const { id } = useParams();
+  const [reviews, setReviews] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    if (id) {
+      fetch(`http://127.0.0.1:8000/api/tutors/${id}`)
+        .then((response) => response.json())
+        .then((data) => setReviews(data))
+        .catch((error) => console.error('Error fetching reviews:', error));
+      setLoading(false);
+    }
+  }, [id]);
+
   return (
     <div className='container-fluid'>
       <Card>
@@ -111,7 +128,7 @@ const ReviewSection: React.FC = () => {
 
                 <TabsContent value="description" className="pt-6">
                   <p className="text-gray-700">
-                    Detailed description of the tutor's services, methodology, and approach to teaching.
+                    {reviews?.description}
                   </p>
                 </TabsContent>
 

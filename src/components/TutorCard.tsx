@@ -16,7 +16,7 @@ const TutorCard: React.FC<TutorCardProps> = ({ tutor }) => {
   const profileImage = tutor.user.profile_picture || "/lovable-uploads/ced7cd19-6baa-4f95-a194-cd4c9c7c3f0c.png";
   const teachingRate = tutor.teaching_rate.toLocaleString();
   const isOnline = tutor.teaching_type === "ONLINE";
-  
+
   return (
     <Card>
       <div className="bg-white rounded-xl shadow-sm overflow-hidden p-3">
@@ -28,13 +28,13 @@ const TutorCard: React.FC<TutorCardProps> = ({ tutor }) => {
           />
         </div>
         <div className="p-3">
-          <p className="text-sm text-gray-500">Dhaka University</p>
+          <p className="text-sm text-gray-500">{tutor.collage_name}</p>
           <h3 className="text-2xl font-bold text-gray-900 my-1">{fullName}</h3>
           <div className="flex items-center gap-2 mb-2">
             <Star size={24} className="text-yellow-400 fill-yellow-400" />
             <span className="text-lg font-medium">4.9</span>
             <span className="text-gray-500">(60 reviews)</span>
-            <span className="ml-auto text-sm font-bold">${teachingRate}/Hour</span>
+            <span className="ml-auto text-sm font-bold">৳{teachingRate}/Hour</span>
           </div>
 
           <div className="flex items-center gap-2 mb-4">

@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
@@ -19,11 +18,14 @@ interface PersonalInfoFormProps {
 
 const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFormData, onNext }) => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-    
+
     if (file) {
+      setFileName(file.name);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result as string);
@@ -35,59 +37,67 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
 
   const removeImage = () => {
     setPreviewImage(null);
+    setFileName('');
     updateFormData({ profilePicture: null });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
   };
 
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium mb-2">Upload Profile Picture</h3>
-        <div className="flex items-center space-x-4">
+        <Label className="text-gray-600 font-medium mb-2 block">Upload Profile Picture</Label>
+        <div
+          className="border border-gray-300 rounded-lg p-3 flex items-center cursor-pointer"
+          onClick={handleUploadClick}
+        >
           {previewImage ? (
-            <div className="relative">
-              <div className="w-16 h-16 rounded-full overflow-hidden border">
-                <img src={previewImage} alt="Profile preview" className="w-full h-full object-cover" />
+            <>
+              <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100 mr-3">
+                <img
+                  src={previewImage}
+                  alt="Profile preview"
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <Button 
-                type="button" 
-                variant="ghost" 
-                size="sm" 
-                className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 text-red-500"
-                onClick={removeImage}
+              <span className="text-blue-500 flex-grow">{fileName}</span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="text-gray-400 hover:text-gray-600 p-1 h-auto"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeImage();
+                }}
               >
-                <X className="h-3 w-3" />
+                <X className="h-4 w-4" />
               </Button>
-            </div>
+            </>
           ) : (
-            <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center">
-              <span className="text-gray-500 text-xs">No image</span>
-            </div>
+            <span className="text-gray-500">Select a file to upload</span>
           )}
-          
-          <div>
-            <Label
-              htmlFor="profile-upload"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 cursor-pointer"
-            >
-              Upload
-            </Label>
-            <Input
-              id="profile-upload"
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="hidden"
-            />
-            <p className="text-xs text-gray-500 mt-1">profilepicture.jpg</p>
-          </div>
+          <Input
+            ref={fileInputRef}
+            id="profile-upload"
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="hidden"
+          />
         </div>
       </div>
 
       <div>
         <Label htmlFor="fullName">Full Name</Label>
-        <Input 
-          id="fullName" 
-          placeholder="Enter Full Name" 
+        <Input
+          id="fullName"
+          placeholder="Enter Full Name"
           value={formData.fullName}
           onChange={(e) => updateFormData({ fullName: e.target.value })}
           className="mt-1"
@@ -97,18 +107,18 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
       <div>
         <Label htmlFor="address">Address</Label>
         <div className="relative mt-1">
-          <Input 
-            id="address" 
-            placeholder="Enter your address" 
+          <Input
+            id="address"
+            placeholder="Enter your address"
             value={formData.address}
             onChange={(e) => updateFormData({ address: e.target.value })}
           />
           {formData.address && (
-            <Button 
-              type="button" 
-              variant="ghost" 
-              size="sm" 
-              className="absolute right-2 top-2 h-6 w-6 p-0" 
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="absolute right-2 top-2 h-6 w-6 p-0"
               onClick={() => updateFormData({ address: '' })}
             >
               <X className="h-4 w-4" />
@@ -120,8 +130,8 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="gender">Gender</Label>
-          <Select 
-            value={formData.gender} 
+          <Select
+            value={formData.gender}
             onValueChange={(value) => updateFormData({ gender: value })}
           >
             <SelectTrigger id="gender" className="mt-1">
@@ -134,7 +144,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             </SelectContent>
           </Select>
         </div>
-        
+
         <div>
           <Label htmlFor="birthDate">Birth Date</Label>
           <Popover>
@@ -167,9 +177,9 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
       <div>
         <Label htmlFor="linkedin">LinkedIn Profile</Label>
         <div className="relative mt-1">
-          <Input 
-            id="linkedin" 
-            placeholder="Enter LinkedIn url" 
+          <Input
+            id="linkedin"
+            placeholder="Enter LinkedIn url"
             value={formData.linkedinProfile}
             onChange={(e) => updateFormData({ linkedinProfile: e.target.value })}
             className="pl-10"

@@ -47,10 +47,10 @@ const ProfilePage: React.FC = () => {
   return (
     <div className="flex-1 overflow-auto bg-gray-50">
       <DashboardHeader userName="Tutor" />
-      
+
       <div className="p-6">
         <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
-        
+
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6">
           <div className="flex items-center mb-1">
             <svg className="h-6 w-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -62,51 +62,54 @@ const ProfilePage: React.FC = () => {
           </div>
           <p>Showcase your expertise, attract more students, and stand out by finishing your profile setup! To Update profile <span className="text-red-700 cursor-pointer font-medium hover:underline">click here</span></p>
         </div>
-        
-        <div className="bg-white p-8 rounded-lg shadow-sm border">
-          <ProfileStepper steps={steps} currentStep={currentStep} />
-          
-          <div className="mt-8">
-            {currentStep === 1 && (
-              <PersonalInfoForm 
-                formData={formData} 
-                updateFormData={updateFormData} 
-                onNext={handleNext} 
-              />
-            )}
-            
-            {currentStep === 2 && (
-              <div className="flex justify-between mt-8">
-                <button
-                  className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
-                  onClick={handleBack}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                  onClick={handleNext}
-                >
-                  Next
-                </button>
+        <div className="flex justify-center w-full">
+          <div className="col-6 w-1/2">
+            <div className="bg-white p-8 rounded-lg border">
+              <ProfileStepper steps={steps} currentStep={currentStep} />
+
+              <div className="mt-8 mb-10">
+                {currentStep === 1 && (
+                  <PersonalInfoForm
+                    formData={formData}
+                    updateFormData={updateFormData}
+                    onNext={handleNext}
+                  />
+                )}
+
+                {currentStep === 2 && (
+                  <div className="flex justify-between mt-8">
+                    <button
+                      className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+                      onClick={handleBack}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                      onClick={handleNext}
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
+
+                {currentStep === 3 && (
+                  <div className="flex justify-between mt-8">
+                    <button
+                      className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+                      onClick={handleBack}
+                    >
+                      Back
+                    </button>
+                    <button
+                      className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    >
+                      Save
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
-            
-            {currentStep === 3 && (
-              <div className="flex justify-between mt-8">
-                <button
-                  className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
-                  onClick={handleBack}
-                >
-                  Back
-                </button>
-                <button
-                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
-                  Save
-                </button>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

@@ -13,6 +13,7 @@ export interface Tutor {
   user: User;
   teaching_rate: number;
   teaching_type: string;
+  collage_name: string;
 }
 
 export interface TutorListResponse {

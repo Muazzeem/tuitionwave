@@ -10,14 +10,13 @@ const Sidebar = () => {
         { icon: Search, text: 'Find Tutor', path: '/' },
         { icon: User, text: 'My Request', path: '/my-request' },
         { icon: User, text: 'My Tutor', path: '/my-tutor' },
-        { icon: MessageSquare, text: 'Message', path: '/message' },
-        { icon: Settings, text: 'Settings', path: '/settings' },
+        { icon: MessageSquare, text: 'Message', path: '/message' }
     ];
 
     return (
         <div className="w-[160px] bg-white border-r border-gray-200 flex flex-col h-screen">
             <div className="p-4 border-b border-gray-200">
-                <h1 className="text-xl font-bold">Tuition Wave</h1>
+                <h1 className="text-xl font-bold mb-1">Tuition Wave</h1>
             </div>
 
             <nav className="flex-1 overflow-y-auto py-4">
