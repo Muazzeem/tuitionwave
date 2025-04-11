@@ -3,17 +3,17 @@ import React, { useState, useRef, useEffect } from "react";
 import { Chat, Message, MessageType } from "@/types/message";
 import { v4 as uuidv4 } from "uuid";
 import { format } from "date-fns";
-import { 
-  Image, 
-  Paperclip, 
-  Send, 
-  Mic, 
-  MoreVertical, 
-  X, 
-  Play, 
-  Pause, 
-  Trash, 
-  MicOff 
+import {
+  Image,
+  Paperclip,
+  Send,
+  Mic,
+  MoreVertical,
+  X,
+  Play,
+  Pause,
+  Trash,
+  MicOff
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -96,11 +96,11 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
   const [recordingInterval, setRecordingInterval] = useState<NodeJS.Timeout | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  
+
   // Scroll to bottom when messages change
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -160,7 +160,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
     if (file) {
       // In a real app, you'd upload the file to storage and get a URL
       const fakeUrl = URL.createObjectURL(file);
-      
+
       const newMessage: Message = {
         id: uuidv4(),
         content: fakeUrl,
@@ -176,7 +176,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
 
       setMessages([...messages, newMessage]);
       toast.success("File uploaded successfully");
-      
+
       // Reset file input
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
@@ -192,7 +192,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
 
       // In a real app, you'd upload the image to storage and get a URL
       const fakeUrl = URL.createObjectURL(file);
-      
+
       const newMessage: Message = {
         id: uuidv4(),
         content: fakeUrl,
@@ -207,7 +207,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
 
       setMessages([...messages, newMessage]);
       toast.success("Image uploaded successfully");
-      
+
       // Reset file input
       if (imageInputRef.current) imageInputRef.current.value = "";
     }
@@ -216,11 +216,11 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
   const toggleRecording = () => {
     // In a real app, you'd use Web Audio API or MediaRecorder
     setIsRecording(!isRecording);
-    
+
     if (isRecording) {
       // Simulate ending recording and creating a message
       const fakeDuration = recordingTime;
-      
+
       const newMessage: Message = {
         id: uuidv4(),
         content: "/audio-placeholder.mp3", // Fake audio file
@@ -270,7 +270,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Chat header */}
-      <div className="px-6 py-4 bg-white border-b border-gray-200 flex items-center justify-between">
+      <div className="px-6 py-3 bg-white border-b border-gray-200 flex items-center justify-between">
         <div className="flex items-center">
           <Avatar className="h-10 w-10 mr-3">
             <AvatarImage src={chat.avatar} alt={chat.name} />
@@ -292,7 +292,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem 
+            <DropdownMenuItem
               className="text-red-500 cursor-pointer"
               onClick={onDeleteChat}
             >
@@ -303,14 +303,14 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
       </div>
 
       {/* Messages area */}
-      <ScrollArea 
-        className="flex-1 p-4" 
+      <ScrollArea
+        className="flex-1 p-4"
         ref={scrollAreaRef}
       >
         <div className="space-y-4">
           {messages.map((message) => {
             const isCurrentUser = message.senderId === "user1";
-            
+
             return (
               <div
                 key={message.id}
@@ -320,11 +320,10 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
                   {/* Message content based on type */}
                   {message.type === "text" && (
                     <div
-                      className={`p-3 rounded-lg ${
-                        isCurrentUser
+                      className={`p-3 rounded-lg ${isCurrentUser
                           ? "bg-blue-500 text-white"
                           : "bg-gray-200 text-gray-900"
-                      }`}
+                        }`}
                     >
                       {message.content}
                     </div>
@@ -410,14 +409,13 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
 
                   {/* Timestamp and message actions */}
                   <div
-                    className={`text-xs mt-1 flex items-center ${
-                      isCurrentUser ? "justify-end" : "justify-start"
-                    }`}
+                    className={`text-xs mt-1 flex items-center ${isCurrentUser ? "justify-end" : "justify-start"
+                      }`}
                   >
                     <span className="text-gray-500">
                       {format(message.timestamp, "h:mm a")}
                     </span>
-                    
+
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
@@ -482,7 +480,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
                 onChange={handleImageUpload}
               />
             </Button>
-            
+
             <Button
               variant="ghost"
               size="icon"
@@ -497,7 +495,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
                 onChange={handleFileUpload}
               />
             </Button>
-            
+
             <Button
               variant={isRecording ? "destructive" : "ghost"}
               size="icon"
@@ -507,7 +505,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
               {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
             </Button>
           </div>
-          
+
           <Input
             placeholder="Type a message..."
             value={inputMessage}
@@ -516,7 +514,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
             className="flex-1"
             disabled={isRecording}
           />
-          
+
           <Button
             variant="ghost"
             size="icon"

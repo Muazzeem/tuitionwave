@@ -67,19 +67,19 @@ const MessagingInterface: React.FC = () => {
     <div className="flex h-full">
       {/* Chat list sidebar */}
       <div className="w-1/3 border-r border-gray-200 bg-white">
-        <ChatList 
-          chats={chats} 
-          activeChat={activeChat} 
+        <ChatList
+          chats={chats}
+          activeChat={activeChat}
           onChatSelect={handleChatSelect}
           onDeleteChat={handleDeleteChat}
         />
       </div>
-      
+
       {/* Conversation area */}
       <div className="w-2/3 bg-gray-50">
         {activeChat ? (
-          <Conversation 
-            chat={activeChat} 
+          <Conversation
+            chat={activeChat}
             onDeleteChat={() => handleDeleteChat(activeChat.id)}
           />
         ) : (

@@ -35,16 +35,7 @@ const ChatList: React.FC<ChatListProps> = ({
   return (
     <div className="flex flex-col h-full">
       <div className="p-4 border-b border-gray-200">
-        <h2 className="text-xl font-bold mb-4">Messages</h2>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Search conversations..."
-            className="pl-10"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+        <h2 className="text-xl font-bold mb-1">Messages</h2>
       </div>
 
       <ScrollArea className="flex-1">
@@ -53,11 +44,10 @@ const ChatList: React.FC<ChatListProps> = ({
             filteredChats.map((chat) => (
               <div
                 key={chat.id}
-                className={`flex items-center p-3 mb-1 rounded-lg cursor-pointer ${
-                  activeChat?.id === chat.id
-                    ? "bg-blue-50"
-                    : "hover:bg-gray-100"
-                }`}
+                className={`flex items-center p-3 mb-1 rounded-lg cursor-pointer ${activeChat?.id === chat.id
+                  ? "bg-blue-50"
+                  : "hover:bg-gray-100"
+                  }`}
                 onClick={() => onChatSelect(chat)}
               >
                 <Avatar className="h-12 w-12 mr-3">
