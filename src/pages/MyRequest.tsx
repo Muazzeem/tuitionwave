@@ -21,6 +21,7 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Badge } from '@/components/ui/badge';
 
 interface TuitionRequest {
     id: string;
@@ -35,11 +36,11 @@ interface TuitionRequest {
 const MyRequest: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
-    
+
     // Dummy data - replace with API call later
     const requests: TuitionRequest[] = [
         {
-            id: '#1440',
+            id: '1440',
             institution: 'Dhaka Residential Model School',
             studentClass: 'Class IV',
             subjects: ['Bangla', 'English', 'Math'],
@@ -48,7 +49,7 @@ const MyRequest: React.FC = () => {
             status: 'Accepted',
         },
         {
-            id: '#1440',
+            id: '1440',
             institution: 'Dhaka Residential Model School',
             studentClass: 'Class IV',
             subjects: ['Bangla', 'English', 'Math'],
@@ -138,7 +139,7 @@ const MyRequest: React.FC = () => {
                                 <TableBody>
                                     {requests.map((request, index) => (
                                         <TableRow key={index}>
-                                            <TableCell 
+                                            <TableCell
                                                 className="font-medium cursor-pointer hover:text-blue-600"
                                                 onClick={() => handleRequestClick(request.id)}
                                             >

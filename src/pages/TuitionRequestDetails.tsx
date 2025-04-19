@@ -75,72 +75,73 @@ const TuitionRequestDetails: React.FC = () => {
     };
 
     return (
-        <div className="flex-1 overflow-auto bg-gray-50">
+        <div className="flex-1 overflow-auto">
             <DashboardHeader userName="John" />
-
             <div className="p-6">
                 <div className="mb-6">
-                    <button
+                    <Button
                         onClick={handleBack}
-                        className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
+                        className="flex items-center text-gray-600 hover:text-gray-900 mb-4 bg-gray-100 hover:bg-gray-300"
                     >
                         <ArrowLeft className="h-4 w-4 mr-2" />
                         Back
-                    </button>
+                    </Button>
                     <h1 className="text-2xl font-bold">Request {requestDetails.id}</h1>
                     <p className="text-gray-600">Explore all the tuition request from guardian</p>
                 </div>
 
-                <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-4">
-                            <DetailItem label="Student Class" value={requestDetails.studentClass} />
-                            <DetailItem label="Institution" value={requestDetails.institution} />
-                            <DetailItem label="Subject" value={requestDetails.subject} />
-                            <DetailItem label="Department" value={requestDetails.department} />
-                            <DetailItem label="Gender" value={requestDetails.gender} />
-                        </div>
-                        <div className="space-y-4">
-                            <DetailItem label="Area" value={requestDetails.area} />
-                            <DetailItem label="Tuition Type" value={requestDetails.tuitionType} />
-                            <DetailItem label="Tuition Members" value={requestDetails.tuitionMembers} />
-                            <DetailItem label="Preferred Days" value={requestDetails.preferredDays} />
-                            <DetailItem label="Payment" value={requestDetails.payment} />
-                        </div>
-                    </div>
-
-                    {showRejection && (
-                        <div className="mt-6 space-y-4">
-                            <h3 className="text-lg font-medium">Details About Rejection</h3>
-                            <Textarea
-                                placeholder="Write about rejection of the request"
-                                value={rejectionReason}
-                                onChange={(e) => setRejectionReason(e.target.value)}
-                                className="min-h-[120px]"
-                            />
-                            <div className="flex justify-end">
-                                <Button onClick={handleSubmitRejection}>Submit</Button>
+                <div className='container'>
+                    <div className="bg-gray-50 rounded-lg shadow-sm p-6 border border-white-200 ">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <DetailItem label="Student Class" value={requestDetails.studentClass} />
+                                <DetailItem label="Institution" value={requestDetails.institution} />
+                                <DetailItem label="Subject" value={requestDetails.subject} />
+                                <DetailItem label="Department" value={requestDetails.department} />
+                                <DetailItem label="Gender" value={requestDetails.gender} />
+                            </div>
+                            <div className="space-y-4">
+                                <DetailItem label="Area" value={requestDetails.area} />
+                                <DetailItem label="Tuition Type" value={requestDetails.tuitionType} />
+                                <DetailItem label="Tuition Members" value={requestDetails.tuitionMembers} />
+                                <DetailItem label="Preferred Days" value={requestDetails.preferredDays} />
+                                <DetailItem label="Payment" value={requestDetails.payment} />
                             </div>
                         </div>
-                    )}
 
-                    {!showRejection && (
-                        <div className="mt-6 flex justify-end gap-4">
-                            <Button
-                                variant="outline"
-                                className="w-[200px]"
-                                onClick={handleReject}
-                            >
-                                Reject
-                            </Button>
-                            <Button 
-                                className="w-[200px]"
-                                onClick={handleAccept}
-                            >
-                                Accept
-                            </Button>
-                        </div>
-                    )}
+                        {showRejection && (
+                            <div className="mt-6 space-y-4">
+                                <h3 className="text-lg font-medium">Details About Rejection</h3>
+                                <Textarea
+                                    placeholder="Write about rejection of the request"
+                                    value={rejectionReason}
+                                    onChange={(e) => setRejectionReason(e.target.value)}
+                                    className="min-h-[120px]"
+                                />
+                                <div className="flex justify-end">
+                                    <Button onClick={handleSubmitRejection}>Submit</Button>
+                                </div>
+                            </div>
+                        )}
+
+                        {!showRejection && (
+                            <div className="mt-6 flex justify-end gap-4">
+                                <Button
+                                    variant="outline"
+                                    className="w-[200px]"
+                                    onClick={handleReject}
+                                >
+                                    Reject
+                                </Button>
+                                <Button
+                                    className="w-[200px]"
+                                    onClick={handleAccept}
+                                >
+                                    Accept
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
