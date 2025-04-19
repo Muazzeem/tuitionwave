@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DashboardHeader from '@/components/DashboardHeader';
 import { Search, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,7 @@ interface TuitionRequest {
 
 const MyRequest: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
+    const navigate = useNavigate();
     
     // Dummy data - replace with API call later
     const requests: TuitionRequest[] = [
@@ -81,6 +83,10 @@ const MyRequest: React.FC = () => {
             default:
                 return '';
         }
+    };
+
+    const handleRequestClick = (requestId: string) => {
+        navigate(`/my-request/${requestId}`);
     };
 
     return (
@@ -132,7 +138,12 @@ const MyRequest: React.FC = () => {
                                 <TableBody>
                                     {requests.map((request, index) => (
                                         <TableRow key={index}>
-                                            <TableCell className="font-medium">{request.id}</TableCell>
+                                            <TableCell 
+                                                className="font-medium cursor-pointer hover:text-blue-600"
+                                                onClick={() => handleRequestClick(request.id)}
+                                            >
+                                                {request.id}
+                                            </TableCell>
                                             <TableCell>{request.institution}</TableCell>
                                             <TableCell>{request.studentClass}</TableCell>
                                             <TableCell>{request.subjects.join(', ')}</TableCell>
