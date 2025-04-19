@@ -10,20 +10,20 @@ const PasswordSettings = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8 p-6">
             <div>
-                <h2 className="text-2xl font-semibold mb-2">Password</h2>
-                <p className="text-gray-500 mb-6">Manage and change your password</p>
+                <h2 className="text-xl font-semibold mb-2">Password</h2>
+                <p className="text-gray-500">Manage and change your password</p>
             </div>
 
             <div className="space-y-6">
                 <div className="space-y-2">
-                    <label className="font-medium">Current Password</label>
+                    <h3 className="font-medium">Current Password</h3>
                     <div className="relative">
                         <Input
                             type={showCurrentPassword ? "text" : "password"}
                             className="pl-10 pr-10"
-                            placeholder="Enter current password"
+                            placeholder="Current password"
                         />
                         <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
                         <button
@@ -41,13 +41,13 @@ const PasswordSettings = () => {
                 </div>
 
                 <div className="space-y-2">
-                    <label className="font-medium">New Password</label>
+                    <h3 className="font-medium">New Password</h3>
                     <p className="text-sm text-gray-500">Type your new unique password.</p>
                     <div className="relative">
                         <Input
                             type={showNewPassword ? "text" : "password"}
                             className="pl-10 pr-10"
-                            placeholder="Enter new password"
+                            placeholder="New password"
                         />
                         <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
                         <button
@@ -62,17 +62,17 @@ const PasswordSettings = () => {
                             )}
                         </button>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">Minimum of 8 characters or more.</p>
+                    <p className="text-sm text-gray-500">Minimum of 8 characters or more.</p>
                 </div>
 
                 <div className="space-y-2">
-                    <label className="font-medium">Confirm New Password</label>
+                    <h3 className="font-medium">Confirm New Password</h3>
                     <p className="text-sm text-gray-500">Re-enter your new password.</p>
                     <div className="relative">
                         <Input
                             type={showConfirmPassword ? "text" : "password"}
                             className="pl-10 pr-10"
-                            placeholder="Confirm new password"
+                            placeholder="Confirm password"
                         />
                         <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
                         <button
@@ -90,9 +90,9 @@ const PasswordSettings = () => {
                 </div>
             </div>
 
-            <div className="flex justify-end gap-4 mt-6">
+            <div className="flex justify-end gap-4 pt-4">
                 <Button variant="outline">Cancel</Button>
-                <Button>Save Changes</Button>
+                <Button className="bg-blue-600 hover:bg-blue-700">Save Changes</Button>
             </div>
         </div>
     );
