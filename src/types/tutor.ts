@@ -73,6 +73,15 @@ export interface Tutor {
   teaching_type_display: string;
   expected_hourly_charge: SalaryRange;
   created_at: string;
+  first_name?: string;
+  last_name?: string;
+  rating?: number;
+  total_reviews?: number;
+}
+
+export interface TutorListResponse {
+  results: Tutor[];
+  count: number;
 }
 
 export interface ProfileFormData {
