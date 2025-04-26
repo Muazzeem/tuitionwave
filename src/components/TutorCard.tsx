@@ -12,9 +12,9 @@ interface TutorCardProps {
 }
 
 const TutorCard: React.FC<TutorCardProps> = ({ tutor }) => {
-  const fullName = `${tutor.user.first_name} ${tutor.user.last_name}`;
-  const profileImage = tutor.user.profile_picture || "/lovable-uploads/ced7cd19-6baa-4f95-a194-cd4c9c7c3f0c.png";
-  const teachingRate = tutor.teaching_rate.toLocaleString();
+  const fullName = `${tutor.first_name} ${tutor.last_name}`;
+  const profileImage = tutor.profile_picture || "/lovable-uploads/ced7cd19-6baa-4f95-a194-cd4c9c7c3f0c.png";
+  // const teachingRate = tutor.teaching_rate.toLocaleString();
   const isOnline = tutor.teaching_type === "ONLINE";
 
   return (
@@ -34,19 +34,19 @@ const TutorCard: React.FC<TutorCardProps> = ({ tutor }) => {
             <Star size={24} className="text-yellow-400 fill-yellow-400" />
             <span className="text-lg font-medium">4.9</span>
             <span className="text-gray-500">(60 reviews)</span>
-            <span className="ml-auto text-sm font-bold">৳{teachingRate}/Hour</span>
+            <span className="ml-auto text-sm font-bold">৳10000/Hour</span>
           </div>
 
           <div className="flex items-center gap-2 mb-4">
             <MapPin size={18} className="text-gray-700" />
-            <span className="text-gray-700">{tutor.user.address || "Not specified"}</span>
+            <span className="text-gray-700">{tutor.address || "Not specified"}</span>
             <div className="ml-auto flex gap-2">
               {isOnline && <Badge className="bg-green-100 text-green-800 hover:bg-green-200">Online</Badge>}
               {!isOnline && <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">Home</Badge>}
             </div>
           </div>
 
-          <Link to={`/tutor/${tutor.id}`}>
+          <Link to={`/tutor/${tutor.uid}`}>
             <Button
               className="w-full text-blue-600 bg-white border border-blue-600 hover:bg-blue-50"
             >

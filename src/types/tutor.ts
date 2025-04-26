@@ -9,11 +9,15 @@ export interface User {
 }
 
 export interface Tutor {
-  id: number;
+  uid: string;
   user: User;
-  teaching_rate: number;
+  first_name: string;
+  last_name: string;
+  profile_picture: string | null;
+  teaching_rate: number | null;
   teaching_type: string;
   collage_name: string;
+  address: string;
 }
 
 export interface TutorListResponse {
