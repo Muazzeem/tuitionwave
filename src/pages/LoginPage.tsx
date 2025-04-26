@@ -1,27 +1,53 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { toast } from "sonner";
+import { setAuthTokens } from '@/utils/auth';
 
 const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState<1 | 2>(1);
   const [userType, setUserType] = useState<'tutor' | 'guardian'>('guardian');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleContinue = () => {
     setStep(2);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Logging in as', userType, 'with', email, password);
+    setLoading(true);
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/token/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Invalid credentials');
+      }
+
+      const data = await response.json();
+      setAuthTokens(data);
+      toast.success('Successfully logged in!');
+      navigate('/dashboard');
+    } catch (error) {
+      toast.error('Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -98,6 +124,7 @@ const LoginPage: React.FC = () => {
                         onChange={(e) => setEmail(e.target.value)}
                         required
                         className="w-full"
+                        disabled={loading}
                       />
                     </div>
                   </div>
@@ -113,6 +140,7 @@ const LoginPage: React.FC = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         className="w-full pr-10"
+                        disabled={loading}
                       />
                       <button
                         type="button"
@@ -131,8 +159,9 @@ const LoginPage: React.FC = () => {
                   <Button 
                     type="submit" 
                     className="w-full bg-blue-600 hover:bg-blue-700 mt-2"
+                    disabled={loading}
                   >
-                    Log in
+                    {loading ? 'Logging in...' : 'Log in'}
                   </Button>
                   
                   <div className="text-center text-sm">
@@ -140,6 +169,7 @@ const LoginPage: React.FC = () => {
                       type="button" 
                       className="text-blue-600 hover:underline"
                       onClick={() => setStep(1)}
+                      disabled={loading}
                     >
                       Back to user selection
                     </button>

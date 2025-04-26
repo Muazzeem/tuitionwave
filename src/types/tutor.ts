@@ -81,6 +81,12 @@ export interface Tutor {
   created_at: string;
   rating?: number;
   total_reviews?: number;
+  first_name?: string;
+  last_name?: string;
+  profile_picture?: string;
+  teaching_type?: string;
+  collage_name?: string;
+  id?: number;
 }
 
 export interface TutorListResponse {

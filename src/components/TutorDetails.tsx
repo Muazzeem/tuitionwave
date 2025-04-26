@@ -21,8 +21,14 @@ const TutorDetails: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
+    const accessToken = localStorage.getItem('accessToken');
+    
     if (id) {
-      fetch(`http://127.0.0.1:8000/api/tutors/${id}`)
+      fetch(`http://127.0.0.1:8000/api/tutors/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        }
+      })
         .then((response) => response.json())
         .then((data) => setTutor(data))
         .catch((error) => console.error('Error fetching tutor details:', error))
