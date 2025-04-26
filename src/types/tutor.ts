@@ -60,8 +60,14 @@ export interface Tutor {
     id: number;
     name: string;
   };
-  institute: Institute;
-  department: Department;
+  institute: {
+    id: number;
+    name: string;
+  };
+  department: {
+    id: number;
+    name: string;
+  };
   current_status_display: string;
   cv_document: string | null;
   preferred_districts: District[];
@@ -73,8 +79,6 @@ export interface Tutor {
   teaching_type_display: string;
   expected_hourly_charge: SalaryRange;
   created_at: string;
-  first_name?: string;
-  last_name?: string;
   rating?: number;
   total_reviews?: number;
 }
