@@ -1,9 +1,11 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from './ui/button';
 import { getAccessToken } from '@/utils/auth';
 import { ContractResponse, Contract } from '@/types/contract';
+import * as Tooltip from '@radix-ui/react-tooltip';
 
 const RequestRow: React.FC<{ request: Contract }> = ({ request }) => {
   const getStatusColor = (status: string) => {
@@ -34,7 +36,7 @@ const RequestRow: React.FC<{ request: Contract }> = ({ request }) => {
 
   return (
     <tr className="border-b border-gray-100">
-      <td className="py-3 px-2 text-sm">#{request.uid.slice(0, 4)}</td>
+      <td className="py-3 px-2 text-sm">#{request.uid.slice(5, 10)}</td>
       <td className="py-3 px-2">
         <div className="flex items-center">
           <div className="h-8 w-8 rounded-full overflow-hidden mr-2">
@@ -45,8 +47,8 @@ const RequestRow: React.FC<{ request: Contract }> = ({ request }) => {
             />
           </div>
           <div>
-            <p className="text-sm font-medium">{request.tutor.institute.name}</p>
-            <p className="text-xs text-gray-500">{request.tutor.address}</p>
+            <p className="text-sm font-medium">{request.tutor.full_name}</p>
+            <p className="text-xs text-gray-500">{request.tutor.institute.name}</p>
           </div>
         </div>
       </td>
@@ -54,6 +56,7 @@ const RequestRow: React.FC<{ request: Contract }> = ({ request }) => {
         {request.subjects.map(s => s.subject).join(', ')}
       </td>
       <td className="py-3 px-2 text-sm">{request.contract_duration} Month</td>
+      <td className="py-3 px-2 text-sm">৳{request.proposed_salary}</td>
       <td className="py-3 px-2">
         <div className="flex items-center">
           <span className={`h-2 w-2 rounded-full ${getStatusDot(request.status_display)} mr-2`}></span>
@@ -62,7 +65,9 @@ const RequestRow: React.FC<{ request: Contract }> = ({ request }) => {
           </span>
         </div>
       </td>
-      <td className="py-3 px-2"></td>
+      <td className="py-3 px-2">
+
+      </td>
     </tr>
   );
 };
@@ -96,9 +101,11 @@ const RecentRequests: React.FC = () => {
     <div className="bg-white p-4 rounded-md shadow-none border border-gray-100">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-bold">Recent Request</h2>
-        <Button className="text-sm text-tuitionwave-blue hover:underline text-white">
-          View All
-        </Button>
+        <Link to="/all-requests">
+          <Button className="text-sm text-tuitionwave-blue hover:underline text-white">
+            View All
+          </Button>
+        </Link>
       </div>
 
       <div className="overflow-x-auto">
@@ -109,6 +116,7 @@ const RecentRequests: React.FC = () => {
               <th className="py-2 px-2">Tutor Name</th>
               <th className="py-2 px-2">Subject</th>
               <th className="py-2 px-2">Tuition Period</th>
+              <th className="py-2 px-2">Requested Amount</th>
               <th className="py-2 px-2">Status</th>
               <th className="py-2 px-2">Others</th>
             </tr>

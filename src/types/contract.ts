@@ -9,6 +9,7 @@ export interface Guardian {
 }
 
 export interface ContractTutor {
+  full_name: ReactNode;
   uid: string;
   institute: {
     id: number;
@@ -31,6 +32,7 @@ export interface ContractTutor {
 export interface Contract {
   uid: string;
   guardian: Guardian;
+  full_name: string;
   tutor: ContractTutor;
   subjects: {
     id: number;

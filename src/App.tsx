@@ -37,7 +37,7 @@ const App = () => (
           <Route path="/login" element={<LoginPage />} />
           <Route path="/tutor/:id" element={<TutorProfile />} />
           <Route path="/dashboard" element={<MainLayout><Dashboard /></MainLayout>} />
-          <Route path="/my-request" element={<MainLayout><MyRequest /></MainLayout>} />
+          <Route path="/all-requests" element={<MainLayout><MyRequest /></MainLayout>} />
           <Route path="/my-request/:id" element={<MainLayout><TuitionRequestDetails /></MainLayout>} />
           <Route path="/settings" element={<MainLayout><Settings /></MainLayout>} />
           <Route path="/profile" element={<MainLayout><ProfilePage /></MainLayout>} />
