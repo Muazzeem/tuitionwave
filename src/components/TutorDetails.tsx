@@ -1,160 +1,222 @@
+
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';  // Import useParams
+import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Card } from './ui/card';
 import { Skeleton } from './ui/skeleton';
+import { MapPin, Book, Calendar, DollarSign, GraduationCap, Building, Users } from 'lucide-react';
+import { Badge } from './ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { Tutor } from '@/types/tutor';
 
 const TutorDetails: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const { id } = useParams();  // Get tutor ID from the URL
-  const [tutor, setTutor] = useState<any>(null);
-  const [selectedDays, setSelectedDays] = useState<string[]>([]);
-  const [selectedSubjects, setSelectedSubjects] = useState<string[]>(['English']);
+  const { id } = useParams();
+  const [tutor, setTutor] = useState<Tutor | null>(null);
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
 
-  // Fetch tutor details by ID from API
   useEffect(() => {
     setLoading(true);
     if (id) {
       fetch(`http://127.0.0.1:8000/api/tutors/${id}`)
         .then((response) => response.json())
         .then((data) => setTutor(data))
-        .catch((error) => console.error('Error fetching tutor details:', error));
-      setLoading(false);
+        .catch((error) => console.error('Error fetching tutor details:', error))
+        .finally(() => setLoading(false));
     }
-  }, [id]);  // Re-run this effect when the 'id' changes
+  }, [id]);
 
-  // Toggle selected days
-  const toggleDay = (day: string) => {
-    if (selectedDays.includes(day)) {
-      setSelectedDays(selectedDays.filter(d => d !== day));
-    } else {
-      setSelectedDays([...selectedDays, day]);
-    }
-  };
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Skeleton className="h-48 w-full mb-6" />
+        <Skeleton className="h-24 w-full mb-4" />
+        <Skeleton className="h-32 w-full" />
+      </div>
+    );
+  }
 
-  // Toggle selected subjects
-  const toggleSubject = (subject: string) => {
-    if (selectedSubjects.includes(subject)) {
-      setSelectedSubjects(selectedSubjects.filter(s => s !== subject));
-    } else {
-      setSelectedSubjects([...selectedSubjects, subject]);
-    }
-  };
-
-  // Show loading or display tutor details
   if (!tutor) {
-    return <div>
-      <Skeleton className="h-48 w-full mb-3" />
-    </div>;  // Display loading state while data is being fetched
+    return <div className="container mx-auto px-4 py-8">Failed to load tutor details.</div>;
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
-
-      <div className="">
-        {loading ? (
-          // Loading skeletons
-          [...Array(1)].map((_, index) => (
-            <Card key={index}>
-              <div className="p-3">
-                <Skeleton className="h-48 w-full mb-3" />
+    <div className="container mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="md:col-span-1">
+          <Card className="p-6">
+            <div className="mb-6">
+              <img
+                src={tutor.profile_picture_url || "/lovable-uploads/ced7cd19-6baa-4f95-a194-cd4c9c7c3f0c.png"}
+                alt="Tutor Profile"
+                className="w-full h-48 object-cover rounded-lg mb-4"
+              />
+              <h2 className="text-xl font-semibold mb-2">{tutor.description}</h2>
+              <div className="flex items-center text-gray-600 mb-2">
+                <MapPin className="w-4 h-4 mr-2" />
+                <span>{tutor.address}</span>
               </div>
-            </Card>
-          ))
-        ) : tutor ? (
-          // Display tutors
+              <div className="flex items-center text-gray-600">
+                <Users className="w-4 h-4 mr-2" />
+                <span>{tutor.gender_display}</span>
+              </div>
+            </div>
 
-          <div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="md:col-span-1">
-                <img
-                  src={tutor.profile_picture || "/default-image.png"}  // Use fetched image or default
-                  alt={tutor.username}
-                  className="w-full h-full rounded-lg"
-                />
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <GraduationCap className="w-5 h-5 text-gray-600" />
+                <div>
+                  <p className="text-sm text-gray-600">Degree</p>
+                  <p className="font-medium">{tutor.degree.name}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Building className="w-5 h-5 text-gray-600" />
+                <div>
+                  <p className="text-sm text-gray-600">Institute</p>
+                  <p className="font-medium">{tutor.institute.name}</p>
+                </div>
               </div>
 
-              <div className="md:col-span-2">
-                <h1 className="text-3xl font-bold mb-2">{tutor.user.first_name} {tutor.user.last_name}</h1>
-
-                <div className="flex items-center mb-4">
-                  <div className="flex">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <svg key={star} className="w-5 h-5 star-filled" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                      </svg>
-                    ))}
-                  </div>
-                  <span className="ml-2 text-gray-600">5.0 (10)</span>
-                </div>
-
-                <h2 className="text-xl font-semibold mb-3">Tuition From: ৳{tutor.teaching_rate.toLocaleString()}</h2>
-
-                <p className="text-gray-600 mb-6">{tutor.description}</p>
-
-                <div className="mb-6">
-                  <h3 className="text-gray-500 text-sm mb-2">Select Days</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {tutor.active_days.map((dayObj: { day: string }, index: number) => (
-                      <button
-                        key={index}
-                        onClick={() => toggleDay(dayObj.day)}
-                        className={`px-4 py-2 rounded-md text-sm ${selectedDays.includes(dayObj.day)
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-200 text-gray-700'
-                          }`}
-                      >
-                        {dayObj.day}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <h3 className="text-gray-500 text-sm mb-2">Select Subject</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {tutor.subjects.map((subjectObj: { subject: string }, index: number) => (
-                      <button
-                        key={index}
-                        onClick={() => toggleDay(subjectObj.subject)}
-                        className={`px-4 py-2 rounded-md text-sm ${selectedDays.includes(subjectObj.subject)
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-200 text-gray-700'
-                          }`}
-                      >
-                        {subjectObj.subject}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-gray-500 text-sm mb-2">I want to Pay</h3>
-                    <Input type="text" placeholder={tutor.teaching_rate.toLocaleString()} className="w-full" />
-                  </div>
-
-                  <div>
-                    <h3 className="text-gray-500 text-sm mb-2">Custom Notes</h3>
-                    <Textarea placeholder="Write any custom message" className="w-full" />
-                  </div>
-
-                  <Button className="w-full py-6 bg-blue-600 hover:bg-blue-700 text-white text-lg">
-                    Make Request
-                  </Button>
+              <div className="flex items-center gap-2">
+                <Book className="w-5 h-5 text-gray-600" />
+                <div>
+                  <p className="text-sm text-gray-600">Department</p>
+                  <p className="font-medium">{tutor.department.name}</p>
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
+        </div>
 
-        ) : (
-          // No tutors found
-          <div className="col-span-full text-center py-10">
-            <p className="text-gray-500">No tutors found. Try adjusting your search criteria.</p>
-          </div>
-        )}
+        <div className="md:col-span-2">
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="w-full">
+              <TabsTrigger value="overview" className="flex-1">Overview</TabsTrigger>
+              <TabsTrigger value="schedule" className="flex-1">Schedule & Fees</TabsTrigger>
+              <TabsTrigger value="subjects" className="flex-1">Subjects</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="overview" className="mt-6">
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4">Preferred Locations</h3>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-gray-600 mb-2">Districts:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {tutor.preferred_districts.map((district) => (
+                        <Badge key={district.id} variant="secondary">
+                          {district.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600 mb-2">Areas:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {tutor.preferred_areas.map((area) => (
+                        <Badge key={area.id} variant="secondary">
+                          {area.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="schedule" className="mt-6">
+              <Card className="p-6">
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Available Days</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {tutor.active_days.map((day) => (
+                        <Badge key={day.id} variant="outline">
+                          {day.day}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="flex items-center gap-3">
+                      <Calendar className="w-5 h-5 text-gray-600" />
+                      <div>
+                        <p className="text-sm text-gray-600">Days per Week</p>
+                        <p className="font-medium">{tutor.days_per_week} days</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <DollarSign className="w-5 h-5 text-gray-600" />
+                      <div>
+                        <p className="text-sm text-gray-600">Expected Monthly Salary</p>
+                        <p className="font-medium">{tutor.expected_salary.display_range}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Teaching Type</h3>
+                    <Badge>{tutor.teaching_type_display}</Badge>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Hourly Rate</h3>
+                    <p className="text-xl font-semibold text-blue-600">
+                      {tutor.expected_hourly_charge.display_range}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="subjects" className="mt-6">
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4">Subjects</h3>
+                <div className="flex flex-wrap gap-2">
+                  {tutor.subjects.map((subject) => (
+                    <Badge 
+                      key={subject.id}
+                      variant={selectedSubjects.includes(subject.subject) ? "default" : "outline"}
+                      className="cursor-pointer"
+                      onClick={() => {
+                        if (selectedSubjects.includes(subject.subject)) {
+                          setSelectedSubjects(selectedSubjects.filter(s => s !== subject.subject));
+                        } else {
+                          setSelectedSubjects([...selectedSubjects, subject.subject]);
+                        }
+                      }}
+                    >
+                      {subject.subject}
+                    </Badge>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="p-6 mt-6">
+                <h3 className="text-lg font-semibold mb-4">Request Tuition</h3>
+                <div className="space-y-4">
+                  <Input
+                    type="number"
+                    placeholder="Enter your offer amount"
+                    className="w-full"
+                  />
+                  <Textarea
+                    placeholder="Write any special requirements or message for the tutor"
+                    className="w-full"
+                  />
+                  <Button className="w-full">Send Request</Button>
+                </div>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
