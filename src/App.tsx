@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +19,7 @@ import GuardianDashboard from "./pages/Guardian/Dashboard";
 import Unauthorized from "./pages/Unauthorized";
 import { AuthProvider } from '@/contexts/AuthContext';
 import AuthGuard from "./components/AuthGuard";
+import FindTutors from "./pages/FindTutors";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +77,7 @@ const App = () => (
             <Route path="/login" element={<LoginPage />} />
             <Route path="/tutor/:id" element={<TutorProfile />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
+            <Route path="/find-tutors" element={<FindTutors />} />
             
             {/* Protected routes for all authenticated users */}
             <Route path="/profile" element={
