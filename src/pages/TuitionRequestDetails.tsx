@@ -7,6 +7,7 @@ import DashboardHeader from "@/components/DashboardHeader";
 import { useToast } from "@/hooks/use-toast";
 import { Contract, ContractResponse } from "@/types/contract";
 import { useAuth } from "@/contexts/AuthContext";
+import ConfirmationDialog from "@/components/ConfirmationDialog";
 
 interface DetailItemProps {
   label: string;
@@ -28,8 +29,12 @@ const TuitionRequestDetails: React.FC = () => {
   const [showRejection, setShowRejection] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
-
   const [requestDetails, setRequestDetails] = useState<Contract | null>(null);
+
+  // Add states for confirmation dialogs
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showApproveConfirm, setShowApproveConfirm] = useState(false);
+  const [showRejectConfirm, setShowRejectConfirm] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -52,11 +57,11 @@ const TuitionRequestDetails: React.FC = () => {
     navigate("/all-requests");
   };
 
-  const handleReject = () => {
-    setShowRejection(true);
+  const handleDelete = () => {
+    setShowCancelConfirm(true);
   };
 
-  const handleDelete = () => {
+  const confirmDelete = () => {
     const accessToken = localStorage.getItem("accessToken");
 
     if (id) {
@@ -66,23 +71,29 @@ const TuitionRequestDetails: React.FC = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       })
-        .catch((error) => console.error("Error fetching tutor details:", error))
-        .finally(() => setLoading(false));
-      toast({
-        title: "Request Deleted",
-        description: "The tuition request has been deleted successfully.",
-      });
-      navigate("/all-requests");
-    } else {
-      toast({
-        title: "Error",
-        description: "Please provide a valid request id.",
-        variant: "destructive",
-      });
+        .then(() => {
+          toast({
+            title: "Request Deleted",
+            description: "The tuition request has been deleted successfully.",
+          });
+          navigate("/all-requests");
+        })
+        .catch((error) => {
+          console.error("Error deleting request:", error);
+          toast({
+            title: "Error",
+            description: "Failed to delete the request.",
+            variant: "destructive",
+          });
+        });
     }
   };
 
   const handleAccept = () => {
+    setShowApproveConfirm(true);
+  };
+
+  const confirmAccept = () => {
     const accessToken = localStorage.getItem("accessToken");
 
     if (id) {
@@ -93,24 +104,30 @@ const TuitionRequestDetails: React.FC = () => {
         },
       })
         .then((response) => response.json())
-        .then((data) => setRequestDetails(data))
-        .catch((error) => console.error("Error fetching tutor details:", error))
-        .finally(() => setLoading(false));
-      toast({
-        title: "Request Accepted",
-        description: "The tuition request has been accepted successfully.",
-      });
-      navigate("/all-requests");
-    } else {
-      toast({
-        title: "Error",
-        description: "Please provide a valid request id.",
-        variant: "destructive",
-      });
+        .then((data) => {
+          setRequestDetails(data);
+          toast({
+            title: "Request Accepted",
+            description: "The tuition request has been accepted successfully.",
+          });
+          navigate("/all-requests");
+        })
+        .catch((error) => {
+          console.error("Error accepting request:", error);
+          toast({
+            title: "Error",
+            description: "Failed to accept the request.",
+            variant: "destructive",
+          });
+        });
     }
   };
 
-  const handleSubmitRejection = () => {
+  const handleReject = () => {
+    setShowRejectConfirm(true);
+  };
+
+  const confirmReject = () => {
     if (!rejectionReason.trim()) {
       toast({
         title: "Error",
@@ -130,20 +147,22 @@ const TuitionRequestDetails: React.FC = () => {
         },
       })
         .then((response) => response.json())
-        .then((data) => setRequestDetails(data))
-        .catch((error) => console.error("Error fetching tutor details:", error))
-        .finally(() => setLoading(false));
-      toast({
-        title: "Request Rejected",
-        description: "The tuition request has been rejected successfully.",
-      });
-      navigate("/all-requests");
-    } else {
-      toast({
-        title: "Error",
-        description: "Please provide a valid request id.",
-        variant: "destructive",
-      });
+        .then((data) => {
+          setRequestDetails(data);
+          toast({
+            title: "Request Rejected",
+            description: "The tuition request has been rejected successfully.",
+          });
+          navigate("/all-requests");
+        })
+        .catch((error) => {
+          console.error("Error rejecting request:", error);
+          toast({
+            title: "Error",
+            description: "Failed to reject the request.",
+            variant: "destructive",
+          });
+        });
     }
   };
 
@@ -153,7 +172,7 @@ const TuitionRequestDetails: React.FC = () => {
 
   return (
     <div className="flex-1 overflow-auto">
-      <DashboardHeader userName="John" />
+      <DashboardHeader userName={userProfile?.first_name || 'User'} />
       <div className="p-6">
         <div className="mb-6">
           <h1 className="text-2xl font-bold uppercase">
@@ -316,6 +335,34 @@ const TuitionRequestDetails: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Add Confirmation Dialogs */}
+      <ConfirmationDialog
+        isOpen={showCancelConfirm}
+        onClose={() => setShowCancelConfirm(false)}
+        onConfirm={confirmDelete}
+        title="Cancel Request"
+        description="Are you sure you want to cancel this tuition request? This action cannot be undone."
+        variant="cancel"
+      />
+
+      <ConfirmationDialog
+        isOpen={showApproveConfirm}
+        onClose={() => setShowApproveConfirm(false)}
+        onConfirm={confirmAccept}
+        title="Accept Request"
+        description="Are you sure you want to accept this tuition request?"
+        variant="approve"
+      />
+
+      <ConfirmationDialog
+        isOpen={showRejectConfirm}
+        onClose={() => setShowRejectConfirm(false)}
+        onConfirm={confirmReject}
+        title="Reject Request"
+        description="Are you sure you want to reject this tuition request? Please provide a reason for rejection."
+        variant="reject"
+      />
     </div>
   );
 };

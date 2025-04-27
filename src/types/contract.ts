@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 
 export interface Guardian {
   id: number;
