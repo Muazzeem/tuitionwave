@@ -7,9 +7,11 @@ import { Label } from '@/components/ui/label';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { toast } from "sonner";
 import { setAuthTokens } from '@/utils/auth';
+import { useAuth } from '@/contexts/AuthContext';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const { fetchProfile } = useAuth();
   const [step, setStep] = useState<1 | 2>(1);
   const [userType, setUserType] = useState<'tutor' | 'guardian'>('guardian');
   const [email, setEmail] = useState('');
@@ -40,8 +42,12 @@ const LoginPage: React.FC = () => {
 
       const data = await response.json();
       setAuthTokens(data);
+      
+      // Fetch user profile after successful login
+      await fetchProfile();
+      
       toast.success('Successfully logged in!');
-      navigate('/dashboard');
+      navigate('/teacher/dashboard');
     } catch (error) {
       toast.error('Login failed. Please check your credentials.');
     } finally {
@@ -52,17 +58,17 @@ const LoginPage: React.FC = () => {
   return (
     <div className="flex h-screen w-full">
       {/* Left section with image */}
-      <div className="hidden md:flex md:w-1/2 bg-gray-300 relative">
+      <div className="hidden md:flex md:w-1/2 bg-gray-600 relative absolute inset-0 z-0">
         <img 
           src="/lovable-uploads/56c05a63-4266-4a9d-ad96-7c9d83120840.png" 
           alt="Mother and child studying" 
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover opacity-50 mix-blend-overlay"
         />
         <div className="absolute inset-0 bg-black/20" />
         
         {/* Logo */}
         <div className="absolute top-6 left-6">
-          <h1 className="text-2xl font-bold text-black">Tuition Wave</h1>
+          <h1 className="text-2xl font-bold text-white">Tuition Wave</h1>
         </div>
         
         {/* Welcome message */}

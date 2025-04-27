@@ -1,18 +1,32 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Search, MessageSquare, User, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Sidebar = () => {
+    const { userProfile } = useAuth();
     const location = useLocation();
     const [isExpanded, setIsExpanded] = useState(true);
+
+    const userType = userProfile?.user_type?.toLowerCase();
 
     const menuItems = [
         { icon: Home, text: 'Dashboard', path: '/dashboard' },
         { icon: Search, text: 'Find Tutor', path: '/' },
-        { icon: User, text: 'My Request', path: '/my-request' },
+        { icon: User, text: 'Contract Requests', path: '/requests' },
         { icon: User, text: 'My Tutor', path: '/my-tutor' },
         { icon: MessageSquare, text: 'Message', path: '/message' }
     ];
+
+    const updatedMenuItems = menuItems.map(item => {
+        if (['Dashboard', 'Contract Requests'].includes(item.text)) {
+          return {
+            ...item,
+            path: `/${userType}${item.path}`
+          };
+        }
+        return item;
+      });
 
     const toggleSidebar = () => {
         setIsExpanded(!isExpanded);
@@ -32,7 +46,7 @@ const Sidebar = () => {
 
             <nav className="flex-1 overflow-y-auto py-4">
                 <ul className="space-y-1">
-                    {menuItems.map((item, index) => {
+                    {updatedMenuItems.map((item, index) => {
                         const isActive = location.pathname === item.path;
                         const IconComponent = item.icon;
 

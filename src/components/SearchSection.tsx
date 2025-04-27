@@ -8,9 +8,9 @@ const SearchSection: React.FC = () => {
     <div className="search-section text-white py-16 md:py-24 relative">
       <div className="absolute inset-0 bg-blue-900 z-0">
         <img
-          src="/lovable-uploads/295ad78b-d35b-4792-bd5b-f75958ab09b8.png"
+          src="/lovable-uploads/cover-image.jpg"
           alt="Tutor helping student"
-          className="w-full h-full object-cover opacity-30 mix-blend-overlay"
+          className="w-full h-full object-cover opacity-40 mix-blend-overlay"
         />
       </div>
       <div className="container mx-auto px-4 relative z-10">

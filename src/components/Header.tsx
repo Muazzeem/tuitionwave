@@ -1,9 +1,11 @@
-
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Header: React.FC = () => {
+  const { userProfile, clearProfile } = useAuth();
+
   return (
     <header className="border-b py-4">
       <div className="container mx-auto px-4 flex justify-between items-center">
@@ -11,16 +13,35 @@ const Header: React.FC = () => {
           Tuition Wave
         </Link>
         <nav className="hidden md:flex space-x-6">
-          <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium">
+          <Link
+            to="/"
+            className="text-gray-700 hover:text-blue-600 font-medium"
+          >
             Home
           </Link>
-          <Link to="/job-preparation" className="text-gray-700 hover:text-blue-600 font-medium">
+          <Link
+            to="/job-preparation"
+            className="text-gray-700 hover:text-blue-600 font-medium"
+          >
             Job Preparation
           </Link>
         </nav>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6">
-          Tutor Zone
-        </Button>
+        {userProfile?.uid? (
+          <Button
+            className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-6"
+            onClick={() => {
+              clearProfile();
+            }}
+          >
+            Logout
+          </Button>
+        ) : (
+          <Link to="/login">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6">
+              Login
+            </Button>
+          </Link>
+        )}
       </div>
     </header>
   );

@@ -30,6 +30,13 @@ export interface ContractTutor {
 }
 
 export interface Contract {
+  active_days: any;
+  family_members: string | number;
+  student_gender: string | null;
+  student_department: string | number;
+  student_institution: string;
+  student_class: string | number;
+  tuition_type: string;
   uid: string;
   guardian: Guardian;
   full_name: string;
@@ -38,12 +45,17 @@ export interface Contract {
     id: number;
     subject: string;
   }[];
+  student_area: {
+    id: number;
+    name: string;
+  };
   contract_duration: number;
   proposed_salary: string;
   status_display: string;
 }
 
 export interface ContractResponse {
+  uid: string;
   count: number;
   total_pages: number;
   current_page: number;

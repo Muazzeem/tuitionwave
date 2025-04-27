@@ -40,9 +40,9 @@ const StatsCards: React.FC = () => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <StatCard title="All Tuitions" value={data?.count || 0} />
-      <StatCard title="Tutor Request Accepted" value={acceptedCount} />
-      <StatCard title="Tutor Request Sent" value={pendingCount} />
+      <StatCard title="All Requests" value={data?.count || 0} />
+      <StatCard title="Accepted Requests" value={acceptedCount} />
+      <StatCard title="Pending Requests" value={pendingCount} />
     </div>
   );
 };
