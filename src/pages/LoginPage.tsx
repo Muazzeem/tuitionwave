@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { fetchProfile } = useAuth();
+  const { fetchProfile, userProfile } = useAuth();
   const [step, setStep] = useState<1 | 2>(1);
   const [userType, setUserType] = useState<'tutor' | 'guardian'>('guardian');
   const [email, setEmail] = useState('');
@@ -47,7 +48,13 @@ const LoginPage: React.FC = () => {
       await fetchProfile();
       
       toast.success('Successfully logged in!');
-      navigate('/teacher/dashboard');
+      
+      // Navigate based on user type
+      if (userType === 'tutor') {
+        navigate('/teacher/dashboard');
+      } else {
+        navigate('/guardian/dashboard');
+      }
     } catch (error) {
       toast.error('Login failed. Please check your credentials.');
     } finally {
@@ -58,7 +65,7 @@ const LoginPage: React.FC = () => {
   return (
     <div className="flex h-screen w-full">
       {/* Left section with image */}
-      <div className="hidden md:flex md:w-1/2 bg-gray-600 relative absolute inset-0 z-0">
+      <div className="hidden md:flex md:w-1/2 bg-gray-600 relative">
         <img 
           src="/lovable-uploads/56c05a63-4266-4a9d-ad96-7c9d83120840.png" 
           alt="Mother and child studying" 
@@ -73,7 +80,7 @@ const LoginPage: React.FC = () => {
         
         {/* Welcome message */}
         <div className="absolute bottom-20 left-10 text-white">
-          <h2 className="text-3xl font-bold mb-1">Welcome Back !</h2>
+          <h2 className="text-3xl font-bold mb-1">Welcome Back!</h2>
           <p className="text-sm">Manage Your Perfect Tuition Effortlessly</p>
         </div>
       </div>
@@ -88,6 +95,7 @@ const LoginPage: React.FC = () => {
               <RadioGroup 
                 defaultValue="guardian" 
                 className="flex justify-center gap-8 mb-8"
+                value={userType}
                 onValueChange={(value) => setUserType(value as 'tutor' | 'guardian')}
               >
                 <div className="flex items-center space-x-2">
@@ -124,7 +132,7 @@ const LoginPage: React.FC = () => {
                       <Input
                         id="email"
                         type="email"
-                        placeholder="guardian@gmail.com"
+                        placeholder="example@gmail.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required

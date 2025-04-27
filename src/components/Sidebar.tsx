@@ -1,35 +1,31 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Search, MessageSquare, User, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Sidebar = () => {
-    const { userProfile } = useAuth();
+    const { userProfile, clearProfile } = useAuth();
     const location = useLocation();
     const [isExpanded, setIsExpanded] = useState(true);
 
-    const userType = userProfile?.user_type?.toLowerCase();
-
+    const userType = userProfile?.user_type?.toLowerCase() === 'teacher' ? 'teacher' : 'guardian';
+    
     const menuItems = [
-        { icon: Home, text: 'Dashboard', path: '/dashboard' },
+        { icon: Home, text: 'Dashboard', path: `/${userType}/dashboard` },
         { icon: Search, text: 'Find Tutor', path: '/' },
-        { icon: User, text: 'Contract Requests', path: '/requests' },
-        { icon: User, text: 'My Tutor', path: '/my-tutor' },
-        { icon: MessageSquare, text: 'Message', path: '/message' }
+        { icon: User, text: 'Contract Requests', path: `/${userType}/requests` },
+        { icon: MessageSquare, text: 'Message', path: '/message' },
+        { icon: User, text: 'Profile', path: '/profile' },
     ];
-
-    const updatedMenuItems = menuItems.map(item => {
-        if (['Dashboard', 'Contract Requests'].includes(item.text)) {
-          return {
-            ...item,
-            path: `/${userType}${item.path}`
-          };
-        }
-        return item;
-      });
 
     const toggleSidebar = () => {
         setIsExpanded(!isExpanded);
+    };
+    
+    const handleLogout = () => {
+        clearProfile();
+        window.location.href = "/";
     };
 
     return (
@@ -46,7 +42,7 @@ const Sidebar = () => {
 
             <nav className="flex-1 overflow-y-auto py-4">
                 <ul className="space-y-1">
-                    {updatedMenuItems.map((item, index) => {
+                    {menuItems.map((item, index) => {
                         const isActive = location.pathname === item.path;
                         const IconComponent = item.icon;
 
@@ -70,7 +66,11 @@ const Sidebar = () => {
             </nav>
 
             <div className="p-4 border-t border-gray-200">
-                <button className={`flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full ${!isExpanded && 'justify-center'}`} title={!isExpanded ? "Logout" : ""}>
+                <button 
+                    onClick={handleLogout}
+                    className={`flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full ${!isExpanded && 'justify-center'}`} 
+                    title={!isExpanded ? "Logout" : ""}
+                >
                     <LogOut size={18} className={isExpanded ? "mr-2" : ""} />
                     {isExpanded && <span>Logout</span>}
                 </button>
