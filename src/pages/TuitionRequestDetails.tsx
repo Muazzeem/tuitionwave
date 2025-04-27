@@ -253,7 +253,7 @@ const TuitionRequestDetails: React.FC = () => {
                   className="min-h-[120px]"
                 />
                 <div className="flex justify-end">
-                  <Button onClick={handleSubmitRejection}>Submit</Button>
+                  <Button onClick={confirmReject}>Submit</Button>
                 </div>
               </div>
             )}

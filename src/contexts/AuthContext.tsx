@@ -1,3 +1,4 @@
+
 // src/contexts/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { getAccessToken } from '@/utils/auth';
@@ -25,7 +26,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true); // Start with loading true
   const [error, setError] = useState<string | null>(null);
 
   // Function to fetch user profile
@@ -58,6 +59,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error occurred');
+      // Clear stored data on error
+      sessionStorage.removeItem('userProfile');
     } finally {
       setLoading(false);
     }
@@ -66,20 +69,29 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Function to clear profile (used during logout)
   const clearProfile = () => {
     setUserProfile(null);
-    localStorage.clear()
+    localStorage.clear();
     sessionStorage.removeItem('userProfile');
   };
 
   // Try to load profile from sessionStorage on mount
   useEffect(() => {
     const storedProfile = sessionStorage.getItem('userProfile');
+    const accessToken = getAccessToken();
     
     if (storedProfile) {
       try {
         setUserProfile(JSON.parse(storedProfile));
+        setLoading(false);
       } catch (e) {
         sessionStorage.removeItem('userProfile');
+        setLoading(false);
       }
+    } else if (accessToken) {
+      // If we have a token but no stored profile, try to fetch the profile
+      fetchProfile();
+    } else {
+      // No token and no profile, we're not authenticated
+      setLoading(false);
     }
   }, []);
 
