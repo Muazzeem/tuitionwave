@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Select,
   SelectContent,
@@ -7,23 +6,93 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 const TutorFilters = () => {
+  const [institutions, setInstitutions] = useState<
+    { id: number; name: string }[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false); // To control dropdown visibility
+
+  const fetchInstitutions = useCallback(async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/institutes/");
+      if (!response.ok) {
+        throw new Error(`Failed to fetch institutions: ${response.status}`);
+      }
+      const data = await response.json();
+      setInstitutions(data);
+    } catch (err: any) {
+      setError(err.message || "An error occurred while fetching institutions.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchInstitutions();
+  }, [fetchInstitutions]);
+
+  const filteredInstitutions = institutions.filter((institution) =>
+    institution.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  if (loading) {
+    return <div>Loading Institutions...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
-    <div className="flex flex-wrap gap-4 mb-8">
-      <Select>
-        <SelectTrigger className="w-[200px]">
+    <div className="flex flex-wrap gap-2 mb-8">
+      <Select open={isOpen} onOpenChange={setIsOpen}>
+        <SelectTrigger className="w-[300px]">
           <SelectValue placeholder="Institution" />
         </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="du">Dhaka University</SelectItem>
-          <SelectItem value="buet">BUET</SelectItem>
-          <SelectItem value="ju">Jahangirnagar University</SelectItem>
+        <SelectContent className="max-h-[400px] overflow-y-auto">
+          <div className="p-2">
+            <Input
+              placeholder="Search Institution..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={cn(
+                "h-8",
+                "focus-visible:ring-0 focus-visible:ring-offset-0" // Remove focus ring/outline
+              )}
+            />
+          </div>
+          <ScrollArea className="h-[300px] pr-2">
+            {filteredInstitutions.length > 0 ? (
+              filteredInstitutions.map((institution) => (
+                <SelectItem
+                  key={institution.id}
+                  value={institution.name}
+                  onSelect={() => {
+                    setSearchQuery(""); // Clear search query on selection
+                    setIsOpen(false); // Close dropdown after selection
+                  }}
+                >
+                  {institution.name}
+                </SelectItem>
+              ))
+            ) : (
+              <div className="p-2 text-sm text-gray-500">
+                No institutions found.
+              </div>
+            )}
+          </ScrollArea>
         </SelectContent>
       </Select>
 
       <Select>
-        <SelectTrigger className="w-[200px]">
+        <SelectTrigger className="w-[150px]">
           <SelectValue placeholder="City" />
         </SelectTrigger>
         <SelectContent>
@@ -34,7 +103,7 @@ const TutorFilters = () => {
       </Select>
 
       <Select>
-        <SelectTrigger className="w-[200px]">
+        <SelectTrigger className="w-[150px]">
           <SelectValue placeholder="Subject" />
         </SelectTrigger>
         <SelectContent>
@@ -45,7 +114,7 @@ const TutorFilters = () => {
       </Select>
 
       <Select>
-        <SelectTrigger className="w-[200px]">
+        <SelectTrigger className="w-[150px]">
           <SelectValue placeholder="Online" />
         </SelectTrigger>
         <SelectContent>
@@ -56,7 +125,7 @@ const TutorFilters = () => {
       </Select>
 
       <Select>
-        <SelectTrigger className="w-[200px]">
+        <SelectTrigger className="w-[150px]">
           <SelectValue placeholder="Amount" />
         </SelectTrigger>
         <SelectContent>
@@ -67,7 +136,7 @@ const TutorFilters = () => {
       </Select>
 
       <Select>
-        <SelectTrigger className="w-[200px]">
+        <SelectTrigger className="w-[150px]">
           <SelectValue placeholder="Rating" />
         </SelectTrigger>
         <SelectContent>

@@ -1,77 +1,190 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, X, Check, MessageSquare, Calendar, FileText } from 'lucide-react';
+import { getAccessToken } from "@/utils/auth";
+import { useToast } from '@/hooks/use-toast';
 
 interface NotificationProps {
     onMarkAllRead: () => void;
 }
 
-interface Notification {
+interface Actor {
     id: number;
-    type: 'message' | 'appointment' | 'system';
-    title: string;
+    model: string;
+    app_label: string;
+    __str__: string;
+}
+
+interface ActionObject {
+    id: number;
+    model: string;
+    app_label: string;
+    __str__: string;
+}
+
+interface NotificationItem {
+    id: number;
+    slug: number;
+    level: string;
+    actor_content_type: number;
+    actor_object_id: string;
+    actor: Actor;
+    verb: string;
     description: string;
-    time: string;
-    read: boolean;
+    target_content_type: number | null;
+    target_object_id: string | null;
+    target: null;
+    action_object_content_type: number | null;
+    action_object_object_id: string | null;
+    action_object: ActionObject | null;
+    timestamp: string;
+    unread: boolean;
+    deleted: boolean;
+    emailed: boolean;
+}
+
+interface NotificationsResponse {
+    count: number;
+    total_pages: number;
+    current_page: number;
+    next: string | null;
+    previous: string | null;
+    results: NotificationItem[];
 }
 
 const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) => {
+    const { toast } = useToast();
     const [isOpen, setIsOpen] = useState(false);
-    const [notifications, setNotifications] = useState<Notification[]>([
-        {
-            id: 1,
-            type: 'message',
-            title: 'New Message',
-            description: 'John Smith sent you a message about your recent appointment',
-            time: '10 mins ago',
-            read: false
-        },
-        {
-            id: 2,
-            type: 'appointment',
-            title: 'Appointment Reminder',
-            description: 'Your meeting with Team Alpha is scheduled for tomorrow at 10:00 AM',
-            time: '2 hours ago',
-            read: false
-        },
-        {
-            id: 3,
-            type: 'system',
-            title: 'Document Updated',
-            description: 'The "Q1 Report" document has been updated with new information',
-            time: '1 day ago',
-            read: true
-        }
-    ]);
+    const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    const unreadCount = notifications.filter(notif => !notif.read).length;
+    const accessToken = getAccessToken();
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/notifications', {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data: NotificationsResponse = await response.json();
+                setNotifications(data.results);
+                setUnreadCount(data.results.filter(notif => notif.unread).length);
+            } catch (e: any) {
+                setError('Failed to load notifications');
+                console.error("Error fetching notifications:", e);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchNotifications();
+    }, [accessToken]); // Re-fetch if the access token changes
 
     const toggleDropdown = () => setIsOpen(!isOpen);
 
-    const markAsRead = (id: number) => {
-        setNotifications(notifications.map(notif =>
-            notif.id === id ? { ...notif, read: true } : notif
-        ));
+    const markAsRead = async (id: number) => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/notifications/mark-read/${id}/`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+            if (response.ok) {
+                setNotifications(notifications.map(notif =>
+                    notif.id === id ? { ...notif, unread: false } : notif
+                ));
+                setUnreadCount(prevCount => prevCount > 0 ? prevCount - 1 : 0);
+                toast({
+                    title: "Success",
+                    description: "Notification marked as read.",
+                });
+            } else {
+                console.error(`Failed to mark notification ${id} as read`);
+            }
+        } catch (error) {
+            console.error("Error marking notification as read:", error);
+        }
     };
 
-    const handleMarkAllRead = () => {
-        setNotifications(notifications.map(notif => ({ ...notif, read: true })));
-        onMarkAllRead();
+    const handleMarkAllRead = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/notifications/mark-all-read/', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+            if (response.ok) {
+                setNotifications(notifications.map(notif => ({ ...notif, unread: false })));
+                setUnreadCount(0);
+                onMarkAllRead();
+            } else {
+                console.error('Failed to mark all notifications as read');
+            }
+        } catch (error) {
+            console.error("Error marking all as read:", error);
+        }
     };
 
-    const removeNotification = (id: number) => {
-        setNotifications(notifications.filter(notif => notif.id !== id));
+    const removeNotification = async (id: number) => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/notifications/${id}/delete/`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+            if (response.ok) {
+                const deletedNotification = notifications.find(notif => notif.id === id);
+                setNotifications(notifications.filter(notif => notif.id !== id));
+                if (deletedNotification?.unread) {
+                    setUnreadCount(prevCount => prevCount - 1);
+                }
+            } else {
+                console.error(`Failed to delete notification ${id}`);
+            }
+        } catch (error) {
+            console.error("Error deleting notification:", error);
+        }
     };
 
-    const getNotificationIcon = (type: string) => {
-        switch (type) {
-            case 'message':
+    const getNotificationIcon = (level: string) => {
+        switch (level) {
+            case 'success':
+                return <Check className="h-5 w-5 text-green-500" />;
+            case 'info':
                 return <MessageSquare className="h-5 w-5 text-blue-500" />;
-            case 'appointment':
-                return <Calendar className="h-5 w-5 text-green-500" />;
-            case 'system':
-                return <FileText className="h-5 w-5 text-purple-500" />;
+            case 'warning':
+                return <Calendar className="h-5 w-5 text-yellow-500" />;
+            case 'error':
+                return <X className="h-5 w-5 text-red-500" />;
             default:
                 return <Bell className="h-5 w-5 text-gray-500" />;
+        }
+    };
+
+    const formatDate = (timestamp: string) => {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+        if (diffInSeconds < 60) {
+            return `${diffInSeconds} seconds ago`;
+        } else if (diffInSeconds < 3600) {
+            return `${Math.floor(diffInSeconds / 60)} mins ago`;
+        } else if (diffInSeconds < 86400) {
+            return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+        } else {
+            return date.toLocaleDateString();
         }
     };
 
@@ -80,6 +193,7 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
             <button
                 className="text-gray-500 hover:text-gray-700 relative p-2"
                 onClick={toggleDropdown}
+                disabled={loading}
             >
                 <Bell size={20} />
                 {unreadCount > 0 && (
@@ -97,6 +211,7 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
                             <button
                                 onClick={handleMarkAllRead}
                                 className="text-xs text-blue-600 hover:text-blue-800"
+                                disabled={loading}
                             >
                                 Mark all as read
                             </button>
@@ -104,25 +219,34 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
                     </div>
 
                     <div className="max-h-80 overflow-y-auto">
-                        {notifications.length > 0 ? (
+                        {loading ? (
+                            <div className="px-4 py-6 text-center text-gray-500">
+                                <p>Loading notifications...</p>
+                            </div>
+                        ) : error ? (
+                            <div className="px-4 py-6 text-center text-red-500">
+                                <p>{error}</p>
+                            </div>
+                        ) : notifications.length > 0 ? (
                             notifications.map(notification => (
                                 <div
                                     key={notification.id}
-                                    className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${!notification.read ? 'bg-blue-50' : ''}`}
+                                    className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${notification.unread ? 'bg-blue-50' : ''}`}
                                 >
                                     <div className="flex">
                                         <div className="flex-shrink-0 mr-3">
-                                            {getNotificationIcon(notification.type)}
+                                            {getNotificationIcon(notification.level)}
                                         </div>
                                         <div className="flex-grow">
                                             <div className="flex justify-between items-start">
-                                                <p className="text-sm font-medium">{notification.title}</p>
+                                                <p className="text-sm font-medium">{notification.verb} {notification.action_object?.__str__ || notification.target?.__str__ || ''}</p>
                                                 <div className="flex items-center">
-                                                    {!notification.read && (
+                                                    {notification.unread && (
                                                         <button
                                                             onClick={() => markAsRead(notification.id)}
                                                             className="text-blue-500 hover:text-blue-700 mr-1"
                                                             title="Mark as read"
+                                                            disabled={loading}
                                                         >
                                                             <Check className="h-4 w-4" />
                                                         </button>
@@ -131,20 +255,21 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
                                                         onClick={() => removeNotification(notification.id)}
                                                         className="text-gray-400 hover:text-gray-600"
                                                         title="Remove notification"
+                                                        disabled={loading}
                                                     >
                                                         <X className="h-4 w-4" />
                                                     </button>
                                                 </div>
                                             </div>
                                             <p className="text-xs text-gray-500 mt-1">{notification.description}</p>
-                                            <p className="text-xs text-gray-400 mt-1">{notification.time}</p>
+                                            <p className="text-xs text-gray-400 mt-1">{formatDate(notification.timestamp)}</p>
                                         </div>
                                     </div>
                                 </div>
                             ))
                         ) : (
                             <div className="px-4 py-6 text-center text-gray-500">
-                                <p>No notifications</p>
+                                <p>No new notifications</p>
                             </div>
                         )}
                     </div>

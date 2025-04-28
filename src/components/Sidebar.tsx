@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Search, MessageSquare, User, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -13,7 +12,7 @@ const Sidebar = () => {
     
     const menuItems = [
         { icon: Home, text: 'Dashboard', path: `/${userType}/dashboard` },
-        { icon: Search, text: 'Find Tutor', path: '/' },
+        ...(userType !== 'teacher' ? [{ icon: Search, text: 'Find Tutor', path: '/find-tutors' }] : []), // Hide for teachers
         { icon: User, text: 'Contract Requests', path: `/${userType}/requests` },
         { icon: MessageSquare, text: 'Message', path: '/message' },
         { icon: User, text: 'Profile', path: '/profile' },
@@ -80,3 +79,4 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+

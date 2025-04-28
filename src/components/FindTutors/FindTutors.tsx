@@ -1,15 +1,12 @@
-
-import React from 'react';
 import { Search, Filter } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import TutorFilters from './TutorFilters';
 import TutorGrid from './TutorGrid';
-import TutorPagination from './TutorPagination';
 
-const FindTutors = () => {
+const FindTutorsList = () => {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-0 py-8 h-screen flex flex-col"> {/* Removed h-full */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold mb-2">Find Tutors</h1>
         <p className="text-gray-600">Find and explore various types of tutors</p>
@@ -34,10 +31,12 @@ const FindTutors = () => {
       </div>
 
       <TutorFilters />
-      <TutorGrid />
-      <TutorPagination />
+
+      <div className="overflow-y-auto flex-grow"> {/* Scrollable container for TutorGrid */}
+        <TutorGrid />
+      </div>
     </div>
   );
 };
 
-export default FindTutors;
+export default FindTutorsList;

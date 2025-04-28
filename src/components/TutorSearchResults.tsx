@@ -22,7 +22,7 @@ const TutorSearchResults: React.FC = () => {
         }
         
         const data: TutorListResponse = await response.json();
-        setTutors(data.results);
+        setTutors(data.results.slice(0, 4));
         setError(null);
       } catch (err) {
         console.error('Error fetching tutors:', err);

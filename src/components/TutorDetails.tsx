@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,6 +26,7 @@ const TutorDetails: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const { id } = useParams();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [tutor, setTutor] = useState<Tutor | null>(null);
   const [selectedAmount, setSelectedAmount] = useState<string>("5000");
   const [customMessage, setCustomMessage] = useState<string>("");
@@ -155,6 +156,7 @@ const TutorDetails: React.FC = () => {
         title: "Success",
         description: "Your tutor request has been submitted successfully.",
       });
+      navigate("/all-requests");
     } catch (err) {
       toast({
         title: "Error",
