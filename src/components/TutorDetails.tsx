@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,6 +38,9 @@ const TutorDetails: React.FC = () => {
   const [studentInstitution, setStudentInstitution] = useState<string>("");
   const [studentDepartment, setStudentDepartment] = useState<string>("Bangla");
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [institutions, setInstitutions] = useState<
+      { id: number; name: string }[]
+    >([]);
 
   useEffect(() => {
     setLoading(true);
@@ -187,10 +190,12 @@ const TutorDetails: React.FC = () => {
           />
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-1">
+            <h2 className="text-xl font-semibold text-gray-900">
+              Maya
+            </h2>
           <div>
-            <h1 className="text-3xl font-semibold mb-2">{tutor.description}</h1>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mb-5 mt-2">
               <div className="flex items-center text-yellow-400">
                 <Star className="w-5 h-5 fill-current" />
                 <span className="ml-1 text-black">4.7</span>
@@ -199,7 +204,7 @@ const TutorDetails: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3 mt-5">
             <h2 className="text-xl font-semibold text-gray-900">
               Education: {tutor.degree?.name} in {tutor.department?.name}
             </h2>
@@ -213,7 +218,7 @@ const TutorDetails: React.FC = () => {
           {(
             <div className="space-y-4">
               <div>
-                <h3 className="font-medium mb-3 text-gray-900">Student Information</h3>
+                <h3 className="font-medium mb-3 text-gray-900 mt-3">Student Information</h3>
                 <div className="space-y-3">
                   <div>
                     <label className="block text-sm text-gray-600 mb-1">Student Class</label>

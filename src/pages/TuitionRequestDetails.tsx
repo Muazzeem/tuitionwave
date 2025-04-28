@@ -103,9 +103,7 @@ const TuitionRequestDetails: React.FC = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       })
-        .then((response) => response.json())
-        .then((data) => {
-          setRequestDetails(data);
+        .then(() => {
           toast({
             title: "Request Accepted",
             description: "The tuition request has been accepted successfully.",

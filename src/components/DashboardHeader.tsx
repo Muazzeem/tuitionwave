@@ -47,7 +47,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
               />
             </div>
             <span className="text-sm font-medium">
-              {userProfile?.first_name} {userProfile?.last_name}
+              {userProfile?.first_name}
             </span>
             <ChevronDown className="h-4 w-4 text-gray-500" />
           </div>
@@ -60,6 +60,9 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
               >
                 <User className="h-4 w-4 mr-2" />
                 Profile
+                <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                    {userProfile?.user_type?.toLowerCase() === 'guardian' ? 'Guardian' : 'Teacher'}
+                </span>
               </a>
               <a
                 href="/settings"
