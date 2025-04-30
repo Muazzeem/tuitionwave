@@ -20,6 +20,7 @@ import Unauthorized from "./pages/Unauthorized";
 import { AuthProvider } from '@/contexts/AuthContext';
 import AuthGuard from "./components/AuthGuard";
 import FindTutorsList from "./components/FindTutors/FindTutors";
+import NotificationPage from "./pages/Notification";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +78,11 @@ const App = () => (
             <Route path="/login" element={<LoginPage />} />
             <Route path="/tutor/:id" element={<TutorProfile />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
+            <Route path="/notifications" element={
+              <AuthGuard>
+                <NotificationPage />
+              </AuthGuard>
+            } />
             
             <Route path="/find-tutors" element={
               <AuthGuard>

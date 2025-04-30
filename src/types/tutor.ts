@@ -95,13 +95,18 @@ export interface TutorListResponse {
 }
 
 export interface ProfileFormData {
-  fullName: string;
+  full_name: string;
   address: string;
   gender: string;
   birthDate: Date | undefined;
   linkedinProfile: string;
   profilePicture: File | null;
   education: EducationData[];
+  degree: string;
+  institute: string;
+  department: string;
+  currentStatus: string;
+  cvDocument: File | null;
   tuitionDetails: {
     teachingRate: number;
     teachingType: string;

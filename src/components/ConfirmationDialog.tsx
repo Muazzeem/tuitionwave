@@ -10,7 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Check, X, AlertTriangle } from "lucide-react";
+import { Check, X, Trash2 } from "lucide-react";
 
 interface ConfirmationDialogProps {
   isOpen: boolean;
@@ -36,7 +36,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       case 'reject':
         return <X className="h-6 w-6 text-red-600" />;
       case 'cancel':
-        return <AlertTriangle className="h-6 w-6 text-yellow-600" />;
+        return <Trash2 className="h-6 w-6 text-red-600" />;
     }
   };
 
@@ -47,7 +47,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       case 'reject':
         return 'bg-red-600 hover:bg-red-700';
       case 'cancel':
-        return 'bg-yellow-600 hover:bg-yellow-700';
+        return 'bg-red-600 hover:bg-red-700';
     }
   };
 

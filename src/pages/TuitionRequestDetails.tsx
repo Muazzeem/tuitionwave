@@ -340,7 +340,7 @@ const TuitionRequestDetails: React.FC = () => {
         onClose={() => setShowCancelConfirm(false)}
         onConfirm={confirmDelete}
         title="Cancel Request"
-        description="Are you sure you want to cancel this tuition request? This action cannot be undone."
+        description="Are you sure to cancel this request? This action cannot be undone, so please confirm your decision."
         variant="cancel"
       />
 

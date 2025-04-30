@@ -1,5 +1,6 @@
-
 import React from 'react';
+import { Button } from "@/components/ui/button"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 
 export interface Step {
   id: number;
@@ -9,9 +10,11 @@ export interface Step {
 interface ProfileStepperProps {
   steps: Step[];
   currentStep: number;
+  onNext?: () => void;
+  onPrev?: () => void;
 }
 
-export const ProfileStepper: React.FC<ProfileStepperProps> = ({ steps, currentStep }) => {
+export const ProfileStepper: React.FC<ProfileStepperProps> = ({ steps, currentStep, onNext, onPrev }) => {
   return (
     <div className="relative">
       <div className="flex justify-between items-center">
@@ -47,6 +50,26 @@ export const ProfileStepper: React.FC<ProfileStepperProps> = ({ steps, currentSt
           width: `${(currentStep - 1) * 50}%`,
         }}
       />
+        <div className="flex justify-between mt-4">
+            <Button
+                variant="outline"
+                size="icon"
+                onClick={onPrev}
+                disabled={currentStep === 1}
+                className="rounded-full"
+            >
+                <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <Button
+                variant="outline"
+                size="icon"
+                onClick={onNext}
+                disabled={currentStep === steps.length}
+                className="rounded-full"
+            >
+                <ArrowRight className="h-4 w-4" />
+            </Button>
+        </div>
     </div>
   );
 };

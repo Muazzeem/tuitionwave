@@ -1,14 +1,38 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { CalendarIcon, X, Linkedin } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { ProfileFormData } from '@/types/tutor';
+import axios from 'axios';
+import { useToast } from './ui/use-toast';
+import { getAccessToken } from '@/utils/auth';
+
+interface ProfileFormData {
+  uid?: string;
+  profilePicture: File | null;
+  profile_picture_url?: string | null;
+  full_name: string;
+  address: string;
+  gender: string;
+  birthDate: Date | null;
+  linkedinProfile: string;
+}
+
+interface TutorProfileResponse {
+  full_name: string;
+  uid: string;
+  profile_picture: string | null;
+  profile_picture_url: string | null;
+  address: string;
+  gender_display: string;
+  birth_date: string | null;
+  // Other fields from the API response that we're not using in this form
+}
 
 interface PersonalInfoFormProps {
   formData: ProfileFormData;
@@ -17,9 +41,59 @@ interface PersonalInfoFormProps {
 }
 
 const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFormData, onNext }) => {
+  const { toast } = useToast();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const accessToken = getAccessToken();
+
+  // Fetch profile data on component mount
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get(`http://127.0.0.1:8000/api/tutors/my-profile`, 
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          }
+        );
+        const profileData: TutorProfileResponse = response.data;
+        
+        // Update form data with fetched profile data
+        updateFormData({
+          uid: profileData.uid,
+          address: profileData.address || '',
+          gender: profileData.gender_display ? profileData.gender_display.toUpperCase() : '',
+          birthDate: profileData.birth_date ? parseISO(profileData.birth_date) : null,
+          profilePicture: null,
+          full_name: profileData.full_name
+        });
+        
+        // Set profile picture preview if available
+        if (profileData.profile_picture_url) {
+          setPreviewImage(profileData.profile_picture_url);
+          setFileName('Current Profile Picture');
+        }
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load profile data. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
@@ -48,8 +122,55 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
     fileInputRef.current?.click();
   };
 
+  const handleSubmit = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Create form data for multipart/form-data request
+      const formDataToSend = new FormData();
+      if (formData.profilePicture) {
+        formDataToSend.append('profile_picture', formData.profilePicture);
+      }
+      formDataToSend.append('address', formData.address);
+      formDataToSend.append('gender', formData.gender);
+      if (formData.birthDate) {
+        formDataToSend.append('birth_date', format(formData.birthDate, 'yyyy-MM-dd'));
+      }
+      
+      // Add other fields as needed
+      
+      await axios.put(
+        `http://127.0.0.1:8000//api/tutors/c021858d-00ca-4395-907b-1603c6666e88/`, 
+        formDataToSend,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      
+      toast({
+        title: "Success",
+        description: "Personal information updated successfully!",
+      });
+      onNext();
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update profile. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      {isLoading && <div className="text-center text-gray-500">Loading profile data...</div>}
+      
       <div>
         <Label className="text-gray-600 font-medium mb-2 block">Upload Profile Picture</Label>
         <div
@@ -98,8 +219,8 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
         <Input
           id="fullName"
           placeholder="Enter Full Name"
-          value={formData.fullName}
-          onChange={(e) => updateFormData({ fullName: e.target.value })}
+          value={formData.full_name}
+          onChange={(e) => updateFormData({ full_name: e.target.value })}
           className="mt-1"
         />
       </div>
@@ -138,9 +259,9 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
               <SelectValue placeholder="Select Gender" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="male">Male</SelectItem>
-              <SelectItem value="female">Female</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
+              <SelectItem value="MALE">Male</SelectItem>
+              <SelectItem value="FEMALE">Female</SelectItem>
+              <SelectItem value="OTHER">Other</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -189,11 +310,16 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
       </div>
 
       <div className="flex justify-between pt-4">
-        <Button variant="outline" className="px-6">
+        <Button variant="outline" className="px-6" disabled={isLoading}>
           Cancel
         </Button>
-        <Button type="button" onClick={onNext} className="px-6">
-          Next
+        <Button 
+          type="button" 
+          onClick={handleSubmit} 
+          className="px-6"
+          disabled={isLoading}
+        >
+          {isLoading ? 'Saving...' : 'Save & Next'}
         </Button>
       </div>
     </div>
