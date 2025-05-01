@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ProfileStepper, Step } from '@/components/ProfileStepper';
 import RegistrationForm from '@/components/Registration/RegistrationForm';
 import OTPVerification from '@/components/Registration/OTPVerification';
+import NIDUpload from '@/components/Registration/NIDUpload';
 import RegistrationSuccess from '@/components/Registration/RegistrationSuccess';
 import { RegistrationData } from '@/types/common';
 import { toast } from 'sonner';
@@ -11,7 +12,8 @@ import { toast } from 'sonner';
 const steps: Step[] = [
   { id: 1, title: 'Create Account' },
   { id: 2, title: 'Verify Email' },
-  { id: 3, title: 'Success' },
+  { id: 3, title: 'Upload NID' },
+  { id: 4, title: 'Success' },
 ];
 
 const RegistrationPage = () => {
@@ -75,9 +77,34 @@ const RegistrationPage = () => {
         throw new Error(errorData.message || 'OTP verification failed');
       }
 
-      setCurrentStep(3);
+      setCurrentStep(3); // Move to NID upload step
     } catch (error: any) {
       toast.error(error.message || 'Failed to verify OTP');
+    }
+  };
+
+  const handleNIDUpload = async (nidFile: File) => {
+    try {
+      // Create form data
+      const formData = new FormData();
+      formData.append('email', registrationData.email);
+      formData.append('nid_document', nidFile);
+
+      const response = await fetch('http://127.0.0.1:8000/auth/upload-nid/', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'NID upload failed');
+      }
+
+      // Show success message and move to success step
+      toast.success('NID document uploaded successfully');
+      setCurrentStep(4);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to upload NID document');
     }
   };
 
@@ -94,7 +121,12 @@ const RegistrationPage = () => {
   };
 
   const handleLoginRedirect = () => {
-    navigate('/login');
+    // Redirect to login page or dashboard based on the user type
+    if (registrationData.user_type === 'TEACHER') {
+      navigate('/teacher/dashboard');
+    } else {
+      navigate('/guardian/dashboard');
+    }
   };
 
   return (
@@ -136,21 +168,26 @@ const RegistrationPage = () => {
               />
             )}
             {currentStep === 3 && (
+              <NIDUpload 
+                onComplete={handleNIDUpload}
+              />
+            )}
+            {currentStep === 4 && (
               <RegistrationSuccess 
                 onLogin={handleLoginRedirect} 
               />
             )}
           </div>
           
-          {/* Only show stepper for development purposes */}
-          {/* <div className="mt-8">
+          {/* Show stepper for all steps */}
+          <div className="mt-8">
             <ProfileStepper
               steps={steps}
               currentStep={currentStep}
               onNext={handleNext}
               onPrev={handlePrev}
             />
-          </div> */}
+          </div>
         </div>
       </div>
     </div>

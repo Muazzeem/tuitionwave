@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPSlot } from "@/components/ui/input-otp";
@@ -11,7 +12,7 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ onVerify }) => {
   const [loading, setLoading] = useState(false);
 
   const handleVerify = async () => {
-    if (otp) {
+    if (!otp || otp.length !== 4) {
       alert("Please enter a valid 4-digit OTP");
       return;
     }
@@ -22,6 +23,10 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ onVerify }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleOtpChange = (value: string) => {
+    setOtp(value);
   };
 
   return (
@@ -42,6 +47,8 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ onVerify }) => {
           maxLength={4}
           containerClassName="gap-2"
           className="w-full flex items-center justify-center gap-2"
+          value={otp}
+          onChange={handleOtpChange}
         >
           {Array.from({ length: 4 }).map((_, index) => (
             <InputOTPSlot
@@ -56,7 +63,7 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ onVerify }) => {
       <Button
         className="w-full bg-blue-600 hover:bg-blue-700 mb-4"
         onClick={handleVerify}
-        // disabled={loading || otp.length !== 4}
+        disabled={loading || otp.length !== 4}
       >
         {loading ? "Verifying..." : "Verify Code"}
       </Button>

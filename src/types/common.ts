@@ -19,4 +19,5 @@ export interface RegistrationData {
   user_type: 'TEACHER' | 'GUARDIAN';
   first_name?: string;
   last_name?: string;
+  nid_document?: File;
 }
