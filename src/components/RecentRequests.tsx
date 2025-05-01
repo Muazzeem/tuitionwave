@@ -1,14 +1,78 @@
 import React from "react";
-import { useState } from "react";
-
-import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "./ui/button";
 import { getAccessToken } from "@/utils/auth";
 import { ContractResponse, Contract } from "@/types/contract";
+import { useToast } from "@/hooks/use-toast";
+import { useConfirmationDialog } from "@/components/useConfirmationDialog";
 
-const RequestRow: React.FC<{ request: Contract }> = ({ request }) => {
-  const [open, setOpen] = useState(false);
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuGroup,
+} from "@/components/ui/dropdown-menu";
+import { Eye, Pen, Trash2 } from "lucide-react";
+
+import { RequestRowProps } from "@/types/common";
+
+const RequestRow: React.FC<RequestRowProps> = ({
+  request,
+  showConfirmationDialog,
+}) => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const deleteContractMutation = useMutation({
+    mutationFn: async (contractUid: string) => {
+      const accessToken = getAccessToken();
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/contracts/${contractUid}/`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        console.log(response);
+        throw new Error("Failed to delete contract");
+      }
+    },
+    onSuccess: () => {
+      toast({
+        title: "Request Deleted",
+        description: "The tuition request has been deleted successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["contracts"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: `Failed to delete the request: ${error.message}`,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDetailsClick = () => {
+    navigate(`/request-details/${request.uid}`);
+  };
+
+  const handleDeleteClick = () => {
+    showConfirmationDialog({
+      title: "Delete Request",
+      description: "Are you sure you want to delete this tuition request?",
+      onConfirm: () => deleteContractMutation.mutate(request.uid),
+      variant: "cancel",
+    });
+  };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -46,14 +110,14 @@ const RequestRow: React.FC<{ request: Contract }> = ({ request }) => {
           <div className="h-8 w-8 rounded-full overflow-hidden mr-2">
             <img
               src={request.tutor.profile_picture}
-              alt={`${request.tutor.institute.name}`}
+              alt={`${request.tutor.institute?.name}`}
               className="h-full w-full object-cover"
             />
           </div>
           <div>
             <p className="text-sm font-medium">{request.tutor.full_name}</p>
             <p className="text-xs text-gray-500">
-              {request.tutor.institute.name}
+              {request.tutor.institute?.name}
             </p>
           </div>
         </div>
@@ -69,36 +133,71 @@ const RequestRow: React.FC<{ request: Contract }> = ({ request }) => {
             className={`h-2 w-2 rounded-full ${getStatusDot(
               request.status_display
             )} mr-2`}
-          ></span>
+          />
           <span className={`text-sm ${getStatusColor(request.status_display)}`}>
             {request.status_display}
           </span>
         </div>
       </td>
       <td className="py-3 px-2">
-        <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="2"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-            />
-          </svg>
-        </Button>
-        
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+                />
+              </svg>
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={handleDetailsClick}
+              >
+                <Eye className="mr-2 h-4 w-4" />
+                <span>View</span>
+              </DropdownMenuItem>
+              {request.status_display === "Pending" && (
+                <DropdownMenuItem>
+                  <Pen className="mr-2 h-4 w-4" />
+                  <span>Edit</span>
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuGroup>
+            {request.status_display === "Pending" && (
+              <DropdownMenuItem
+                className="cursor-pointer text-red-500"
+                onClick={handleDeleteClick}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                <span>Delete Request</span>
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </td>
     </tr>
   );
 };
 
 const RecentRequests: React.FC = () => {
+  const { Confirmation: ConfirmationComponent, showConfirmationDialog } =
+    useConfirmationDialog();
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["contracts"],
     queryFn: async () => {
@@ -148,12 +247,17 @@ const RecentRequests: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {data?.results.map((request, index) => (
-              <RequestRow key={index} request={request} />
+            {data?.results.map((request) => (
+              <RequestRow
+                key={request.uid}
+                request={request}
+                showConfirmationDialog={showConfirmationDialog}
+              />
             ))}
           </tbody>
         </table>
       </div>
+      <ConfirmationComponent />
     </div>
   );
 };

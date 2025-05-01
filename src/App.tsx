@@ -21,6 +21,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import AuthGuard from "./components/AuthGuard";
 import FindTutorsList from "./components/FindTutors/FindTutors";
 import NotificationPage from "./pages/Notification";
+import CreateContract from "./pages/CreateContract";
 
 const queryClient = new QueryClient();
 
@@ -87,6 +88,12 @@ const App = () => (
             <Route path="/find-tutors" element={
               <AuthGuard>
                 <MainLayout><FindTutorsList /></MainLayout>
+              </AuthGuard>
+            } />
+
+            <Route path="/create-contract" element={
+              <AuthGuard>
+                <MainLayout><CreateContract /></MainLayout>
               </AuthGuard>
             } />
             

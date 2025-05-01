@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, FC } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,19 +7,21 @@ import DashboardHeader from "@/components/DashboardHeader";
 import { useToast } from "@/hooks/use-toast";
 import { Contract, ContractResponse } from "@/types/contract";
 import { useAuth } from "@/contexts/AuthContext";
-import ConfirmationDialog from "@/components/ConfirmationDialog";
+import { useConfirmationDialog } from "@/components/useConfirmationDialog";
 
 interface DetailItemProps {
   label: string;
-  value: string | number;
+  value: string | number | undefined | null;
 }
 
-const DetailItem: React.FC<DetailItemProps> = ({ label, value }) => (
-  <div className="py-2">
-    <dt className="text-gray-600">{label}:</dt>
-    <dd className="font-medium text-gray-900">{value}</dd>
-  </div>
-);
+const DetailItem: FC<DetailItemProps> = ({ label, value }) => {
+  return (
+    <div className="flex items-center gap-2">
+      <dt className="font-medium text-gray-600 w-32 md:w-40">{label}:</dt>
+      <dd className="text-gray-900">{value !== undefined && value !== null ? value : "N/A"}</dd>
+    </div>
+  );
+};
 
 const TuitionRequestDetails: React.FC = () => {
   const { userProfile } = useAuth();
@@ -30,11 +32,7 @@ const TuitionRequestDetails: React.FC = () => {
   const [rejectionReason, setRejectionReason] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
   const [requestDetails, setRequestDetails] = useState<Contract | null>(null);
-
-  // Add states for confirmation dialogs
-  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-  const [showApproveConfirm, setShowApproveConfirm] = useState(false);
-  const [showRejectConfirm, setShowRejectConfirm] = useState(false);
+  const { showConfirmationDialog, Confirmation: ConfirmationComponent } = useConfirmationDialog();
 
   useEffect(() => {
     setLoading(true);
@@ -58,7 +56,12 @@ const TuitionRequestDetails: React.FC = () => {
   };
 
   const handleDelete = () => {
-    setShowCancelConfirm(true);
+    showConfirmationDialog({
+      title: "Cancel Request",
+      description: "Are you sure to cancel this request? This action cannot be undone, so please confirm your decision.",
+      onConfirm: confirmDelete,
+      variant: "cancel",
+    });
   };
 
   const confirmDelete = () => {
@@ -90,7 +93,12 @@ const TuitionRequestDetails: React.FC = () => {
   };
 
   const handleAccept = () => {
-    setShowApproveConfirm(true);
+    showConfirmationDialog({
+      title: "Accept Request",
+      description: "Are you sure you want to accept this tuition request?",
+      onConfirm: confirmAccept,
+      variant: "approve",
+    });
   };
 
   const confirmAccept = () => {
@@ -122,7 +130,12 @@ const TuitionRequestDetails: React.FC = () => {
   };
 
   const handleReject = () => {
-    setShowRejectConfirm(true);
+    showConfirmationDialog({
+      title: "Reject Request",
+      description: "Are you sure you want to reject this tuition request? Please confirm your decision.",
+      onConfirm: confirmReject,
+      variant: "reject",
+    });
   };
 
   const confirmReject = () => {
@@ -333,34 +346,7 @@ const TuitionRequestDetails: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Add Confirmation Dialogs */}
-      <ConfirmationDialog
-        isOpen={showCancelConfirm}
-        onClose={() => setShowCancelConfirm(false)}
-        onConfirm={confirmDelete}
-        title="Cancel Request"
-        description="Are you sure to cancel this request? This action cannot be undone, so please confirm your decision."
-        variant="cancel"
-      />
-
-      <ConfirmationDialog
-        isOpen={showApproveConfirm}
-        onClose={() => setShowApproveConfirm(false)}
-        onConfirm={confirmAccept}
-        title="Accept Request"
-        description="Are you sure you want to accept this tuition request?"
-        variant="approve"
-      />
-
-      <ConfirmationDialog
-        isOpen={showRejectConfirm}
-        onClose={() => setShowRejectConfirm(false)}
-        onConfirm={confirmReject}
-        title="Reject Request"
-        description="Are you sure you want to reject this tuition request? Please provide a reason for rejection."
-        variant="reject"
-      />
+      <ConfirmationComponent /> {/* Render the ConfirmationComponent here */}
     </div>
   );
 };

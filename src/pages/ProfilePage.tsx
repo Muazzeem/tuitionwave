@@ -98,14 +98,14 @@ const ProfilePage: React.FC = () => {
                   />
                 )}
 
-                {currentStep === 3 && (
+                {/* {currentStep === 3 && (
                   <TuitionForm
                     formData={formData}
                     updateFormData={updateFormData}
                     onNext={handleNext}
                     onPrev={handleBack}
                   />
-                )}
+                )} */}
               </div>
             </div>
           </div>

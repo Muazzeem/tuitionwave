@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface User {
   id: number;
   username: string;
@@ -48,6 +50,12 @@ export interface SalaryRange {
 }
 
 export interface Tutor {
+  full_name: ReactNode;
+  preferred_city: string;
+  tuition_type: string;
+  bio: ReactNode;
+  average_rating: number;
+  user: any;
   uid: string;
   profile_picture_url: string | null;
   city: string | null;
@@ -119,3 +127,71 @@ export interface EducationData {
   institution: string;
   year: string;
 }
+
+
+interface TuitionFormData {
+  daysPerWeek: string;
+  teachingType: string;
+  minSalary: string;
+  maxSalary: string;
+  minHourlyCharge: string;
+  maxHourlyCharge: string;
+  subjects: string[];
+  activeDays: string[];
+  preferredDistricts: string[];
+  preferredAreas: string[];
+}
+
+interface TuitionInfoResponse {
+  days_per_week: number;
+  teaching_type_display: string;
+  expected_salary: {
+      min_amount: number;
+      max_amount: number;
+  } | null;
+  expected_hourly_charge: {
+      min_amount: number;
+      max_amount: number;
+  } | null;
+  subjects: { id: number; subject: string }[];
+  active_days: { id: number; day: string }[];
+  preferred_districts: { id: number; name: string }[];
+  preferred_areas: { id: number; name: string }[];
+}
+
+interface PaginatedResponse<T> {
+  count: number;
+  total_pages: number;
+  current_page: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+interface SubjectList {
+  id: number;
+  subject: string;
+}
+
+interface ActiveDayList {
+  id: number;
+  day: string;
+}
+
+interface DistrictList {
+  id: number;
+  name: string;
+}
+
+interface AreaList {
+  id: number;
+  name: string;
+}
+
+interface TuitionFormProps {
+  formData: TuitionFormData;
+  updateFormData: (data: Partial<TuitionFormData>) => void;
+  onNext: () => void;
+  onPrev: () => void;
+}
+

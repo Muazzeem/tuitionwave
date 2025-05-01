@@ -10,7 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Check, X, Trash2 } from "lucide-react";
+import { Check, X, Trash2, Navigation } from "lucide-react";
 
 interface ConfirmationDialogProps {
   isOpen: boolean;
@@ -18,7 +18,7 @@ interface ConfirmationDialogProps {
   onConfirm: () => void;
   title: string;
   description: string;
-  variant: 'approve' | 'reject' | 'cancel';
+  variant: 'approve' | 'reject' | 'cancel' | 'confirmation';
 }
 
 const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
@@ -37,6 +37,8 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
         return <X className="h-6 w-6 text-red-600" />;
       case 'cancel':
         return <Trash2 className="h-6 w-6 text-red-600" />;
+      case 'confirmation':
+        return <Navigation className="h-6 w-6 text-gray-600" />;
     }
   };
 
@@ -48,6 +50,8 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
         return 'bg-red-600 hover:bg-red-700';
       case 'cancel':
         return 'bg-red-600 hover:bg-red-700';
+      case 'confirmation':
+        return 'bg-blue-600 hover:bg-blue-700'; 
     }
   };
 
@@ -57,7 +61,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
         <AlertDialogHeader>
           <div className="flex items-center gap-3">
             {getIcon()}
-            <AlertDialogTitle>{title}</AlertDialogTitle>
+            <AlertDialogTitle className="text-xl font-bold text-center">{title}</AlertDialogTitle>
           </div>
           <AlertDialogDescription className="mt-4">
             {description}
