@@ -29,7 +29,7 @@ const RegistrationPage = () => {
 
   const handleRegistrationSubmit = async (formData: RegistrationData) => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/auth/registration/', {
+      const response = await fetch('http://127.0.0.1:8000/auth/registration/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,7 +39,9 @@ const RegistrationPage = () => {
           phone: formData.phone,
           password1: formData.password1,
           password2: formData.password2,
-          user_type: formData.user_type
+          user_type: formData.user_type,
+          first_name: formData.first_name,
+          last_name: formData.last_name
         }),
       });
 
@@ -57,7 +59,7 @@ const RegistrationPage = () => {
 
   const handleOTPVerify = async (otp: string) => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/auth/verify-otp/', {
+      const response = await fetch('http://127.0.0.1:8000/auth/verify-otp/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -120,7 +122,7 @@ const RegistrationPage = () => {
 
       {/* Right section with form */}
       <div className="w-full md:w-1/2 flex items-center justify-center py-8 px-4">
-        <div className="w-full max-w-md p-4">
+        <div className="w-full max-w-xl p-4">
           <div className="bg-white rounded-lg p-6 shadow-sm border">
             {currentStep === 1 && (
               <RegistrationForm 
@@ -130,7 +132,6 @@ const RegistrationPage = () => {
             )}
             {currentStep === 2 && (
               <OTPVerification 
-                email={registrationData.email} 
                 onVerify={handleOTPVerify} 
               />
             )}

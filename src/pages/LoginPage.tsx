@@ -87,7 +87,7 @@ const LoginPage: React.FC = () => {
 
       {/* Right section with form */}
       <div className="w-full md:w-1/2 flex items-center justify-center">
-        <div className="w-full max-w-md p-8">
+        <div className="w-full max-w-lg">
           {step === 1 ? (
             <div className="bg-white rounded-lg p-6 shadow-sm border">
               <h2 className="text-2xl font-bold text-center mb-6">Login as {userType === 'tutor' ? 'Tutor' : 'Guardian'}</h2>
