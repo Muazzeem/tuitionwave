@@ -116,7 +116,7 @@ const LoginPage: React.FC = () => {
               </Button>
               
               <div className="text-center mt-4 text-sm">
-                Don't have an account? <Link to="/signup" className="text-blue-600 hover:underline font-medium">Sign Up</Link>
+                Don't have an account? <Link to="/auth/registration" className="text-blue-600 hover:underline font-medium">Sign Up</Link>
               </div>
             </div>
           ) : (

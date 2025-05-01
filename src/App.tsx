@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,6 +23,7 @@ import AuthGuard from "./components/AuthGuard";
 import FindTutorsList from "./components/FindTutors/FindTutors";
 import NotificationPage from "./pages/Notification";
 import CreateContract from "./pages/CreateContract";
+import RegistrationPage from "./pages/RegistrationPage";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +79,7 @@ const App = () => (
             {/* Public routes */}
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/auth/registration" element={<RegistrationPage />} />
             <Route path="/tutor/:id" element={<TutorProfile />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/notifications" element={
