@@ -81,8 +81,25 @@ const App = () => (
             <Route path="/auth/registration" element={<RegistrationPage />} />
             <Route path="/tutor/:id" element={<TutorProfile />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
+            <Route path="/find-tutors" element={
+              <AuthGuard>
+                <MainLayout><FindTutorsList /></MainLayout>
+              </AuthGuard>
+            } />
             
             {/* Protected routes for all authenticated users */}
+
+            <Route path="/create-contract" element={
+              <AuthGuard>
+                <MainLayout><CreateContract /></MainLayout>
+              </AuthGuard>
+            } />
+
+            <Route path="/notifications" element={
+              <AuthGuard>
+                <MainLayout><NotificationPage /></MainLayout>
+              </AuthGuard>
+            } />
 
             <Route path="/profile" element={
               <AuthGuard>
@@ -137,9 +154,7 @@ const App = () => (
             {/* Redirect legacy routes to role-specific routes */}
             <Route path="/dashboard" element={<RoleRedirect />} />
             <Route path="/all-requests" element={<RoleRedirect pathSuffix="/requests" />} />
-            <Route path="/request-details/:id" element={<RoleRedirect pathSuffix="/request-details" preserveParams={true} />} 
-            
-            {/* 404 route */}
+            <Route path="/request-details/:id" element={<RoleRedirect pathSuffix="/request-details" preserveParams={true} />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

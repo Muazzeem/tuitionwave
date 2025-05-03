@@ -5,7 +5,6 @@ import PersonalInfoForm from '@/components/PersonalInfoForm';
 import ProfileCompletionAlert from '@/components/ProfileCompletionAlert';
 import { ProfileFormData } from '@/types/tutor';
 import EducationForm from '@/components/EducationForm';
-import TuitionForm from '@/components/TuitionForm';
 
 const ProfilePage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);

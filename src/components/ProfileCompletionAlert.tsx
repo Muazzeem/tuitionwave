@@ -1,52 +1,11 @@
-import { getAccessToken } from "@/utils/auth";
-import React, { useState, useEffect } from "react";
+// src/components/ProfileCompletionAlert.jsx
+
+import React, { useState } from "react";
+import { useProfileCompletion } from "@/components/ProfileCompletionContext";
 
 const ProfileCompletionAlert = () => {
-  const [completionData, setCompletionData] = useState({
-    completion_percentage: 0,
-    completed_weight: 0,
-    total_weight: 100,
-    completed_fields: [],
-    missing_fields: [],
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { completionData, loading, error } = useProfileCompletion();
   const [showMissingFields, setShowMissingFields] = useState(false);
-
-  useEffect(() => {
-    const fetchCompletionData = async () => {
-      const accessToken = getAccessToken();
-      try {
-        setLoading(true);
-
-        // Make request with Authorization header
-        const response = await fetch(
-          "http://127.0.0.1:8000/api/tutors/profile-completion",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch profile completion data");
-        }
-
-        const data = await response.json();
-        setCompletionData(data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchCompletionData();
-  }, []);
 
   const formatFieldName = (name) => {
     return name
@@ -86,11 +45,7 @@ const ProfileCompletionAlert = () => {
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center">
           {completion_percentage < 80 ? (
-            <svg
-              className="h-6 w-6 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
+            <svg className="h-6 w-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-2a6 6 0 100-12 6 6 0 000 12z"
@@ -108,11 +63,7 @@ const ProfileCompletionAlert = () => {
               />
             </svg>
           ) : (
-            <svg
-              className="h-6 w-6 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
+            <svg className="h-6 w-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm-2-5a1 1 0 011-1h4a1 1 0 110 2H9a1 1 0 01-1-1zm0-4a1 1 0 011-1h4a1 1 0 110 2H9a1 1 0 01-1-1zm8-3a1 1 0 00-1-1H9a1 1 0 000 2h6a1 1 0 001-1z"
@@ -171,18 +122,16 @@ const ProfileCompletionAlert = () => {
           </button>
 
           {showMissingFields && (
-            <div className="">
-              <ul className="">
-                {missing_fields.map((field, index) => (
-                  <li key={index}>
-                    {formatFieldName(field.name)}{" "}
-                    <span className="text-sm text-gray-500">
-                      ({field.weight} points)
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <ul className="mt-2 list-disc list-inside">
+              {missing_fields.map((field, index) => (
+                <li key={index}>
+                  {formatFieldName(field.name)}{" "}
+                  <span className="text-sm text-gray-500">
+                    ({field.weight} points)
+                  </span>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       )}

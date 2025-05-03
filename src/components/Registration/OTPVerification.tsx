@@ -12,8 +12,7 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ onVerify }) => {
   const [loading, setLoading] = useState(false);
 
   const handleVerify = async () => {
-    if (!otp || otp.length !== 4) {
-      alert("Please enter a valid 4-digit OTP");
+    if (!otp || otp.length !== 6) {
       return;
     }
 
@@ -44,13 +43,13 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ onVerify }) => {
 
       <div className="flex justify-center mb-6">
         <InputOTP
-          maxLength={4}
+          maxLength={6}
           containerClassName="gap-2"
           className="w-full flex items-center justify-center gap-2"
           value={otp}
           onChange={handleOtpChange}
         >
-          {Array.from({ length: 4 }).map((_, index) => (
+          {Array.from({ length: 6 }).map((_, index) => (
             <InputOTPSlot
               key={index}
               index={index}
@@ -61,9 +60,9 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ onVerify }) => {
       </div>
 
       <Button
-        className="w-full bg-blue-600 hover:bg-blue-700 mb-4"
+        className="w-full min-h-[55px] bg-blue-600 hover:bg-blue-700 mb-4"
         onClick={handleVerify}
-        disabled={loading || otp.length !== 4}
+        disabled={loading || !otp || otp.length !== 6}
       >
         {loading ? "Verifying..." : "Verify Code"}
       </Button>

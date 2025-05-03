@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { EyeIcon, EyeOffIcon, User, Mail, Phone } from 'lucide-react';
+import { EyeIcon, EyeOffIcon, Lock, Mail, Phone } from 'lucide-react';
 import { RegistrationData } from '@/types/common';
 
 interface RegistrationFormProps {
@@ -20,8 +20,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
     password1: '',
     password2: '',
     user_type: 'GUARDIAN',
-    first_name: '',
-    last_name: ''
   });
   
   const [showPassword, setShowPassword] = useState(false);
@@ -71,32 +69,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
     }
   };
 
-  const fullNameField = (
-    <div>
-      <Label htmlFor="fullName">Full Name</Label>
-      <div className="mt-1 relative">
-        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-          <User className="h-4 w-4 text-gray-400" />
-        </div>
-        <Input
-          id="fullName"
-          type="text"
-          placeholder="Full Name"
-          className="pl-10"
-          name="full_name"
-          value={`${formData.first_name || ''} ${formData.last_name || ''}`.trim()}
-          onChange={(e) => {
-            const names = e.target.value.split(' ');
-            setFormData(prev => ({
-              ...prev,
-              first_name: names[0] || '',
-              last_name: names.slice(1).join(' ') || '',
-            }));
-          }}
-        />
-      </div>
-    </div>
-  );
 
   return (
     <>
@@ -105,8 +77,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
       
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
-          {fullNameField}
-          
           <div>
             <Label htmlFor="email">Email Address</Label>
             <div className="mt-1 relative">
@@ -148,6 +118,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
           <div>
             <Label htmlFor="password1">Password</Label>
             <div className="mt-1 relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <Lock className="h-4 w-4 text-gray-400" />
+              </div>
               <Input
                 id="password1"
                 type={showPassword ? 'text' : 'password'}
@@ -156,7 +129,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
                 value={formData.password1}
                 onChange={handleChange}
                 required
-                className="pr-10"
+                className="pl-10"
               />
               <button
                 type="button"
@@ -175,6 +148,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
           <div>
             <Label htmlFor="password2">Confirm Password</Label>
             <div className="mt-1 relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <Lock className="h-4 w-4 text-gray-400" />
+              </div>
               <Input
                 id="password2"
                 type={showConfirmPassword ? 'text' : 'password'}
@@ -183,7 +159,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
                 value={formData.password2}
                 onChange={handleChange}
                 required
-                className="pr-10"
+                className="pl-10"
               />
               <button
                 type="button"
@@ -240,7 +216,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
           
           <Button 
             type="submit" 
-            className="w-full bg-blue-600 hover:bg-blue-700"
+            className="w-full min-h-[55px] bg-blue-600 hover:bg-blue-700"
             disabled={loading}
           >
             {loading ? 'Creating account...' : 'Log in'}

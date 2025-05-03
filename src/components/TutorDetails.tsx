@@ -54,8 +54,8 @@ const TutorDetails: React.FC = () => {
         </div>
 
         <div className="space-y-1">
-            <h2 className="text-xl font-semibold text-gray-900">
-              Maya
+            <h2 className="text-2xl font-semibold text-gray-900">
+              {tutor.full_name}
             </h2>
           <div>
             <div className="flex items-center gap-2 mb-5 mt-2">

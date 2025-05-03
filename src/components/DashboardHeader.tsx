@@ -3,7 +3,6 @@ import { ChevronDown, User, LogOut, Settings } from "lucide-react";
 import NotificationDropdown from "./NotificationDropdown";
 import { useAuth } from "@/contexts/AuthContext";
 
-
 interface HeaderProps {
   userName: string;
 }
@@ -39,13 +38,27 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
             className="flex items-center gap-2 cursor-pointer rounded-lg hover:bg-gray-100 p-2"
             onClick={toggleDropdown}
           >
-            <div className="h-8 w-8 rounded-full bg-gray-300 overflow-hidden">
-              <img
-                src="https://randomuser.me/api/portraits/men/43.jpg"
-                alt="User avatar"
-                className="h-full w-full object-cover"
-              />
-            </div>
+            {userProfile.user_type === "TEACHER" ? (
+              <div className="relative w-10 h-10 crown-container">
+                <img
+                  src={userProfile?.profile_picture}
+                  alt="User avatar"
+                  className="h-full w-full object-cover rounded-full border-2 border-yellow-500 crown-image"
+                />
+                <div className="crown-icon absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  👑
+                </div>
+              </div>
+            ) : (
+              <div className="h-8 w-8 rounded-full bg-gray-300 overflow-hidden">
+                <img
+                  src={userProfile?.profile_picture}
+                  alt="User avatar"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            )}
+
             <span className="text-sm font-medium">
               {userProfile?.first_name}
             </span>
@@ -61,7 +74,9 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                 <User className="h-4 w-4 mr-2" />
                 Profile
                 <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                    {userProfile?.user_type?.toLowerCase() === 'guardian' ? 'Guardian' : 'Teacher'}
+                  {userProfile?.user_type?.toLowerCase() === "guardian"
+                    ? "Guardian"
+                    : "Teacher"}
                 </span>
               </a>
               <a
@@ -73,7 +88,8 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
               </a>
               <hr className="my-1 border-gray-200" />
               <a
-                href="#" onClick={handleLogout}
+                href="#"
+                onClick={handleLogout}
                 className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
               >
                 <LogOut className="h-4 w-4 mr-2" />

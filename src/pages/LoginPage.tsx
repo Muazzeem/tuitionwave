@@ -6,9 +6,9 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { toast } from "sonner";
 import { setAuthTokens } from '@/utils/auth';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui/use-toast';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -19,6 +19,7 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleContinue = () => {
     setStep(2);
@@ -47,7 +48,10 @@ const LoginPage: React.FC = () => {
       // Fetch user profile after successful login
       await fetchProfile();
       
-      toast.success('Successfully logged in!');
+      toast({
+        title: "Login Success",
+        description: "Successfully logged in!",
+      });
       
       // Navigate based on user type
       if (userType === 'tutor') {
@@ -56,7 +60,11 @@ const LoginPage: React.FC = () => {
         navigate('/guardian/dashboard');
       }
     } catch (error) {
-      toast.error('Login failed. Please check your credentials.');
+      toast({
+        title: "Login Failed",
+        description: "Login failed. Please check your credentials.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -87,7 +95,7 @@ const LoginPage: React.FC = () => {
 
       {/* Right section with form */}
       <div className="w-full md:w-1/2 flex items-center justify-center">
-        <div className="w-full max-w-lg">
+        <div className="w-full max-w-2xl">
           {step === 1 ? (
             <div className="bg-white rounded-lg p-6 shadow-sm border">
               <h2 className="text-2xl font-bold text-center mb-6">Login as {userType === 'tutor' ? 'Tutor' : 'Guardian'}</h2>
@@ -109,10 +117,11 @@ const LoginPage: React.FC = () => {
               </RadioGroup>
               
               <Button 
-                className="w-full bg-blue-600 hover:bg-blue-700" 
+                className="w-full min-h-[55px] bg-blue-600 hover:bg-blue-700" 
                 onClick={handleContinue}
+                disabled={loading}
               >
-                Log in
+                Next
               </Button>
               
               <div className="text-center mt-4 text-sm">
@@ -171,7 +180,7 @@ const LoginPage: React.FC = () => {
                   
                   <Button 
                     type="submit" 
-                    className="w-full bg-blue-600 hover:bg-blue-700 mt-2"
+                    className="w-full min-h-[55px] bg-blue-600 hover:bg-blue-700 mt-2"
                     disabled={loading}
                   >
                     {loading ? 'Logging in...' : 'Log in'}

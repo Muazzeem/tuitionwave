@@ -1,13 +1,12 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ProfileStepper, Step } from '@/components/ProfileStepper';
+import { Step } from '@/components/ProfileStepper';
 import RegistrationForm from '@/components/Registration/RegistrationForm';
 import OTPVerification from '@/components/Registration/OTPVerification';
-import NIDUpload from '@/components/Registration/NIDUpload';
 import RegistrationSuccess from '@/components/Registration/RegistrationSuccess';
 import { RegistrationData } from '@/types/common';
-import { toast } from 'sonner';
+import { useToast } from '@/components/ui/use-toast';
 
 const steps: Step[] = [
   { id: 1, title: 'Create Account' },
@@ -24,10 +23,9 @@ const RegistrationPage = () => {
     password1: '',
     password2: '',
     user_type: 'GUARDIAN',
-    first_name: '',
-    last_name: ''
   });
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleRegistrationSubmit = async (formData: RegistrationData) => {
     try {
@@ -42,8 +40,6 @@ const RegistrationPage = () => {
           password1: formData.password1,
           password2: formData.password2,
           user_type: formData.user_type,
-          first_name: formData.first_name,
-          last_name: formData.last_name
         }),
       });
 
@@ -55,7 +51,11 @@ const RegistrationPage = () => {
       setRegistrationData(formData);
       setCurrentStep(2);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to register');
+      toast({
+        title: "Error",
+        description: "Failed to register.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -77,9 +77,13 @@ const RegistrationPage = () => {
         throw new Error(errorData.message || 'OTP verification failed');
       }
 
-      setCurrentStep(3); // Move to NID upload step
+      setCurrentStep(3); // Move to success step
     } catch (error: any) {
-      toast.error(error.message || 'Failed to verify OTP');
+      toast({
+        title: "Error",
+        description: "Failed to verify OTP.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -101,22 +105,9 @@ const RegistrationPage = () => {
       }
 
       // Show success message and move to success step
-      toast.success('NID document uploaded successfully');
       setCurrentStep(4);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to upload NID document');
-    }
-  };
 
-  const handleNext = () => {
-    if (currentStep < steps.length) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const handlePrev = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
     }
   };
 
@@ -154,7 +145,7 @@ const RegistrationPage = () => {
 
       {/* Right section with form */}
       <div className="w-full md:w-1/2 flex items-center justify-center py-8 px-4">
-        <div className="w-full max-w-xl p-4">
+        <div className="w-full max-w-2xl p-4">
           <div className="bg-white rounded-lg p-6 shadow-sm border">
             {currentStep === 1 && (
               <RegistrationForm 
@@ -168,25 +159,10 @@ const RegistrationPage = () => {
               />
             )}
             {currentStep === 3 && (
-              <NIDUpload 
-                onComplete={handleNIDUpload}
-              />
-            )}
-            {currentStep === 4 && (
               <RegistrationSuccess 
                 onLogin={handleLoginRedirect} 
               />
             )}
-          </div>
-          
-          {/* Show stepper for all steps */}
-          <div className="mt-8">
-            <ProfileStepper
-              steps={steps}
-              currentStep={currentStep}
-              onNext={handleNext}
-              onPrev={handlePrev}
-            />
           </div>
         </div>
       </div>

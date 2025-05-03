@@ -6,7 +6,7 @@ import TutorGrid from './TutorGrid';
 
 const FindTutorsList = () => {
   return (
-    <div className="container mx-auto px-0 py-8 h-screen flex flex-col"> {/* Removed h-full */}
+    <div className="container gap-6 mt-8 mb-10">
       <div className="mb-8">
         <h1 className="text-2xl font-bold mb-2">Find Tutors</h1>
         <p className="text-gray-600">Find and explore various types of tutors</p>

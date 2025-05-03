@@ -52,6 +52,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       
       const profileData = await response.json();
+      console.log('Profile data:', profileData);
       setUserProfile(profileData);
       
       // Store profile in sessionStorage for persistence across page refreshes

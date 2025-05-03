@@ -23,7 +23,7 @@ const RegistrationSuccess: React.FC<RegistrationSuccessProps> = ({ onLogin }) =>
       </p>
       
       <Button 
-        className="w-full bg-blue-600 hover:bg-blue-700 mb-4"
+        className="w-full min-h-[55px] bg-blue-600 hover:bg-blue-700 mb-4"
         onClick={onLogin}
       >
         Login Now

@@ -140,7 +140,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
       // Add other fields as needed
       
       await axios.put(
-        `http://127.0.0.1:8000//api/tutors/c021858d-00ca-4395-907b-1603c6666e88/`, 
+        `http://127.0.0.1:8000/api/tutors/${formData.uid}/`,
         formDataToSend,
         {
           headers: {
