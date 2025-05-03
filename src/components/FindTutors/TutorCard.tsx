@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import { Star, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface TutorCardProps {
   name: string;
@@ -22,17 +23,21 @@ const TutorCard: React.FC<TutorCardProps> = ({
   image,
   uid,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const openModal = (e: React.MouseEvent) => {
-    // Don't open modal if clicking on the button
+  const openSidebar = (e: React.MouseEvent) => {
+    // Don't open sidebar if clicking on the button
     if (!(e.target as HTMLElement).closest('a')) {
-      setIsModalOpen(true);
+      setIsSidebarOpen(true);
+      // Add class to prevent scrolling
+      document.body.classList.add('overflow-hidden');
     }
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
+    // Remove class to allow scrolling again
+    document.body.classList.remove('overflow-hidden');
   };
 
   const stopPropagation = (e: React.MouseEvent) => {
@@ -41,9 +46,9 @@ const TutorCard: React.FC<TutorCardProps> = ({
 
   return (
     <>
-      <div 
+      <div
         className="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer transition-shadow hover:shadow-md"
-        onClick={openModal}
+        onClick={openSidebar}
       >
         <div className="relative w-100" style={{ paddingBottom: "56.25%" }}>
           <img
@@ -69,68 +74,84 @@ const TutorCard: React.FC<TutorCardProps> = ({
         </div>
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div 
-            className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-            onClick={stopPropagation}
-          >
-            <div className="flex justify-between items-center p-4 border-b">
-              <h2 className="text-xl font-bold">{name}</h2>
-              <button 
-                onClick={closeModal}
-                className="p-1 rounded-full hover:bg-gray-100"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <div className="p-6">
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="md:w-1/3">
+      {/* Side Drawer Modal */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden">
+          <div
+            className="absolute inset-0 bg-black bg-opacity-50 transition-opacity"
+            onClick={closeSidebar}
+          />
+
+          <div className="fixed inset-y-0 right-0 max-w-full flex">
+            {/* Sliding sidebar panel */}
+            <div
+              className={cn(
+                "w-screen max-w-md transform transition-transform duration-300 ease-in-out translate-x-full",
+                isSidebarOpen && "translate-x-0"
+              )}
+              onClick={stopPropagation}
+            >
+              <div className="h-full flex flex-col bg-white shadow-xl overflow-y-auto">
+                <div className="flex justify-between items-center p-4 border-b">
+                  <h2 className="text-xl font-bold">Tutor Details</h2>
+                  <button
+                    onClick={closeSidebar}
+                    className="p-1 rounded-full hover:bg-gray-100"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="p-6 flex-grow overflow-y-auto">
                   <img
                     src={image}
                     alt={name}
-                    className="w-full h-auto rounded-lg object-cover"
+                    className="w-full h-64 object-cover rounded-lg mb-6"
                   />
-                </div>
-                
-                <div className="md:w-2/3 space-y-4">
-                  <div>
-                    <h3 className="font-semibold text-lg">{name}</h3>
-                    <p className="text-gray-600">{university}</p>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                    <span className="font-medium">{rating}</span>
-                    <span>({reviewCount} reviews)</span>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <p className="font-medium">Monthly Rate: <span className="text-gray-900">{monthlyRate}</span></p>
-                    
-                    <h4 className="font-medium mt-4">About Tutor</h4>
-                    <p className="text-gray-700">
-                      Experienced tutor specializing in helping students excel in their studies.
-                      Personalized teaching approach that adapts to each student's unique learning style.
-                    </p>
-                    
-                    <h4 className="font-medium mt-4">Subjects</h4>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Mathematics</span>
-                      <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Physics</span>
-                      <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Chemistry</span>
+
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="font-semibold text-lg">{name}</h3>
+                      <p className="text-gray-600">{university}</p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                      <span className="font-medium">{rating}</span>
+                      <span>({reviewCount} reviews)</span>
+                    </div>
+
+                    <div className="space-y-2">
+                      <p className="font-medium">Monthly Rate: <span className="text-gray-900">{monthlyRate}</span></p>
+
+                      <h4 className="font-medium mt-4">About Tutor</h4>
+                      <p className="text-gray-700">
+                        Experienced tutor specializing in helping students excel in their studies.
+                        Personalized teaching approach that adapts to each student's unique learning style.
+                      </p>
+
+                      <h4 className="font-medium mt-4">Subjects</h4>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Mathematics</span>
+                        <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Physics</span>
+                        <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Chemistry</span>
+                      </div>
+
+                      <h4 className="font-medium mt-4">Location</h4>
+                      <p className="text-gray-700">Rajshahi</p>
+
+                      <h4 className="font-medium mt-4">Availability</h4>
+                      <p className="text-gray-700">Online, Home</p>
                     </div>
                   </div>
-                  
-                  <div className="pt-4">
-                    <Link to={`/tutor/${uid}`} onClick={closeModal}>
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                        REQUEST THIS TUTOR
-                      </Button>
-                    </Link>
-                  </div>
+                </div>
+
+                <div className="p-4 border-t">
+                  <Link to={`/tutor/${uid}`} onClick={closeSidebar}>
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                      REQUEST THIS TUTOR
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>
