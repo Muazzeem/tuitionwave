@@ -23,6 +23,7 @@ import FindTutorsList from "./components/FindTutors/FindTutors";
 import NotificationPage from "./pages/Notification";
 import CreateContract from "./pages/CreateContract";
 import RegistrationPage from "./pages/RegistrationPage";
+import GuardianProfile from "./pages/Guardian/Profile";
 
 const queryClient = new QueryClient();
 
@@ -89,7 +90,7 @@ const App = () => (
             
             {/* Protected routes for all authenticated users */}
 
-            <Route path="/create-contract" element={
+            <Route path="/create-contract/:id" element={
               <AuthGuard>
                 <MainLayout><CreateContract /></MainLayout>
               </AuthGuard>
@@ -101,9 +102,14 @@ const App = () => (
               </AuthGuard>
             } />
 
-            <Route path="/profile" element={
-              <AuthGuard>
+            <Route path="teacher/profile" element={
+              <AuthGuard allowedRoles={['TEACHER']}>
                 <MainLayout><ProfilePage /></MainLayout>
+              </AuthGuard>
+            } />
+            <Route path="profile/guardian" element={
+              <AuthGuard allowedRoles={['GUARDIAN']}>
+                <MainLayout><GuardianProfile /></MainLayout>
               </AuthGuard>
             } />
             <Route path="/settings" element={
@@ -113,7 +119,7 @@ const App = () => (
             } />
             <Route path="/message" element={
               <AuthGuard>
-                <MainLayout><MessagePage /></MainLayout>
+                <MessagePage />
               </AuthGuard>
             } />
             

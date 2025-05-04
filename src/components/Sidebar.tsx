@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 const Sidebar = () => {
     const { userProfile, clearProfile } = useAuth();
     const location = useLocation();
-    const [isExpanded, setIsExpanded] = useState(true);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const userType = userProfile?.user_type?.toLowerCase() === 'teacher' ? 'teacher' : 'guardian';
     
@@ -15,7 +15,7 @@ const Sidebar = () => {
         ...(userType !== 'teacher' ? [{ icon: Search, text: 'Find Tutor', path: '/find-tutors' }] : []), // Hide for teachers
         { icon: User, text: 'Contract Requests', path: `/${userType}/requests` },
         { icon: MessageSquare, text: 'Message', path: '/message' },
-        { icon: User, text: 'Profile', path: '/profile' },
+        { icon: User, text: 'Profile', path: `/profile/${userType}` },
     ];
 
     const toggleSidebar = () => {

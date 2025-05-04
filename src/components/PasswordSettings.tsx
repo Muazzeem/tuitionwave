@@ -1,13 +1,95 @@
-
 import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { EyeIcon, EyeOffIcon, Lock } from "lucide-react";
+import { getAccessToken } from '@/utils/auth';
+import { useToast } from './ui/use-toast';
 
 const PasswordSettings = () => {
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isSaving, setIsSaving] = useState<boolean>(false);
+    const { toast } = useToast();
+    const apiEndpoint = 'http://127.0.0.1:8000/auth/password/change/'; // Your API endpoint
+    const accessToken = getAccessToken();
+
+    const handleChangePassword = async () => {
+
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            toast({
+                title: "Error",
+                description: "Please fill in all fields.",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            toast({
+                title: "Error",
+                description: "New passwords do not match.",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        if (newPassword.length < 8) {
+            toast({
+                title: "Error",
+                description: "New password must be at least 8 characters long.",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        try {
+            setIsSaving(true);
+            const response = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`, // Include your authentication token
+                },
+                body: JSON.stringify({
+                    password: currentPassword,
+                    new_password1: newPassword,
+                    new_password2: confirmPassword,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                toast({
+                    title: "Success",
+                    description: "Password changed successfully!",
+                });
+                setCurrentPassword('');
+                setNewPassword('');
+                setConfirmPassword('');
+            } else {
+                // Handle API errors, you might want to display specific error messages from the backend
+                toast({
+                    title: "Error",
+                    description: data?.detail || 'Failed to change password. Please try again.',
+                    variant: "destructive"
+                });
+            }
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "An unexpected error occurred. Please try again later.",
+                variant: "destructive"
+            });
+        }
+        finally {
+            setIsSaving(false);
+        }
+    }
 
     return (
         <div className="p-6 space-y-8">
@@ -24,6 +106,8 @@ const PasswordSettings = () => {
                             type={showCurrentPassword ? "text" : "password"}
                             className="pl-10 pr-10 bg-white"
                             placeholder="Current password"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
                         />
                         <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
                         <button
@@ -48,6 +132,8 @@ const PasswordSettings = () => {
                             type={showNewPassword ? "text" : "password"}
                             className="pl-10 pr-10 bg-white"
                             placeholder="New password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
                         />
                         <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
                         <button
@@ -73,6 +159,8 @@ const PasswordSettings = () => {
                             type={showConfirmPassword ? "text" : "password"}
                             className="pl-10 pr-10 bg-white"
                             placeholder="Confirm password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                         <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
                         <button
@@ -92,7 +180,11 @@ const PasswordSettings = () => {
 
             <div className="flex justify-end gap-3 pt-4">
                 <Button variant="outline" className="px-6">Cancel</Button>
-                <Button className="px-6 bg-blue-600 hover:bg-blue-700">Save Changes</Button>
+                <Button className="px-6 bg-blue-600 hover:bg-blue-700"
+                disabled={isSaving}
+                onClick={handleChangePassword}>
+                    Save Changes
+                </Button>
             </div>
         </div>
     );

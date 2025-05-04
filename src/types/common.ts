@@ -21,3 +21,16 @@ export interface RegistrationData {
   last_name?: string;
   nid_document?: File;
 }
+
+export interface ProfileData {
+  user_type: string;
+  id?: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  country_code: string;
+  country: string;
+  city: string;
+  profile_picture?: string;
+}

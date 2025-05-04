@@ -68,7 +68,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
           {isDropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200">
               <a
-                href="/profile"
+                href={`/profile/${userProfile?.user_type?.toLowerCase()}`}
                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
                 <User className="h-4 w-4 mr-2" />
@@ -79,13 +79,16 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                     : "Teacher"}
                 </span>
               </a>
-              <a
-                href="/settings"
-                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
-              </a>
+              {
+                userProfile?.user_type?.toLowerCase() === "teacher" &&
+                <a
+                  href="/settings"
+                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Settings
+                </a>
+              }
               <hr className="my-1 border-gray-200" />
               <a
                 href="#"

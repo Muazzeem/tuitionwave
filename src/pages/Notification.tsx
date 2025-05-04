@@ -6,6 +6,7 @@ import NotificationDetailModal from "@/components/NotificationDetailModal";
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface Actor {
     id: number;
@@ -405,6 +406,7 @@ const NotificationsPage: React.FC = () => {
                 ) : notifications.length > 0 ? (
                     <div>
                         <table className="min-w-full divide-y divide-gray-200">
+                        <ScrollArea type="always" style={{ height: 'calc(90vh - 160px)' }}>
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -490,6 +492,7 @@ const NotificationsPage: React.FC = () => {
                                     </tr>
                                 ))}
                             </tbody>
+                            </ScrollArea>
                         </table>
                         
                         {/* Pagination */}

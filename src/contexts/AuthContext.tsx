@@ -2,20 +2,11 @@
 // src/contexts/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { getAccessToken } from '@/utils/auth';
+import { ProfileData } from '@/types/common';
 
-// Define the profile interface based on your API response
-interface UserProfile {
-  uid: string;
-  email: string;
-  user_type: string;
-  first_name: string;
-  last_name: string;
-  profile_picture?: string;
-  // Add other fields that come from your profile API
-}
 
 interface AuthContextType {
-  userProfile: UserProfile | null;
+  userProfile: ProfileData | null;
   loading: boolean;
   error: string | null;
   fetchProfile: () => Promise<void>;
@@ -25,7 +16,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [userProfile, setUserProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState<boolean>(true); // Start with loading true
   const [error, setError] = useState<string | null>(null);
 
