@@ -28,7 +28,7 @@ const Sidebar = () => {
     };
 
     return (
-        <div className={`${isExpanded ? 'w-56' : 'w-16'} bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-500 relative`}>
+        <div className={`${isExpanded ? 'w-70' : 'w-16'} bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-500 ease-in-out`}>
             <div className="p-4 border-b border-gray-200 flex justify-between items-center">
                 {isExpanded && <h1 className="text-xl font-bold">Tuition Wave</h1>}
                 <button
