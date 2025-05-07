@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 const Sidebar = () => {
     const { userProfile, clearProfile } = useAuth();
     const location = useLocation();
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(true);
 
     const userType = userProfile?.user_type?.toLowerCase() === 'teacher' ? 'teacher' : 'guardian';
     
@@ -28,9 +28,9 @@ const Sidebar = () => {
     };
 
     return (
-        <div className={`${isExpanded ? 'w-70' : 'w-16'} bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-500 ease-in-out`}>
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-                {isExpanded && <h1 className="text-xl font-bold">Tuition Wave</h1>}
+        <div className={`${isExpanded ? 'w-56' : 'w-16'} bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-500 relative`}>
+            <div className="p-3 flex justify-between items-center align-middle">
+                {isExpanded && <h1 className="text-xl font-bold mt-2">Tuition Wave</h1>}
                 <button
                     onClick={toggleSidebar}
                     className="p-1 rounded-full hover:bg-gray-100"

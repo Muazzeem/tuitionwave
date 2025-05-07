@@ -3,17 +3,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import TutorFilters from './TutorFilters';
 import TutorGrid from './TutorGrid';
+import { ScrollArea } from '../ui/scroll-area';
 
 const FindTutorsList = () => {
   return (
-    <div className="container gap-6 mt-8 mb-10">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-2">Find Tutors</h1>
-        <p className="text-gray-600">Find and explore various types of tutors</p>
-      </div>
-
+    <div className="ml-7 mr-7 mt-8 w-full">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-xl font-semibold">All Tutors</h2>
+        <h2 className="text-2xl font-semibold">All Tutors</h2>
         <div className="flex gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -32,8 +28,10 @@ const FindTutorsList = () => {
 
       <TutorFilters />
 
-      <div className="overflow-y-auto flex-grow"> {/* Scrollable container for TutorGrid */}
-        <TutorGrid />
+      <div className="">
+        <ScrollArea type="always" style={{ height: 'calc(95vh - 160px)' }}>
+          <TutorGrid />
+        </ScrollArea>
       </div>
     </div>
   );

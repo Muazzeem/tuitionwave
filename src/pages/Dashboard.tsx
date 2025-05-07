@@ -17,7 +17,7 @@ const Dashboard: React.FC = () => {
     <div className="flex-1 overflow-auto">
       <DashboardHeader userName="John" />
 
-      {userProfile?.user_type === "TEACHER" && (
+      {userProfile?.user_type === "TEACHER" && completionData.completion_percentage < 80 && (
         <div className="p-6">
           <ProfileCompletionAlert />
         </div>

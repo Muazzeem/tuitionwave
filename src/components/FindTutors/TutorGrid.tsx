@@ -70,13 +70,15 @@ const TutorGrid = () => {
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
         {tutors.map((tutor) => (
           <TutorCard
             key={tutor.uid}
             uid={tutor.uid}
             name={`${tutor.first_name} ${tutor.last_name}`}
+            teaching_type={tutor.teaching_type}
             university={tutor.institute ? tutor.institute.name : 'Not specified'}
+            division={tutor.division ? tutor.division.name : 'Not specified'}
             monthlyRate={tutor.expected_salary ? tutor.expected_salary.display_range : 'Not specified'}
             rating={4.5}
             reviewCount={0}

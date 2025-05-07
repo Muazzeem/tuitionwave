@@ -15,7 +15,7 @@ const TutorCard: React.FC<TutorCardProps> = ({ tutor }) => {
   const fullName = `${tutor.first_name} ${tutor.last_name}`;
   const profileImage = tutor.profile_picture || "/lovable-uploads/ced7cd19-6baa-4f95-a194-cd4c9c7c3f0c.png";
   // const teachingRate = tutor.teaching_rate.toLocaleString();
-  const isOnline = tutor.teaching_type === "ONLINE";
+  const teaching_type = tutor.teaching_type;
 
   return (
     <Card>
@@ -41,8 +41,9 @@ const TutorCard: React.FC<TutorCardProps> = ({ tutor }) => {
             <MapPin size={18} className="text-gray-700" />
             <span className="text-gray-700">{tutor.address || "Not specified"}</span>
             <div className="ml-auto flex gap-2">
-              {isOnline && <Badge className="bg-green-100 text-green-800 hover:bg-green-200">Online</Badge>}
-              {!isOnline && <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">Home</Badge>}
+              {teaching_type === 'ONLINE' && <Badge className="bg-green-100 text-green-800 hover:bg-green-200">Online</Badge>}
+              {teaching_type === 'HOME' && <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">Home</Badge>}
+              {teaching_type === 'BOTH' && <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">Online & Home</Badge>}
             </div>
           </div>
 

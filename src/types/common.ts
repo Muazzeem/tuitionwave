@@ -34,3 +34,36 @@ export interface ProfileData {
   city: string;
   profile_picture?: string;
 }
+
+
+// Define types
+export interface Student {
+  uid: string;
+  first_name: string;
+  last_name: string;
+}
+
+export interface FeedbackItem {
+  uid: string;
+  contract: string;
+  student: Student;
+  avg_ratting: number;
+  comment: string;
+  created_at: string;
+}
+
+export interface FeedbackResponse {
+  count: number;
+  total_pages: number;
+  current_page: number;
+  next: string | null;
+  previous: string | null;
+  results: FeedbackItem[];
+}
+
+export interface ReviewItemProps {
+  name: string;
+  comment: string;
+  rating: number;
+  date: string;
+}

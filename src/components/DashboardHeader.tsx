@@ -25,7 +25,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
   };
 
   return (
-    <div className="flex justify-between items-center py-2 px-6 border-b border-gray-200 bg-white">
+    <div className="flex justify-between items-center py-1 px-6 border-b border-gray-200 bg-white">
       <h1 className="text-xl font-bold">
         Welcome Back, {userProfile?.first_name}!
       </h1>

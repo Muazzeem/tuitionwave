@@ -1,9 +1,9 @@
 
-import React from "react";
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
 import { Star, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import ContactTutorDrawer from "@/components/ContactTutorDrawer";
 import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
 
 interface TutorDetailsDrawerProps {
   isOpen: boolean;
@@ -28,6 +28,15 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
   image,
   uid,
 }) => {
+  const [isContactDrawerOpen, setIsContactDrawerOpen] = useState(false);
+
+  const openContactDrawer = () => {
+    setIsContactDrawerOpen(true);
+  };
+
+  const closeContactDrawer = () => {
+    setIsContactDrawerOpen(false);
+  };
   // Handle clicks inside the drawer to prevent propagation
   const stopPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -95,9 +104,9 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
                 
                 <h4 className="font-medium mt-4">Subjects</h4>
                 <div className="flex flex-wrap gap-2">
-                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Mathematics</span>
-                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Physics</span>
-                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Chemistry</span>
+                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-lg text-sm">Mathematics</span>
+                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-lg text-sm">Physics</span>
+                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-lg text-sm">Chemistry</span>
                 </div>
 
                 <h4 className="font-medium mt-4">Location</h4>
@@ -110,11 +119,17 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
           </div>
           
           <div className="p-4 border-t">
-            <Link to={`/create-contract/${uid}`} onClick={onClose}>
-              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                REQUEST THIS TUTOR
-              </Button>
-            </Link>
+            <Button onClick={openContactDrawer} className="w-full">
+              Contact Tutor
+            </Button>
+            {/* Conditionally render the ContactTutorDrawer */}
+            {isContactDrawerOpen && (
+              <ContactTutorDrawer
+                isOpen={isContactDrawerOpen}
+                onClose={closeContactDrawer}
+                tutorName={name}
+              />
+            )}
           </div>
         </div>
       </div>
