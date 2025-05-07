@@ -2,10 +2,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate, useParams } from "react-router-dom";
-import DashboardHeader from "@/components/DashboardHeader";
+import { useNavigate } from "react-router-dom";
 import { AlertCircle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,6 +12,7 @@ import ConfirmationDialog from "@/components/ConfirmationDialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Define all days of the week
 const ALL_DAYS = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thr", "Fri"];
@@ -49,9 +49,30 @@ interface ValidationErrors {
   selectedAmount?: string;
 }
 
-const CreateContract: React.FC = () => {
+interface DrawerState {
+  isOpen: boolean;
+}
+
+interface City {
+  id: number;
+  name: string;
+  district: {
+    id: number;
+    name: string;
+    division: {
+      id: number;
+      name: string;
+    }
+  }
+}
+
+interface Area {
+  id: number;
+  name: string;
+}
+
+const CreateContract: React.FC<{ uid: string; drawer: DrawerState }> = ({ uid, drawer }) => {
   const { userProfile } = useAuth();
-  const { tutorId } = useParams<{ tutorId: string }>();
   const [selectedAmount, setSelectedAmount] = useState<string>("5000.00");
   const [customMessage, setCustomMessage] = useState<string>("");
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
@@ -63,9 +84,6 @@ const CreateContract: React.FC = () => {
   const [tuitionType, setTuitionType] = useState<string>("");
   const [memberCount, setMemberCount] = useState<string>("");
   const [preferredGender, setPreferredGender] = useState<string>("");
-  const [institutions, setInstitutions] = useState<
-    { id: number; name: string }[]
-  >([]);
   const [activeDayMapping, setActiveDayMapping] = useState<
     Record<string, number>
   >({});
@@ -77,14 +95,21 @@ const CreateContract: React.FC = () => {
   const [showApproveConfirm, setShowApproveConfirm] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [showValidationError, setShowValidationError] = useState(false);
+  
+  // New state for cities and areas
+  const [cities, setCities] = useState<City[]>([]);
+  const [areas, setAreas] = useState<Area[]>([]);
+  const [filteredAreas, setFilteredAreas] = useState<Area[]>([]);
+  const [loadingCities, setLoadingCities] = useState<boolean>(false);
+  const [loadingAreas, setLoadingAreas] = useState<boolean>(false);
 
   const { toast } = useToast();
   const navigate = useNavigate();
 
   // Use tutorId from route parameters, fallback to a default if not available
-  const currentTutorId = tutorId || "43e0f61e-6cd1-4b29-8fdd-ba08b2fdfbf0";
+  const currentTutorId = uid;
 
-  useEffect(() => {
+  const fetchTutorDetails = useCallback(async () => {
     setLoading(true);
     if (currentTutorId) {
       fetch(`http://127.0.0.1:8000/api/tutors/${currentTutorId}`, {})
@@ -107,6 +132,75 @@ const CreateContract: React.FC = () => {
         .finally(() => setLoading(false));
     }
   }, [currentTutorId]);
+
+  // Fetch cities from API
+  const fetchCities = useCallback(async () => {
+    setLoadingCities(true);
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/cities/");
+      if (!response.ok) {
+        throw new Error("Failed to fetch cities");
+      }
+      const data = await response.json();
+      setCities(data.results || []);
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load cities. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingCities(false);
+    }
+  }, [toast]);
+
+  // Fetch areas from API
+  const fetchAreas = useCallback(async () => {
+    setLoadingAreas(true);
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/areas/");
+      if (!response.ok) {
+        throw new Error("Failed to fetch areas");
+      }
+      const data = await response.json();
+      setAreas(data.results || []);
+    } catch (error) {
+      console.error("Error fetching areas:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load areas. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingAreas(false);
+    }
+  }, [toast]);
+
+  useEffect(() => {
+    if (drawer.isOpen) {
+      fetchTutorDetails();
+      fetchCities();
+      fetchAreas();
+    }
+  }, [drawer.isOpen, fetchTutorDetails, fetchCities, fetchAreas]);
+
+  // Filter areas based on selected city
+  useEffect(() => {
+    if (studentCity && areas.length > 0) {
+      const selectedCityObj = cities.find(city => city.id.toString() === studentCity);
+      if (selectedCityObj) {
+        const areasForCity = areas.filter(area => area.id.toString() === studentArea);
+        setFilteredAreas(areasForCity);
+      } else {
+        setFilteredAreas([]);
+      }
+    } else {
+      setFilteredAreas([]);
+    }
+    // Reset selected area when city changes
+    setStudentArea("");
+  }, [studentCity, areas, cities]);
 
   const handleDaySelection = (values: string[]) => {
     const validSelections = values.filter((day) => activeDays.includes(day));
@@ -132,12 +226,12 @@ const CreateContract: React.FC = () => {
       isValid = false;
     }
 
-    if (!studentCity.trim()) {
+    if (!studentCity) {
       newErrors.studentCity = "City is required";
       isValid = false;
     }
 
-    if (!studentArea.trim()) {
+    if (!studentArea) {
       newErrors.studentArea = "Area is required";
       isValid = false;
     }
@@ -197,9 +291,13 @@ const CreateContract: React.FC = () => {
 
     const dayIds = selectedDays.map((day) => activeDayMapping[day]);
 
+    // Get city and area names for payload
+    const selectedCityObj = cities.find(city => city.id.toString() === studentCity);
+    const selectedAreaObj = areas.find(area => area.id.toString() === studentArea);
+
     const payload = {
-      student_city: studentCity,
-      student_area: studentArea,
+      student_city: selectedCityObj?.name || "",
+      student_area: selectedAreaObj?.name || "",
       student_institution: studentInstitution,
       student_class: studentClass,
       student_department: studentDepartment,
@@ -298,8 +396,8 @@ const CreateContract: React.FC = () => {
 
   return (
     <div className="flex-1 overflow-auto">
-      <DashboardHeader userName={tutor?.full_name || "Tutor Name"} />
-      <div className="p-6 container mx-auto">
+      <div className="p-6 mb-10">
+      <ScrollArea type="always" style={{ height: "97vh" }}>
         <h2 className="text-3xl font-bold mb-6">{tutor?.full_name}</h2>
 
         {showValidationError && (
@@ -388,13 +486,20 @@ const CreateContract: React.FC = () => {
               <Label htmlFor="studentCity" className="block text-sm text-gray-600 mb-1">
                 Student City <span className="text-red-500">*</span>
               </Label>
-              <Input
-                id="studentCity"
-                value={studentCity}
-                onChange={(e) => handleFieldChange('studentCity', e.target.value)}
-                className={cn("w-full", errors.studentCity && "border-red-500")}
-                placeholder="Enter City"
-              />
+              <Select 
+                value={studentCity} 
+                onValueChange={(value) => handleFieldChange('studentCity', value)}
+                disabled={loadingCities}
+              >
+                <SelectTrigger className={cn("w-full", errors.studentCity && "border-red-500")}>
+                  <SelectValue placeholder={loadingCities ? "Loading cities..." : "Select City"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {cities.map((city) => (
+                    <SelectItem key={city.id} value={city.id.toString()}>{city.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.studentCity && (
                 <p className="text-red-500 text-sm mt-1">{errors.studentCity}</p>
               )}
@@ -405,13 +510,25 @@ const CreateContract: React.FC = () => {
               <Label htmlFor="studentArea" className="block text-sm text-gray-600 mb-1">
                 Area <span className="text-red-500">*</span>
               </Label>
-              <Input
-                id="studentArea"
-                value={studentArea}
-                onChange={(e) => handleFieldChange('studentArea', e.target.value)}
-                className={cn("w-full", errors.studentArea && "border-red-500")}
-                placeholder="Enter Area"
-              />
+              <Select 
+                value={studentArea} 
+                onValueChange={(value) => handleFieldChange('studentArea', value)}
+                disabled={loadingAreas || !studentCity}
+              >
+                <SelectTrigger className={cn("w-full", errors.studentArea && "border-red-500")}>
+                  <SelectValue placeholder={
+                    loadingAreas ? "Loading areas..." : 
+                    !studentCity ? "Select a city first" :
+                    filteredAreas.length === 0 ? "No areas available" :
+                    "Select Area"
+                  } />
+                </SelectTrigger>
+                <SelectContent>
+                  {filteredAreas.map((area) => (
+                    <SelectItem key={area.id} value={area.id.toString()}>{area.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.studentArea && (
                 <p className="text-red-500 text-sm mt-1">{errors.studentArea}</p>
               )}
@@ -598,6 +715,7 @@ const CreateContract: React.FC = () => {
             )}
           </div>
         </div>
+        </ScrollArea>
       </div>
       <ConfirmationDialog
         isOpen={showApproveConfirm}
