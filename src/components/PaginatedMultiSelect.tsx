@@ -1,5 +1,15 @@
-import { useEffect, useState } from "react";
 
+import { useEffect, useState } from "react";
+import { Label } from "@/components/ui/label";
+
+interface PaginatedResponse<T> {
+    count: number;
+    total_pages: number;
+    current_page: number;
+    next: string | null;
+    previous: string | null;
+    results: T[];
+}
 
 const PaginatedMultiSelect = ({
     label,
@@ -102,3 +112,5 @@ const PaginatedMultiSelect = ({
         </div>
     );
 };
+
+export default PaginatedMultiSelect;

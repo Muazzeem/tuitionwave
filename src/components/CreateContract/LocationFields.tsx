@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import FormField from "./FormField";
 
 interface City {
@@ -27,7 +27,6 @@ interface LocationFieldsProps {
   onAreaChange: (value: string) => void;
   cities: City[];
   areas: Area[];
-  filteredAreas: Area[];
   loadingCities: boolean;
   loadingAreas: boolean;
   cityError?: string;
@@ -41,7 +40,6 @@ const LocationFields: React.FC<LocationFieldsProps> = ({
   onAreaChange,
   cities,
   areas,
-  filteredAreas,
   loadingCities,
   loadingAreas,
   cityError,
@@ -52,18 +50,11 @@ const LocationFields: React.FC<LocationFieldsProps> = ({
     label: city.name
   }));
 
-  const areaOptions = filteredAreas.map(area => ({
+  const areaOptions = areas.map(area => ({
     value: area.id.toString(),
     label: area.name
   }));
 
-  const getAreaPlaceholder = () => {
-    if (loadingAreas) return "Loading areas...";
-    if (!studentCity) return "Select a city first";
-    if (filteredAreas.length === 0) return "No areas available";
-    return "Select Area";
-  };
-  
   return (
     <>
       <div className="col-span-6">
@@ -87,10 +78,10 @@ const LocationFields: React.FC<LocationFieldsProps> = ({
           type="select"
           value={studentArea}
           onChange={onAreaChange}
-          placeholder={getAreaPlaceholder()}
+          placeholder={loadingAreas ? "Loading areas..." : "Select Area"}
           error={areaError}
           required
-          disabled={loadingAreas || !studentCity}
+          disabled={loadingAreas}
           options={areaOptions}
         />
       </div>

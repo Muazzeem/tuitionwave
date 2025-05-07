@@ -5,16 +5,20 @@ import { AlertCircle } from "lucide-react";
 
 interface ValidationAlertProps {
   show: boolean;
+  message?: string;
 }
 
-const ValidationAlert: React.FC<ValidationAlertProps> = ({ show }) => {
+const ValidationAlert: React.FC<ValidationAlertProps> = ({ 
+  show, 
+  message = "Please fill in all required fields before submitting." 
+}) => {
   if (!show) return null;
 
   return (
     <Alert variant="destructive" className="mb-6">
       <AlertCircle className="h-4 w-4" />
       <AlertDescription>
-        Please fill in all required fields before submitting.
+        {message}
       </AlertDescription>
     </Alert>
   );

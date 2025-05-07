@@ -23,7 +23,6 @@ interface Area {
 export const useLocationData = () => {
   const [cities, setCities] = useState<City[]>([]);
   const [areas, setAreas] = useState<Area[]>([]);
-  const [filteredAreas, setFilteredAreas] = useState<Area[]>([]);
   const [loadingCities, setLoadingCities] = useState<boolean>(false);
   const [loadingAreas, setLoadingAreas] = useState<boolean>(false);
   const [studentCity, setStudentCity] = useState<string>("");
@@ -75,28 +74,11 @@ export const useLocationData = () => {
     }
   }, [toast]);
 
-  // Filter areas based on selected city
-  useEffect(() => {
-    if (studentCity && areas.length > 0) {
-      const selectedCityObj = cities.find(city => city.id.toString() === studentCity);
-      if (selectedCityObj) {
-        const areasForCity = areas.filter(area => area.id.toString() === studentArea);
-        setFilteredAreas(areasForCity);
-      } else {
-        setFilteredAreas([]);
-      }
-    } else {
-      setFilteredAreas([]);
-    }
-    // Reset selected area when city changes
-    if (studentCity) {
-      setStudentArea("");
-    }
-  }, [studentCity, areas, cities]);
-
   // Update student city and area
   const handleCityChange = (value: string) => {
     setStudentCity(value);
+    // Reset area when city changes
+    setStudentArea("");
   };
 
   const handleAreaChange = (value: string) => {
@@ -106,7 +88,6 @@ export const useLocationData = () => {
   return {
     cities,
     areas,
-    filteredAreas,
     loadingCities,
     loadingAreas,
     studentCity,
