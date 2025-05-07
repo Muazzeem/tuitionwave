@@ -37,6 +37,7 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
   const closeContactDrawer = () => {
     setIsContactDrawerOpen(false);
   };
+  
   // Handle clicks inside the drawer to prevent propagation
   const stopPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -56,7 +57,7 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
       {/* Drawer */}
       <div 
         className={cn(
-          "fixed inset-y-0 right-0 z-50 w-full w-1/3 transform transition-all duration-300 ease-in-out",
+          "fixed inset-y-0 right-0 z-50 w-full md:w-1/2 transform transition-all duration-300 ease-in-out",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
@@ -122,17 +123,16 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
             <Button onClick={openContactDrawer} className="w-full">
               Contact Tutor
             </Button>
-            {/* Conditionally render the ContactTutorDrawer */}
-            {isContactDrawerOpen && (
-              <ContactTutorDrawer
-                isOpen={isContactDrawerOpen}
-                onClose={closeContactDrawer}
-                tutorName={name}
-              />
-            )}
           </div>
         </div>
       </div>
+      
+      {/* Contact Tutor Drawer */}
+      <ContactTutorDrawer
+        isOpen={isContactDrawerOpen}
+        onClose={closeContactDrawer}
+        tutorName={name}
+      />
     </>
   );
 };
