@@ -80,13 +80,7 @@ export const useLocationData = () => {
   // Update student city and trigger area fetch for that city
   const handleCityChange = (value: string) => {
     setStudentCity(value);
-    // Get the city name to use as parameter
-    const selectedCity = cities.find(city => city.id.toString() === value);
-    if (selectedCity) {
-      fetchAreas(selectedCity.name);
-    } else {
-      fetchAreas(); // Fetch all areas if no city is selected
-    }
+    fetchAreas(value); // Pass the city ID directly to fetchAreas
     // Reset area when city changes
     setStudentArea("");
   };

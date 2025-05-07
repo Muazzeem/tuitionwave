@@ -138,13 +138,10 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState }> = ({ uid, d
 
     const dayIds = selectedDays.map((day) => activeDayMapping[day]);
 
-    // Get city and area names for payload
-    const selectedCityObj = cities.find(city => city.id.toString() === studentCity);
-    const selectedAreaObj = areas.find(area => area.id.toString() === studentArea);
-
+    // Send the IDs directly without looking up names
     const payload = {
-      student_city: selectedCityObj?.name || "",
-      student_area: selectedAreaObj?.name || "",
+      student_city: studentCity, // City ID
+      student_area: studentArea, // Area ID
       student_institution: studentInstitution,
       student_class: studentClass,
       student_department: studentDepartment,
