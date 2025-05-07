@@ -1,0 +1,67 @@
+
+import { useState, useEffect, useCallback } from 'react';
+
+interface Subject {
+  id: number;
+  subject: string;
+}
+
+interface ActiveDay {
+  id: number;
+  day: string;
+}
+
+interface TutorDetails {
+  full_name?: string;
+  subjects?: Subject[];
+  active_days?: ActiveDay[];
+  rating?: number;
+  review_count?: number;
+}
+
+export const useTutorDetails = (tutorId: string, isDrawerOpen: boolean) => {
+  const [tutor, setTutor] = useState<TutorDetails | null>(null);
+  const [activeDays, setActiveDays] = useState<string[]>([]);
+  const [activeDayMapping, setActiveDayMapping] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const fetchTutorDetails = useCallback(async () => {
+    setLoading(true);
+    if (tutorId) {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/tutors/${tutorId}`);
+        const data = await response.json();
+        
+        setTutor(data);
+
+        const daysList: string[] = [];
+        const daysMap: Record<string, number> = {};
+
+        data?.active_days?.forEach((dayInfo: ActiveDay) => {
+          daysList.push(dayInfo.day.slice(0, 3)); // Shorten day names to three letters
+          daysMap[dayInfo.day.slice(0, 3)] = dayInfo.id;
+        });
+
+        setActiveDays(daysList);
+        setActiveDayMapping(daysMap);
+      } catch (error) {
+        console.error("Error fetching tutor details:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  }, [tutorId]);
+
+  useEffect(() => {
+    if (isDrawerOpen && tutorId) {
+      fetchTutorDetails();
+    }
+  }, [isDrawerOpen, tutorId, fetchTutorDetails]);
+
+  return {
+    tutor,
+    activeDays,
+    activeDayMapping,
+    loading
+  };
+};
