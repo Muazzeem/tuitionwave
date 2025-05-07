@@ -11,6 +11,7 @@ import ConfirmationDialog from "@/components/ConfirmationDialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import ValidationAlert from "./CreateContract/ValidationAlert";
 import TutorHeader from "./CreateContract/TutorHeader";
 import SubjectSelector from "./CreateContract/SubjectSelector";

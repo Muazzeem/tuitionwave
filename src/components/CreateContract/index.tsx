@@ -49,7 +49,6 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState }> = ({ uid, d
   const {
     cities,
     areas,
-    filteredAreas,
     loadingCities,
     loadingAreas,
     studentCity,
@@ -295,7 +294,6 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState }> = ({ uid, d
               }}
               cities={cities}
               areas={areas}
-              filteredAreas={filteredAreas}
               loadingCities={loadingCities}
               loadingAreas={loadingAreas}
               cityError={errors.studentCity}

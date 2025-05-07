@@ -52,11 +52,14 @@ export const useLocationData = () => {
     }
   }, [toast]);
 
-  // Fetch areas from API
-  const fetchAreas = useCallback(async () => {
+  // Fetch areas from API based on selected city
+  const fetchAreas = useCallback(async (cityId?: string) => {
     setLoadingAreas(true);
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/areas/");
+      // If cityId is provided, use it to filter areas
+      const cityParam = cityId ? `?city=${cityId}` : '';
+      const response = await fetch(`http://127.0.0.1:8000/api/areas/${cityParam}`);
+      
       if (!response.ok) {
         throw new Error("Failed to fetch areas");
       }
@@ -74,9 +77,16 @@ export const useLocationData = () => {
     }
   }, [toast]);
 
-  // Update student city and area
+  // Update student city and trigger area fetch for that city
   const handleCityChange = (value: string) => {
     setStudentCity(value);
+    // Get the city name to use as parameter
+    const selectedCity = cities.find(city => city.id.toString() === value);
+    if (selectedCity) {
+      fetchAreas(selectedCity.name);
+    } else {
+      fetchAreas(); // Fetch all areas if no city is selected
+    }
     // Reset area when city changes
     setStudentArea("");
   };
