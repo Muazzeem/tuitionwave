@@ -34,8 +34,8 @@ const ChatList: React.FC<ChatListProps> = ({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 border-b border-gray-200">
-        <h2 className="text-xl font-bold mb-1">Messages</h2>
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-xl font-bold mb-1 dark:text-white">Messages</h2>
       </div>
 
       <ScrollArea className="flex-1">
@@ -45,8 +45,8 @@ const ChatList: React.FC<ChatListProps> = ({
               <div
                 key={chat.id}
                 className={`flex items-center p-3 mb-1 rounded-lg cursor-pointer ${activeChat?.id === chat.id
-                  ? "bg-blue-50"
-                  : "hover:bg-gray-100"
+                  ? "bg-blue-50 dark:bg-blue-900/30"
+                  : "hover:bg-gray-100 dark:hover:bg-gray-700/50"
                   }`}
                 onClick={() => onChatSelect(chat)}
               >
@@ -59,15 +59,15 @@ const ChatList: React.FC<ChatListProps> = ({
 
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-center">
-                    <h3 className="font-medium text-gray-900 truncate">
+                    <h3 className="font-medium text-gray-900 dark:text-white truncate">
                       {chat.name}
                     </h3>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
                       {format(chat.updatedAt, "HH:mm")}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <p className="text-sm text-gray-500 truncate">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                       {chat.lastMessage?.content || "Start a conversation"}
                     </p>
                     {chat.unreadCount > 0 && (
@@ -81,10 +81,10 @@ const ChatList: React.FC<ChatListProps> = ({
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button
-                      className="ml-2 p-1 rounded-full hover:bg-gray-200 focus:outline-none"
+                      className="ml-2 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <MoreHorizontal className="h-4 w-4 text-gray-500" />
+                      <MoreHorizontal className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
@@ -102,7 +102,7 @@ const ChatList: React.FC<ChatListProps> = ({
               </div>
             ))
           ) : (
-            <div className="p-4 text-center text-gray-500">
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
               No conversations found
             </div>
           )}

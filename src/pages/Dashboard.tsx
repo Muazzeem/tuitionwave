@@ -1,3 +1,4 @@
+
 import React from "react";
 import DashboardHeader from "@/components/DashboardHeader";
 import StatsCards from "@/components/StatsCards";
@@ -14,7 +15,7 @@ const Dashboard: React.FC = () => {
   const { completionData, loading, error } = useProfileCompletion();
 
   return (
-    <div className="flex-1 overflow-auto">
+    <div className="flex-1 overflow-auto bg-white dark:bg-gray-900">
       <DashboardHeader userName="John" />
 
       {userProfile?.user_type === "TEACHER" && completionData.completion_percentage < 80 && (
@@ -25,7 +26,7 @@ const Dashboard: React.FC = () => {
 
       {completionData.completion_percentage >= 80 && (
         <div className="p-6">
-          <h2 className="text-xl font-bold mb-6">Dashboard</h2>
+          <h2 className="text-xl font-bold mb-6 dark:text-white">Dashboard</h2>
 
           <StatsCards />
 

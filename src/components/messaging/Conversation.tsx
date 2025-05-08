@@ -270,7 +270,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Chat header */}
-      <div className="px-6 py-3 bg-white border-b border-gray-200 flex items-center justify-between">
+      <div className="px-6 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
         <div className="flex items-center">
           <Avatar className="h-10 w-10 mr-3">
             <AvatarImage src={chat.avatar} alt={chat.name} />
@@ -279,8 +279,8 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
             </AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="font-medium text-gray-900">{chat.name}</h3>
-            <p className="text-xs text-gray-500">
+            <h3 className="font-medium text-gray-900 dark:text-white">{chat.name}</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               {chat.participants.includes("user1") ? "Active now" : "Offline"}
             </p>
           </div>
@@ -304,7 +304,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
 
       {/* Messages area */}
       <ScrollArea
-        className="flex-1 p-4"
+        className="flex-1 p-4 dark:bg-gray-900"
         ref={scrollAreaRef}
       >
         <div className="space-y-4">
@@ -322,7 +322,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
                     <div
                       className={`p-3 rounded-lg ${isCurrentUser
                           ? "bg-blue-500 text-white"
-                          : "bg-gray-200 text-gray-900"
+                          : "bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-white"
                         }`}
                     >
                       {message.content}
@@ -330,7 +330,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
                   )}
 
                   {message.type === "image" && (
-                    <div className="rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                    <div className="rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                       <Dialog>
                         <DialogTrigger asChild>
                           <img
@@ -348,27 +348,27 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
                           />
                         </DialogContent>
                       </Dialog>
-                      <div className="p-2 text-xs text-gray-500">
+                      <div className="p-2 text-xs text-gray-500 dark:text-gray-400">
                         {message.fileName} • {formatFileSize(message.fileSize || 0)}
                       </div>
                     </div>
                   )}
 
                   {message.type === "file" && (
-                    <div className="p-3 rounded-lg bg-gray-100 border border-gray-200">
+                    <div className="p-3 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                       <a
                         href={message.fileUrl}
                         download={message.fileName}
                         className="flex items-center"
                       >
-                        <div className="bg-blue-100 rounded p-2 mr-3">
-                          <Paperclip className="h-6 w-6 text-blue-500" />
+                        <div className="bg-blue-100 dark:bg-blue-900 rounded p-2 mr-3">
+                          <Paperclip className="h-6 w-6 text-blue-500 dark:text-blue-400" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-blue-500 truncate">
+                          <p className="font-medium text-blue-500 dark:text-blue-400 truncate">
                             {message.fileName}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             {formatFileSize(message.fileSize || 0)}
                           </p>
                         </div>
@@ -377,7 +377,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
                   )}
 
                   {message.type === "audio" && (
-                    <div className="p-3 rounded-lg bg-gray-100 border border-gray-200">
+                    <div className="p-3 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                       <div className="flex items-center">
                         <Button
                           variant="ghost"
@@ -391,7 +391,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
                             <Play className="h-4 w-4" />
                           )}
                         </Button>
-                        <div className="w-32 h-2 bg-gray-300 rounded-full overflow-hidden">
+                        <div className="w-32 h-2 bg-gray-300 dark:bg-gray-600 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-blue-500"
                             style={{
@@ -400,7 +400,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
                             }}
                           />
                         </div>
-                        <span className="ml-2 text-xs text-gray-500">
+                        <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
                           {formatAudioDuration(message.audioDuration || 0)}
                         </span>
                       </div>
@@ -412,7 +412,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
                     className={`text-xs mt-1 flex items-center ${isCurrentUser ? "justify-end" : "justify-start"
                       }`}
                   >
-                    <span className="text-gray-500">
+                    <span className="text-gray-500 dark:text-gray-400">
                       {format(message.timestamp, "h:mm a")}
                     </span>
 
@@ -444,13 +444,13 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
           {/* Recording indicator */}
           {isRecording && (
             <div className="flex justify-center my-2">
-              <div className="bg-red-100 text-red-500 px-3 py-1 rounded-full text-xs flex items-center">
+              <div className="bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400 px-3 py-1 rounded-full text-xs flex items-center">
                 <span className="animate-pulse h-2 w-2 bg-red-500 rounded-full mr-2"></span>
                 Recording voice message... {formatAudioDuration(recordingTime)}
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-5 w-5 ml-2 text-red-500"
+                  className="h-5 w-5 ml-2 text-red-500 dark:text-red-400"
                   onClick={toggleRecording}
                 >
                   <X className="h-3 w-3" />
@@ -462,13 +462,13 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
       </ScrollArea>
 
       {/* Input area */}
-      <div className="px-4 py-3 bg-white border-t border-gray-200">
+      <div className="px-4 py-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
         <div className="flex items-center">
           <div className="flex space-x-2 mr-3">
             <Button
               variant="ghost"
               size="icon"
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               onClick={() => imageInputRef.current?.click()}
             >
               <Image className="h-5 w-5" />
@@ -484,7 +484,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
             <Button
               variant="ghost"
               size="icon"
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               onClick={() => fileInputRef.current?.click()}
             >
               <Paperclip className="h-5 w-5" />
@@ -499,7 +499,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
             <Button
               variant={isRecording ? "destructive" : "ghost"}
               size="icon"
-              className={`${isRecording ? "" : "text-gray-500 hover:text-gray-700"}`}
+              className={`${isRecording ? "" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
               onClick={toggleRecording}
             >
               {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
@@ -518,7 +518,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
           <Button
             variant="ghost"
             size="icon"
-            className="ml-3 text-blue-500"
+            className="ml-3 text-blue-500 dark:text-blue-400"
             onClick={handleSendMessage}
             disabled={!inputMessage.trim() || isRecording}
           >

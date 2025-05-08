@@ -66,7 +66,7 @@ const MessagingInterface: React.FC = () => {
   return (
     <div className="flex h-full">
       {/* Chat list sidebar */}
-      <div className="w-1/3 border-r border-gray-200 bg-white">
+      <div className="w-1/3 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <ChatList
           chats={chats}
           activeChat={activeChat}
@@ -76,7 +76,7 @@ const MessagingInterface: React.FC = () => {
       </div>
 
       {/* Conversation area */}
-      <div className="w-2/3 bg-gray-50">
+      <div className="w-2/3 bg-gray-50 dark:bg-gray-900">
         {activeChat ? (
           <Conversation
             chat={activeChat}
@@ -84,7 +84,7 @@ const MessagingInterface: React.FC = () => {
           />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <p className="text-gray-500">Select a chat to start messaging</p>
+            <p className="text-gray-500 dark:text-gray-400">Select a chat to start messaging</p>
           </div>
         )}
       </div>
