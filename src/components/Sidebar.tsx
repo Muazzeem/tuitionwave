@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Search, MessageSquare, User, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -28,14 +29,17 @@ const Sidebar = () => {
     };
 
     return (
-        <div className={`${isExpanded ? 'w-56' : 'w-16'} bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-500 relative`}>
+        <div className={`${isExpanded ? 'w-56' : 'w-16'} bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col h-screen transition-all duration-500 relative`}>
             <div className="p-3 flex justify-between items-center align-middle">
-                {isExpanded && <h1 className="text-xl font-bold mt-2">Tuition Wave</h1>}
+                {isExpanded && <h1 className="text-xl font-bold mt-2 dark:text-white">Tuition Wave</h1>}
                 <button
                     onClick={toggleSidebar}
-                    className="p-1 rounded-full hover:bg-gray-100"
+                    className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
-                    {isExpanded ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+                    {isExpanded ? 
+                        <ChevronLeft size={18} className="text-gray-700 dark:text-gray-300" /> : 
+                        <ChevronRight size={18} className="text-gray-700 dark:text-gray-300" />
+                    }
                 </button>
             </div>
 
@@ -51,7 +55,7 @@ const Sidebar = () => {
                                     to={item.path}
                                     className={`flex items-center px-4 py-2 text-sm ${isActive
                                         ? 'bg-blue-500 text-white'
-                                        : 'text-gray-700 hover:bg-blue-100'
+                                        : 'text-gray-700 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-900/30'
                                         } ${!isExpanded && 'justify-center'}`}
                                     title={!isExpanded ? item.text : ""}
                                 >
@@ -64,10 +68,10 @@ const Sidebar = () => {
                 </ul>
             </nav>
 
-            <div className="p-4 border-t border-gray-200">
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
                 <button 
                     onClick={handleLogout}
-                    className={`flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full ${!isExpanded && 'justify-center'}`} 
+                    className={`flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 w-full ${!isExpanded && 'justify-center'}`} 
                     title={!isExpanded ? "Logout" : ""}
                 >
                     <LogOut size={18} className={isExpanded ? "mr-2" : ""} />
@@ -79,4 +83,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
