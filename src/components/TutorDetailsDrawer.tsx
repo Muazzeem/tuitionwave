@@ -1,38 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Star, X } from "lucide-react";
 import ContactTutorDrawer from "@/components/ContactTutorDrawer";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { Tutor } from "@/types/tutor";
+import { Skeleton } from "@/components/ui/skeleton"; // Import the Skeleton component
 
 interface TutorDetailsDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  name: string;
-  university: string;
-  monthlyRate: number;
-  rating: number;
-  reviewCount: number;
-  image: string;
   uid: string;
 }
 
 const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
   isOpen,
   onClose,
-  name,
-  university,
-  monthlyRate,
-  rating,
-  reviewCount,
-  image,
   uid,
 }) => {
   const [isContactDrawerOpen, setIsContactDrawerOpen] = useState(false);
+  const [tutorDetails, setTutorDetails] = useState<Tutor | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const openContactDrawer = () => {
-    // Close the TutorDetailsDrawer
     onClose();
-    // Open the ContactTutorDrawer
     setIsContactDrawerOpen(true);
   };
 
@@ -40,10 +31,45 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
     setIsContactDrawerOpen(false);
   };
 
-  // Handle clicks inside the drawer to prevent propagation
   const stopPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
+
+  useEffect(() => {
+    const fetchTutorDetails = async () => {
+      if (!uid) return;
+
+      if (tutorDetails && tutorDetails.uid === uid) return;
+
+      setTutorDetails(null);
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/tutors/${uid}`);
+        if (!response.ok) {
+          const errorMessage = await response.text();
+          throw new Error(
+            `HTTP error! status: ${response.status}, message: ${errorMessage}`
+          );
+        }
+        const data: Tutor = await response.json();
+        setTutorDetails(data);
+      } catch (e: any) {
+        setError("Failed to load tutor details.");
+        console.error("Error fetching tutor details:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isOpen) {
+      fetchTutorDetails();
+    } else {
+      setTutorDetails(null);
+      setError(null);
+      setLoading(false);
+    }
+  }, [isOpen, uid]);
 
   return (
     <>
@@ -78,54 +104,149 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
           </div>
 
           <div className="p-4 md:p-6 flex-grow overflow-y-auto">
-            <img
-              src={image}
-              alt={name}
-              className="w-full h-48 md:h-64 object-cover rounded-lg mb-6"
-            />
-
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-semibold text-lg">{name}</h3>
-                <p className="text-gray-600">{university}</p>
+            {tutorDetails?.profile_picture_url ||
+            tutorDetails?.profile_picture ? (
+              <img
+                src={
+                  tutorDetails.profile_picture_url ||
+                  tutorDetails.profile_picture!
+                }
+                alt={`${tutorDetails.full_name}'s profile`}
+                className="w-full h-48 md:h-64 object-cover rounded-lg mb-6"
+              />
+            ) : (
+              <div className="w-full h-48 md:h-64 bg-gray-100 rounded-lg flex items-center justify-center mb-6">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-16 h-16 text-gray-400"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.125a.75.75 0 01-.75-.75V11.25a.75.75 0 01.75-.75h15.002a.75.75 0 01.75.75v8.125a.75.75 0 01-.75.75H4.501z"
+                  />
+                </svg>
               </div>
-
-              <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                <span className="font-medium">{rating}</span>
-                <span>({reviewCount} reviews)</span>
+            )}
+            {loading ? (
+              <div className="space-y-4">
+                <Skeleton className="w-32 h-8" /> {/* Skeleton for name */}
+                <div className="space-y-2">
+                  <h4 className="font-medium mt-4">
+                    <Skeleton className="w-24 h-5" />
+                  </h4>{" "}
+                  {/* Skeleton for "About Tutor" */}
+                  <Skeleton className="h-4" />
+                  <Skeleton className="h-4 w-4/5" />
+                  {/* Add more skeletons for other loading elements */}
+                  <div>
+                    <h4 className="font-medium text-base mt-4">
+                      <Skeleton className="w-20 h-5" />
+                    </h4>{" "}
+                    {/* Skeleton for "Subjects" */}
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      <Skeleton className="w-16 h-6 rounded-lg" />
+                      <Skeleton className="w-12 h-6 rounded-lg" />
+                      {/* Add more skeleton subject pills as needed */}
+                    </div>
+                  </div>
+                  <h4 className="font-medium mt-4">
+                    <Skeleton className="w-16 h-5" />
+                  </h4>{" "}
+                  {/* Skeleton for "Location" */}
+                  <Skeleton className="h-4 w-28" />
+                  <div>
+                    <h4 className="font-medium text-base mt-4">
+                      <Skeleton className="w-24 h-5" />
+                    </h4>{" "}
+                    {/* Skeleton for "Availability" */}
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-4 w-20" />
+                  </div>
+                </div>
               </div>
-
-              <div className="space-y-2">
-                <p className="font-medium">Monthly Rate: <span className="text-gray-900">{monthlyRate}</span></p>
-
-                <h4 className="font-medium mt-4">About Tutor</h4>
-                <p className="text-gray-700">
-                  Experienced tutor specializing in helping students excel in their studies.
-                  Personalized teaching approach that adapts to each student's unique learning style.
-                </p>
-
-                <h4 className="font-medium mt-4">Subjects</h4>
-                <div className="flex flex-wrap gap-2">
-                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-lg text-sm">Mathematics</span>
-                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-lg text-sm">Physics</span>
-                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-lg text-sm">Chemistry</span>
+            ) : error ? (
+              <div className="flex justify-center items-center h-full">
+                <p className="text-red-500">{error}</p>
+              </div>
+            ) : tutorDetails ? (
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold text-lg">
+                    {tutorDetails.full_name}
+                  </h3>
                 </div>
 
-                <h4 className="font-medium mt-4">Location</h4>
-                <p className="text-gray-700">Rajshahi</p>
+                <div className="space-y-2">
+                  <h4 className="font-medium mt-4">About Tutor</h4>
+                  <p className="text-gray-700">
+                    {tutorDetails.description || "No description provided."}
+                  </p>
 
-                <h4 className="font-medium mt-4">Availability</h4>
-                <p className="text-gray-700">Online, Home</p>
+                  {tutorDetails.subjects &&
+                    tutorDetails.subjects.length > 0 && (
+                      <div>
+                        <h4 className="font-medium text-base">Subjects</h4>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {tutorDetails.subjects.map((subject) => (
+                            <span
+                              key={subject.id}
+                              className="bg-blue-100 text-blue-800 px-3 py-1 rounded-lg text-sm"
+                            >
+                              {subject.subject}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                  <h4 className="font-medium mt-4">Location</h4>
+                  <p className="text-gray-700">Rajshahi</p>
+
+                  <div>
+                    <h4 className="font-medium text-base">Availability</h4>
+                    <div className="text-gray-700 mt-1">
+                      {tutorDetails.active_days &&
+                        tutorDetails.active_days.length > 0 && (
+                          <p>
+                            Days:{" "}
+                            {tutorDetails.active_days
+                              .map((day) => day.day)
+                              .join(", ")}
+                          </p>
+                        )}
+                      {tutorDetails.days_per_week !== null && (
+                        <p>Per Week: {tutorDetails.days_per_week}</p>
+                      )}
+                      {tutorDetails.teaching_type_display && (
+                        <p>
+                          Teaching Type: {tutorDetails.teaching_type_display}
+                        </p>
+                      )}
+                      {(tutorDetails.active_days === null ||
+                        tutorDetails.active_days.length === 0) &&
+                        tutorDetails.days_per_week === null &&
+                        !tutorDetails.teaching_type_display && (
+                          <p>Availability information not specified</p>
+                        )}
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : null}
           </div>
 
-          <div className="p-4 border-t">
-            <Button onClick={openContactDrawer} className="w-full">
-              Contact Tutor
-            </Button>
-          </div>
+          {tutorDetails && !loading && !error && (
+            <div className="p-4 border-t">
+              <Button onClick={openContactDrawer} className="w-full">
+                Contact Tutor
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 
 import React, { useEffect } from "react";
 import { cn } from "@/lib/utils";
-import CreateContract from "@/components/CreateContract";
+import CreateContract from "@/components/CreateContract/index";
 
 interface ContactTutorDrawerProps {
   isOpen: boolean;

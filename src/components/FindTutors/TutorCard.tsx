@@ -116,12 +116,6 @@ const TutorCard: React.FC<TutorCardProps> = ({
       <TutorDetailsDrawer
         isOpen={isDrawerOpen}
         onClose={closeDrawer}
-        name={name}
-        university={university}
-        monthlyRate={monthlyRate}
-        rating={rating}
-        reviewCount={reviewCount}
-        image={image}
         uid={uid}
       />
     </>

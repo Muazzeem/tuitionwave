@@ -49,6 +49,19 @@ export interface SalaryRange {
   display_range: string;
 }
 
+export interface City {
+  id: number;
+  name: string;
+  district: {
+    id: number;
+    name: string;
+    division: {
+      id: number;
+      name: string;
+    };
+  };
+}
+
 export interface Tutor {
   full_name: ReactNode;
   preferred_city: string;
@@ -58,7 +71,7 @@ export interface Tutor {
   user: any;
   uid: string;
   profile_picture_url: string | null;
-  city: string | null;
+  city: City;
   address: string;
   gender_display: string;
   birth_date: string | null;

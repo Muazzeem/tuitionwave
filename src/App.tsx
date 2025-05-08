@@ -21,7 +21,6 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import AuthGuard from "./components/AuthGuard";
 import FindTutorsList from "./components/FindTutors/FindTutors";
 import NotificationPage from "./pages/Notification";
-import CreateContract from "./components/CreateContract";
 import RegistrationPage from "./pages/RegistrationPage";
 import GuardianProfile from "./pages/Guardian/Profile";
 
@@ -89,12 +88,6 @@ const App = () => (
             } />
             
             {/* Protected routes for all authenticated users */}
-
-            <Route path="/create-contract/:id" element={
-              <AuthGuard>
-                <MainLayout><CreateContract /></MainLayout>
-              </AuthGuard>
-            } />
 
             <Route path="/notifications" element={
               <AuthGuard>
