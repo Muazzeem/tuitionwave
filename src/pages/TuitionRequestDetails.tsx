@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, FC } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -17,8 +18,8 @@ interface DetailItemProps {
 const DetailItem: FC<DetailItemProps> = ({ label, value }) => {
   return (
     <div className="flex items-center gap-2">
-      <dt className="font-medium text-gray-600 w-32 md:w-40">{label}:</dt>
-      <dd className="text-gray-900">{value !== undefined && value !== null ? value : "N/A"}</dd>
+      <dt className="font-medium text-gray-600 dark:text-gray-400 w-32 md:w-40">{label}:</dt>
+      <dd className="text-gray-900 dark:text-gray-200">{value !== undefined && value !== null ? value : "N/A"}</dd>
     </div>
   );
 };
@@ -182,19 +183,19 @@ const TuitionRequestDetails: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-auto">
+    <div className="flex-1 overflow-auto dark:bg-gray-900">
       <DashboardHeader userName={userProfile?.first_name || 'User'} />
       <div className="p-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold uppercase">
+          <h1 className="text-2xl font-bold uppercase dark:text-white">
             Request #{requestDetails?.uid.slice(0, 8)}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             Explore all the tuition request from guardian
           </p>
           <Button
             onClick={handleBack}
-            className="flex items-center text-gray-600 hover:text-gray-900 mb-4 bg-gray-100 hover:bg-gray-300 mt-6"
+            className="flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white mb-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 mt-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
@@ -202,7 +203,7 @@ const TuitionRequestDetails: React.FC = () => {
         </div>
 
         <div className="container">
-          <div className="bg-gray-50 rounded-lg shadow-sm p-6 border border-white-200 ">
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-white-200 dark:border-gray-700">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <DetailItem
@@ -256,12 +257,12 @@ const TuitionRequestDetails: React.FC = () => {
 
             {showRejection && (
               <div className="mt-6 space-y-4">
-                <h3 className="text-lg font-medium">Details About Rejection</h3>
+                <h3 className="text-lg font-medium dark:text-white">Details About Rejection</h3>
                 <Textarea
                   placeholder="Write about rejection of the request"
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
-                  className="min-h-[120px]"
+                  className="min-h-[120px] dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
                 <div className="flex justify-end">
                   <Button onClick={confirmReject}>Submit</Button>
@@ -307,7 +308,7 @@ const TuitionRequestDetails: React.FC = () => {
                       <>
                         <Button
                           variant="outline"
-                          className="w-[200px]"
+                          className="w-[200px] dark:border-gray-600 dark:text-gray-200"
                           onClick={handleReject}
                         >
                           Reject

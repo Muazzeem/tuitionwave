@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -83,7 +84,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
       case "pending":
         return "text-tuitionwave-yellow";
       default:
-        return "text-gray-500";
+        return "text-gray-500 dark:text-gray-400";
     }
   };
 
@@ -101,8 +102,8 @@ const RequestRow: React.FC<RequestRowProps> = ({
   };
 
   return (
-    <tr className="border-b border-gray-100">
-      <td className="py-3 px-2 text-sm uppercase">
+    <tr className="border-b border-gray-100 dark:border-gray-700">
+      <td className="py-3 px-2 text-sm uppercase dark:text-gray-300">
         #{request.uid.slice(0, 8)}
       </td>
       <td className="py-3 px-2">
@@ -115,18 +116,18 @@ const RequestRow: React.FC<RequestRowProps> = ({
             />
           </div>
           <div>
-            <p className="text-sm font-medium">{request.tutor.full_name}</p>
-            <p className="text-xs text-gray-500">
+            <p className="text-sm font-medium dark:text-white">{request.tutor.full_name}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               {request.tutor.institute?.name}
             </p>
           </div>
         </div>
       </td>
-      <td className="py-3 px-2 text-sm">
+      <td className="py-3 px-2 text-sm dark:text-gray-300">
         {request.subjects.map((s) => s.subject).join(", ")}
       </td>
-      <td className="py-3 px-2 text-sm">{request.contract_duration} Month</td>
-      <td className="py-3 px-2 text-sm">৳{request.proposed_salary}</td>
+      <td className="py-3 px-2 text-sm dark:text-gray-300">{request.contract_duration} Month</td>
+      <td className="py-3 px-2 text-sm dark:text-gray-300">৳{request.proposed_salary}</td>
       <td className="py-3 px-2">
         <div className="flex items-center">
           <span
@@ -145,7 +146,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
             <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
               <span className="sr-only">Open menu</span>
               <svg
-                className="h-4 w-4"
+                className="h-4 w-4 dark:text-gray-300"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth="2"
@@ -215,17 +216,17 @@ const RecentRequests: React.FC = () => {
   });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="dark:text-white">Loading...</div>;
   }
 
   if (error) {
-    return <div>Error loading requests</div>;
+    return <div className="dark:text-white">Error loading requests</div>;
   }
 
   return (
-    <div className="bg-white p-4 rounded-md shadow-none border border-gray-100">
+    <div className="bg-white dark:bg-gray-800 p-4 rounded-md shadow-none border border-gray-100 dark:border-gray-700">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold">Recent Request</h2>
+        <h2 className="text-lg font-bold dark:text-white">Recent Request</h2>
         <Link to="/all-requests">
           <Button className="text-sm text-tuitionwave-blue hover:underline text-white">
             View All
@@ -236,7 +237,7 @@ const RecentRequests: React.FC = () => {
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="text-left text-xs text-gray-500 border-b border-gray-200">
+            <tr className="text-left text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
               <th className="py-2 px-2">Req. ID</th>
               <th className="py-2 px-2">Tutor Name</th>
               <th className="py-2 px-2">Subject</th>
