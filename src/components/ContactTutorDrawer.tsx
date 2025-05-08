@@ -40,7 +40,7 @@ const ContactTutorDrawer: React.FC<ContactTutorDrawerProps> = ({ isOpen, onClose
       {/* Drawer */}
       <div
         className={cn(
-          "fixed inset-y-0 right-0 z-70 w-full md:w-1/2 lg:w-1/3 transform transition-all duration-300 ease-in-out bg-white shadow-xl",
+          "fixed inset-y-0 right-0 z-70 w-full md:w-1/2 lg:w-1/3 transform transition-all duration-300 ease-in-out bg-white dark:bg-gray-900 shadow-xl",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
         onClick={stopPropagation}
