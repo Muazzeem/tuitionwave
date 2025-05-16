@@ -27,10 +27,10 @@ const ReviewItem = ({ name, comment, rating, date }: ReviewItemProps) => (
         ))}
         <span className="ml-1 text-sm text-gray-600">{rating.toFixed(1)}</span>
       </div>
-      <span className="text-sm text-gray-500">{date}</span>
+      <span className="text-sm text-gray-500 dark:text-gray-400">{date}</span>
     </div>
 
-    <p className="my-4 text-gray-700">{comment}</p>
+    <p className="my-4 text-gray-700 dark:text-gray-300">{comment}</p>
 
     <div className="flex items-center">
       <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
@@ -63,7 +63,7 @@ const RatingsSummary = ({ feedbacks }: { feedbacks: FeedbackItem[] }) => {
   });
 
   return (
-    <div className="p-6 bg-gray-50 rounded-lg">
+    <div className="p-6 bg-gray-50 rounded-lg dark:bg-gray-800 shadow-md">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-xl font-bold">{avgRating} Rating</h3>
         {parseFloat(avgRating) >= 4.5 && (
@@ -83,16 +83,16 @@ const RatingsSummary = ({ feedbacks }: { feedbacks: FeedbackItem[] }) => {
         ))}
       </div>
 
-      <p className="text-sm text-gray-500 mb-6">Based on {feedbacks.length}+ Reviews</p>
+      <p className="text-sm text-gray-500 mb-6 dark:text-gray-300">Based on {feedbacks.length}+ Reviews</p>
 
       {ratingCounts.map(({ rating, count, percentage }) => (
         <div key={rating} className="flex items-center mb-3">
-          <span className="w-3 text-gray-600 mr-2">{rating}</span>
+          <span className="w-3 text-gray-600 mr-2 dark:text-gray-300">{rating}</span>
           <Progress
-            className="h-2 flex-1 bg-gray-200"
+            className="h-2 flex-1 bg-gray-200 dark:text-gray-200"
             value={percentage}
           />
-          <span className="w-8 text-right text-xs text-gray-600 ml-2">
+          <span className="w-8 text-right text-xs text-gray-600 ml-2 dark:text-gray-300">
             {count.toString().padStart(2, '0')}
           </span>
         </div>
@@ -168,7 +168,10 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ id, condition }) => {
 
   return (
     <div className='container-fluid'>
-        <div className="container mx-auto px-4 py-12">
+      <div className='mt-5'>
+        {/* <RatingsSummary feedbacks={feedbacks} /> */}
+      </div>
+        <div className="mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-3">
               <Tabs defaultValue="reviews">
@@ -188,7 +191,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ id, condition }) => {
                 </TabsList>
 
                 <TabsContent value="description" className="pt-6">
-                  <p className="text-gray-700">
+                  <p className="text-gray-700 dark:text-gray-300">
                     {tutorData?.description || "No description available."}
                   </p>
                 </TabsContent>

@@ -26,7 +26,7 @@ const DaySelector: React.FC<DaySelectorProps> = ({
 
   return (
     <div>
-      <h3 className="mb-3 text-gray-600 text-md">
+      <h3 className="mb-3 text-gray-600 text-md dark:text-gray-300">
         Select Days <span className="text-red-500">*</span>
       </h3>
       <ToggleGroup

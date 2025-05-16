@@ -93,7 +93,7 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
         )}
       >
         <div
-          className="h-full flex flex-col bg-white shadow-xl overflow-y-auto"
+          className="h-full flex flex-col bg-white shadow-xl overflow-y-auto dark:bg-gray-900"
           onClick={stopPropagation}
         >
           <div className="flex justify-between items-center p-4 border-b">
@@ -228,7 +228,7 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
                       </div>
 
                   <div>
-                    <div className="text-gray-700 mt-1">
+                    <div className="text-gray-700 mt-1 dark:text-gray-300">
                       
                       {tutorDetails.days_per_week !== null && (
                         <p>Per Week: {tutorDetails.days_per_week}</p>
@@ -249,7 +249,7 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
 
           {tutorDetails && !loading && !error && (
             <div className="p-4 border-t">
-              <Button onClick={openContactDrawer} className="w-full">
+              <Button onClick={openContactDrawer} className="w-full min-h-[55px] dark:text-white">
                 Contact Tutor
               </Button>
             </div>

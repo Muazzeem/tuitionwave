@@ -136,6 +136,8 @@ const MyRequest: React.FC = () => {
         return "text-red-500";
       case "Pending":
         return "text-yellow-500";
+      case "Completed":
+        return "text-green-500";
       default:
         return "";
     }
@@ -149,6 +151,8 @@ const MyRequest: React.FC = () => {
         return "bg-red-500";
       case "Pending":
         return "bg-yellow-500";
+      case "Completed":
+        return "bg-green-500";
       default:
         return "";
     }

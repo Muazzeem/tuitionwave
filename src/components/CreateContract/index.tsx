@@ -403,10 +403,10 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState }> = ({ uid, d
           </div>
           
           <div className="flex justify-center">
-            <div className="w-full sm:w-auto">
+            <div className="w-full">
               {userProfile?.user_type === "GUARDIAN" && (
                 <Button
-                  className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 mt-6 rounded-md"
+                  className="w-full min-h-[55px] dark:text-white"
                   onClick={handleSendRequest}
                   disabled={submitting}
                 >

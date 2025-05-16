@@ -23,7 +23,7 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
 }) => {
   return (
     <div className="mt-5">
-      <h3 className="mb-3 text-gray-600 text-md">
+      <h3 className="mb-3 text-gray-600 text-md dark:text-gray-300">
         Select Subject <span className="text-red-500">*</span>
       </h3>
       <ToggleGroup

@@ -60,7 +60,7 @@ const TutorCard: React.FC<TutorCardProps> = ({
   return (
     <>
       <div
-        className="bg-white rounded-lg overflow-hidden cursor-pointer dark:bg-gray-800"
+        className="bg-white rounded-lg overflow-hidden cursor-pointer dark:bg-gray-800 border dark:border-gray-700 shadow-md hover:shadow-lg transition-shadow duration-300"
         onClick={openDrawer}
       >
         <div className="relative w-100" style={{ paddingBottom: "56.25%" }}>
