@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,6 +24,9 @@ import FindTutorsList from "./components/FindTutors/FindTutors";
 import NotificationPage from "./pages/Notification";
 import RegistrationPage from "./pages/RegistrationPage";
 import GuardianProfile from "./pages/Guardian/Profile";
+import FAQPage from "./pages/FAQPage";
+import TermsPage from "./pages/TermsPage";
+import HowItWorksPage from "./pages/HowItWorksPage";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +85,9 @@ const App = () => (
             <Route path="/auth/registration" element={<RegistrationPage />} />
             <Route path="/tutor/:id" element={<TutorProfile />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
+            <Route path="/faq" element={<FAQPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/find-tutors" element={
               <AuthGuard>
                 <MainLayout><FindTutorsList /></MainLayout>
@@ -88,7 +95,6 @@ const App = () => (
             } />
             
             {/* Protected routes for all authenticated users */}
-
             <Route path="/notifications" element={
               <AuthGuard>
                 <MainLayout><NotificationPage /></MainLayout>
