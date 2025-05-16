@@ -26,20 +26,15 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="font-medium mb-4 text-gray-800 dark:text-gray-200">Short links</h3>
             <ul className="space-y-2">
-              <li><Link to="/features" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Features</Link></li>
               <li><Link to="/how-it-works" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">How it works</Link></li>
-              <li><Link to="/security" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Security</Link></li>
-              <li><Link to="/testimonial" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Testimonial</Link></li>
             </ul>
           </div>
 
           <div>
             <h3 className="font-medium mb-4 text-gray-800 dark:text-gray-200">Other pages</h3>
             <ul className="space-y-2">
-              <li><Link to="/privacy-policy" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Privacy policy</Link></li>
               <li><Link to="/terms" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">Terms & conditions</Link></li>
               <li><Link to="/faq" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">FAQ</Link></li>
-              <li><Link to="/404" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">404</Link></li>
             </ul>
           </div>
         </div>
