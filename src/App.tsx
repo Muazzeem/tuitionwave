@@ -27,6 +27,7 @@ import GuardianProfile from "./pages/Guardian/Profile";
 import FAQPage from "./pages/FAQPage";
 import TermsPage from "./pages/TermsPage";
 import HowItWorksPage from "./pages/HowItWorksPage";
+import JobPreparationPage from "./pages/JobPreparationPage";
 
 const queryClient = new QueryClient();
 
@@ -88,6 +89,7 @@ const App = () => (
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
+            <Route path="/job-preparation" element={<JobPreparationPage />} />
             <Route path="/find-tutors" element={
               <AuthGuard>
                 <MainLayout><FindTutorsList /></MainLayout>
