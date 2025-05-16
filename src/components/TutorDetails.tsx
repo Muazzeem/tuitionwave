@@ -5,6 +5,7 @@ import { Star, Calendar } from "lucide-react";
 import { Tutor } from "@/types/tutor";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import ReviewSection from "./ReviewSection";
 
 
 
@@ -12,7 +13,6 @@ const TutorDetails: React.FC = () => {
   const { userProfile } = useAuth();
   const [loading, setLoading] = useState<boolean>(true);
   const { id } = useParams();
-  const { toast } = useToast();
   const navigate = useNavigate();
   const [tutor, setTutor] = useState<Tutor | null>(null);
   const [submitting, setSubmitting] = useState<boolean>(false);
@@ -40,7 +40,8 @@ const TutorDetails: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="container-fluid">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
           <img
@@ -90,7 +91,10 @@ const TutorDetails: React.FC = () => {
           )}
         </div>
       </div>
+      </div>
+      <ReviewSection id={id} condition={'True'} />
     </div>
+    
   );
 };
 

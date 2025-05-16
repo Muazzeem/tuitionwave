@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ChevronDown, User, LogOut, Settings } from "lucide-react";
 import NotificationDropdown from "./NotificationDropdown";
 import { useAuth } from "@/contexts/AuthContext";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface HeaderProps {
   userName: string;
@@ -25,17 +26,18 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
   };
 
   return (
-    <div className="flex justify-between items-center py-1 px-6 border-b border-gray-200 bg-white">
+    <div className="flex justify-between items-center py-1 px-6 border-b border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700">
       <h1 className="text-xl font-bold">
         Welcome Back, {userProfile?.first_name}!
       </h1>
 
       <div className="flex items-center gap-4">
+        <ThemeToggle />
         <NotificationDropdown onMarkAllRead={handleMarkAllNotificationsRead} />
 
         <div className="relative">
           <div
-            className="flex items-center gap-2 cursor-pointer rounded-lg hover:bg-gray-100 p-2"
+            className="flex items-center gap-2 cursor-pointer rounded-lg hover:bg-gray-100 p-2 dark:hover:bg-gray-700"
             onClick={toggleDropdown}
           >
             {userProfile.user_type === "TEACHER" ? (
@@ -66,13 +68,13 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
           </div>
 
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200">
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
               <a
                 href={`/profile/${userProfile?.user_type?.toLowerCase()}`}
                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
                 <User className="h-4 w-4 mr-2" />
-                Profile
+                <span className="text-gray-700 dark:text-white">Profile</span>
                 <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
                   {userProfile?.user_type?.toLowerCase() === "guardian"
                     ? "Guardian"

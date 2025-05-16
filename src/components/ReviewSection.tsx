@@ -101,8 +101,12 @@ const RatingsSummary = ({ feedbacks }: { feedbacks: FeedbackItem[] }) => {
   );
 };
 
-const ReviewSection: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+interface ReviewSectionProps {
+  id: string;
+  condition?: string;
+}
+
+const ReviewSection: React.FC<ReviewSectionProps> = ({ id, condition }) => {
   const [tutorData, setTutorData] = useState<any>(null);
   const [feedbacks, setFeedbacks] = useState<FeedbackItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -164,10 +168,9 @@ const ReviewSection: React.FC = () => {
 
   return (
     <div className='container-fluid'>
-      <Card>
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="md:col-span-2">
+            <div className="md:col-span-3">
               <Tabs defaultValue="reviews">
                 <TabsList className="border-b w-full justify-start rounded-none bg-transparent p-0">
                   <TabsTrigger
@@ -207,13 +210,8 @@ const ReviewSection: React.FC = () => {
                 </TabsContent>
               </Tabs>
             </div>
-
-            <div className="md:col-span-1">
-              <RatingsSummary feedbacks={feedbacks} />
-            </div>
           </div>
         </div>
-      </Card>
     </div>
   );
 };

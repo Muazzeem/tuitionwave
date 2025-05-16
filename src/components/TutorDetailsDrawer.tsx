@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Star, X } from "lucide-react";
+import { X } from "lucide-react";
 import ContactTutorDrawer from "@/components/ContactTutorDrawer";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Tutor } from "@/types/tutor";
 import { Skeleton } from "@/components/ui/skeleton"; // Import the Skeleton component
+import ReviewSection from "./ReviewSection";
 
 interface TutorDetailsDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   uid: string;
+  image: string;
 }
 
 const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
   isOpen,
   onClose,
   uid,
+  image,
 }) => {
   const [isContactDrawerOpen, setIsContactDrawerOpen] = useState(false);
   const [tutorDetails, setTutorDetails] = useState<Tutor | null>(null);
@@ -104,14 +107,10 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
           </div>
 
           <div className="p-4 md:p-6 flex-grow overflow-y-auto">
-            {tutorDetails?.profile_picture_url ||
-            tutorDetails?.profile_picture ? (
+            {image || tutorDetails?.profile_picture ? (
               <img
-                src={
-                  tutorDetails.profile_picture_url ||
-                  tutorDetails.profile_picture!
-                }
-                alt={`${tutorDetails.full_name}'s profile`}
+                src={image}
+                alt={`${tutorDetails?.full_name}'s profile`}
                 className="w-full h-48 md:h-64 object-cover rounded-lg mb-6"
               />
             ) : (
@@ -180,18 +179,15 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
                     {tutorDetails.full_name}
                   </h3>
                 </div>
-
-                <div className="space-y-2">
-                  <h4 className="font-medium mt-4">About Tutor</h4>
-                  <p className="text-gray-700">
-                    {tutorDetails.description || "No description provided."}
-                  </p>
-
+                
+                <div className="space-y-4">
                   {tutorDetails.subjects &&
                     tutorDetails.subjects.length > 0 && (
-                      <div>
-                        <h4 className="font-medium text-base">Subjects</h4>
-                        <div className="flex flex-wrap gap-2 mt-1">
+                      <div className="flex items-center gap-2 mb-5">
+                        <div className="flex items-center gap-1">
+                          <span className="font-medium">Subjects</span>
+                        </div>
+                        <div className="ml-auto flex gap-2">
                           {tutorDetails.subjects.map((subject) => (
                             <span
                               key={subject.id}
@@ -204,29 +200,40 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
                       </div>
                     )}
 
-                  <h4 className="font-medium mt-4">Location</h4>
-                  <p className="text-gray-700">Rajshahi</p>
 
-                  <div>
-                    <h4 className="font-medium text-base">Availability</h4>
-                    <div className="text-gray-700 mt-1">
-                      {tutorDetails.active_days &&
+                      <div className="flex items-center gap-2 mb-5">
+                        <div className="flex items-center gap-1">
+                          <span className="font-medium">Preferred Time</span>
+                        </div>
+                        <div className="ml-auto flex gap-2">
+                        {tutorDetails?.preferred_time}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 mb-5">
+                        <div className="flex items-center gap-1">
+                          <span className="font-medium">Availability Days</span>
+                        </div>
+                        <div className="ml-auto flex gap-2">
+                        {tutorDetails.active_days &&
                         tutorDetails.active_days.length > 0 && (
-                          <p>
-                            Days:{" "}
+                          <span>
+                            {" "}
                             {tutorDetails.active_days
                               .map((day) => day.day)
                               .join(", ")}
-                          </p>
+                          </span>
                         )}
+                        </div>
+                      </div>
+
+                  <div>
+                    <div className="text-gray-700 mt-1">
+                      
                       {tutorDetails.days_per_week !== null && (
                         <p>Per Week: {tutorDetails.days_per_week}</p>
                       )}
-                      {tutorDetails.teaching_type_display && (
-                        <p>
-                          Teaching Type: {tutorDetails.teaching_type_display}
-                        </p>
-                      )}
+                      <ReviewSection id={uid} condition='False' />
                       {(tutorDetails.active_days === null ||
                         tutorDetails.active_days.length === 0) &&
                         tutorDetails.days_per_week === null &&

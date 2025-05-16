@@ -75,14 +75,14 @@ const SearchSection: React.FC = () => {
           <p className="text-xl">FIND A RIGHT TUTOR IN YOUR AREA.</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-gray-800 font-medium text-lg mb-4">
+        <div className="bg-white rounded-lg shadow-lg p-6 dark:bg-gray-900">
+          <h3 className="text-gray-800 font-medium text-lg mb-4 dark:text-white">
             SEARCH TUTOR
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">
+              <label className="block text-xs text-gray-500 mb-1 dark:text-white">
                 Institution
               </label>
               <Select 
@@ -91,16 +91,16 @@ const SearchSection: React.FC = () => {
                 value={selectedInstitution}
                 onValueChange={handleInstitutionSelect}
               >
-                <SelectTrigger className="w-full text-black">
-                  <SelectValue placeholder="Institution" className="text-black" />
+                <SelectTrigger className="w-full text-black dark:text-white">
+                  <SelectValue placeholder="Institution" className="text-black dark:text-white" />
                 </SelectTrigger>
                 <SelectContent>
-                  <div className="p-2 sticky top-0 bg-white z-10">
+                  <div className="p-2 sticky top-0 bg-white z-10 dark:bg-gray-900">
                     <Input
                       placeholder="Search Institution..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="h-8 focus-visible:ring-1 focus-visible:ring-offset-0 text-black"
+                      className="h-8 focus-visible:ring-1 focus-visible:ring-offset-0 text-black dark:text-white"
                       onClick={(e) => e.stopPropagation()}
                     />
                   </div>
@@ -116,7 +116,7 @@ const SearchSection: React.FC = () => {
                         </SelectItem>
                       ))
                     ) : (
-                      <div className="p-2 text-sm text-gray-500">
+                      <div className="p-2 text-sm text-gray-500 dark:text-white">
                         No institutions found.
                       </div>
                     )}
@@ -126,8 +126,8 @@ const SearchSection: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs text-gray-500 mb-1">City</label>
-              <select className="w-full h-10 px-3 rounded-md border border-input bg-background text-black">
+              <label className="block text-xs text-gray-500 mb-1 dark:text-white">City</label>
+              <select className="w-full h-10 px-3 rounded-md border border-input bg-background text-black dark:text-white">
                 <option>Dhaka</option>
                 <option>Chittagong</option>
                 <option>Sylhet</option>
@@ -135,10 +135,10 @@ const SearchSection: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs text-gray-500 mb-1">
+              <label className="block text-xs text-gray-500 mb-1 dark:text-white">
                 Subject
               </label>
-              <select className="w-full h-10 px-3 rounded-md border border-input bg-background text-black">
+              <select className="w-full h-10 px-3 rounded-md border border-input bg-background text-black dark:text-white">
                 <option>English</option>
                 <option>Mathematics</option>
                 <option>Science</option>
@@ -150,15 +150,15 @@ const SearchSection: React.FC = () => {
             <div className="flex space-x-4">
               <label className="flex items-center space-x-2">
                 <input type="radio" name="gender" className="h-4 w-4" />
-                <span className="text-gray-600">Male</span>
+                <span className="text-gray-600 dark:text-white">Male</span>
               </label>
               <label className="flex items-center space-x-2">
                 <input type="radio" name="gender" className="h-4 w-4" />
-                <span className="text-gray-600">Female</span>
+                <span className="text-gray-600 dark:text-white">Female</span>
               </label>
             </div>
 
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 dark:text-white">
               SEARCH TUTOR
             </Button>
           </div>

@@ -108,6 +108,7 @@ export interface Tutor {
   teaching_type?: string;
   collage_name?: string;
   id?: number;
+  preferred_time?: string;
 }
 
 export interface TutorListResponse {

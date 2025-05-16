@@ -60,7 +60,7 @@ const TutorCard: React.FC<TutorCardProps> = ({
   return (
     <>
       <div
-        className="bg-white rounded-lg overflow-hidden cursor-pointer"
+        className="bg-white rounded-lg overflow-hidden cursor-pointer dark:bg-gray-800"
         onClick={openDrawer}
       >
         <div className="relative w-100" style={{ paddingBottom: "56.25%" }}>
@@ -71,7 +71,7 @@ const TutorCard: React.FC<TutorCardProps> = ({
           />
         </div>
         <div className="p-4">
-          <p className="text-gray-600 text-sm">{university}</p>
+          <p className="text-gray-600 text-sm dark:text-gray-300">{university}</p>
           <h3 className="text-lg font-semibold mt-1 text-shadow-lg">{name}</h3>
           <div className="flex items-center gap-1 mt-2 mb-5">
               <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
@@ -81,10 +81,10 @@ const TutorCard: React.FC<TutorCardProps> = ({
               </span>
           </div>
           <div className="flex items-center gap-2 mb-5">
-          <div className="flex items-center gap-1">
-              <MapPin className="w-4 h-4 text-dark-400" />
-              <span className="font-medium">{division}</span>
-          </div>
+            <div className="flex items-center gap-1">
+                <MapPin className="w-4 h-4 text-dark-400" />
+                <span className="font-medium">{division}</span>
+            </div>
             <div className="ml-auto flex gap-2">
               {teaching_type === "ONLINE" && (
                 <Badge className="bg-green-100 text-green-800 hover:bg-green-200 rounded-lg">
@@ -104,7 +104,7 @@ const TutorCard: React.FC<TutorCardProps> = ({
             </div>
           </div>
           <Button
-            className="w-full text-blue-600 bg-white border border-blue-600 hover:bg-blue-50 uppercase"
+            className="w-full text-blue-600 bg-white border border-blue-600 hover:bg-blue-50 uppercase dark:bg-black dark:border-gray-600 dark:text-gray-300"
             onClick={openDrawer}
           >
             View Details
@@ -117,6 +117,7 @@ const TutorCard: React.FC<TutorCardProps> = ({
         isOpen={isDrawerOpen}
         onClose={closeDrawer}
         uid={uid}
+        image={image}
       />
     </>
   );

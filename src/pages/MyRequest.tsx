@@ -447,7 +447,7 @@ const MyRequest: React.FC = () => {
               />
             </div>
             <div className="flex justify-end gap-3 mt-6">
-              <Button
+              <Button className="dark:text-gray-300 hover:dark:bg-gray-700"
                 variant="outline"
                 onClick={() => {
                   const searchDialog = document.getElementById(
@@ -460,7 +460,7 @@ const MyRequest: React.FC = () => {
               >
                 Cancel
               </Button>
-              <Button
+              <Button className="dark:text-gray-300"
                 onClick={() => {
                   setCurrentPage(1);
                   setIsSearching(true);

@@ -211,16 +211,16 @@ const GeneralSettings = () => {
     }
 
     return (
-        <div className="p-6 space-y-8">
+        <div className="p-6 space-y-8 dark:bg-gray-900">
             <div>
-                <h2 className="text-lg font-semibold text-gray-900">General</h2>
-                <p className="text-gray-500 mt-1">Manage general settings for your account</p>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">General</h2>
+                <p className="text-gray-500 mt-1 dark:text-white">Manage general settings for your account</p>
             </div>
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <ScrollArea type="always" style={{ height: 'calc(83vh - 160px)' }}>
                     <div>
-                        <h3 className="font-medium text-gray-900 mb-1">Profile Picture</h3>
-                        <p className="text-sm text-gray-500 mb-4">Upload a profile image.</p>
+                        <h3 className="font-medium text-gray-900 mb-1 dark:text-gray-300">Profile Picture</h3>
+                        <p className="text-sm text-gray-500 mb-4 dark:text-gray-300">Upload a profile image.</p>
                         <div className="flex items-center gap-4">
                             <Avatar className="h-16 w-16">
                                 {previewUrl ? (
@@ -258,34 +258,34 @@ const GeneralSettings = () => {
                     <div className="mt-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="text-sm text-gray-600 mb-1.5 block">First name</label>
+                                <label className="text-sm text-gray-600 mb-1.5 block dark:text-gray-300">First name</label>
                                 <Input 
                                     name="first_name"
                                     value={profileData.first_name}
                                     onChange={handleInputChange}
                                     placeholder="John" 
-                                    className="bg-white" 
+                                    className="bg-white dark:bg-black" 
                                 />
                             </div>
                             <div>
-                                <label className="text-sm text-gray-600 mb-1.5 block">Last name</label>
+                                <label className="text-sm text-gray-600 mb-1.5 block dark:text-gray-300">Last name</label>
                                 <Input 
                                     name="last_name"
                                     value={profileData.last_name}
                                     onChange={handleInputChange}
                                     placeholder="Milton" 
-                                    className="bg-white" 
+                                    className="bg-white dark:bg-black" 
                                 />
                             </div>
                         </div>
                     </div>
                     <Separator className="my-4" />
                     <div>
-                        <h3 className="font-medium text-gray-900 mb-1">Contact Information</h3>
-                        <p className="text-sm text-gray-500 mb-4">Type your contact information.</p>
+                        <h3 className="font-medium text-gray-900 mb-1 dark:text-white">Contact Information</h3>
+                        <p className="text-sm text-gray-500 mb-4 dark:text-white">Type your contact information.</p>
                         <div className="space-y-4">
                             <div>
-                                <label className="text-sm text-gray-600 mb-1.5 block">Email Address</label>
+                                <label className="text-sm text-gray-600 mb-1.5 block dark:text-gray-300">Email Address</label>
                                 <div className="relative">
                                     <Input 
                                         name="email"
@@ -293,13 +293,13 @@ const GeneralSettings = () => {
                                         onChange={handleInputChange}
                                         type="email" 
                                         placeholder="oliverjack@gmail.com" 
-                                        className="pl-10 bg-white"
+                                        className="pl-10 bg-white dark:bg-black"
                                     />
                                     <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
                                 </div>
                             </div>
                             <div>
-                                <label className="text-sm text-gray-600 mb-1.5 block">Phone Number</label>
+                                <label className="text-sm text-gray-600 mb-1.5 block dark:text-gray-300">Phone Number</label>
                                 <div className="flex gap-2">
                                     <Select
                                         value={'bd'}
@@ -318,7 +318,7 @@ const GeneralSettings = () => {
                                         value={profileData.phone}
                                         onChange={handleInputChange}
                                         placeholder="1632 960001" 
-                                        className="flex-1 bg-white" 
+                                        className="flex-1 bg-white dark:bg-black" 
                                     />
                                 </div>
                             </div>
@@ -328,11 +328,11 @@ const GeneralSettings = () => {
                     <Separator className="my-4" />
 
                     <div>
-                        <h3 className="font-medium text-gray-900 mb-1">Location</h3>
-                        <p className="text-sm text-gray-500 mb-4">Select your global location.</p>
+                        <h3 className="font-medium text-gray-900 mb-1 dark:text-white">Location</h3>
+                        <p className="text-sm text-gray-500 mb-4 dark:text-white">Select your current location.</p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="text-sm text-gray-600 mb-1.5 block">Country</label>
+                                <label className="text-sm text-gray-600 mb-1.5 block dark:text-gray-300">Country</label>
                                 <Select 
                                     value={'bd'}
                                     onValueChange={(value) => handleSelectChange('country', value)}
@@ -347,7 +347,7 @@ const GeneralSettings = () => {
                                 </Select>
                             </div>
                             <div>
-                                <label className="text-sm text-gray-600 mb-1.5 block">City</label>
+                                <label className="text-sm text-gray-600 mb-1.5 block dark:text-gray-300">City</label>
                                 <Select 
                                     value={profileData.city}
                                     onValueChange={(value) => handleSelectChange('city', value)}
@@ -377,7 +377,7 @@ const GeneralSettings = () => {
                         </Button>
                         <Button 
                             type="submit"
-                            className="px-6 bg-blue-600 hover:bg-blue-700"
+                            className="px-6 bg-blue-600 hover:bg-blue-700 dark:text-gray-300"
                             disabled={isSaving}
                         >
                             {isSaving ? (

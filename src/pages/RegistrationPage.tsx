@@ -146,7 +146,7 @@ const RegistrationPage = () => {
       {/* Right section with form */}
       <div className="w-full md:w-1/2 flex items-center justify-center py-8 px-4">
         <div className="w-full max-w-2xl p-4">
-          <div className="bg-white rounded-lg p-6 shadow-sm border">
+          <div className="bg-white rounded-lg p-6 shadow-sm border dark:bg-gray-900">
             {currentStep === 1 && (
               <RegistrationForm 
                 onSubmit={handleRegistrationSubmit} 

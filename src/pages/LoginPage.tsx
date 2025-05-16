@@ -97,7 +97,7 @@ const LoginPage: React.FC = () => {
       <div className="w-full md:w-1/2 flex items-center justify-center">
         <div className="w-full max-w-2xl">
           {step === 1 ? (
-            <div className="bg-white rounded-lg p-6 shadow-sm border">
+            <div className="bg-white rounded-lg p-6 shadow-sm border dark:bg-gray-900">
               <h2 className="text-2xl font-bold text-center mb-6">Login as {userType === 'tutor' ? 'Tutor' : 'Guardian'}</h2>
               
               <RadioGroup 
@@ -117,7 +117,7 @@ const LoginPage: React.FC = () => {
               </RadioGroup>
               
               <Button 
-                className="w-full min-h-[55px] bg-blue-600 hover:bg-blue-700" 
+                className="w-full min-h-[55px] bg-blue-600 hover:bg-blue-700 dark:text-white" 
                 onClick={handleContinue}
                 disabled={loading}
               >
@@ -129,9 +129,9 @@ const LoginPage: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-lg p-6 shadow-sm border">
+            <div className="bg-white rounded-lg p-6 shadow-sm border dark:bg-gray-900">
               <h2 className="text-2xl font-bold mb-2">Log in to {userType === 'tutor' ? 'Tutor' : 'Guardian'} Panel</h2>
-              <p className="text-gray-500 mb-6">Welcome! Please enter your details.</p>
+              <p className="text-gray-500 mb-6 dark:text-gray-400">Welcome! Please enter your email and password.</p>
               
               <form onSubmit={handleLogin}>
                 <div className="space-y-4">
@@ -180,7 +180,7 @@ const LoginPage: React.FC = () => {
                   
                   <Button 
                     type="submit" 
-                    className="w-full min-h-[55px] bg-blue-600 hover:bg-blue-700 mt-2"
+                    className="w-full min-h-[55px] bg-blue-600 hover:bg-blue-700 mt-2 dark:text-white"
                     disabled={loading}
                   >
                     {loading ? 'Logging in...' : 'Log in'}

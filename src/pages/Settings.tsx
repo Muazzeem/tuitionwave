@@ -1,8 +1,4 @@
-
-import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Bell } from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import GeneralSettings from '@/components/GeneralSettings';
 import PasswordSettings from '@/components/PasswordSettings';
 import DashboardHeader from '@/components/DashboardHeader';

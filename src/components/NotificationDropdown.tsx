@@ -32,7 +32,7 @@ interface NotificationItem {
     description: string;
     target_content_type: number | null;
     target_object_id: string | null;
-    target: null;
+    target: string | null;
     action_object_content_type: number | null;
     action_object_object_id: string | null;
     action_object: ActionObject | null;
@@ -218,7 +218,7 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
                         )}
                     </div>
 
-                    <div className="max-h-80 overflow-y-auto">
+                    <div className="max-h-80 overflow-y-auto dark:bg-gray-800">
                         {loading ? (
                             <div className="px-4 py-6 text-center text-gray-500">
                                 <p>Loading notifications...</p>
