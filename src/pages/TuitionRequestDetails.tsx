@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Contract } from "@/types/contract";
 import { useAuth } from "@/contexts/AuthContext";
 import { useConfirmationDialog } from "@/components/useConfirmationDialog";
+import ReviewModal from "@/components/ReviewModal";
 
 interface DetailItemProps {
   label: string;
@@ -36,6 +37,7 @@ const TuitionRequestDetails: React.FC = () => {
   const [rejectionReason, setRejectionReason] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
   const [requestDetails, setRequestDetails] = useState<Contract | null>(null);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
   const { showConfirmationDialog, Confirmation: ConfirmationComponent } =
     useConfirmationDialog();
 
@@ -186,7 +188,7 @@ const TuitionRequestDetails: React.FC = () => {
   };
 
   const handleWriteReview = () => {
-    navigate(`/write-review/${id}`);
+    setIsReviewModalOpen(true);
   };
 
   const getBgColorClass = (status) => {
@@ -412,6 +414,11 @@ const TuitionRequestDetails: React.FC = () => {
         </div>
       </div>
       <ConfirmationComponent />
+      <ReviewModal 
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        contractId={id || ""}
+      />
     </div>
   );
 };
