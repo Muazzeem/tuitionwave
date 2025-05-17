@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getAccessToken } from "@/utils/auth";
 
 interface ReviewModalProps {
   isOpen: boolean;
@@ -61,8 +62,8 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
     setSubmitting(true);
     
     try {
-      const accessToken = localStorage.getItem("accessToken");
-      const response = await fetch(`http://127.0.0.1:8000/api/feedbacks/`, {
+      const accessToken = getAccessToken();
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/feedbacks/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

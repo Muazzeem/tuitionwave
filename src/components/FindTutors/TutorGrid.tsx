@@ -15,7 +15,7 @@ const TutorGrid = () => {
   const fetchTutors = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://127.0.0.1:8000/api/tutors/?page=${page}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tutors/?page=${page}`);
       
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);

@@ -33,7 +33,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
     mutationFn: async (contractUid: string) => {
       const accessToken = getAccessToken();
       const response = await fetch(
-        `http://127.0.0.1:8000/api/contracts/${contractUid}/`,
+        `${import.meta.env.VITE_API_URL}/api/contracts/${contractUid}/`,
         {
           method: "DELETE",
           headers: {
@@ -203,7 +203,7 @@ const RecentRequests: React.FC = () => {
     queryKey: ["contracts"],
     queryFn: async () => {
       const accessToken = getAccessToken();
-      const response = await fetch("http://127.0.0.1:8000/api/contracts", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/contracts`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

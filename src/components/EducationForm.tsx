@@ -47,9 +47,9 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
     useEffect(() => {
         const fetchLookUpData = async () => {
           try {
-                const degreeResponse = await axios.get('http://127.0.0.1:8000/api/degrees/');
-                const instituteResponse = await axios.get('http://127.0.0.1:8000/api/institutes/');
-                // const departmentResponse = await axios.get('http://127.0.0.1:8000/api/department/');
+                const degreeResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/degrees/`);
+                const instituteResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/institutes/`);
+                // const departmentResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/department/`);
 
                 setAvailableDegrees(degreeResponse.data);
                 setAvailableInstitutes(instituteResponse.data);
@@ -72,7 +72,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
     const fetchEducationData = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`http://127.0.0.1:8000/api/tutors/my-profile`, 
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/tutors/my-profile`, 
           {
             method: "GET",
             headers: {
@@ -148,7 +148,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
       }
       
       await axios.put(
-        `http://127.0.0.1:8000/api/tutors/c021858d-00ca-4395-907b-1603c6666e88/`, // Use the uid
+        `${import.meta.env.VITE_API_URL}/api/tutors/c021858d-00ca-4395-907b-1603c6666e88/`, // Use the uid
         formDataToSend,
         {
           headers: {

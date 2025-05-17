@@ -20,7 +20,7 @@ export const ProfileCompletionProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/tutors/profile-completion`,
+        `${import.meta.env.VITE_API_URL}/api/tutors/profile-completion`,
         {
           method: "GET",
           headers: {

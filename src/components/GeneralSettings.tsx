@@ -53,7 +53,7 @@ const GeneralSettings = () => {
                 throw new Error('Authentication token not found');
             }
 
-            const response = await fetch('http://127.0.0.1:8000/api/profile/', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -149,7 +149,7 @@ const GeneralSettings = () => {
                     formData.append('profile_picture', '');
                 }
 
-                response = await fetch('http://127.0.0.1:8000/api/profile/', {
+                response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/`, {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
@@ -162,7 +162,7 @@ const GeneralSettings = () => {
                 // Filter out profile_picture to avoid sending it as string
                 const { profile_picture, ...dataToSend } = profileData;
                 
-                response = await fetch('http://127.0.0.1:8000/api/profile/', {
+                response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/`, {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,

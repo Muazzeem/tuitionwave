@@ -1,10 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import TutorCard from './TutorCard';
 import { Tutor, TutorListResponse } from '@/types/tutor';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Card } from './ui/card';
 
 const TutorSearchResults: React.FC = () => {
   const [tutors, setTutors] = useState<Tutor[]>([]);
@@ -15,7 +15,7 @@ const TutorSearchResults: React.FC = () => {
     const fetchTutors = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/tutors/`);  
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tutors`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch tutors');
@@ -80,5 +80,8 @@ const TutorSearchResults: React.FC = () => {
     </div>
   );
 };
+
+// Import Card component to use in the loading skeleton
+import { Card } from './ui/card';
 
 export default TutorSearchResults;

@@ -29,7 +29,7 @@ export const useTutorDetails = (tutorId: string, isDrawerOpen: boolean) => {
     setLoading(true);
     if (tutorId) {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/tutors/${tutorId}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tutors/${tutorId}`);
         const data = await response.json();
         
         setTutor(data);

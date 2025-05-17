@@ -112,7 +112,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ id, condition }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const BASE_URL = 'http://127.0.0.1:8000';
+  const BASE_URL = `${import.meta.env.VITE_API_URL}`;
 
   useEffect(() => {
     const fetchTutorData = async () => {

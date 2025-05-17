@@ -23,7 +23,7 @@ const SearchSection: React.FC = () => {
 
   const fetchInstitutions = useCallback(async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/institutes/");
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/institutes/`);
       if (!response.ok) {
         throw new Error(`Failed to fetch institutions: ${response.status}`);
       }

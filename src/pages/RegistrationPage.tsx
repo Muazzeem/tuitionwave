@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Step } from '@/components/ProfileStepper';
 import RegistrationForm from '@/components/Registration/RegistrationForm';
 import OTPVerification from '@/components/Registration/OTPVerification';
@@ -29,7 +29,7 @@ const RegistrationPage = () => {
 
   const handleRegistrationSubmit = async (formData: RegistrationData) => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/auth/registration/', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/registration/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ const RegistrationPage = () => {
 
   const handleOTPVerify = async (otp: string) => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/auth/verify-otp/', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/verify-otp/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ const RegistrationPage = () => {
       formData.append('email', registrationData.email);
       formData.append('nid_document', nidFile);
 
-      const response = await fetch('http://127.0.0.1:8000/auth/upload-nid/', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/upload-nid/`, {
         method: 'POST',
         body: formData,
       });
@@ -133,7 +133,9 @@ const RegistrationPage = () => {
         
         {/* Logo */}
         <div className="absolute top-6 left-6">
-          <h1 className="text-2xl font-bold text-white">Tuition Wave</h1>
+          <Link to={'/'}>
+            <h1 className="text-2xl font-bold text-white">Tuition Wave</h1>
+          </Link>
         </div>
         
         {/* Welcome message */}

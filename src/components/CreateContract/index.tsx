@@ -19,6 +19,7 @@ import LocationFields from "./LocationFields";
 import { useTutorDetails } from "./useTutorDetails";
 import { useFormValidation } from "./useFormValidation";
 import { useLocationData } from "./useLocationData";
+import { getAccessToken } from "@/utils/auth";
 
 interface DrawerState {
   isOpen: boolean;
@@ -157,10 +158,10 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState }> = ({ uid, d
 
     console.log("Sending contract request:", payload);
 
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = getAccessToken();
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/contracts/", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/contracts/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,

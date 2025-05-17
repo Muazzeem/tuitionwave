@@ -23,7 +23,7 @@ const StatsCards: React.FC = () => {
     queryKey: ['contracts'],
     queryFn: async () => {
       const accessToken = getAccessToken();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/contracts`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/contracts`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
         },

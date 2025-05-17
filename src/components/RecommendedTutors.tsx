@@ -16,7 +16,7 @@ const RecommendedTutors: React.FC = () => {
     const fetchTutors = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://127.0.0.1:8000/api/tutors');
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tutors`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch tutors');

@@ -101,7 +101,7 @@ const MyRequest: React.FC = () => {
       const accessToken = getAccessToken();
       const queryString = buildQueryString();
       const response = await fetch(
-        `http://127.0.0.1:8000/api/contracts?${queryString}`,
+        `${import.meta.env.VITE_API_URL}/api/contracts?${queryString}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

@@ -9,6 +9,7 @@ import { Contract } from "@/types/contract";
 import { useAuth } from "@/contexts/AuthContext";
 import { useConfirmationDialog } from "@/components/useConfirmationDialog";
 import ReviewModal from "@/components/ReviewModal";
+import { getAccessToken } from "@/utils/auth";
 
 interface DetailItemProps {
   label: string;
@@ -43,10 +44,10 @@ const TuitionRequestDetails: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = getAccessToken();
 
     if (id) {
-      fetch(`http://127.0.0.1:8000/api/contracts/${id}`, {
+      fetch(`${import.meta.env.VITE_API_URL}/api/contracts/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -73,10 +74,10 @@ const TuitionRequestDetails: React.FC = () => {
   };
 
   const confirmDelete = () => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = getAccessToken();
 
     if (id) {
-      fetch(`http://127.0.0.1:8000/api/contracts/${id}/`, {
+      fetch(`${import.meta.env.VITE_API_URL}/api/contracts/${id}/`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -110,10 +111,10 @@ const TuitionRequestDetails: React.FC = () => {
   };
 
   const confirmAccept = () => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = getAccessToken();
 
     if (id) {
-      fetch(`http://127.0.0.1:8000/api/contracts/${id}/confirm/`, {
+      fetch(`${import.meta.env.VITE_API_URL}/api/contracts/${id}/confirm/`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -152,10 +153,10 @@ const TuitionRequestDetails: React.FC = () => {
       return;
     }
 
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = getAccessToken();
 
     if (id) {
-      fetch(`http://127.0.0.1:8000/api/contracts/${id}/reject/`, {
+      fetch(`${import.meta.env.VITE_API_URL}/api/contracts/${id}/reject/`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${accessToken}`,

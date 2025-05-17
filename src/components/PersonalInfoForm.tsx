@@ -53,7 +53,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
     const fetchProfileData = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`http://127.0.0.1:8000/api/tutors/my-profile`, 
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/tutors/my-profile`, 
           {
             method: "GET",
             headers: {
@@ -140,7 +140,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
       // Add other fields as needed
       
       await axios.put(
-        `http://127.0.0.1:8000/api/tutors/${formData.uid}/`,
+        `${import.meta.env.VITE_API_URL}/api/tutors/${formData.uid}/`,
         formDataToSend,
         {
           headers: {

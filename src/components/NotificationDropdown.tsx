@@ -66,7 +66,7 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
             setLoading(true);
             setError(null);
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notifications`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications`, {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
                     },

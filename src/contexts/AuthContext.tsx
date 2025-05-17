@@ -32,7 +32,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         throw new Error('No access token found');
       }
       
-      const response = await fetch('http://127.0.0.1:8000/api/profile/', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

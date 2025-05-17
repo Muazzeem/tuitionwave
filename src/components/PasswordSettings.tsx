@@ -14,7 +14,7 @@ const PasswordSettings = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const { toast } = useToast();
-    const apiEndpoint = 'http://127.0.0.1:8000/auth/password/change/'; // Your API endpoint
+    const apiEndpoint = `${import.meta.env.VITE_API_URL}/auth/password/change/`; // Your API endpoint
     const accessToken = getAccessToken();
 
     const handleChangePassword = async () => {

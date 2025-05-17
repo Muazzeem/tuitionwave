@@ -79,7 +79,7 @@ const NotificationsPage: React.FC = () => {
         setError(null);
         try {
             // Construct URL with query parameters
-            let url = `http://127.0.0.1:8000/api/notifications?page=${currentPage}`;
+            let url = `${import.meta.env.VITE_API_URL}/api/notifications?page=${currentPage}`;
             if (filterType) {
                 url += `&level=${filterType}`;
             }
@@ -111,7 +111,7 @@ const NotificationsPage: React.FC = () => {
 
     const markAsRead = async (id: number) => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/notifications/mark-read/${id}/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/mark-read/${id}/`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -146,7 +146,7 @@ const NotificationsPage: React.FC = () => {
 
     const markAllAsRead = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/notifications/mark-all-read/', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/mark-all-read/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -179,7 +179,7 @@ const NotificationsPage: React.FC = () => {
 
     const removeNotification = async (id: number) => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/notifications/${id}/delete/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/${id}/delete/`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,

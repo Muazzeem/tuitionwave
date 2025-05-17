@@ -20,7 +20,7 @@ const TutorDetails: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     if (id) {
-      fetch(`http://127.0.0.1:8000/api/tutors/${id}`, {
+      fetch(`${import.meta.env.VITE_API_URL}/api/tutors/${id}`, {
       })
         .then((response) => response.json())
         .then((data) => {

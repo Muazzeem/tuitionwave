@@ -30,7 +30,7 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/token/`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/token/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,7 +83,9 @@ const LoginPage: React.FC = () => {
         
         {/* Logo */}
         <div className="absolute top-6 left-6">
-          <h1 className="text-2xl font-bold text-white">Tuition Wave</h1>
+          <Link to={'/'}>
+            <h1 className="text-2xl font-bold text-white">Tuition Wave</h1>
+          </Link>
         </div>
         
         {/* Welcome message */}

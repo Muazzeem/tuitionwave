@@ -41,7 +41,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
     const fetchSubjects = async (page = 1) => {
         try {
             const response = await axios.get<PaginatedResponse<Subject>>(
-                `http://127.0.0.1:8000/api/subjects/?page=${page}`
+                `${import.meta.env.VITE_API_URL}/api/subjects/?page=${page}`
             );
             setSubjects(response.data.results);
             setSubjectsTotalPages(response.data.total_pages);
@@ -91,9 +91,9 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
     // Fetch active days, districts, and areas
     const fetchLookupData = async () => {
         try {
-            const activeDayResponse = await axios.get<PaginatedResponse<ActiveDay>>('http://127.0.0.1:8000/api/active-days/');
-            const districtResponse = await axios.get<PaginatedResponse<District>>('http://127.0.0.1:8000/api/districts/');
-            const areaResponse = await axios.get<PaginatedResponse<Area>>('http://127.0.0.1:8000/api/areas/');
+            const activeDayResponse = await axios.get<PaginatedResponse<ActiveDay>>(`${import.meta.env.VITE_API_URL}/api/active-days/`);
+            const districtResponse = await axios.get<PaginatedResponse<District>>(`${import.meta.env.VITE_API_URL}/api/districts/`);
+            const areaResponse = await axios.get<PaginatedResponse<Area>>(`${import.meta.env.VITE_API_URL}/api/areas/`);
 
             setActiveDays(activeDayResponse.data.results);
             setDistricts(districtResponse.data.results);
@@ -125,7 +125,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
         const fetchTuitionData = async () => {
             try {
                 setIsLoading(true);
-                const response = await axios.get(`http://127.0.0.1:8000/api/tutors/my-profile`,
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/tutors/my-profile`,
                     {
                         headers: {
                             Authorization: `Bearer ${accessToken}`,
@@ -192,7 +192,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
             };
 
             await axios.put(
-                `http://127.0.0.1:8000/api/tutors/c021858d-00ca-4395-907b-1603c6666e88/`,
+                `${import.meta.env.VITE_API_URL}/api/tutors/c021858d-00ca-4395-907b-1603c6666e88/`,
                 formDataToSend,
                 {
                     headers: {
