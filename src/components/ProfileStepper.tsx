@@ -1,6 +1,7 @@
+
 import React from 'react';
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, ArrowRight } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 
 export interface Step {
   id: number;
@@ -17,59 +18,38 @@ interface ProfileStepperProps {
 export const ProfileStepper: React.FC<ProfileStepperProps> = ({ steps, currentStep, onNext, onPrev }) => {
   return (
     <div className="relative">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-6">
         {steps.map((step, index) => {
           const isActive = step.id === currentStep;
           const isCompleted = step.id < currentStep;
           
           return (
-            <div key={step.id} className="flex flex-col items-center relative z-10 w-1/3">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white ${
-                isActive ? 'bg-blue-600' : 
-                isCompleted ? 'bg-green-500' : 'bg-gray-200'
-              }`}>
-                {step.id < currentStep ? (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
+            <div key={step.id} className="flex flex-col items-center relative z-10">
+              <div 
+                className={`w-12 h-12 rounded-full flex items-center justify-center text-white 
+                  ${isActive ? 'bg-blue-600' : 
+                    isCompleted ? 'bg-green-500' : 'bg-gray-200'}`}
+              >
+                {isCompleted ? (
+                  <Check className="w-5 h-5" />
                 ) : (
-                  <span>{step.id}</span>
+                  <span className="font-semibold">{String(step.id).padStart(2, '0')}</span>
                 )}
               </div>
-              <span className="mt-2 text-sm font-medium">{step.title}</span>
+              <span className={`mt-2 text-sm font-medium ${isActive ? 'text-blue-600' : isCompleted ? 'text-green-500' : 'text-gray-400'}`}>
+                {step.title}
+              </span>
+              {index < steps.length - 1 && (
+                <div 
+                  className={`absolute h-0.5 top-6 w-full -right-1/2 z-0 
+                    ${index < currentStep - 1 ? 'bg-green-500' : 
+                      index === currentStep - 1 && currentStep > 1 ? 'bg-blue-600' : 'bg-gray-200'}`}
+                />
+              )}
             </div>
           );
         })}
       </div>
-      
-      {/* Connecting lines */}
-      <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200 -z-10" />
-      <div 
-        className="absolute top-5 left-0 h-0.5 bg-blue-600 -z-5 transition-all duration-300"
-        style={{ 
-          width: `${(currentStep - 1) * 50}%`,
-        }}
-      />
-        <div className="flex justify-between mt-4">
-            <Button
-                variant="outline"
-                size="icon"
-                onClick={onPrev}
-                disabled={currentStep === 1}
-                className="rounded-full"
-            >
-                <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <Button
-                variant="outline"
-                size="icon"
-                onClick={onNext}
-                disabled={currentStep === steps.length}
-                className="rounded-full"
-            >
-                <ArrowRight className="h-4 w-4" />
-            </Button>
-        </div>
     </div>
   );
 };

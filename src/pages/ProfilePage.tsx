@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import DashboardHeader from '@/components/DashboardHeader';
 import { Step, ProfileStepper } from '@/components/ProfileStepper';
@@ -5,10 +6,25 @@ import PersonalInfoForm from '@/components/PersonalInfoForm';
 import ProfileCompletionAlert from '@/components/ProfileCompletionAlert';
 import { ProfileFormData } from '@/types/tutor';
 import EducationForm from '@/components/EducationForm';
+import TuitionForm from '@/components/TuitionForm';
+import { useProfileCompletion } from '@/components/ProfileCompletionContext';
 
 const ProfilePage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
-  const [formData, setFormData] = useState<ProfileFormData>({
+  const { completionData } = useProfileCompletion();
+  
+  const [formData, setFormData] = useState<ProfileFormData & {
+    daysPerWeek: string;
+    teachingType: string;
+    minSalary: string;
+    maxSalary: string;
+    minHourlyCharge: string;
+    maxHourlyCharge: string;
+    subjects: string[];
+    activeDays: string[];
+    preferredDistricts: string[];
+    preferredAreas: string[];
+  }>({
     full_name: '',
     address: '',
     gender: '',
@@ -56,7 +72,7 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  const updateFormData = (partialData: Partial<ProfileFormData>) => {
+  const updateFormData = (partialData: Partial<typeof formData>) => {
     setFormData({ ...formData, ...partialData });
   };
 
@@ -70,7 +86,7 @@ const ProfilePage: React.FC = () => {
         <ProfileCompletionAlert />
 
         <div className="flex justify-center w-full">
-          <div className="col-6 w-1/2">
+          <div className="col-6 w-full md:w-2/3 lg:w-1/2">
             <div className="bg-white p-8 rounded-lg border">
               <ProfileStepper
                 steps={steps}
@@ -97,14 +113,14 @@ const ProfilePage: React.FC = () => {
                   />
                 )}
 
-                {/* {currentStep === 3 && (
+                {currentStep === 3 && (
                   <TuitionForm
                     formData={formData}
                     updateFormData={updateFormData}
                     onNext={handleNext}
                     onPrev={handleBack}
                   />
-                )} */}
+                )}
               </div>
             </div>
           </div>

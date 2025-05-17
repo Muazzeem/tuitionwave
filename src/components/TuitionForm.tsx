@@ -1,5 +1,4 @@
 import { ActiveDay, Area, District, Subject } from "@/types/tutor";
-
 import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,6 +11,52 @@ import { getAccessToken } from '@/utils/auth';
 import PaginatedMultiSelect from "@/components/MultiSelect";
 import MultiSelect from "@/components/MultiSelect";
 
+
+interface TuitionFormProps {
+    formData: TuitionFormData;
+    updateFormData: (data: Partial<TuitionFormData>) => void;
+    onNext: () => void;
+    onPrev: () => void;
+}
+
+interface TuitionFormData {
+    daysPerWeek: string;
+    teachingType: string;
+    minSalary: string;
+    maxSalary: string;
+    minHourlyCharge: string;
+    maxHourlyCharge: string;
+    subjects: string[];
+    activeDays: string[];
+    preferredDistricts: string[];
+    preferredAreas: string[];
+}
+
+interface TuitionInfoResponse {
+    days_per_week: number;
+    teaching_type_display: string;
+    expected_salary: {
+        min_amount: number;
+        max_amount: number;
+    } | null;
+    expected_hourly_charge: {
+        min_amount: number;
+        max_amount: number;
+    } | null;
+    subjects: { id: number; subject: string }[];
+    active_days: { id: number; day: string }[];
+    preferred_districts: { id: number; name: string }[];
+    preferred_areas: { id: number; name: string }[];
+}
+
+interface PaginatedResponse<T> {
+    count: number;
+    total_pages: number;
+    current_page: number;
+    next: string | null;
+    previous: string | null;
+    results: T[];
+}
 
 const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onNext, onPrev }) => {
     const { toast } = useToast();
@@ -270,6 +315,9 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
             label: area.name
         }));
     };
+
+    const [selectedPreferredDistricts, setSelectedPreferredDistricts] = useState<string[]>(formData.preferredDistricts || []);
+    const [selectedPreferredAreas, setSelectedPreferredAreas] = useState<string[]>(formData.preferredAreas || []);
 
     return (
         <div className="space-y-6">

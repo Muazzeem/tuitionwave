@@ -1,3 +1,4 @@
+
 import { ReactNode } from "react";
 
 export interface User {
@@ -142,8 +143,7 @@ export interface EducationData {
   year: string;
 }
 
-
-interface TuitionFormData {
+export interface TuitionFormData {
   daysPerWeek: string;
   teachingType: string;
   minSalary: string;
@@ -156,7 +156,7 @@ interface TuitionFormData {
   preferredAreas: string[];
 }
 
-interface TuitionInfoResponse {
+export interface TuitionInfoResponse {
   days_per_week: number;
   teaching_type_display: string;
   expected_salary: {
@@ -173,7 +173,7 @@ interface TuitionInfoResponse {
   preferred_areas: { id: number; name: string }[];
 }
 
-interface PaginatedResponse<T> {
+export interface PaginatedResponse<T> {
   count: number;
   total_pages: number;
   current_page: number;
@@ -181,31 +181,3 @@ interface PaginatedResponse<T> {
   previous: string | null;
   results: T[];
 }
-
-interface SubjectList {
-  id: number;
-  subject: string;
-}
-
-interface ActiveDayList {
-  id: number;
-  day: string;
-}
-
-interface DistrictList {
-  id: number;
-  name: string;
-}
-
-interface AreaList {
-  id: number;
-  name: string;
-}
-
-interface TuitionFormProps {
-  formData: TuitionFormData;
-  updateFormData: (data: Partial<TuitionFormData>) => void;
-  onNext: () => void;
-  onPrev: () => void;
-}
-
