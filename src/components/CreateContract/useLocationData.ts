@@ -34,7 +34,7 @@ export const useLocationData = () => {
   const fetchCities = useCallback(async () => {
     setLoadingCities(true);
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/cities/");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/cities/`);
       if (!response.ok) {
         throw new Error("Failed to fetch cities");
       }
@@ -58,7 +58,7 @@ export const useLocationData = () => {
     try {
       // If cityId is provided, use it to filter areas
       const cityParam = cityId ? `?city=${cityId}` : '';
-      const response = await fetch(`http://127.0.0.1:8000/api/areas/${cityParam}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/areas/${cityParam}`);
       
       if (!response.ok) {
         throw new Error("Failed to fetch areas");

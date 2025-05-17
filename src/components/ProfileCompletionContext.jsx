@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getAccessToken } from "@/utils/auth";
 
@@ -19,7 +20,7 @@ export const ProfileCompletionProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await fetch(
-        "http://127.0.0.1:8000/api/tutors/profile-completion",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/tutors/profile-completion`,
         {
           method: "GET",
           headers: {

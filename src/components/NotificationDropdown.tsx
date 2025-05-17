@@ -32,7 +32,7 @@ interface NotificationItem {
     description: string;
     target_content_type: number | null;
     target_object_id: string | null;
-    target: string | null;
+    target: ActionObject | null;
     action_object_content_type: number | null;
     action_object_object_id: string | null;
     action_object: ActionObject | null;
@@ -66,7 +66,7 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
             setLoading(true);
             setError(null);
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/notifications', {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notifications`, {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
                     },
@@ -92,7 +92,7 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
 
     const markAsRead = async (id: number) => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/notifications/mark-read/${id}/`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notifications/mark-read/${id}/`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -117,7 +117,7 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
 
     const handleMarkAllRead = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/notifications/mark-all-read/', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notifications/mark-all-read/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -137,7 +137,7 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
 
     const removeNotification = async (id: number) => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/notifications/${id}/delete/`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notifications/${id}/delete/`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,

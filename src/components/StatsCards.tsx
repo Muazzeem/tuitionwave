@@ -23,7 +23,7 @@ const StatsCards: React.FC = () => {
     queryKey: ['contracts'],
     queryFn: async () => {
       const accessToken = getAccessToken();
-      const response = await fetch('http://127.0.0.1:8000/api/contracts', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/contracts`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
         },
