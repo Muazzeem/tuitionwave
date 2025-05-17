@@ -15,7 +15,7 @@ const TutorSearchResults: React.FC = () => {
     const fetchTutors = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:8000/api/tutors');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/tutors/`);  
         
         if (!response.ok) {
           throw new Error('Failed to fetch tutors');

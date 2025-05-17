@@ -22,9 +22,9 @@ const TutorHeader: React.FC<TutorHeaderProps> = ({
           {Array.from({ length: Math.floor(rating || 4) }).map((_, index) => (
             <Star key={index} className="w-5 h-5 fill-current" />
           ))}
-          <span className="ml-1 text-black">{rating?.toFixed(1) || "4.0"}</span>
+          <span className="ml-1 text-black dark:text-white">{rating?.toFixed(1) || "4.0"}</span>
         </div>
-        <span className="text-gray-500">({reviewCount || 20} reviews)</span>
+        <span className="text-gray-500 dark:text-white">({reviewCount || 20} reviews)</span>
       </div>
     </>
   );

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -17,29 +16,43 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
   onClose,
   contractId,
 }) => {
-  const [rating, setRating] = useState<number>(0);
-  const [review, setReview] = useState<string>("");
+  const [teachingStyleRating, setTeachingStyleRating] = useState<number>(0);
+  const [timeManagementRating, setTimeManagementRating] = useState<number>(0);
+  const [behaviorRating, setBehaviorRating] = useState<number>(0);
+  const [comment, setComment] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
   const { toast } = useToast();
 
-  const handleStarClick = (selectedRating: number) => {
-    setRating(selectedRating);
+  const handleStarClick = (category: string, selectedRating: number) => {
+    switch (category) {
+      case "teaching":
+        setTeachingStyleRating(selectedRating);
+        break;
+      case "timeManagement":
+        setTimeManagementRating(selectedRating);
+        break;
+      case "behavior":
+        setBehaviorRating(selectedRating);
+        break;
+      default:
+        break;
+    }
   };
 
   const handleSubmitReview = async () => {
-    if (rating === 0) {
+    if (teachingStyleRating === 0 || timeManagementRating === 0 || behaviorRating === 0) {
       toast({
-        title: "Rating Required",
-        description: "Please select a star rating before submitting.",
+        title: "Ratings Required",
+        description: "Please provide ratings for all categories before submitting.",
         variant: "destructive",
       });
       return;
     }
 
-    if (!review.trim()) {
+    if (!comment.trim()) {
       toast({
-        title: "Review Required",
-        description: "Please write a review before submitting.",
+        title: "Comment Required",
+        description: "Please write a comment before submitting.",
         variant: "destructive",
       });
       return;
@@ -49,16 +62,18 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
     
     try {
       const accessToken = localStorage.getItem("accessToken");
-      const response = await fetch(`http://127.0.0.1:8000/api/reviews/`, {
+      const response = await fetch(`http://127.0.0.1:8000/api/feedbacks/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          contract: contractId,
-          rating,
-          review,
+          contract_uid: contractId,
+          teaching_style_rating: teachingStyleRating,
+          time_management_rating: timeManagementRating,
+          behavior_rating: behaviorRating,
+          comment: comment,
         }),
       });
 
@@ -67,16 +82,22 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
           title: "Review Submitted",
           description: "Your review has been submitted successfully.",
         });
-        setRating(0);
-        setReview("");
+        setTeachingStyleRating(0);
+        setTimeManagementRating(0);
+        setBehaviorRating(0);
+        setComment("");
         onClose();
       } else {
         const errorData = await response.json();
-        toast({
-          title: "Error",
-          description: errorData.detail || "Failed to submit review. Please try again.",
-          variant: "destructive",
-        });
+        for (const key in errorData) {
+          if (errorData[key].length > 0) {
+            toast({
+              title: "Error",
+              description: errorData[key][0],
+              variant: "destructive",
+            });
+          }
+        }
       }
     } catch (error) {
       console.error("Error submitting review:", error);
@@ -90,6 +111,29 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
     }
   };
 
+  const renderStarRating = (category: string, value: number, label: string) => {
+    return (
+      <div className="flex flex-col items-center space-y-2">
+        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          {label}
+        </p>
+        <div className="flex space-x-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Star
+              key={star}
+              className={`h-6 w-6 cursor-pointer ${
+                star <= value
+                  ? "fill-yellow-400 text-yellow-400"
+                  : "text-gray-300 dark:text-gray-500"
+              }`}
+              onClick={() => handleStarClick(category, star)}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md dark:bg-gray-800 dark:border-gray-700">
@@ -99,37 +143,27 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
           </DialogTitle>
         </DialogHeader>
         <div className="flex flex-col space-y-6 py-4">
-          <div className="flex flex-col items-center space-y-2">
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              How would you rate your experience?
+          <div className="flex flex-col space-y-5">
+            <p className="text-sm text-center text-gray-600 dark:text-gray-300">
+              Please rate your experience in the following categories:
             </p>
-            <div className="flex space-x-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star
-                  key={star}
-                  className={`h-8 w-8 cursor-pointer ${
-                    star <= rating
-                      ? "fill-yellow-400 text-yellow-400"
-                      : "text-gray-300 dark:text-gray-500"
-                  }`}
-                  onClick={() => handleStarClick(star)}
-                />
-              ))}
-            </div>
+            {renderStarRating("teaching", teachingStyleRating, "Teaching Style")}
+            {renderStarRating("timeManagement", timeManagementRating, "Time Management")}
+            {renderStarRating("behavior", behaviorRating, "Behavior")}
           </div>
           <div>
             <label
-              htmlFor="review"
+              htmlFor="comment"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200"
             >
-              Your Review
+              Your Comment
             </label>
             <Textarea
-              id="review"
+              id="comment"
               placeholder="Share your experience and help others..."
-              className="h-32 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              value={review}
-              onChange={(e) => setReview(e.target.value)}
+              className="h-24 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
             />
           </div>
         </div>
