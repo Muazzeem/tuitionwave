@@ -32,7 +32,8 @@ export interface ProfileData {
   country_code: string;
   country: string;
   city: string;
-  profile_picture?: string;
+  profile_picture: string;
+  is_nid_verified: string;
 }
 
 

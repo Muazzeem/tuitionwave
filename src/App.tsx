@@ -103,7 +103,7 @@ const App = () => (
               </AuthGuard>
             } />
 
-            <Route path="teacher/profile" element={
+            <Route path="profile/teacher" element={
               <AuthGuard allowedRoles={['TEACHER']}>
                 <MainLayout><ProfilePage /></MainLayout>
               </AuthGuard>

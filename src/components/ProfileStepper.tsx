@@ -41,7 +41,7 @@ export const ProfileStepper: React.FC<ProfileStepperProps> = ({ steps, currentSt
               </span>
               {index < steps.length - 1 && (
                 <div 
-                  className={`absolute h-0.5 top-6 w-full -right-1/2 z-0 
+                  className={`absolute h-0.5 top-6 w-full -right-2/2 z-0 
                     ${index < currentStep - 1 ? 'bg-green-500' : 
                       index === currentStep - 1 && currentStep > 1 ? 'bg-blue-600' : 'bg-gray-200'}`}
                 />

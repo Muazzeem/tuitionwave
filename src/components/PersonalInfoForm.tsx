@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import axios from 'axios';
 import { useToast } from './ui/use-toast';
 import { getAccessToken } from '@/utils/auth';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ProfileFormData {
   uid?: string;
@@ -149,7 +150,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
           },
         }
       );
-      
       toast({
         title: "Success",
         description: "Personal information updated successfully!",
@@ -216,7 +216,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
 
       <div>
         <Label htmlFor="fullName">Full Name</Label>
-        <Input
+        <Input disabled
           id="fullName"
           placeholder="Enter Full Name"
           value={formData.full_name}
@@ -251,7 +251,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="gender">Gender</Label>
-          <Select
+          <Select disabled
             value={formData.gender}
             onValueChange={(value) => updateFormData({ gender: value })}
           >
@@ -270,7 +270,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
           <Label htmlFor="birthDate">Birth Date</Label>
           <Popover>
             <PopoverTrigger asChild>
-              <Button
+              <Button disabled
                 id="birthDate"
                 variant="outline"
                 className={cn(

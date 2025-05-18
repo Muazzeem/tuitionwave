@@ -3,7 +3,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
 import axios from 'axios';
 import { useToast } from './ui/use-toast';
 import { getAccessToken } from '@/utils/auth';
@@ -39,9 +38,10 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const accessToken = getAccessToken();
-    const [availableDegrees, setAvailableDegrees] = useState<{ id: number; name: string }[]>([]);
-    const [availableInstitutes, setAvailableInstitutes] = useState<{ id: number; name: string }[]>([]);
-    const [availableDepartments, setAvailableDepartments] = useState<{ id: number; name: string }[]>([]);
+  const [uid, setUid] = useState<string | null>(null);
+  const [availableDegrees, setAvailableDegrees] = useState<{ id: number; name: string }[]>([]);
+  const [availableInstitutes, setAvailableInstitutes] = useState<{ id: number; name: string }[]>([]);
+  const [availableDepartments, setAvailableDepartments] = useState<{ id: number; name: string }[]>([]);
 
   // Fetch initial data (degrees, institutes, departments)
     useEffect(() => {
@@ -82,6 +82,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
             },
           }
         );
+        setUid(response.data.uid);
         const educationData: EducationInfoResponse = response.data;
         
         // Update form data with fetched education data.  Handle nulls.
@@ -148,7 +149,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
       }
       
       await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/tutors/c021858d-00ca-4395-907b-1603c6666e88/`, // Use the uid
+        `${import.meta.env.VITE_API_URL}/api/tutors/${uid}/`, // Use the uid
         formDataToSend,
         {
           headers: {
