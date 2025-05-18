@@ -216,7 +216,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
 
       <div>
         <Label htmlFor="fullName">Full Name</Label>
-        <Input disabled
+        <Input
           id="fullName"
           placeholder="Enter Full Name"
           value={formData.full_name}
@@ -251,7 +251,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="gender">Gender</Label>
-          <Select disabled
+          <Select
             value={formData.gender}
             onValueChange={(value) => updateFormData({ gender: value })}
           >
@@ -278,19 +278,9 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
                   !formData.birthDate && "text-muted-foreground"
                 )}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {formData.birthDate ? format(formData.birthDate, "PPP") : <span>Select Date</span>}
+                {formData.birthDate && format(formData.birthDate, "PPP")}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={formData.birthDate}
-                onSelect={(date) => updateFormData({ birthDate: date })}
-                initialFocus
-                className="p-3 pointer-events-auto"
-              />
-            </PopoverContent>
           </Popover>
         </div>
       </div>
