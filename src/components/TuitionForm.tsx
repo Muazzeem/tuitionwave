@@ -169,7 +169,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
                 <Button variant="outline" className="px-6" onClick={onPrev} disabled={isLoading}>
                     Previous
                 </Button>
-                <Button type="button" onClick={handleSubmit} className="px-6" disabled={isLoading}>
+                <Button type="button" onClick={handleSubmit} className="px-6 px-6 dark:bg-blue-600 dark:text-white" disabled={isLoading}>
                     {isLoading ? 'Saving...' : 'Save'}
                 </Button>
             </div>

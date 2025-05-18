@@ -77,7 +77,7 @@ const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-auto bg-gray-50">
+    <div className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900">
       <DashboardHeader userName="Tutor" />
 
       <div className="p-6">
@@ -87,7 +87,7 @@ const ProfilePage: React.FC = () => {
 
         <div className="flex justify-center w-full">
           <div className="col-6 w-full md:w-2/3 lg:w-1/2">
-            <div className="bg-white p-8 rounded-lg border">
+            <div className="bg-white p-8 rounded-lg border dark:bg-gray-900 :dark:border-gray-400">
               <ProfileStepper
                 steps={steps}
                 currentStep={currentStep}

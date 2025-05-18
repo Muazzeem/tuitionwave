@@ -230,4 +230,5 @@ const App = () => (
     </QueryClientProvider>
 );
 
+console.log('API_URL:', import.meta.env.VITE_API_URL);
 export default App;

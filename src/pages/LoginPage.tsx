@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { setAuthTokens } from '@/utils/auth';
@@ -13,7 +12,7 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { fetchProfile, userProfile } = useAuth();
   const [step, setStep] = useState<1 | 2>(1);
-  const [userType, setUserType] = useState<'tutor' | 'guardian'>('guardian');
+  const [userType, setUserType] = useState<'tutor' | 'guardian' | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -31,8 +30,13 @@ const LoginPage: React.FC = () => {
     }
   }, [userProfile, navigate]);
 
-  const handleContinue = () => {
-    setStep(2);
+  // Handle user type selection and automatically advance to step 2
+  const handleUserTypeChange = (value: 'tutor' | 'guardian') => {
+    setUserType(value);
+    // Add a small delay for better UX
+    setTimeout(() => {
+      setStep(2);
+    }, 300);
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -111,39 +115,45 @@ const LoginPage: React.FC = () => {
         <div className="w-full max-w-2xl">
           {step === 1 ? (
             <div className="bg-white rounded-lg p-6 shadow-sm border dark:bg-gray-900">
-              <h2 className="text-2xl font-bold text-center mb-6">Login as {userType === 'tutor' ? 'Tutor' : 'Guardian'}</h2>
+              <h2 className="text-2xl font-bold text-center mb-6">Choose Your Login Type</h2>
               
-              <RadioGroup 
-                defaultValue="guardian" 
-                className="flex justify-center gap-8 mb-8"
-                value={userType}
-                onValueChange={(value) => setUserType(value as 'tutor' | 'guardian')}
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="tutor" id="tutor" />
-                  <Label htmlFor="tutor">Tutor</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                {/* Teacher Card */}
+                <div 
+                  className="border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200 dark:border-gray-700 dark:hover:border-blue-400 dark:hover:bg-blue-900/20"
+                  onClick={() => handleUserTypeChange('tutor')}
+                >
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 dark:bg-blue-900">
+                      <svg className="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Teacher</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Access your teaching dashboard and manage your classes</p>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="guardian" id="guardian" />
-                  <Label htmlFor="guardian">Guardian</Label>
+
+                {/* Guardian Card */}
+                <div 
+                  className="border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200 dark:border-gray-700 dark:hover:border-blue-400 dark:hover:bg-blue-900/20"
+                  onClick={() => handleUserTypeChange('guardian')}
+                >
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 dark:bg-green-900">
+                      <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Guardian</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Monitor your child's progress and manage tuition</p>
+                  </div>
                 </div>
-              </RadioGroup>
-              
-              <Button 
-                className="w-full min-h-[55px] bg-blue-600 hover:bg-blue-700 dark:text-white" 
-                onClick={handleContinue}
-                disabled={loading}
-              >
-                Next
-              </Button>
-              
-              <div className="text-center mt-4 text-sm">
-                Don't have an account? <Link to="/auth/registration" className="text-blue-600 hover:underline font-medium">Sign Up</Link>
               </div>
             </div>
           ) : (
             <div className="bg-white rounded-lg p-6 shadow-sm border dark:bg-gray-900">
-              <h2 className="text-2xl font-bold mb-2">Log in to {userType === 'tutor' ? 'Tutor' : 'Guardian'} Panel</h2>
+              <h2 className="text-2xl font-bold mb-2">Log in to {userType === 'tutor' ? 'Teacher' : 'Guardian'} Panel</h2>
               <p className="text-gray-500 mb-6 dark:text-gray-400">Welcome! Please enter your email and password.</p>
               
               <form onSubmit={handleLogin}>
@@ -200,14 +210,9 @@ const LoginPage: React.FC = () => {
                   </Button>
                   
                   <div className="text-center text-sm">
-                    <button 
-                      type="button" 
-                      className="text-blue-600 hover:underline"
-                      onClick={() => setStep(1)}
-                      disabled={loading}
-                    >
-                      Back to user selection
-                    </button>
+                    <div className="text-center mt-4 text-sm">
+                      Don't have an account? <Link to="/auth/registration" className="text-blue-600 hover:underline font-medium">Sign Up</Link>
+                    </div>
                   </div>
                 </div>
               </form>

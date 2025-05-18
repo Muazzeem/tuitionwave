@@ -31,7 +31,7 @@ const FindTutorsList = () => {
       </div>
 
       <div className="">
-      <TutorFilters />
+      {/* <TutorFilters /> */}
       </div>
 
       <div className="">

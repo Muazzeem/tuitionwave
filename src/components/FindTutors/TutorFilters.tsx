@@ -28,7 +28,7 @@ const TutorFilters = () => {
         throw new Error(`Failed to fetch institutions: ${response.status}`);
       }
       const data = await response.json();
-      setInstitutions(data);
+      setInstitutions(data.resutl);
     } catch (err: any) {           
       setError(err.message || "An error occurred while fetching institutions.");
     } finally {

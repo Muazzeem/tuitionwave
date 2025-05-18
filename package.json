@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --mode production",
     "build:dev": "vite build --mode development",
     "deploy": "aws s3 sync dist/ s3://tuitionwave.com --delete",
     "lint": "eslint .",

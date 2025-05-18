@@ -154,7 +154,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
       {isLoading && <div className="text-center text-gray-500">Loading education data...</div>}
 
       <div>
-        <Label className="text-gray-600 font-medium mb-2 block">Upload CV</Label>
+        <Label className="text-gray-600 font-medium mb-2 block dark:text-white">Upload CV</Label>
         <div
           className="border border-gray-300 rounded-lg p-3 flex items-center cursor-pointer"
           onClick={handleUploadClick}
@@ -176,7 +176,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
               </Button>
             </>
           ) : (
-            <span className="text-gray-500">Select a file to upload</span>
+            <span className="text-gray-500 dark:text-white">Select a file to upload</span>
           )}
           <Input
             ref={fileInputRef}
@@ -245,7 +245,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
         <Button variant="outline" className="px-6" onClick={onPrev} disabled={isLoading}>
           Previous
         </Button>
-        <Button type="button" onClick={handleSubmit} className="px-6" disabled={isLoading}>
+        <Button type="button" onClick={handleSubmit} className="px-6 px-6 dark:bg-blue-600 dark:text-white" disabled={isLoading}>
           {isLoading ? 'Saving...' : 'Save & Next'}
         </Button>
       </div>

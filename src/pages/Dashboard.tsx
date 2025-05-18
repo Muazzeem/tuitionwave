@@ -24,7 +24,7 @@ const Dashboard: React.FC = () => {
         </div>
       )}
       {userProfile.is_nid_verified}
-      <NIDUpload />
+      {/* <NIDUpload /> */}
       {completionData.completion_percentage >= 80 && (
         <div className="p-6">
           <h2 className="text-xl font-bold mb-6 dark:text-white">Dashboard</h2>

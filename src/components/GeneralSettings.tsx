@@ -5,8 +5,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { getAccessToken } from '@/utils/auth';
-import axios from 'axios';
+
 
 const GeneralSettings = () => {
   const { profile, updateProfile, loading } = useUserProfile();

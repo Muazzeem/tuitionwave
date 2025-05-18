@@ -92,7 +92,7 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
 
     const markAsRead = async (id: number) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notifications/mark-read/${id}/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/mark-read/${id}/`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,

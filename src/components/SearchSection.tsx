@@ -28,7 +28,7 @@ const SearchSection: React.FC = () => {
         throw new Error(`Failed to fetch institutions: ${response.status}`);
       }
       const data = await response.json();
-      setInstitutions(data);
+      setInstitutions(data.resutl);
     } catch (err: any) {
       setError(err.message || "An error occurred while fetching institutions.");
     } finally {
@@ -40,9 +40,7 @@ const SearchSection: React.FC = () => {
     fetchInstitutions();
   }, [fetchInstitutions]);
 
-  const filteredInstitutions = institutions.filter((institution) =>
-    institution.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredInstitutions = []
 
   const handleInstitutionSelect = (value: string) => {
     setSelectedInstitution(value);

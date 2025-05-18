@@ -82,7 +82,7 @@ const TopTutors: React.FC = () => {
   useEffect(() => {
     const fetchTutors = async () => {
       try {
-        const response = await fetch("${import.meta.env.VITE_API_URL}/api/tutors/");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tutors/`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

@@ -219,7 +219,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
             className="w-full min-h-[55px] bg-blue-600 hover:bg-blue-700 dark:text-white"
             disabled={loading}
           >
-            {loading ? 'Creating account...' : 'Log in'}
+            {loading ? 'Creating account...' : 'Sign up'}
           </Button>
           
           <div className="text-center mt-4">

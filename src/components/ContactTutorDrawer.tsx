@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import CreateContract from "@/components/CreateContract/index";
+import { X } from "lucide-react";
 
 interface ContactTutorDrawerProps {
   isOpen: boolean;
@@ -45,6 +46,15 @@ const ContactTutorDrawer: React.FC<ContactTutorDrawerProps> = ({ isOpen, onClose
         )}
         onClick={stopPropagation}
       >
+        <div className="flex justify-between items-center p-4 border-b">
+            <h2 className="text-xl font-bold">Create Contract</h2>
+            <button
+              onClick={onClose}
+              className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         <CreateContract 
             uid={uid}
             drawer={{ isOpen: isOpen }}
