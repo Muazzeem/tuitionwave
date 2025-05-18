@@ -20,6 +20,7 @@ import TuitionRequestDetails from "./pages/TuitionRequestDetails";
 import GuardianDashboard from "./pages/Guardian/Dashboard";
 import Unauthorized from "./pages/Unauthorized";
 import { AuthProvider } from '@/contexts/AuthContext';
+import { UserProfileProvider } from '@/contexts/UserProfileContext';
 import AuthGuard from "./components/AuthGuard";
 import AuthService from "./services/AuthService";
 import FindTutorsList from "./components/FindTutors/FindTutors";
@@ -133,95 +134,97 @@ const App = () => (
         <Toaster />
         <Sonner />
         <AuthProvider>
-          <BrowserRouter>
-            <TokenValidationWrapper>
-              <Routes>
-                {/* Public routes */}
-                <Route path="/" element={<HomePage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/auth/registration" element={<RegistrationPage />} />
-                <Route path="/tutor/:id" element={<TutorProfile />} />
-                <Route path="/unauthorized" element={<Unauthorized />} />
-                <Route path="/faq" element={<FAQPage />} />
-                <Route path="/terms" element={<TermsPage />} />
-                <Route path="/how-it-works" element={<HowItWorksPage />} />
-                <Route path="/job-preparation" element={<JobPreparationPage />} />
-                <Route path="/find-tutors" element={
-                  <AuthGuard>
-                    <MainLayout><FindTutorsList /></MainLayout>
-                  </AuthGuard>
-                } />
-                
-                {/* Protected routes for all authenticated users */}
-                <Route path="/notifications" element={
-                  <AuthGuard>
-                    <MainLayout><NotificationPage /></MainLayout>
-                  </AuthGuard>
-                } />
+          <UserProfileProvider>
+            <BrowserRouter>
+              <TokenValidationWrapper>
+                <Routes>
+                  {/* Public routes */}
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/auth/registration" element={<RegistrationPage />} />
+                  <Route path="/tutor/:id" element={<TutorProfile />} />
+                  <Route path="/unauthorized" element={<Unauthorized />} />
+                  <Route path="/faq" element={<FAQPage />} />
+                  <Route path="/terms" element={<TermsPage />} />
+                  <Route path="/how-it-works" element={<HowItWorksPage />} />
+                  <Route path="/job-preparation" element={<JobPreparationPage />} />
+                  <Route path="/find-tutors" element={
+                    <AuthGuard>
+                      <MainLayout><FindTutorsList /></MainLayout>
+                    </AuthGuard>
+                  } />
+                  
+                  {/* Protected routes for all authenticated users */}
+                  <Route path="/notifications" element={
+                    <AuthGuard>
+                      <MainLayout><NotificationPage /></MainLayout>
+                    </AuthGuard>
+                  } />
 
-                <Route path="profile/teacher" element={
-                  <AuthGuard allowedRoles={['TEACHER']}>
-                    <MainLayout><ProfilePage /></MainLayout>
-                  </AuthGuard>
-                } />
-                <Route path="profile/guardian" element={
-                  <AuthGuard allowedRoles={['GUARDIAN']}>
-                    <MainLayout><GuardianProfile /></MainLayout>
-                  </AuthGuard>
-                } />
-                <Route path="/settings" element={
-                  <AuthGuard>
-                    <MainLayout><Settings /></MainLayout>
-                  </AuthGuard>
-                } />
-                <Route path="/message" element={
-                  <AuthGuard>
-                    <MessagePage />
-                  </AuthGuard>
-                } />
-                
-                {/* Teacher-only routes */}
-                <Route path="/teacher/dashboard" element={
-                  <AuthGuard allowedRoles={['TEACHER']}>
-                    <MainLayout><TeacherDashboard /></MainLayout>
-                  </AuthGuard>
-                } />
-                <Route path="/teacher/requests" element={
-                  <AuthGuard allowedRoles={['TEACHER']}>
-                    <MainLayout><MyRequest /></MainLayout>
-                  </AuthGuard>
-                } />
-                <Route path="/teacher/request-details/:id" element={
-                  <AuthGuard allowedRoles={['TEACHER']}>
-                    <MainLayout><TuitionRequestDetails /></MainLayout>
-                  </AuthGuard>
-                } />
-                
-                {/* Guardian-only routes */}
-                <Route path="/guardian/dashboard" element={
-                  <AuthGuard allowedRoles={['GUARDIAN']}>
-                    <MainLayout><GuardianDashboard /></MainLayout>
-                  </AuthGuard>
-                } />
-                <Route path="/guardian/requests" element={
-                  <AuthGuard allowedRoles={['GUARDIAN']}>
-                    <MainLayout><MyRequest /></MainLayout>
-                  </AuthGuard>
-                } />
-                <Route path="/guardian/request-details/:id" element={
-                  <AuthGuard allowedRoles={['GUARDIAN']}>
-                    <MainLayout><TuitionRequestDetails /></MainLayout>
-                  </AuthGuard>
-                } />
-                
-                {/* Redirect legacy routes to role-specific routes */}
-                <Route path="/dashboard" element={<RoleRedirect />} />
-                <Route path="/all-requests" element={<RoleRedirect pathSuffix="/requests" />} />
-                <Route path="/request-details/:id" element={<RoleRedirect pathSuffix="/request-details" preserveParams={true} />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </TokenValidationWrapper>
-          </BrowserRouter>
+                  <Route path="profile/teacher" element={
+                    <AuthGuard allowedRoles={['TEACHER']}>
+                      <MainLayout><ProfilePage /></MainLayout>
+                    </AuthGuard>
+                  } />
+                  <Route path="profile/guardian" element={
+                    <AuthGuard allowedRoles={['GUARDIAN']}>
+                      <MainLayout><GuardianProfile /></MainLayout>
+                    </AuthGuard>
+                  } />
+                  <Route path="/settings" element={
+                    <AuthGuard>
+                      <MainLayout><Settings /></MainLayout>
+                    </AuthGuard>
+                  } />
+                  <Route path="/message" element={
+                    <AuthGuard>
+                      <MessagePage />
+                    </AuthGuard>
+                  } />
+                  
+                  {/* Teacher-only routes */}
+                  <Route path="/teacher/dashboard" element={
+                    <AuthGuard allowedRoles={['TEACHER']}>
+                      <MainLayout><TeacherDashboard /></MainLayout>
+                    </AuthGuard>
+                  } />
+                  <Route path="/teacher/requests" element={
+                    <AuthGuard allowedRoles={['TEACHER']}>
+                      <MainLayout><MyRequest /></MainLayout>
+                    </AuthGuard>
+                  } />
+                  <Route path="/teacher/request-details/:id" element={
+                    <AuthGuard allowedRoles={['TEACHER']}>
+                      <MainLayout><TuitionRequestDetails /></MainLayout>
+                    </AuthGuard>
+                  } />
+                  
+                  {/* Guardian-only routes */}
+                  <Route path="/guardian/dashboard" element={
+                    <AuthGuard allowedRoles={['GUARDIAN']}>
+                      <MainLayout><GuardianDashboard /></MainLayout>
+                    </AuthGuard>
+                  } />
+                  <Route path="/guardian/requests" element={
+                    <AuthGuard allowedRoles={['GUARDIAN']}>
+                      <MainLayout><MyRequest /></MainLayout>
+                    </AuthGuard>
+                  } />
+                  <Route path="/guardian/request-details/:id" element={
+                    <AuthGuard allowedRoles={['GUARDIAN']}>
+                      <MainLayout><TuitionRequestDetails /></MainLayout>
+                    </AuthGuard>
+                  } />
+                  
+                  {/* Redirect legacy routes to role-specific routes */}
+                  <Route path="/dashboard" element={<RoleRedirect />} />
+                  <Route path="/all-requests" element={<RoleRedirect pathSuffix="/requests" />} />
+                  <Route path="/request-details/:id" element={<RoleRedirect pathSuffix="/request-details" preserveParams={true} />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </TokenValidationWrapper>
+            </BrowserRouter>
+          </UserProfileProvider>
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
