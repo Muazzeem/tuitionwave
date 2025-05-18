@@ -30,7 +30,6 @@ import FAQPage from "./pages/FAQPage";
 import TermsPage from "./pages/TermsPage";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import JobPreparationPage from "./pages/JobPreparationPage";
-import { UserProfileProvider } from "./contexts/UserProfileContext";
 
 const queryClient = new QueryClient();
 
@@ -129,7 +128,6 @@ const RoleRedirect = ({
 };
 
 const App = () => (
-  <UserProfileProvider>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
@@ -227,7 +225,6 @@ const App = () => (
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
-  </UserProfileProvider>
 );
 
 export default App;

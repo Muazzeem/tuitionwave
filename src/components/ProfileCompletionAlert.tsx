@@ -27,7 +27,7 @@ const ProfileCompletionAlert = () => {
   if (error) {
     return (
       <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6">
-        <p>Error loading profile completion data. Please try again later.</p>
+        <p>{error}</p>
       </div>
     );
   }
