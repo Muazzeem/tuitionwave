@@ -1,9 +1,8 @@
 
 // src/contexts/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { getAccessToken } from '@/utils/auth';
+import { getAccessToken, isTokenExpired, refreshAccessToken } from '@/utils/auth';
 import { ProfileData } from '@/types/common';
-
 
 interface AuthContextType {
   userProfile: ProfileData | null;
@@ -26,6 +25,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setError(null);
     
     try {
+      // Check if token is expired and refresh if needed
+      if (isTokenExpired()) {
+        const refreshed = await refreshAccessToken();
+        if (!refreshed) {
+          throw new Error('Failed to refresh token');
+        }
+      }
+      
       const accessToken = getAccessToken();
       
       if (!accessToken) {

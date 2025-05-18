@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +19,17 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+
+  // Check if we're already logged in and redirect if needed
+  useEffect(() => {
+    if (userProfile) {
+      if (userProfile.user_type === 'TEACHER') {
+        navigate('/teacher/dashboard');
+      } else {
+        navigate('/guardian/dashboard');
+      }
+    }
+  }, [userProfile, navigate]);
 
   const handleContinue = () => {
     setStep(2);
@@ -43,6 +53,7 @@ const LoginPage: React.FC = () => {
       }
 
       const data = await response.json();
+      // Save tokens with expiration timestamp
       setAuthTokens(data);
       
       // Fetch user profile after successful login
