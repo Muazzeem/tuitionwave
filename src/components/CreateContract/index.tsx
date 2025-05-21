@@ -25,7 +25,7 @@ interface DrawerState {
   isOpen: boolean;
 }
 
-const CreateContract: React.FC<{ uid: string; drawer: DrawerState }> = ({ uid, drawer }) => {
+const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type: string }> = ({ uid, drawer, teaching_type }) => {
   const { userProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -241,7 +241,7 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState }> = ({ uid, d
     { value: "Online", label: "Online" }
   ];
 
-  const memberOptions = ["1", "2", "3", "4", "5+"].map(member => ({
+  const memberOptions = ["1", "2+"].map(member => ({
     value: member,
     label: member
   }));
@@ -255,7 +255,6 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState }> = ({ uid, d
   return (
     <div className="flex-1 overflow-auto">
       <div className="p-6 mb-10">
-        <ScrollArea type="always" style={{ height: "97vh" }}>
           <TutorHeader
             name={tutor?.full_name}
             rating={tutor?.rating}
@@ -338,7 +337,9 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState }> = ({ uid, d
             </div>
             
             <div className="col-span-6">
-              <FormField
+              { teaching_type === 'BOTH' ?
+                (
+                  <FormField 
                 id="tuitionType"
                 label="Tuition Type"
                 type="select"
@@ -348,6 +349,20 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState }> = ({ uid, d
                 required
                 options={tuitionTypeOptions}
               />
+                ) :
+                (
+                  <FormField disabled
+                    id="tuitionType"
+                    label="Tuition Type"
+                    type="text"
+                    value={teaching_type}
+                    onChange={(value) => handleFieldChange('tuitionType', value)}
+                    placeholder="Enter Tuition Type"
+                    error={errors.tuitionType}
+                    required
+                  />
+                )
+              }
             </div>
             
             <div className="col-span-6">
@@ -416,7 +431,6 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState }> = ({ uid, d
               )}
             </div>
           </div>
-        </ScrollArea>
       </div>
       
       <ConfirmationDialog

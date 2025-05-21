@@ -72,7 +72,7 @@ const TutorCard: React.FC<TutorCardProps> = ({
         </div>
         <div className="p-4">
           <p className="text-gray-600 text-sm dark:text-gray-300">{university}</p>
-          <h3 className="text-lg font-semibold mt-1 text-shadow-lg">{name}</h3>
+          <h3 className="text-lg font-semibold mt-1 text-shadow-lg capitalize">{name}</h3>
           <div className="flex items-center gap-1 mt-2 mb-5">
               <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
               <span className="font-medium">{rating}</span>
@@ -91,9 +91,9 @@ const TutorCard: React.FC<TutorCardProps> = ({
                   Online
                 </Badge>
               )}
-              {teaching_type === "HOME" && (
+              {teaching_type === "OFFLINE" && (
                 <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200 rounded-lg">
-                  Home
+                  Offline
                 </Badge>
               )}
               {teaching_type === "BOTH" && (
@@ -118,6 +118,7 @@ const TutorCard: React.FC<TutorCardProps> = ({
         onClose={closeDrawer}
         uid={uid}
         image={image}
+        teaching_type={teaching_type}
       />
     </>
   );

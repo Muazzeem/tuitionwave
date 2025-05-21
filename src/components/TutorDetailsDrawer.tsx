@@ -12,6 +12,7 @@ interface TutorDetailsDrawerProps {
   onClose: () => void;
   uid: string;
   image: string;
+  teaching_type: string;
 }
 
 const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
@@ -19,6 +20,7 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
   onClose,
   uid,
   image,
+  teaching_type,
 }) => {
   const [isContactDrawerOpen, setIsContactDrawerOpen] = useState(false);
   const [tutorDetails, setTutorDetails] = useState<Tutor | null>(null);
@@ -175,7 +177,7 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
             ) : tutorDetails ? (
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-semibold text-lg">
+                  <h3 className="font-semibold text-lg capitalize">
                     {tutorDetails.full_name}
                   </h3>
                 </div>
@@ -262,6 +264,7 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
         isOpen={isContactDrawerOpen}
         onClose={closeContactDrawer}
         uid={uid}
+        tuition_type={teaching_type}
       />
     </>
   );

@@ -15,7 +15,7 @@ const TutorHeader: React.FC<TutorHeaderProps> = ({
 }) => {
   return (
     <>
-      <h2 className="text-3xl font-bold mb-6">{name}</h2>
+      <h2 className="text-3xl font-bold mb-6 capitalize">{name}</h2>
 
       <div className="flex items-center gap-2 mb-5 mt-2">
         <div className="flex items-center text-yellow-400">

@@ -17,6 +17,7 @@ interface TutorDetails {
   active_days?: ActiveDay[];
   rating?: number;
   review_count?: number;
+  tuition_type?: string;
 }
 
 export const useTutorDetails = (tutorId: string, isDrawerOpen: boolean) => {
