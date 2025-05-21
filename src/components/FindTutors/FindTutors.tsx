@@ -6,8 +6,36 @@ import TutorFilters from './TutorFilters';
 import TutorGrid from './TutorGrid';
 import { ScrollArea } from '../ui/scroll-area';
 import DashboardHeader from '../DashboardHeader';
+import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 const FindTutorsList = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [showFilters, setShowFilters] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter') {
+      applySearchTerm();
+    }
+  };
+
+  const applySearchTerm = () => {
+    const params = new URLSearchParams(searchParams);
+    
+    if (searchTerm) {
+      params.set("search", searchTerm);
+    } else {
+      params.delete("search");
+    }
+    
+    setSearchParams(params);
+  };
+
+  const toggleFilters = () => {
+    setShowFilters(!showFilters);
+  };
+
   return (
     <div className="flex-1 overflow-auto bg-white dark:bg-gray-900">
       <DashboardHeader userName="John" />
@@ -21,17 +49,24 @@ const FindTutorsList = () => {
               className="pl-10 w-full sm:w-[300px]"
               placeholder="Search"
               type="search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleSearch}
             />
           </div>
-          <Button variant="default" className="gap-2 dark:text-white">
+          <Button 
+            variant="default" 
+            className="gap-2 dark:text-white"
+            onClick={toggleFilters}
+          >
             <Filter className="h-4 w-4 dark:text-white" />
-            Filters
+            {showFilters ? "Hide Filters" : "Show Filters"}
           </Button>
         </div>
       </div>
 
       <div className="">
-      {/* <TutorFilters /> */}
+        {showFilters && <TutorFilters />}
       </div>
 
       <div className="">
