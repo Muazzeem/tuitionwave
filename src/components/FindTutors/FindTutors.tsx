@@ -11,7 +11,7 @@ import { useSearchParams } from 'react-router-dom';
 
 const FindTutorsList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (e) => {

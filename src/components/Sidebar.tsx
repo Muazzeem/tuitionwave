@@ -31,7 +31,11 @@ const Sidebar = () => {
     return (
         <div className={`${isExpanded ? 'w-56' : 'w-16'} bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col h-screen transition-all duration-500 relative`}>
             <div className="p-3 flex justify-between items-center align-middle">
-                {isExpanded && <h1 className="text-xl font-bold mt-2 dark:text-white">Tuition Wave</h1>}
+                {isExpanded && <h1 className="text-xl font-bold mt-2 dark:text-white">
+                    <Link to="/" className="flex items-center">
+                    Tuition Wave
+                    </Link>
+                    </h1>}
                 <button
                     onClick={toggleSidebar}
                     className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"

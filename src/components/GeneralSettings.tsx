@@ -1,15 +1,17 @@
-
+// GeneralSettings.tsx
 import { useUserProfile, ProfileData } from '@/contexts/UserProfileContext';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-
+import { useLocation } from 'react-router-dom';
 
 const GeneralSettings = () => {
-  const { profile, updateProfile, loading } = useUserProfile();
+  const { profile, updateProfile, loading, refreshProfile } = useUserProfile();
   const { toast } = useToast();
+  const location = useLocation();
+
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState<Partial<ProfileData>>({
     first_name: '',
@@ -21,6 +23,11 @@ const GeneralSettings = () => {
     profile_picture: null,
     is_nid_verified: false
   });
+
+  // Refetch profile every time this page is routed to
+  useEffect(() => {
+    refreshProfile();
+  }, [location.pathname]);
 
   useEffect(() => {
     if (profile) {
@@ -46,9 +53,8 @@ const GeneralSettings = () => {
     e.preventDefault();
     try {
       setIsSaving(true);
-
       await updateProfile(formData);
-      
+
       toast({
         title: "Success",
         description: "Profile updated successfully.",
@@ -128,7 +134,7 @@ const GeneralSettings = () => {
         </div>
 
         <div className="flex justify-end">
-          <Button type="submit" disabled={isSaving}>
+          <Button type="submit" disabled={isSaving} className="dark:text-white">
             {isSaving ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>

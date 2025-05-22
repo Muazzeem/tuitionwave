@@ -1,12 +1,19 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "./ThemeToggle";
 
 const Header: React.FC = () => {
   const { userProfile, clearProfile } = useAuth();
+  const userType = userProfile?.user_type?.toLowerCase() === 'teacher' ? 'teacher' : 'guardian';
+
+  const navigate = useNavigate();
+
+  const goToDashboard = () => {
+    navigate(`/${userType}/dashboard`);
+  };
 
   return (
     <header className="border-b py-4">
@@ -32,12 +39,12 @@ const Header: React.FC = () => {
           <ThemeToggle />
           {userProfile ? (
             <Button
-              className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-6"
+              className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6"
               onClick={() => {
-                clearProfile();
+                goToDashboard();
               }}
             >
-              Logout
+              Go to Dashboard
             </Button>
           ) : (
             <Link to="/login">

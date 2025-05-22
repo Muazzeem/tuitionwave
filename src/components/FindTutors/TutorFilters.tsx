@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -104,11 +103,8 @@ const TutorFilters = () => {
     fetchData();
   }, [fetchInstitutions, fetchCities, fetchSubjects]);
 
-  const filteredInstitutions = institutions.filter((institution) =>
-    institution.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const applyFilters = () => {
+  // Auto-apply filters whenever any filter value changes
+  useEffect(() => {
     const params = new URLSearchParams(searchParams);
     
     // Update or remove each parameter based on selection
@@ -155,8 +151,21 @@ const TutorFilters = () => {
     }
     
     setSearchParams(params);
-    toast.success("Filters applied");
-  };
+  }, [
+    selectedInstitute,
+    selectedCity,
+    selectedSubject,
+    selectedTeachingType,
+    selectedSalaryRange,
+    selectedRating,
+    selectedGender,
+    setSearchParams,
+    searchParams
+  ]);
+
+  const filteredInstitutions = institutions.filter((institution) =>
+    institution.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const clearFilters = () => {
     setSelectedInstitute("");
@@ -205,7 +214,7 @@ const TutorFilters = () => {
                 filteredInstitutions.map((institution) => (
                   <SelectItem
                     key={institution.id}
-                    value={institution.id.toString()}
+                    value={institution.name.toString()}
                   >
                     {institution.name}
                   </SelectItem>
@@ -226,7 +235,7 @@ const TutorFilters = () => {
           <SelectContent>
             <ScrollArea className="h-[200px]">
               {cities.map((city) => (
-                <SelectItem key={city.id} value={city.id.toString()}>
+                <SelectItem key={city.id} value={city.name.toString()}>
                   {city.name}
                 </SelectItem>
               ))}
@@ -294,9 +303,6 @@ const TutorFilters = () => {
       </div>
       
       <div className="flex gap-2">
-        <Button variant="default" onClick={applyFilters}>
-          Apply Filters
-        </Button>
         <Button variant="outline" onClick={clearFilters}>
           Clear Filters
         </Button>

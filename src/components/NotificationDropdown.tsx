@@ -117,7 +117,7 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
 
     const handleMarkAllRead = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notifications/mark-all-read/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/mark-all-read/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -137,7 +137,7 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
 
     const removeNotification = async (id: number) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notifications/${id}/delete/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/${id}/delete/`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,

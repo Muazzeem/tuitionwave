@@ -53,13 +53,13 @@ const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => 
         }
         
         // If we're on login or home page and already logged in, redirect to appropriate dashboard
-        if (["/", "/login"].includes(location.pathname)) {
-          if (userProfile?.user_type === 'TEACHER') {
-            navigate('/teacher/dashboard');
-          } else if (userProfile?.user_type === 'GUARDIAN') {
-            navigate('/guardian/dashboard');
-          }
-        }
+        // if (["/", "/login"].includes(location.pathname)) {
+        //   if (userProfile?.user_type === 'TEACHER') {
+        //     navigate('/teacher/dashboard');
+        //   } else if (userProfile?.user_type === 'GUARDIAN') {
+        //     navigate('/guardian/dashboard');
+        //   }
+        // }
       } else if (
         !location.pathname.startsWith("/auth") && 
         location.pathname !== "/" && 
@@ -118,11 +118,11 @@ const RoleRedirect = ({
   }
   
   // Redirect based on user role
-  if (userProfile?.user_type === 'TEACHER') {
-    return <Navigate to={`/teacher${pathSuffix}${params}`} replace />;
-  } else if (userProfile?.user_type === 'GUARDIAN') {
-    return <Navigate to={`/guardian${pathSuffix}${params}`} replace />;
-  }
+  // if (userProfile?.user_type === 'TEACHER') {
+  //   return <Navigate to={`/teacher${pathSuffix}${params}`} replace />;
+  // } else if (userProfile?.user_type === 'GUARDIAN') {
+  //   return <Navigate to={`/guardian${pathSuffix}${params}`} replace />;
+  // }
   
   // Fallback for unknown user types
   return <Navigate to="/unauthorized" replace />;
@@ -149,9 +149,7 @@ const App = () => (
                   <Route path="/how-it-works" element={<HowItWorksPage />} />
                   <Route path="/job-preparation" element={<JobPreparationPage />} />
                   <Route path="/find-tutors" element={
-                    <AuthGuard>
                       <MainLayout><FindTutorsList /></MainLayout>
-                    </AuthGuard>
                   } />
                   
                   {/* Protected routes for all authenticated users */}

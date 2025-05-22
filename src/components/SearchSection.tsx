@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +11,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { X } from "lucide-react";
 
 const SearchSection: React.FC = () => {
   const navigate = useNavigate();
@@ -22,8 +22,11 @@ const SearchSection: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [selectedInstitution, setSelectedInstitution] = useState<string>("");
+  const [selectedInstitutionName, setSelectedInstitutionName] = useState<string>("");
   const [selectedCity, setSelectedCity] = useState<string>("");
+  const [selectedCityName, setSelectedCityName] = useState<string>("");
   const [selectedSubject, setSelectedSubject] = useState<string>("");
+  const [selectedSubjectName, setSelectedSubjectName] = useState<string>("");
   const [selectedGender, setSelectedGender] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -86,34 +89,42 @@ const SearchSection: React.FC = () => {
   );
 
   const handleSearch = () => {
+    // Build URL params
     const params = new URLSearchParams();
     
-    if (selectedInstitution) {
-      params.append("institute", selectedInstitution);
+    if (selectedInstitutionName) {
+      params.append("institute", selectedInstitutionName);
     }
     
-    if (selectedCity) {
-      params.append("city", selectedCity);
+    if (selectedCityName) {
+      params.append("city", selectedCityName);
     }
     
-    if (selectedSubject) {
-      params.append("subjects", selectedSubject);
+    if (selectedSubjectName) {
+      params.append("subject", selectedSubjectName);
     }
     
     if (selectedGender) {
       params.append("gender", selectedGender);
     }
-
-    // Navigate to search results with the parameters
-    navigate(`/all-tutors?${params.toString()}`);
     
-    // Also pass the search parameters to the TutorSearchResults component
+    // Update the URL without causing a page navigation
+    window.history.replaceState(null, '', `?${params.toString()}`);
+    
+    console.log("Search initiated with params:", {
+      institute: selectedInstitutionName,
+      city: selectedCityName,
+      subject: selectedSubjectName,
+      gender: selectedGender
+    });
+    
+    // Dispatch the custom event for components that listen to it
     window.dispatchEvent(
       new CustomEvent("tutor-search", {
         detail: {
-          institute: selectedInstitution,
-          city: selectedCity,
-          subjects: selectedSubject,
+          institute: selectedInstitutionName,
+          city: selectedCityName,
+          subject: selectedSubjectName,
           gender: selectedGender,
         },
       })
@@ -122,8 +133,51 @@ const SearchSection: React.FC = () => {
 
   const handleInstitutionSelect = (value: string) => {
     setSelectedInstitution(value);
+    // Find the institution name from the ID
+    const institution = institutions.find(inst => inst.id.toString() === value);
+    if (institution) {
+      setSelectedInstitutionName(institution.name);
+    }
     setSearchQuery(""); // Clear search query on selection
     setIsOpen(false); // Close dropdown after selection
+  };
+
+  const handleCitySelect = (value: string) => {
+    setSelectedCity(value);
+    // Find the city name from the ID
+    const city = cities.find(c => c.id.toString() === value);
+    if (city) {
+      setSelectedCityName(city.name);
+    }
+  };
+
+  const handleSubjectSelect = (value: string) => {
+    setSelectedSubject(value);
+    // Find the subject name from the ID
+    const subject = subjects.find(s => s.id.toString() === value);
+    if (subject) {
+      setSelectedSubjectName(subject.subject);
+    }
+  };
+
+  const clearFilter = (filterType: 'institution' | 'city' | 'subject' | 'gender') => {
+    switch (filterType) {
+      case 'institution':
+        setSelectedInstitution("");
+        setSelectedInstitutionName("");
+        break;
+      case 'city':
+        setSelectedCity("");
+        setSelectedCityName("");
+        break;
+      case 'subject':
+        setSelectedSubject("");
+        setSelectedSubjectName("");
+        break;
+      case 'gender':
+        setSelectedGender("");
+        break;
+    }
   };
 
   if (loading) {
@@ -205,7 +259,7 @@ const SearchSection: React.FC = () => {
               <label className="block text-xs text-gray-500 mb-1 dark:text-white">City</label>
               <Select
                 value={selectedCity}
-                onValueChange={setSelectedCity}
+                onValueChange={handleCitySelect}
               >
                 <SelectTrigger className="w-full h-10 text-black dark:text-white">
                   <SelectValue placeholder="Select City" />
@@ -232,7 +286,7 @@ const SearchSection: React.FC = () => {
               </label>
               <Select
                 value={selectedSubject}
-                onValueChange={setSelectedSubject}
+                onValueChange={handleSubjectSelect}
               >
                 <SelectTrigger className="w-full h-10 text-black dark:text-white">
                   <SelectValue placeholder="Select Subject" />
@@ -253,6 +307,56 @@ const SearchSection: React.FC = () => {
               </Select>
             </div>
           </div>
+
+          {/* Active Filters Section */}
+          {(selectedInstitutionName || selectedCityName || selectedSubjectName || selectedGender) && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {selectedInstitutionName && (
+                <div className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                  <span>Institution: {selectedInstitutionName}</span>
+                  <button 
+                    onClick={() => clearFilter('institution')}
+                    className="ml-2 hover:text-blue-900"
+                  >
+                    <X size={16} onChange={handleSearch} />
+                  </button>
+                </div>
+              )}
+              {selectedCityName && (
+                <div className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                  <span>City: {selectedCityName}</span>
+                  <button 
+                    onClick={() => clearFilter('city')}
+                    className="ml-2 hover:text-blue-900"
+                  >
+                    <X size={16} onChange={handleSearch} />
+                  </button>
+                </div>
+              )}
+              {selectedSubjectName && (
+                <div className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                  <span>Subject: {selectedSubjectName}</span>
+                  <button 
+                    onClick={() => clearFilter('subject')}
+                    className="ml-2 hover:text-blue-900"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              )}
+              {selectedGender && (
+                <div className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                  <span>Gender: {selectedGender}</span>
+                  <button 
+                    onClick={() => clearFilter('gender')}
+                    className="ml-2 hover:text-blue-900"
+                  >
+                    <X size={16} onChange={handleSearch} />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="flex justify-between items-center">
             <div className="flex space-x-4">

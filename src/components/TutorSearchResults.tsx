@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -13,36 +12,43 @@ const TutorSearchResults: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
+  const [searchFilters, setSearchFilters] = useState({
+    institute: searchParams.get('institute') || '',
+    city: searchParams.get('city') || '',
+    subject: searchParams.get('subject') || '', // Note: Changed from 'subjects' to 'subject'
+    gender: searchParams.get('gender') || ''
+  });
 
-  const buildApiUrl = () => {
+  const buildApiUrl = (filters: any) => {
     // Get any search parameters from the URL
     const params = new URLSearchParams();
     
-    // Check URL parameters first (these come from direct navigation or refresh)
-    if (searchParams.get('institute')) {
-      params.append('institute', searchParams.get('institute')!);
+    if (filters.institute) {
+      params.append('institute', filters.institute);
     }
     
-    if (searchParams.get('city')) {
-      params.append('city', searchParams.get('city')!);
+    if (filters.city) {
+      params.append('city', filters.city);
     }
     
-    if (searchParams.get('subjects')) {
-      params.append('subjects', searchParams.get('subjects')!);
+    if (filters.subject) {
+      params.append('subjects', filters.subject); // Backend expects 'subjects'
     }
     
-    if (searchParams.get('gender')) {
-      params.append('gender', searchParams.get('gender')!);
+    if (filters.gender) {
+      params.append('gender', filters.gender);
     }
     
-    return `${import.meta.env.VITE_API_URL}/api/tutors/?${params.toString()}`;
+    const apiUrl = `${import.meta.env.VITE_API_URL}/api/tutors/?${params.toString()}`;
+    console.log("Built API URL:", apiUrl);
+    return apiUrl;
   };
 
-  const fetchTutors = async () => {
+  const fetchTutors = async (filters: any) => {
     try {
       setLoading(true);
-      const apiUrl = buildApiUrl();
-      console.log("Fetching tutors from:", apiUrl);
+      const apiUrl = buildApiUrl(filters);
+      console.log("Fetching tutors with filters:", filters);
       
       const response = await fetch(apiUrl);
       
@@ -65,8 +71,19 @@ const TutorSearchResults: React.FC = () => {
   // Listen for the custom event from SearchSection
   useEffect(() => {
     const handleTutorSearch = (event: CustomEvent) => {
-      console.log("Search event received:", event.detail);
-      fetchTutors();
+      const eventDetail = event.detail;
+      console.log("Search event received:", eventDetail);
+      
+      // Update our filters with the new search criteria
+      const newFilters = {
+        institute: eventDetail.institute || '',
+        city: eventDetail.city || '',
+        subject: eventDetail.subject || '',
+        gender: eventDetail.gender || ''
+      };
+      
+      setSearchFilters(newFilters);
+      fetchTutors(newFilters);
     };
 
     window.addEventListener('tutor-search', handleTutorSearch as EventListener);
@@ -78,7 +95,15 @@ const TutorSearchResults: React.FC = () => {
 
   // Fetch tutors on component mount or when URL params change
   useEffect(() => {
-    fetchTutors();
+    const urlFilters = {
+      institute: searchParams.get('institute') || '',
+      city: searchParams.get('city') || '',
+      subject: searchParams.get('subject') || '',
+      gender: searchParams.get('gender') || ''
+    };
+    
+    setSearchFilters(urlFilters);
+    fetchTutors(urlFilters);
   }, [searchParams]);
 
   return (
