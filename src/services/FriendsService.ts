@@ -21,13 +21,7 @@ const FriendsService = {
         count: 0,
         next: null,
         previous: null,
-        results: [{
-          accepted_friends: [],
-          pending_requests: [],
-          sent_requests: [],
-          total_friends_count: 0,
-          total_pending_count: 0
-        }]
+        results: []
       };
     }
   }

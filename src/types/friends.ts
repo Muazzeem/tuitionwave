@@ -11,17 +11,9 @@ export interface Friend {
   is_online: boolean;
 }
 
-export interface FriendsResponse {
-  accepted_friends: Friend[];
-  pending_requests: Friend[];
-  sent_requests: Friend[];
-  total_friends_count: number;
-  total_pending_count: number;
-}
-
 export interface FriendsApiResponse {
   count: number;
   next: string | null;
   previous: string | null;
-  results: FriendsResponse[];
+  results: Friend[];
 }

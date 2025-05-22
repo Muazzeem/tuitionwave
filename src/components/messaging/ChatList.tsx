@@ -1,8 +1,7 @@
 
 import React, { useState } from "react";
-import { Chat } from "@/types/message";
 import { Friend } from "@/types/friends";
-import { MoreHorizontal, Search, Bell, Mail } from "lucide-react";
+import { MoreHorizontal, Search } from "lucide-react";
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -13,13 +12,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 
 interface ChatListProps {
   friends: Friend[];
-  pendingRequests: Friend[];
-  sentRequests: Friend[];
   activeFriend: Friend | null;
   onFriendSelect: (friend: Friend) => void;
   onDeleteChat: (chatId: string) => void;
@@ -30,8 +26,6 @@ interface ChatListProps {
 
 const ChatList: React.FC<ChatListProps> = ({
   friends,
-  pendingRequests,
-  sentRequests,
   activeFriend,
   onFriendSelect,
   onDeleteChat,
@@ -40,7 +34,6 @@ const ChatList: React.FC<ChatListProps> = ({
   isLoading,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("friends");
 
   const filteredFriends = friends.filter((friend) =>
     `${friend.first_name} ${friend.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -135,106 +128,33 @@ const ChatList: React.FC<ChatListProps> = ({
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="px-4 pt-3">
-          <TabsList className="w-full">
-            <TabsTrigger value="friends" className="flex-1">
-              Friends ({friends.length})
-            </TabsTrigger>
-            <TabsTrigger value="pending" className="flex-1">
-              Pending ({pendingRequests.length + sentRequests.length})
-            </TabsTrigger>
-          </TabsList>
-        </div>
-
-        <TabsContent value="friends" className="flex-1 mt-0">
-          <ScrollArea className="flex-1 h-[calc(100vh-220px)]">
-            <div className="p-2">
-              {filteredFriends.length > 0 ? (
-                <>
-                  {filteredFriends.map((friend) => 
-                    renderFriendItem(friend, activeFriend?.uid === friend.uid)
-                  )}
-                  {hasMoreFriends && (
-                    <div className="p-2 text-center">
-                      <Button 
-                        variant="outline" 
-                        onClick={onLoadMore}
-                        disabled={isLoading}
-                        className="w-full"
-                      >
-                        {isLoading ? "Loading..." : "Load More"}
-                      </Button>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-                  {searchQuery ? "No friends found" : "No friends yet"}
+      <ScrollArea className="flex-1 h-[calc(100vh-220px)]">
+        <div className="p-2">
+          {filteredFriends.length > 0 ? (
+            <>
+              {filteredFriends.map((friend) => 
+                renderFriendItem(friend, activeFriend?.uid === friend.uid)
+              )}
+              {hasMoreFriends && (
+                <div className="p-2 text-center">
+                  <Button 
+                    variant="outline" 
+                    onClick={onLoadMore}
+                    disabled={isLoading}
+                    className="w-full"
+                  >
+                    {isLoading ? "Loading..." : "Load More"}
+                  </Button>
                 </div>
               )}
+            </>
+          ) : (
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+              {searchQuery ? "No friends found" : "No friends yet"}
             </div>
-          </ScrollArea>
-        </TabsContent>
-
-        <TabsContent value="pending" className="flex-1 mt-0">
-          <ScrollArea className="flex-1 h-[calc(100vh-220px)]">
-            {pendingRequests.length > 0 && (
-              <div className="p-3">
-                <h3 className="text-sm font-semibold text-gray-500 mb-2">Incoming Requests</h3>
-                {pendingRequests.map((friend) => (
-                  <div key={friend.uid} className="flex items-center p-3 mb-1 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                    <Avatar className="h-12 w-12 mr-3">
-                      <AvatarImage src={friend.profile_picture || ""} alt={friend.first_name} />
-                      <AvatarFallback>
-                        {friend.first_name?.slice(0, 2).toUpperCase() || friend.email.slice(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <h3 className="font-medium dark:text-white">
-                        {friend.first_name ? `${friend.first_name} ${friend.last_name}` : friend.email}
-                      </h3>
-                      <div className="flex gap-2 mt-1">
-                        <Button size="sm" variant="default" className="text-xs py-1 h-7">Accept</Button>
-                        <Button size="sm" variant="outline" className="text-xs py-1 h-7">Decline</Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {sentRequests.length > 0 && (
-              <div className="p-3">
-                <h3 className="text-sm font-semibold text-gray-500 mb-2">Sent Requests</h3>
-                {sentRequests.map((friend) => (
-                  <div key={friend.uid} className="flex items-center p-3 mb-1 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                    <Avatar className="h-12 w-12 mr-3">
-                      <AvatarImage src={friend.profile_picture || ""} alt={friend.first_name} />
-                      <AvatarFallback>
-                        {friend.first_name?.slice(0, 2).toUpperCase() || friend.email.slice(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <h3 className="font-medium dark:text-white">
-                        {friend.first_name ? `${friend.first_name} ${friend.last_name}` : friend.email}
-                      </h3>
-                      <p className="text-xs text-gray-500">Request sent</p>
-                    </div>
-                    <Button size="sm" variant="outline" className="text-xs py-1 h-7">Cancel</Button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {pendingRequests.length === 0 && sentRequests.length === 0 && (
-              <div className="p-4 text-center text-gray-500">
-                No pending requests
-              </div>
-            )}
-          </ScrollArea>
-        </TabsContent>
-      </Tabs>
+          )}
+        </div>
+      </ScrollArea>
     </div>
   );
 };

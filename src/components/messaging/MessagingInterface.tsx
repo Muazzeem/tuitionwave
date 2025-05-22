@@ -11,25 +11,14 @@ const MessagingInterface: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeFriend, setActiveFriend] = useState<Friend | null>(null);
   
-  const { data, isLoading, fetchNextPage, hasNextPage } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['friends', currentPage],
     queryFn: () => FriendsService.getFriends(currentPage),
-    keepPreviousData: true,
   });
 
   const friends = useMemo(() => {
-    if (!data?.results?.[0]) return [];
-    return data.results[0].accepted_friends || [];
-  }, [data]);
-
-  const pendingRequests = useMemo(() => {
-    if (!data?.results?.[0]) return [];
-    return data.results[0].pending_requests || [];
-  }, [data]);
-
-  const sentRequests = useMemo(() => {
-    if (!data?.results?.[0]) return [];
-    return data.results[0].sent_requests || [];
+    if (!data?.results) return [];
+    return data.results || [];
   }, [data]);
 
   // Convert Friend to Chat for the Conversation component
@@ -61,7 +50,9 @@ const MessagingInterface: React.FC = () => {
   };
 
   const loadMoreFriends = () => {
-    setCurrentPage(prev => prev + 1);
+    if (data?.next) {
+      setCurrentPage(prev => prev + 1);
+    }
   };
 
   useEffect(() => {
@@ -77,8 +68,6 @@ const MessagingInterface: React.FC = () => {
       <div className="w-1/3 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <ChatList
           friends={friends}
-          pendingRequests={pendingRequests}
-          sentRequests={sentRequests}
           activeFriend={activeFriend}
           onFriendSelect={handleFriendSelect}
           onDeleteChat={handleDeleteChat}
