@@ -1,0 +1,27 @@
+
+export interface Friend {
+  uid: string;
+  profile_picture: string | null;
+  first_name: string;
+  last_name: string;
+  email: string;
+  last_message: string | null;
+  last_message_time: string | null;
+  unread_count: number;
+  is_online: boolean;
+}
+
+export interface FriendsResponse {
+  accepted_friends: Friend[];
+  pending_requests: Friend[];
+  sent_requests: Friend[];
+  total_friends_count: number;
+  total_pending_count: number;
+}
+
+export interface FriendsApiResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: FriendsResponse[];
+}

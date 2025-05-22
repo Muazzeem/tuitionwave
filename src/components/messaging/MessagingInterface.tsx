@@ -1,77 +1,90 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import ChatList from "./ChatList";
 import Conversation from "./Conversation";
 import { Chat } from "@/types/message";
-
-// Mock data for demonstration
-const mockChats: Chat[] = [
-  {
-    id: "1",
-    participants: ["user1", "user2"],
-    unreadCount: 3,
-    updatedAt: new Date(),
-    name: "John Doe",
-    avatar: "/placeholder.svg",
-  },
-  {
-    id: "2",
-    participants: ["user1", "user3"],
-    unreadCount: 0,
-    updatedAt: new Date(Date.now() - 60000),
-    name: "Jane Smith",
-    avatar: "/placeholder.svg",
-  },
-  {
-    id: "3",
-    participants: ["user1", "user4"],
-    unreadCount: 1,
-    updatedAt: new Date(Date.now() - 120000),
-    name: "Robert Johnson",
-    avatar: "/placeholder.svg",
-  },
-];
+import { Friend } from "@/types/friends";
+import FriendsService from "@/services/FriendsService";
 
 const MessagingInterface: React.FC = () => {
-  const [chats, setChats] = useState<Chat[]>(mockChats);
-  const [activeChat, setActiveChat] = useState<Chat | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [activeFriend, setActiveFriend] = useState<Friend | null>(null);
+  
+  const { data, isLoading, fetchNextPage, hasNextPage } = useQuery({
+    queryKey: ['friends', currentPage],
+    queryFn: () => FriendsService.getFriends(currentPage),
+    keepPreviousData: true,
+  });
 
-  const handleChatSelect = (chat: Chat) => {
-    setActiveChat(chat);
-    // Mark messages as read when selecting a chat
-    const updatedChats = chats.map((c) => {
-      if (c.id === chat.id) {
-        return { ...c, unreadCount: 0 };
-      }
-      return c;
-    });
-    setChats(updatedChats);
+  const friends = useMemo(() => {
+    if (!data?.results?.[0]) return [];
+    return data.results[0].accepted_friends || [];
+  }, [data]);
+
+  const pendingRequests = useMemo(() => {
+    if (!data?.results?.[0]) return [];
+    return data.results[0].pending_requests || [];
+  }, [data]);
+
+  const sentRequests = useMemo(() => {
+    if (!data?.results?.[0]) return [];
+    return data.results[0].sent_requests || [];
+  }, [data]);
+
+  // Convert Friend to Chat for the Conversation component
+  const activeChat = useMemo<Chat | null>(() => {
+    if (!activeFriend) return null;
+    
+    return {
+      id: activeFriend.uid,
+      participants: [activeFriend.uid],
+      unreadCount: activeFriend.unread_count,
+      updatedAt: activeFriend.last_message_time ? new Date(activeFriend.last_message_time) : new Date(),
+      name: activeFriend.first_name && activeFriend.last_name 
+        ? `${activeFriend.first_name} ${activeFriend.last_name}` 
+        : activeFriend.email.split("@")[0],
+      avatar: activeFriend.profile_picture || "/placeholder.svg",
+    };
+  }, [activeFriend]);
+
+  const handleFriendSelect = (friend: Friend) => {
+    setActiveFriend(friend);
   };
 
-  const handleDeleteChat = (chatId: string) => {
-    const updatedChats = chats.filter((chat) => chat.id !== chatId);
-    setChats(updatedChats);
-    if (activeChat?.id === chatId) {
-      setActiveChat(null);
+  const handleDeleteChat = (friendId: string) => {
+    if (activeFriend?.uid === friendId) {
+      setActiveFriend(null);
     }
+    // In a real implementation, we would call an API to delete the chat
+    console.log("Delete chat for friend:", friendId);
+  };
+
+  const loadMoreFriends = () => {
+    setCurrentPage(prev => prev + 1);
   };
 
   useEffect(() => {
-    // Set the first chat as active by default if none is selected
-    if (chats.length > 0 && !activeChat) {
-      setActiveChat(chats[0]);
+    // Set the first friend as active by default if none is selected
+    if (friends.length > 0 && !activeFriend) {
+      setActiveFriend(friends[0]);
     }
-  }, [chats, activeChat]);
+  }, [friends, activeFriend]);
 
   return (
     <div className="flex h-full">
       {/* Chat list sidebar */}
       <div className="w-1/3 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <ChatList
-          chats={chats}
-          activeChat={activeChat}
-          onChatSelect={handleChatSelect}
+          friends={friends}
+          pendingRequests={pendingRequests}
+          sentRequests={sentRequests}
+          activeFriend={activeFriend}
+          onFriendSelect={handleFriendSelect}
           onDeleteChat={handleDeleteChat}
+          onLoadMore={loadMoreFriends}
+          hasMoreFriends={!!data?.next}
+          isLoading={isLoading}
         />
       </div>
 
