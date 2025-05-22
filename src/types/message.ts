@@ -1,6 +1,16 @@
 
 export type MessageType = 'text' | 'image' | 'file' | 'audio';
 
+export interface WebSocketMessage {
+  type: string;
+  message: string;
+  sender_id?: string;
+  sender_email?: string;
+  sent_at?: string;
+  conversation_id?: string;
+  user_id?: string;
+}
+
 export interface Message {
   id: string;
   content: string;

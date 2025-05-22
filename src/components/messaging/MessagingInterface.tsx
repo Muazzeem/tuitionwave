@@ -6,10 +6,12 @@ import Conversation from "./Conversation";
 import { Chat } from "@/types/message";
 import { Friend } from "@/types/friends";
 import FriendsService from "@/services/FriendsService";
+import { useAuth } from "@/contexts/AuthContext";
 
 const MessagingInterface: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeFriend, setActiveFriend] = useState<Friend | null>(null);
+  const { userProfile } = useAuth();
   
   const { data, isLoading, error } = useQuery({
     queryKey: ['friends', currentPage],
@@ -26,7 +28,7 @@ const MessagingInterface: React.FC = () => {
     if (!activeFriend) return null;
     
     return {
-      id: activeFriend.uid,
+      id: `${userProfile?.uid}-${activeFriend.uid}`, // Create a conversation ID
       participants: [activeFriend.uid],
       unreadCount: activeFriend.unread_count,
       updatedAt: activeFriend.last_message_time ? new Date(activeFriend.last_message_time) : new Date(),
@@ -35,7 +37,7 @@ const MessagingInterface: React.FC = () => {
         : activeFriend.email.split("@")[0],
       avatar: activeFriend.profile_picture || "/placeholder.svg",
     };
-  }, [activeFriend]);
+  }, [activeFriend, userProfile]);
 
   const handleFriendSelect = (friend: Friend) => {
     setActiveFriend(friend);

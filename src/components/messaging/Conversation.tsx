@@ -1,6 +1,5 @@
-
-import React, { useState, useRef, useEffect } from "react";
-import { Chat, Message, MessageType } from "@/types/message";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { Chat, Message, MessageType, WebSocketMessage } from "@/types/message";
 import { v4 as uuidv4 } from "uuid";
 import { format } from "date-fns";
 import {
@@ -27,6 +26,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import WebSocketService from "@/services/WebSocketService";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Mock messages for demonstration
 const mockMessages: Message[] = [
@@ -96,10 +97,54 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
   const [recordingInterval, setRecordingInterval] = useState<NodeJS.Timeout | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const { userProfile } = useAuth();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  // Handle WebSocket messages
+  const handleWebSocketMessage = useCallback((event: MessageEvent) => {
+    const wsData: WebSocketMessage = JSON.parse(event.data);
+    
+    if (wsData.type === 'chat_message') {
+      const newMessage: Message = {
+        id: uuidv4(),
+        content: wsData.message,
+        senderId: wsData.sender_id || "",
+        receiverId: userProfile?.uid || "",
+        timestamp: new Date(wsData.sent_at || new Date()),
+        type: "text",
+        isRead: false,
+      };
+      
+      setMessages(prev => [...prev, newMessage]);
+    }
+  }, [userProfile?.uid]);
+
+  // Connect to WebSocket when chat changes
+  useEffect(() => {
+    const connectWebSocket = async () => {
+      if (chat && chat.id) {
+        const connected = await WebSocketService.connect(chat.id);
+        setIsConnected(connected);
+        
+        if (connected) {
+          WebSocketService.addMessageHandler(handleWebSocketMessage);
+        } else {
+          toast.error("Failed to connect to chat server");
+        }
+      }
+    };
+    
+    connectWebSocket();
+    
+    return () => {
+      WebSocketService.removeMessageHandler(handleWebSocketMessage);
+      WebSocketService.disconnect();
+    };
+  }, [chat, handleWebSocketMessage]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -132,19 +177,27 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
   }, [isRecording]);
 
   const handleSendMessage = () => {
-    if (inputMessage.trim()) {
-      const newMessage: Message = {
-        id: uuidv4(),
-        content: inputMessage,
-        senderId: "user1", // Current user ID
-        receiverId: chat.participants.find((id) => id !== "user1") || "",
-        timestamp: new Date(),
-        type: "text",
-        isRead: false,
-      };
+    if (inputMessage.trim() && userProfile?.uid) {
+      // Send message via WebSocket
+      const sent = WebSocketService.sendMessage(inputMessage.trim(), userProfile.uid);
+      
+      if (sent) {
+        // Add message to local state for immediate UI feedback
+        const newMessage: Message = {
+          id: uuidv4(),
+          content: inputMessage,
+          senderId: userProfile.uid, // Current user ID
+          receiverId: chat.participants.find((id) => id !== userProfile.uid) || "",
+          timestamp: new Date(),
+          type: "text",
+          isRead: false,
+        };
 
-      setMessages([...messages, newMessage]);
-      setInputMessage("");
+        setMessages([...messages, newMessage]);
+        setInputMessage("");
+      } else {
+        toast.error("Failed to send message. Please try again.");
+      }
     }
   };
 
@@ -281,7 +334,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
           <div>
             <h3 className="font-medium text-gray-900 dark:text-white">{chat.name}</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              {chat.participants.includes("user1") ? "Active now" : "Offline"}
+              {isConnected ? "Connected" : "Connecting..."}
             </p>
           </div>
         </div>
@@ -309,7 +362,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
       >
         <div className="space-y-4">
           {messages.map((message) => {
-            const isCurrentUser = message.senderId === "user1";
+            const isCurrentUser = message.senderId === userProfile?.uid;
 
             return (
               <div
@@ -458,6 +511,15 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
               </div>
             </div>
           )}
+          
+          {!isConnected && (
+            <div className="flex justify-center my-2">
+              <div className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-500 dark:text-yellow-400 px-3 py-1 rounded-full text-xs flex items-center">
+                <span className="animate-pulse h-2 w-2 bg-yellow-500 rounded-full mr-2"></span>
+                Connecting to chat server...
+              </div>
+            </div>
+          )}
         </div>
       </ScrollArea>
 
@@ -470,6 +532,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
               size="icon"
               className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               onClick={() => imageInputRef.current?.click()}
+              disabled={!isConnected}
             >
               <Image className="h-5 w-5" />
               <input
@@ -486,6 +549,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
               size="icon"
               className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               onClick={() => fileInputRef.current?.click()}
+              disabled={!isConnected}
             >
               <Paperclip className="h-5 w-5" />
               <input
@@ -501,18 +565,19 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
               size="icon"
               className={`${isRecording ? "" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
               onClick={toggleRecording}
+              disabled={!isConnected}
             >
               {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
             </Button>
           </div>
 
           <Input
-            placeholder="Type a message..."
+            placeholder={isConnected ? "Type a message..." : "Connecting..."}
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={handleKeyPress}
             className="flex-1"
-            disabled={isRecording}
+            disabled={isRecording || !isConnected}
           />
 
           <Button
@@ -520,7 +585,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
             size="icon"
             className="ml-3 text-blue-500 dark:text-blue-400"
             onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || isRecording}
+            disabled={!inputMessage.trim() || isRecording || !isConnected}
           >
             <Send className="h-5 w-5" />
           </Button>
