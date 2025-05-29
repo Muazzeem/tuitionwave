@@ -14,10 +14,9 @@ class WebSocketService {
       }
       
       // Get user token from localStorage
-      const token = localStorage.getItem('access_token');
       
       // Create a new WebSocket connection
-      const socketUrl = `ws://localhost:8001/ws/chat/${conversationId}/`;
+      const socketUrl = `ws://13.200.63.86:9000/ws/chat/1/`;
       this.socket = new WebSocket(socketUrl);
       
       // Setup event handlers

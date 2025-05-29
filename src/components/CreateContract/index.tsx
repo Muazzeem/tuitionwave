@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -253,185 +252,189 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
   ];
 
   return (
-    <div className="flex-1 overflow-auto">
-      <div className="p-6 mb-10">
-          <TutorHeader
-            name={tutor?.full_name}
-            rating={tutor?.rating}
-            reviewCount={tutor?.review_count}
-          />
-
-          <ValidationAlert show={showValidationError} />
-
-          <DaySelector
-            activeDays={activeDays}
-            selectedDays={selectedDays}
-            onChange={handleDaysChange}
-            error={errors.selectedDays}
-          />
-
-          <SubjectSelector
-            subjects={tutor?.subjects || []}
-            selectedSubjects={selectedSubjects}
-            onChange={(value) => handleFieldChange('selectedSubjects', value)}
-            error={errors.selectedSubjects}
-          />
-
-          <div className="grid grid-cols-12 gap-4 mb-6 mt-5">
-            <LocationFields
-              studentCity={studentCity}
-              studentArea={studentArea}
-              onCityChange={(value) => {
-                handleCityChange(value);
-                clearFieldError('studentCity');
-              }}
-              onAreaChange={(value) => {
-                handleAreaChange(value);
-                clearFieldError('studentArea');
-              }}
-              cities={cities}
-              areas={areas}
-              loadingCities={loadingCities}
-              loadingAreas={loadingAreas}
-              cityError={errors.studentCity}
-              areaError={errors.studentArea}
+    <div className="flex flex-col h-full">
+      {/* Scrollable Content Area */}
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="p-6">
+            <TutorHeader
+              name={tutor?.full_name}
+              rating={tutor?.rating}
+              reviewCount={tutor?.review_count}
             />
-            
-            <div className="col-span-6">
-              <FormField
-                id="studentInstitution"
-                label="Student Institution"
-                type="text"
-                value={studentInstitution}
-                onChange={(value) => handleFieldChange('studentInstitution', value)}
-                placeholder="Enter Institution"
-                error={errors.studentInstitution}
-                required
+
+            <ValidationAlert show={showValidationError} />
+
+            <DaySelector
+              activeDays={activeDays}
+              selectedDays={selectedDays}
+              onChange={handleDaysChange}
+              error={errors.selectedDays}
+            />
+
+            <SubjectSelector
+              subjects={tutor?.subjects || []}
+              selectedSubjects={selectedSubjects}
+              onChange={(value) => handleFieldChange('selectedSubjects', value)}
+              error={errors.selectedSubjects}
+            />
+
+            <div className="grid grid-cols-12 gap-4 mb-6 mt-5">
+              <LocationFields
+                studentCity={studentCity}
+                studentArea={studentArea}
+                onCityChange={(value) => {
+                  handleCityChange(value);
+                  clearFieldError('studentCity');
+                }}
+                onAreaChange={(value) => {
+                  handleAreaChange(value);
+                  clearFieldError('studentArea');
+                }}
+                cities={cities}
+                areas={areas}
+                loadingCities={loadingCities}
+                loadingAreas={loadingAreas}
+                cityError={errors.studentCity}
+                areaError={errors.studentArea}
               />
-            </div>
-            
-            <div className="col-span-6">
-              <FormField
-                id="studentClass"
-                label="Class"
-                type="select"
-                value={studentClass}
-                onChange={(value) => handleFieldChange('studentClass', value)}
-                error={errors.studentClass}
-                required
-                options={classOptions}
-              />
-            </div>
-            
-            <div className="col-span-6">
-              <FormField
-                id="studentDepartment"
-                label="Department"
-                type="select"
-                value={studentDepartment}
-                onChange={(value) => handleFieldChange('studentDepartment', value)}
-                error={errors.studentDepartment}
-                required
-                options={departmentOptions}
-              />
-            </div>
-            
-            <div className="col-span-6">
-              { teaching_type === 'BOTH' ?
-                (
-                  <FormField 
-                id="tuitionType"
-                label="Tuition Type"
-                type="select"
-                value={tuitionType}
-                onChange={(value) => handleFieldChange('tuitionType', value)}
-                error={errors.tuitionType}
-                required
-                options={tuitionTypeOptions}
-              />
-                ) :
-                (
-                  <FormField disabled
-                    id="tuitionType"
-                    label="Tuition Type"
-                    type="text"
-                    value={teaching_type}
-                    onChange={(value) => handleFieldChange('tuitionType', value)}
-                    placeholder="Enter Tuition Type"
-                    error={errors.tuitionType}
-                    required
-                  />
-                )
-              }
-            </div>
-            
-            <div className="col-span-6">
-              <FormField
-                id="members"
-                label="Members"
-                type="select"
-                value={memberCount}
-                onChange={(value) => handleFieldChange('memberCount', value)}
-                error={errors.memberCount}
-                required
-                options={memberOptions}
-              />
-            </div>
-            
-            <div className="col-span-6">
-              <FormField
-                id="gender"
-                label="Gender"
-                type="select"
-                value={preferredGender}
-                onChange={(value) => handleFieldChange('preferredGender', value)}
-                error={errors.preferredGender}
-                required
-                options={genderOptions}
-              />
-            </div>
-            
-            <div className="col-span-12">
-              <FormField
-                id="iWantToPay"
-                label="I want to Pay"
-                type="number"
-                value={selectedAmount}
-                onChange={(value) => handleFieldChange('selectedAmount', value)}
-                placeholder="Enter amount"
-                error={errors.selectedAmount}
-                required
-              />
-            </div>
-            
-            <div className="col-span-12">
-              <FormField
-                id="customMessage"
-                label="Custom Message (Optional)"
-                type="textarea"
-                value={customMessage}
-                onChange={(value) => handleFieldChange('customMessage', value)}
-                placeholder="Add any additional information or special requirements"
-                required={false}
-                rows={4}
-              />
+              
+              <div className="col-span-6">
+                <FormField
+                  id="studentInstitution"
+                  label="Student Institution"
+                  type="text"
+                  value={studentInstitution}
+                  onChange={(value) => handleFieldChange('studentInstitution', value)}
+                  placeholder="Enter Institution"
+                  error={errors.studentInstitution}
+                  required
+                />
+              </div>
+              
+              <div className="col-span-6">
+                <FormField
+                  id="studentClass"
+                  label="Class"
+                  type="select"
+                  value={studentClass}
+                  onChange={(value) => handleFieldChange('studentClass', value)}
+                  error={errors.studentClass}
+                  required
+                  options={classOptions}
+                />
+              </div>
+              
+              <div className="col-span-6">
+                <FormField
+                  id="studentDepartment"
+                  label="Department"
+                  type="select"
+                  value={studentDepartment}
+                  onChange={(value) => handleFieldChange('studentDepartment', value)}
+                  error={errors.studentDepartment}
+                  required
+                  options={departmentOptions}
+                />
+              </div>
+              
+              <div className="col-span-6">
+                { teaching_type === 'BOTH' ?
+                  (
+                    <FormField 
+                  id="tuitionType"
+                  label="Tuition Type"
+                  type="select"
+                  value={tuitionType}
+                  onChange={(value) => handleFieldChange('tuitionType', value)}
+                  error={errors.tuitionType}
+                  required
+                  options={tuitionTypeOptions}
+                />
+                  ) :
+                  (
+                    <FormField disabled
+                      id="tuitionType"
+                      label="Tuition Type"
+                      type="text"
+                      value={teaching_type}
+                      onChange={(value) => handleFieldChange('tuitionType', value)}
+                      placeholder="Enter Tuition Type"
+                      error={errors.tuitionType}
+                      required
+                    />
+                  )
+                }
+              </div>
+              
+              <div className="col-span-6">
+                <FormField
+                  id="members"
+                  label="Members"
+                  type="select"
+                  value={memberCount}
+                  onChange={(value) => handleFieldChange('memberCount', value)}
+                  error={errors.memberCount}
+                  required
+                  options={memberOptions}
+                />
+              </div>
+              
+              <div className="col-span-6">
+                <FormField
+                  id="gender"
+                  label="Gender"
+                  type="select"
+                  value={preferredGender}
+                  onChange={(value) => handleFieldChange('preferredGender', value)}
+                  error={errors.preferredGender}
+                  required
+                  options={genderOptions}
+                />
+              </div>
+              
+              <div className="col-span-12">
+                <FormField
+                  id="iWantToPay"
+                  label="I want to Pay"
+                  type="number"
+                  value={selectedAmount}
+                  onChange={(value) => handleFieldChange('selectedAmount', value)}
+                  placeholder="Enter amount"
+                  error={errors.selectedAmount}
+                  required
+                />
+              </div>
+              
+              <div className="col-span-12">
+                <FormField
+                  id="customMessage"
+                  label="Custom Message (Optional)"
+                  type="textarea"
+                  value={customMessage}
+                  onChange={(value) => handleFieldChange('customMessage', value)}
+                  placeholder="Add any additional information or special requirements"
+                  required={false}
+                  rows={4}
+                />
+              </div>
             </div>
           </div>
-          
-          <div className="flex justify-center">
-            <div className="w-full">
-              {userProfile?.user_type === "GUARDIAN" && (
-                <Button
-                  className="w-full min-h-[55px] dark:text-white"
-                  onClick={handleSendRequest}
-                  disabled={submitting}
-                >
-                  {submitting ? "Submitting..." : "Make Request"}
-                </Button>
-              )}
-            </div>
-          </div>
+        </ScrollArea>
       </div>
+      
+      {/* Fixed Button at Bottom */}
+      {userProfile?.user_type === "GUARDIAN" && (
+        <div className="border-t bg-background p-4 mb-14">
+          <Button
+            className="w-full min-h-[55px] dark:text-white"
+            onClick={handleSendRequest}
+            disabled={submitting}
+          >
+            {submitting ? "Submitting..." : "Make Request"}
+          </Button>
+        </div>
+      )}
       
       <ConfirmationDialog
         isOpen={showApproveConfirm}
