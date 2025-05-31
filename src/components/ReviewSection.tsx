@@ -186,7 +186,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ id, condition }) => {
                     value="reviews"
                     className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 bg-transparent px-4 py-2"
                   >
-                    Customer Reviews ({feedbacks.length})
+                    Guardian Reviews ({feedbacks.length})
                   </TabsTrigger>
                 </TabsList>
 

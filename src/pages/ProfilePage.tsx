@@ -96,7 +96,7 @@ const ProfilePage: React.FC = () => {
               />
 
               <div className="mt-8 mb-10">
-                {currentStep === 1 && (
+                {currentStep === 3 && (
                   <PersonalInfoForm
                     formData={formData}
                     updateFormData={updateFormData}
@@ -113,7 +113,7 @@ const ProfilePage: React.FC = () => {
                   />
                 )}
 
-                {currentStep === 3 && (
+                {currentStep === 1 && (
                   <TuitionForm
                     formData={formData}
                     updateFormData={updateFormData}

@@ -1,18 +1,21 @@
 // GeneralSettings.tsx
 import { useUserProfile, ProfileData } from '@/contexts/UserProfileContext';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useLocation } from 'react-router-dom';
+import { Camera, User, X } from 'lucide-react';
 
 const GeneralSettings = () => {
   const { profile, updateProfile, loading, refreshProfile } = useUserProfile();
   const { toast } = useToast();
   const location = useLocation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isSaving, setIsSaving] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<ProfileData>>({
     first_name: '',
     last_name: '',
@@ -41,6 +44,13 @@ const GeneralSettings = () => {
         profile_picture: profile.profile_picture || null,
         is_nid_verified: profile.is_nid_verified || false
       });
+      
+      // Set preview URL if profile picture exists
+      if (profile.profile_picture) {
+        if (typeof profile.profile_picture === 'string') {
+          setPreviewUrl(profile.profile_picture);
+        }
+      }
     }
   }, [profile]);
 
@@ -49,11 +59,75 @@ const GeneralSettings = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Error",
+          description: "Please select a valid image file.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "Error",
+          description: "File size must be less than 5MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Create preview URL
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+      
+      // Update form data with the file
+      setFormData((prev) => ({ ...prev, profile_picture: file }));
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setPreviewUrl(null);
+    setFormData((prev) => ({ ...prev, profile_picture: null }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setIsSaving(true);
-      await updateProfile(formData);
+      
+      // Create FormData object to handle file uploads
+      const submitData = new FormData();
+      
+      // Append all form fields
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key === 'profile_picture') {
+          // Handle file upload
+          if (value instanceof File) {
+            submitData.append(key, value);
+          } else if (value === null) {
+            // If explicitly set to null, we want to remove the image
+            submitData.append(key, '');
+          }
+          // If value is a string (existing URL), don't append it - keep existing
+        } else if (value !== null && value !== undefined) {
+          submitData.append(key, String(value));
+        }
+      });
+
+      await updateProfile(submitData);
 
       toast({
         title: "Success",
@@ -79,6 +153,57 @@ const GeneralSettings = () => {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-6">General Settings</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Profile Picture Section */}
+        <div className="flex flex-col items-center space-y-4">
+          <div className="relative">
+            <div className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden border-4 border-gray-300 dark:border-gray-600">
+              {previewUrl ? (
+                <img
+                  src={previewUrl}
+                  alt="Profile preview"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <User className="w-16 h-16 text-gray-400" />
+              )}
+            </div>
+            {previewUrl && (
+              <button
+                type="button"
+                onClick={handleRemoveImage}
+                className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          
+          <div className="flex space-x-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={triggerFileInput}
+              className="flex items-center space-x-2"
+            >
+              <Camera className="w-4 h-4" />
+              <span>{previewUrl ? 'Change Picture' : 'Upload Picture'}</span>
+            </Button>
+          </div>
+          
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          
+          <p className="text-sm text-gray-500 text-center">
+            Supported formats: JPG, PNG, GIF<br />
+            Maximum size: 5MB
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <Label htmlFor="first_name">First Name</Label>

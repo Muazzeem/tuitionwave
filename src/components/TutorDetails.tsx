@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Star, MapPin, Calendar, Clock, BookOpen, GraduationCap, Users, FileText, ChevronLeft, Phone, Mail } from "lucide-react";
 import { useParams } from "react-router-dom";
 import ReviewSection from "./ReviewSection";
@@ -8,7 +7,6 @@ const TutorDetails: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [tutor, setTutor] = useState(null);
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [userProfile] = useState({ user_type: "GUARDIAN" }); // Mock user profile
   const { id } = useParams();
   useEffect(() => {
     setLoading(true);
@@ -17,6 +15,7 @@ const TutorDetails: React.FC = () => {
         .then((response) => response.json())
         .then((data) => {
           setTutor(data);
+          console.log(data);
         })
         .catch((error) => console.error("Error fetching tutor details:", error))
         .finally(() => setLoading(false));
@@ -59,7 +58,7 @@ const TutorDetails: React.FC = () => {
   });
 
   const InfoCard = ({ icon: Icon, title, children, className = "" }) => (
-    <div className={`bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow ${className}`}>
+    <div className={`bg-white rounded-lg p-6 shadow-none border border-gray-100 hover:shadow-sm transition-shadow ${className}`}>
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 bg-blue-50 rounded-lg">
           <Icon className="w-5 h-5 text-blue-600" />
@@ -87,11 +86,11 @@ const TutorDetails: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden sticky top-4">
+            <div className="bg-white rounded-xl shadow-none border border-gray-100 overflow-hidden sticky top-4">
               {/* Profile Image */}
               <div className="aspect-square relative">
                 <img
-                  src={tutor.profile_picture_url}
+                  src={tutor.profile_picture}
                   alt="Tutor Profile"
                   className="w-full h-full object-cover"
                 />
@@ -115,11 +114,11 @@ const TutorDetails: React.FC = () => {
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center gap-3 text-gray-600">
                     <MapPin className="w-4 h-4" />
-                    <span className="text-sm">{tutor.city?.name}, {tutor.city?.district?.name}</span>
+                    <span className="text-sm">{tutor.address}, {tutor.city?.district?.name}</span>
                   </div>
                   <div className="flex items-center gap-3 text-gray-600">
                     <GraduationCap className="w-4 h-4" />
-                    <span className="text-sm">{tutor.degree?.name}</span>
+                    <span className="text-sm">{tutor.institute?.name}</span>
                   </div>
                   <div className="flex items-center gap-3 text-gray-600">
                     <Users className="w-4 h-4" />
@@ -176,7 +175,7 @@ const TutorDetails: React.FC = () => {
                 <div>
                   <h5 className="font-medium text-gray-900 mb-2">Preferred Districts</h5>
                   <div className="flex flex-wrap gap-2">
-                    {tutor.preferred_districts.map((dist, index) => (
+                    {tutor?.preferred_districts?.map((dist, index) => (
                       <span
                         key={index}
                         className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm"
@@ -189,7 +188,7 @@ const TutorDetails: React.FC = () => {
                 <div>
                   <h5 className="font-medium text-gray-900 mb-2">Preferred Areas</h5>
                   <div className="flex flex-wrap gap-2">
-                    {tutor.preferred_areas.map((area, index) => (
+                    {tutor?.preferred_areas?.map((area, index) => (
                       <span
                         key={index}
                         className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-sm"

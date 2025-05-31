@@ -9,7 +9,7 @@ const TutorProfile: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <SearchSection />
+      {/* <SearchSection /> */}
       <main>
         <TutorDetails />
       </main>
