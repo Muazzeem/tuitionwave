@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import ProfileCompletionAlert from "@/components/ProfileCompletionAlert";
 
 import { useProfileCompletion } from "@/components/ProfileCompletionContext";
+import PricingCards from "@/components/PricingCards";
 
 const Dashboard: React.FC = () => {
   const { userProfile } = useAuth();
@@ -23,6 +24,10 @@ const Dashboard: React.FC = () => {
           <ProfileCompletionAlert />
         </div>
       )}
+      {userProfile?.user_type === "TEACHER" && (
+        <PricingCards />
+      )
+      }
       {userProfile.is_nid_verified}
       {/* <NIDUpload /> */}
       {completionData.completion_percentage >= 80 && (
