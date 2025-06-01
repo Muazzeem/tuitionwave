@@ -1,88 +1,18 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Chat, Message, MessageType, WebSocketMessage } from "@/types/message";
-import { v4 as uuidv4 } from "uuid";
-import { format } from "date-fns";
-import {
-  Image,
-  Paperclip,
-  Send,
-  Mic,
-  MoreVertical,
-  X,
-  Play,
-  Pause,
-  Trash,
-  MicOff
-} from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import React, { useState, useEffect, useRef } from 'react';
+import { Send, MoreVertical, Phone, Video } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { toast } from "sonner";
-import WebSocketService from "@/services/WebSocketService";
-import { useAuth } from "@/contexts/AuthContext";
-
-// Mock messages for demonstration
-const mockMessages: Message[] = [
-  {
-    id: "1",
-    content: "Hi there! How can I help you today?",
-    senderId: "user2",
-    receiverId: "user1",
-    timestamp: new Date(Date.now() - 600000),
-    type: "text",
-    isRead: true,
-  },
-  {
-    id: "2",
-    content: "I have a question about my tuition.",
-    senderId: "user1",
-    receiverId: "user2",
-    timestamp: new Date(Date.now() - 540000),
-    type: "text",
-    isRead: true,
-  },
-  {
-    id: "3",
-    content: "/placeholder.svg",
-    senderId: "user2",
-    receiverId: "user1",
-    timestamp: new Date(Date.now() - 480000),
-    type: "image",
-    isRead: true,
-    fileName: "schedule.jpg",
-    fileSize: 245000,
-  },
-  {
-    id: "4",
-    content: "Here's a document with all the details.",
-    senderId: "user2",
-    receiverId: "user1",
-    timestamp: new Date(Date.now() - 420000),
-    type: "file",
-    isRead: true,
-    fileName: "tuition_details.pdf",
-    fileSize: 1240000,
-    fileUrl: "#",
-  },
-  {
-    id: "5",
-    content: "/audio-placeholder.mp3",
-    senderId: "user1",
-    receiverId: "user2",
-    timestamp: new Date(Date.now() - 360000),
-    type: "audio",
-    isRead: true,
-    audioDuration: 15,
-  },
-];
+} from '@/components/ui/dropdown-menu';
+import { Chat, Message } from '@/types/message';
+import WebSocketService from '@/services/WebSocketService';
+import { useUserProfile } from '@/contexts/UserProfileContext';
 
 interface ConversationProps {
   chat: Chat;
@@ -90,504 +20,193 @@ interface ConversationProps {
 }
 
 const Conversation: React.FC<ConversationProps> = ({ chat, onDeleteChat }) => {
-  const [messages, setMessages] = useState<Message[]>(mockMessages);
-  const [inputMessage, setInputMessage] = useState("");
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordingTime, setRecordingTime] = useState(0);
-  const [recordingInterval, setRecordingInterval] = useState<NodeJS.Timeout | null>(null);
-  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
-  const [playingAudio, setPlayingAudio] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState('');
   const [isConnected, setIsConnected] = useState(false);
-  const { userProfile } = useAuth();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { profile } = useUserProfile();
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  // Scroll to bottom when new messages arrive
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
-  // Handle WebSocket messages
-  const handleWebSocketMessage = useCallback((event: MessageEvent) => {
-    const wsData: WebSocketMessage = JSON.parse(event.data);
-    
-    if (wsData.type === 'chat_message') {
-      const newMessage: Message = {
-        id: uuidv4(),
-        content: wsData.message,
-        senderId: wsData.sender_id || "",
-        receiverId: userProfile?.uid || "",
-        timestamp: new Date(wsData.sent_at || new Date()),
-        type: "text",
-        isRead: false,
-      };
-      
-      setMessages(prev => [...prev, newMessage]);
-    }
-  }, [userProfile?.uid]);
-
-  // Connect to WebSocket when chat changes
   useEffect(() => {
-    const connectWebSocket = async () => {
-      if (chat && chat.id) {
-        const connected = await WebSocketService.connect(chat.id);
-        setIsConnected(connected);
-        
-        if (connected) {
-          WebSocketService.addMessageHandler(handleWebSocketMessage);
-        } else {
-          toast.error("Failed to connect to chat server");
-        }
-      }
-    };
-    
-    connectWebSocket();
-    
-    return () => {
-      WebSocketService.removeMessageHandler(handleWebSocketMessage);
-      WebSocketService.disconnect();
-    };
-  }, [chat, handleWebSocketMessage]);
-
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    if (scrollAreaRef.current) {
-      const scrollElement = scrollAreaRef.current;
-      scrollElement.scrollTop = scrollElement.scrollHeight;
-    }
+    scrollToBottom();
   }, [messages]);
 
-  // Handle recording timer
   useEffect(() => {
-    if (isRecording) {
-      const interval = setInterval(() => {
-        setRecordingTime((prev) => prev + 1);
-      }, 1000);
-      setRecordingInterval(interval);
-    } else {
-      if (recordingInterval) {
-        clearInterval(recordingInterval);
-        setRecordingInterval(null);
-      }
-      setRecordingTime(0);
-    }
+    if (!chat.conversationId || !profile?.uid) return;
+
+    // Connect to WebSocket
+    WebSocketService.connect(
+      chat.conversationId,
+      (message) => {
+        setMessages(prev => [...prev, message]);
+      },
+      () => setIsConnected(true),
+      () => setIsConnected(false)
+    );
 
     return () => {
-      if (recordingInterval) {
-        clearInterval(recordingInterval);
-      }
+      WebSocketService.disconnect();
     };
-  }, [isRecording]);
+  }, [chat.conversationId, profile?.uid]);
 
   const handleSendMessage = () => {
-    if (inputMessage.trim() && userProfile?.uid) {
-      // Send message via WebSocket
-      const sent = WebSocketService.sendMessage(inputMessage.trim(), userProfile.uid);
-      
-      if (sent) {
-        // Add message to local state for immediate UI feedback
-        const newMessage: Message = {
-          id: uuidv4(),
-          content: inputMessage,
-          senderId: userProfile.uid, // Current user ID
-          receiverId: chat.participants.find((id) => id !== userProfile.uid) || "",
-          timestamp: new Date(),
-          type: "text",
-          isRead: false,
-        };
+    if (!newMessage.trim() || !profile?.uid || !isConnected) return;
 
-        setMessages([...messages, newMessage]);
-        setInputMessage("");
-      } else {
-        toast.error("Failed to send message. Please try again.");
-      }
-    }
+    const messageData = {
+      type: 'chat_message',
+      message: newMessage,
+      user_id: profile.uid
+    };
+
+    WebSocketService.sendMessage(messageData);
+    setNewMessage('');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // In a real app, you'd upload the file to storage and get a URL
-      const fakeUrl = URL.createObjectURL(file);
+  const renderMessage = (message: Message, index: number) => {
+    const isOwnMessage = message.sender_id === profile?.uid;
+    const showAvatar = !isOwnMessage && (index === 0 || messages[index - 1].sender_id !== message.sender_id);
 
-      const newMessage: Message = {
-        id: uuidv4(),
-        content: fakeUrl,
-        senderId: "user1",
-        receiverId: chat.participants.find((id) => id !== "user1") || "",
-        timestamp: new Date(),
-        type: "file",
-        isRead: false,
-        fileName: file.name,
-        fileSize: file.size,
-        fileUrl: fakeUrl,
-      };
+    return (
+      <div
+        key={`${message.sent_at}-${index}`}
+        className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} mb-4`}
+      >
+        {!isOwnMessage && showAvatar && (
+          <Avatar className="h-8 w-8 mr-2 mt-1">
+            <AvatarImage src={chat.avatar} alt={chat.name} />
+            <AvatarFallback>{chat.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+          </Avatar>
+        )}
+        {!isOwnMessage && !showAvatar && <div className="w-10 mr-2" />}
 
-      setMessages([...messages, newMessage]);
-      toast.success("File uploaded successfully");
-
-      // Reset file input
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
-  };
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (!file.type.startsWith("image/")) {
-        toast.error("Please select an image file");
-        return;
-      }
-
-      // In a real app, you'd upload the image to storage and get a URL
-      const fakeUrl = URL.createObjectURL(file);
-
-      const newMessage: Message = {
-        id: uuidv4(),
-        content: fakeUrl,
-        senderId: "user1",
-        receiverId: chat.participants.find((id) => id !== "user1") || "",
-        timestamp: new Date(),
-        type: "image",
-        isRead: false,
-        fileName: file.name,
-        fileSize: file.size,
-      };
-
-      setMessages([...messages, newMessage]);
-      toast.success("Image uploaded successfully");
-
-      // Reset file input
-      if (imageInputRef.current) imageInputRef.current.value = "";
-    }
-  };
-
-  const toggleRecording = () => {
-    // In a real app, you'd use Web Audio API or MediaRecorder
-    setIsRecording(!isRecording);
-
-    if (isRecording) {
-      // Simulate ending recording and creating a message
-      const fakeDuration = recordingTime;
-
-      const newMessage: Message = {
-        id: uuidv4(),
-        content: "/audio-placeholder.mp3", // Fake audio file
-        senderId: "user1",
-        receiverId: chat.participants.find((id) => id !== "user1") || "",
-        timestamp: new Date(),
-        type: "audio",
-        isRead: false,
-        audioDuration: fakeDuration,
-      };
-
-      setMessages([...messages, newMessage]);
-      toast.success("Voice message recorded");
-    } else {
-      // Simulate starting recording
-      toast.info("Recording voice message...");
-    }
-  };
-
-  const handleDeleteMessage = (messageId: string) => {
-    setMessages(messages.filter((message) => message.id !== messageId));
-    setSelectedMessage(null);
-    toast.success("Message deleted");
-  };
-
-  const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return bytes + " B";
-    else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
-    else return (bytes / 1048576).toFixed(1) + " MB";
-  };
-
-  const formatAudioDuration = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  };
-
-  const toggleAudioPlayback = (messageId: string) => {
-    // In a real app, you'd control audio playback here
-    if (playingAudio === messageId) {
-      setPlayingAudio(null);
-    } else {
-      setPlayingAudio(messageId);
-    }
+        <div
+          className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+            isOwnMessage
+              ? 'bg-blue-500 text-white'
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
+          }`}
+        >
+          <p className="text-sm">{message.message}</p>
+          <p className={`text-xs mt-1 ${isOwnMessage ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'}`}>
+            {new Date(message.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </p>
+        </div>
+      </div>
+    );
   };
 
   return (
     <div className="flex flex-col h-full">
       {/* Chat header */}
-      <div className="px-6 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-        <div className="flex items-center">
-          <Avatar className="h-10 w-10 mr-3">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <div className="flex items-center space-x-3">
+          <Avatar className="h-10 w-10">
             <AvatarImage src={chat.avatar} alt={chat.name} />
-            <AvatarFallback>
-              {chat.name?.slice(0, 2).toUpperCase()}
-            </AvatarFallback>
+            <AvatarFallback>{chat.name.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="font-medium text-gray-900 dark:text-white">{chat.name}</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              {isConnected ? "Connected" : "Connecting..."}
+            <h3 className="font-semibold text-gray-900 dark:text-white">{chat.name}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {isConnected ? 'Online' : 'Connecting...'}
             </p>
           </div>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <MoreVertical className="h-5 w-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              className="text-red-500 cursor-pointer"
-              onClick={onDeleteChat}
-            >
-              Delete Conversation
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        
+        <div className="flex items-center space-x-2">
+          <Button variant="ghost" size="icon">
+            <Phone className="h-5 w-5" />
+          </Button>
+          <Button variant="ghost" size="icon">
+            <Video className="h-5 w-5" />
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreVertical className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={onDeleteChat} className="text-red-500">
+                Delete Chat
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {/* Messages area */}
-      <ScrollArea
-        className="flex-1 p-4 dark:bg-gray-900"
-        ref={scrollAreaRef}
-      >
+      <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
-          {messages.map((message) => {
-            const isCurrentUser = message.senderId === userProfile?.uid;
-
-            return (
-              <div
-                key={message.id}
-                className={`flex ${isCurrentUser ? "justify-end" : "justify-start"}`}
-              >
-                <div className={`max-w-[70%] relative group`}>
-                  {/* Message content based on type */}
-                  {message.type === "text" && (
-                    <div
-                      className={`p-3 rounded-lg ${isCurrentUser
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-white"
-                        }`}
-                    >
-                      {message.content}
-                    </div>
+          {messages.length === 0 ? (
+            <div className="text-center text-gray-500 dark:text-gray-400 mt-8">
+              <p>No messages yet. Start the conversation!</p>
+            </div>
+          ) : (
+            messages.map((message, index) => {
+              const isOwnMessage = message.sender_id === profile?.uid;
+              const showAvatar = !isOwnMessage && (index === 0 || messages[index - 1].sender_id !== message.sender_id);
+              
+              return (
+                <div
+                  key={`${message.sent_at}-${index}`}
+                  className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} mb-4`}
+                >
+                  {!isOwnMessage && showAvatar && (
+                    <Avatar className="h-8 w-8 mr-2 mt-1">
+                      <AvatarImage src={chat.avatar} alt={chat.name} />
+                      <AvatarFallback>{chat.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                    </Avatar>
                   )}
-
-                  {message.type === "image" && (
-                    <div className="rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <img
-                            src={message.content}
-                            alt="Uploaded image"
-                            className="max-w-full cursor-pointer object-cover"
-                            style={{ maxHeight: "200px" }}
-                          />
-                        </DialogTrigger>
-                        <DialogContent className="max-w-3xl p-0">
-                          <img
-                            src={message.content}
-                            alt="Uploaded image"
-                            className="w-full h-auto"
-                          />
-                        </DialogContent>
-                      </Dialog>
-                      <div className="p-2 text-xs text-gray-500 dark:text-gray-400">
-                        {message.fileName} • {formatFileSize(message.fileSize || 0)}
-                      </div>
-                    </div>
-                  )}
-
-                  {message.type === "file" && (
-                    <div className="p-3 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                      <a
-                        href={message.fileUrl}
-                        download={message.fileName}
-                        className="flex items-center"
-                      >
-                        <div className="bg-blue-100 dark:bg-blue-900 rounded p-2 mr-3">
-                          <Paperclip className="h-6 w-6 text-blue-500 dark:text-blue-400" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-blue-500 dark:text-blue-400 truncate">
-                            {message.fileName}
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {formatFileSize(message.fileSize || 0)}
-                          </p>
-                        </div>
-                      </a>
-                    </div>
-                  )}
-
-                  {message.type === "audio" && (
-                    <div className="p-3 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                      <div className="flex items-center">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 mr-2"
-                          onClick={() => toggleAudioPlayback(message.id)}
-                        >
-                          {playingAudio === message.id ? (
-                            <Pause className="h-4 w-4" />
-                          ) : (
-                            <Play className="h-4 w-4" />
-                          )}
-                        </Button>
-                        <div className="w-32 h-2 bg-gray-300 dark:bg-gray-600 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-blue-500"
-                            style={{
-                              width: playingAudio === message.id ? "100%" : "0%",
-                              transition: "width 1s linear",
-                            }}
-                          />
-                        </div>
-                        <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
-                          {formatAudioDuration(message.audioDuration || 0)}
-                        </span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Timestamp and message actions */}
+                  {!isOwnMessage && !showAvatar && <div className="w-10 mr-2" />}
+                  
                   <div
-                    className={`text-xs mt-1 flex items-center ${isCurrentUser ? "justify-end" : "justify-start"
-                      }`}
+                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                      isOwnMessage
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
+                    }`}
                   >
-                    <span className="text-gray-500 dark:text-gray-400">
-                      {format(message.timestamp, "h:mm a")}
-                    </span>
-
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <MoreVertical className="h-3 w-3" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align={isCurrentUser ? "end" : "start"}>
-                        <DropdownMenuItem
-                          className="text-red-500 cursor-pointer"
-                          onClick={() => handleDeleteMessage(message.id)}
-                        >
-                          Delete Message
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <p className="text-sm">{message.message}</p>
+                    <p className={`text-xs mt-1 ${isOwnMessage ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'}`}>
+                      {new Date(message.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-
-          {/* Recording indicator */}
-          {isRecording && (
-            <div className="flex justify-center my-2">
-              <div className="bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400 px-3 py-1 rounded-full text-xs flex items-center">
-                <span className="animate-pulse h-2 w-2 bg-red-500 rounded-full mr-2"></span>
-                Recording voice message... {formatAudioDuration(recordingTime)}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-5 w-5 ml-2 text-red-500 dark:text-red-400"
-                  onClick={toggleRecording}
-                >
-                  <X className="h-3 w-3" />
-                </Button>
-              </div>
-            </div>
+              );
+            })
           )}
-          
-          {!isConnected && (
-            <div className="flex justify-center my-2">
-              <div className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-500 dark:text-yellow-400 px-3 py-1 rounded-full text-xs flex items-center">
-                <span className="animate-pulse h-2 w-2 bg-yellow-500 rounded-full mr-2"></span>
-                Connecting to chat server...
-              </div>
-            </div>
-          )}
+          <div ref={messagesEndRef} />
         </div>
       </ScrollArea>
 
-      {/* Input area */}
-      <div className="px-4 py-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex items-center">
-          <div className="flex space-x-2 mr-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-              onClick={() => imageInputRef.current?.click()}
-              disabled={!isConnected}
-            >
-              <Image className="h-5 w-5" />
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                ref={imageInputRef}
-                onChange={handleImageUpload}
-              />
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={!isConnected}
-            >
-              <Paperclip className="h-5 w-5" />
-              <input
-                type="file"
-                className="hidden"
-                ref={fileInputRef}
-                onChange={handleFileUpload}
-              />
-            </Button>
-
-            <Button
-              variant={isRecording ? "destructive" : "ghost"}
-              size="icon"
-              className={`${isRecording ? "" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
-              onClick={toggleRecording}
-              disabled={!isConnected}
-            >
-              {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-            </Button>
-          </div>
-
+      {/* Message input */}
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <div className="flex space-x-2">
           <Input
-            placeholder={isConnected ? "Type a message..." : "Connecting..."}
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyDown={handleKeyPress}
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Type a message..."
             className="flex-1"
-            disabled={isRecording || !isConnected}
+            disabled={!isConnected}
           />
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className="ml-3 text-blue-500 dark:text-blue-400"
+          <Button 
             onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || isRecording || !isConnected}
+            disabled={!newMessage.trim() || !isConnected}
+            size="icon"
           >
-            <Send className="h-5 w-5" />
+            <Send className="h-4 w-4" />
           </Button>
         </div>
       </div>

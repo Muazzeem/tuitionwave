@@ -6,45 +6,53 @@ import Conversation from "./Conversation";
 import { Chat } from "@/types/message";
 import { Friend } from "@/types/friends";
 import FriendsService from "@/services/FriendsService";
-import { useAuth } from "@/contexts/AuthContext";
+import { useUserProfile } from "@/contexts/UserProfileContext";
 
 const MessagingInterface: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeFriend, setActiveFriend] = useState<Friend | null>(null);
-  const { userProfile } = useAuth();
+  const [allFriends, setAllFriends] = useState<Friend[]>([]);
+  const { profile } = useUserProfile();
   
   const { data, isLoading, error } = useQuery({
     queryKey: ['friends', currentPage],
     queryFn: () => FriendsService.getFriends(currentPage),
   });
 
-  const friends = useMemo(() => {
-    if (!data?.results) return [];
-    return data.results || [];
-  }, [data]);
+  // Accumulate friends from all pages
+  useEffect(() => {
+    if (data?.results) {
+      if (currentPage === 1) {
+        setAllFriends(data.results);
+      } else {
+        setAllFriends(prev => [...prev, ...data.results]);
+      }
+    }
+  }, [data, currentPage]);
 
   // Convert Friend to Chat for the Conversation component
   const activeChat = useMemo<Chat | null>(() => {
-    if (!activeFriend) return null;
+    if (!activeFriend || !profile?.uid) return null;
+    
+    const displayName = activeFriend.friend.full_name || activeFriend.friend.email.split("@")[0];
     
     return {
-      id: `${userProfile?.uid}-${activeFriend.uid}`, // Create a conversation ID
-      participants: [activeFriend.uid],
-      unreadCount: activeFriend.unread_count,
+      id: `${profile.uid}-${activeFriend.friend.id}`,
+      participants: [activeFriend.friend.id.toString()],
+      unreadCount: activeFriend.unread_messages_count,
       updatedAt: activeFriend.last_message_time ? new Date(activeFriend.last_message_time) : new Date(),
-      name: activeFriend.first_name && activeFriend.last_name 
-        ? `${activeFriend.first_name} ${activeFriend.last_name}` 
-        : activeFriend.email.split("@")[0],
-      avatar: activeFriend.profile_picture || "/placeholder.svg",
+      name: displayName,
+      avatar: "/placeholder.svg",
+      conversationId: activeFriend.conversation_id,
     };
-  }, [activeFriend, userProfile]);
+  }, [activeFriend, profile]);
 
   const handleFriendSelect = (friend: Friend) => {
     setActiveFriend(friend);
   };
 
   const handleDeleteChat = (friendId: string) => {
-    if (activeFriend?.uid === friendId) {
+    if (activeFriend?.friend.id.toString() === friendId) {
       setActiveFriend(null);
     }
     // In a real implementation, we would call an API to delete the chat
@@ -59,17 +67,17 @@ const MessagingInterface: React.FC = () => {
 
   useEffect(() => {
     // Set the first friend as active by default if none is selected
-    if (friends.length > 0 && !activeFriend) {
-      setActiveFriend(friends[0]);
+    if (allFriends.length > 0 && !activeFriend) {
+      setActiveFriend(allFriends[0]);
     }
-  }, [friends, activeFriend]);
+  }, [allFriends, activeFriend]);
 
   return (
     <div className="flex h-full">
       {/* Chat list sidebar */}
       <div className="w-1/3 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <ChatList
-          friends={friends}
+          friends={allFriends}
           activeFriend={activeFriend}
           onFriendSelect={handleFriendSelect}
           onDeleteChat={handleDeleteChat}
