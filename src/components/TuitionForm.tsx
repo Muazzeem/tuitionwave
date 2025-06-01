@@ -1,4 +1,3 @@
-// components/TuitionForm.tsx
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -11,6 +10,7 @@ import { useToast } from './ui/use-toast';
 import { getAccessToken } from '@/utils/auth';
 import SearchableSelect from './SearchableSelect';
 import SearchableMultiSelect from './SearchableMultiSelect';
+import LocationSelector from './LocationSelector';
 
 interface TuitionFormProps {
   formData: TuitionFormData;
@@ -30,6 +30,10 @@ interface TuitionFormData {
   activeDays: string[];
   preferredDistricts: string[];
   preferredAreas: string[];
+  selectedDivision?: string;
+  selectedDistrict?: string;
+  selectedUpazila?: string;
+  selectedArea?: string;
 }
 
 interface TuitionInfoResponse {
@@ -45,8 +49,6 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
   const accessToken = getAccessToken();
 
   const [uid, setUid] = useState<string | null>(null);
-  const [areas, setAreas] = useState<{ id: number; name: string }[]>([]);
-  const [districts, setDistricts] = useState<{ id: number; name: string }[]>([]);
 
   useEffect(() => {
     const fetchTuitionData = async () => {
@@ -80,27 +82,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
       }
     };
 
-    const fetchAreasAndDistricts = async () => {
-      try {
-        const [areaRes, districtRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL}/api/areas`),
-          axios.get(`${import.meta.env.VITE_API_URL}/api/districts`),
-        ]);
-
-        setAreas(areaRes.data.results);
-        setDistricts(districtRes.data.results);
-      } catch (error) {
-        console.error('Error fetching areas/districts', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to load areas and districts.',
-          variant: 'destructive',
-        });
-      }
-    };
-
     fetchTuitionData();
-    fetchAreasAndDistricts();
   }, []);
 
   const handleSubmit = async () => {
@@ -169,32 +151,28 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
         </Select>
       </div>
 
-      <SearchableSelect
-            label="Preferred District"
-            placeholder="Select a district"
-            apiEndpoint="/api/districts"
-            value={formData.preferredDistricts[0] || ''}
-            onValueChange={(val) => updateFormData({ preferredDistricts: [val] })}
-            createEntityName="District"
+      <div>
+        <Label className="text-base font-medium mb-4 block">Location Preferences</Label>
+        <LocationSelector
+          selectedDivision={formData.selectedDivision}
+          selectedDistrict={formData.selectedDistrict}
+          selectedUpazila={formData.selectedUpazila}
+          selectedArea={formData.selectedArea}
+          onDivisionChange={(value) => updateFormData({ selectedDivision: value })}
+          onDistrictChange={(value) => updateFormData({ selectedDistrict: value })}
+          onUpazilaChange={(value) => updateFormData({ selectedUpazila: value })}
+          onAreaChange={(value) => updateFormData({ selectedArea: value })}
         />
+      </div>
 
-      <SearchableSelect
-            label="Preferred Area"
-            placeholder="Select an area"
-            apiEndpoint="/api/areas"
-            value={formData.preferredAreas[0] || ''}
-            onValueChange={(val) => updateFormData({ preferredAreas: [val] })}
-            createEntityName="Area"
-        />
-
-        <SearchableMultiSelect
-            label="Active Days"
-            placeholder="Select active days"
-            apiEndpoint="/api/active-days/"
-            selectedValues={formData.activeDays || []}
-            onChange={(vals) => updateFormData({ activeDays: vals })}
-            labelKey="day"
-        />
+      <SearchableMultiSelect
+        label="Active Days"
+        placeholder="Select active days"
+        apiEndpoint="/api/active-days/"
+        selectedValues={formData.activeDays || []}
+        onChange={(vals) => updateFormData({ activeDays: vals })}
+        labelKey="day"
+      />
 
       <div className="flex justify-between pt-4">
         <Button variant="outline" className="px-6" onClick={onPrev} disabled={isLoading}>

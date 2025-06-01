@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 
 export interface User {
@@ -154,6 +153,10 @@ export interface TuitionFormData {
   activeDays: string[];
   preferredDistricts: string[];
   preferredAreas: string[];
+  selectedDivision?: string;
+  selectedDistrict?: string;
+  selectedUpazila?: string;
+  selectedArea?: string;
 }
 
 export interface TuitionInfoResponse {
