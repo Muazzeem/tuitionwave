@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -83,7 +82,6 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 
   const accessToken = getAccessToken();
 
-  // Fetch divisions
   const fetchDivisions = useCallback(async (page = 1, search = '') => {
     try {
       setLoadingDivisions(true);
@@ -104,7 +102,6 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
     }
   }, [accessToken]);
 
-  // Fetch districts
   const fetchDistricts = useCallback(async (divisionId: string, page = 1, search = '') => {
     try {
       setLoadingDistricts(true);
@@ -125,7 +122,6 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
     }
   }, [accessToken]);
 
-  // Fetch upazilas
   const fetchUpazilas = useCallback(async (districtId: string, page = 1, search = '') => {
     try {
       setLoadingUpazilas(true);
@@ -146,7 +142,6 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
     }
   }, [accessToken]);
 
-  // Fetch areas
   const fetchAreas = useCallback(async (page = 1, search = '') => {
     try {
       setLoadingAreas(true);
@@ -167,13 +162,11 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
     }
   }, [accessToken]);
 
-  // Initial data fetch
   useEffect(() => {
     fetchDivisions();
     fetchAreas();
   }, [fetchDivisions, fetchAreas]);
 
-  // Fetch districts when division changes
   useEffect(() => {
     if (selectedDivision) {
       setDistricts([]);
@@ -182,7 +175,6 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
     }
   }, [selectedDivision, fetchDistricts]);
 
-  // Fetch upazilas when district changes
   useEffect(() => {
     if (selectedDistrict) {
       setUpazilas([]);
@@ -191,7 +183,6 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
     }
   }, [selectedDistrict, fetchUpazilas]);
 
-  // Search handlers
   useEffect(() => {
     const timer = setTimeout(() => {
       if (divisionSearch !== '') {
@@ -236,14 +227,11 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
     onDivisionChange(value);
     onDistrictChange('');
     onUpazilaChange('');
-    setSelectedDistrict('');
-    setSelectedUpazila('');
   };
 
   const handleDistrictChange = (value: string) => {
     onDistrictChange(value);
     onUpazilaChange('');
-    setSelectedUpazila('');
   };
 
   return (

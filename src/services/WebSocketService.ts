@@ -1,22 +1,33 @@
 
 class WebSocketService {
+  private static instance: WebSocketService | null = null;
   private socket: WebSocket | null = null;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
   private reconnectTimeout = 3000; // 3 seconds
-  private messageHandlers: ((event: MessageEvent) => void)[] = [];
+  private messageHandlers: ((message: any) => void)[] = [];
   
-  connect(conversationId: string): Promise<boolean> {
+  static getInstance(): WebSocketService {
+    if (!WebSocketService.instance) {
+      WebSocketService.instance = new WebSocketService();
+    }
+    return WebSocketService.instance;
+  }
+  
+  connect(conversationId: string | number, onMessage?: (message: any) => void): Promise<boolean> {
     return new Promise((resolve) => {
       // Close existing connection if any
       if (this.socket) {
         this.socket.close();
       }
       
-      // Get user token from localStorage
+      // Add message handler if provided
+      if (onMessage) {
+        this.messageHandlers.push(onMessage);
+      }
       
       // Create a new WebSocket connection
-      const socketUrl = `ws://13.200.63.86:9000/ws/chat/1/`;
+      const socketUrl = `ws://13.200.63.86:9000/ws/chat/${conversationId}/`;
       this.socket = new WebSocket(socketUrl);
       
       // Setup event handlers
@@ -34,7 +45,7 @@ class WebSocketService {
           console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
           
           setTimeout(() => {
-            this.connect(conversationId);
+            this.connect(conversationId, onMessage);
           }, this.reconnectTimeout);
         }
         
@@ -51,7 +62,7 @@ class WebSocketService {
         console.log('WebSocket message received:', data);
         
         // Notify all registered handlers
-        this.messageHandlers.forEach(handler => handler(event));
+        this.messageHandlers.forEach(handler => handler(data));
       };
     });
   }
@@ -61,29 +72,24 @@ class WebSocketService {
       this.socket.close();
       this.socket = null;
     }
+    this.messageHandlers = [];
   }
   
-  sendMessage(message: string, userId: string) {
+  sendMessage(messageData: any) {
     if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
       console.error('WebSocket not connected');
       return false;
     }
     
-    const messageObj = {
-      type: 'chat_message',
-      message,
-      user_id: userId
-    };
-    
-    this.socket.send(JSON.stringify(messageObj));
+    this.socket.send(JSON.stringify(messageData));
     return true;
   }
   
-  addMessageHandler(handler: (event: MessageEvent) => void) {
+  addMessageHandler(handler: (message: any) => void) {
     this.messageHandlers.push(handler);
   }
   
-  removeMessageHandler(handler: (event: MessageEvent) => void) {
+  removeMessageHandler(handler: (message: any) => void) {
     this.messageHandlers = this.messageHandlers.filter(h => h !== handler);
   }
   
@@ -92,4 +98,5 @@ class WebSocketService {
   }
 }
 
-export default new WebSocketService();
+export { WebSocketService };
+export default WebSocketService;

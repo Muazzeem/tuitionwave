@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -75,12 +74,12 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onBack }) => {
   };
 
   const sendMessage = async () => {
-    if (!newMessage.trim() || !userProfile?.uid) return;
+    if (!newMessage.trim() || !userProfile?.id) return;
 
     const messageData = {
       type: 'chat_message',
       message: newMessage.trim(),
-      user_id: userProfile.uid
+      user_id: userProfile.id.toString()
     };
 
     wsService.sendMessage(messageData);
@@ -170,7 +169,7 @@ const Conversation: React.FC<ConversationProps> = ({ chat, onBack }) => {
             </div>
             
             {dateMessages.map((message, index) => {
-              const isOwnMessage = message.sender_id === userProfile?.uid || message.sender_id === userProfile?.id?.toString();
+              const isOwnMessage = message.sender_id === userProfile?.id?.toString();
               const showAvatar = index === 0 || dateMessages[index - 1].sender_id !== message.sender_id;
               
               return (

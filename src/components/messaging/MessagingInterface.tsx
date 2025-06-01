@@ -32,18 +32,16 @@ const MessagingInterface: React.FC = () => {
 
   // Convert Friend to Chat for the Conversation component
   const activeChat = useMemo<Chat | null>(() => {
-    if (!activeFriend || !profile?.uid) return null;
-    
-    const displayName = activeFriend.friend.full_name || activeFriend.friend.email.split("@")[0];
+    if (!activeFriend || !profile?.id) return null;
     
     return {
-      id: `${profile.uid}-${activeFriend.friend.id}`,
-      participants: [activeFriend.friend.id.toString()],
-      unreadCount: activeFriend.unread_messages_count,
-      updatedAt: activeFriend.last_message_time ? new Date(activeFriend.last_message_time) : new Date(),
-      name: displayName,
-      avatar: "/placeholder.svg",
-      conversationId: activeFriend.conversation_id,
+      id: activeFriend.friend.id,
+      friend: activeFriend.friend,
+      last_message: activeFriend.last_message,
+      last_message_time: activeFriend.last_message_time,
+      friendship_created: activeFriend.friendship_created,
+      conversation_id: activeFriend.conversation_id,
+      unread_messages_count: activeFriend.unread_messages_count,
     };
   }, [activeFriend, profile]);
 
@@ -92,7 +90,7 @@ const MessagingInterface: React.FC = () => {
         {activeChat ? (
           <Conversation
             chat={activeChat}
-            onDeleteChat={() => handleDeleteChat(activeChat.id)}
+            onBack={() => setActiveFriend(null)}
           />
         ) : (
           <div className="flex h-full items-center justify-center">
