@@ -20,7 +20,9 @@ const SearchSection: React.FC = () => {
     { id: number; name: string }[]
   >([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [citySearchQuery, setCitySearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [isCityOpen, setIsCityOpen] = useState(false);
   const [selectedInstitution, setSelectedInstitution] = useState<string>("");
   const [selectedInstitutionName, setSelectedInstitutionName] = useState<string>("");
   const [selectedCity, setSelectedCity] = useState<string>("");
@@ -50,17 +52,22 @@ const SearchSection: React.FC = () => {
     }
   }, []);
 
-  const fetchCities = useCallback(async () => {
+  const fetchCities = useCallback(async (searchName?: string) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cities/`);
+      let url = `${import.meta.env.VITE_API_URL}/api/upazilas/`;
+      if (searchName) {
+        url += `?search=${encodeURIComponent(searchName)}`;
+      }
+      
+      const response = await fetch(url);
       if (!response.ok) {
-        throw new Error(`Failed to fetch cities: ${response.status}`);
+        throw new Error(`Failed to fetch upazilas: ${response.status}`);
       }
       const data = await response.json();
       setCities(data.results || []);
     } catch (err: any) {
-      console.error("Error fetching cities:", err);
-      toast.error("Failed to load cities");
+      console.error("Error fetching upazilas:", err);
+      toast.error("Failed to load upazilas");
     }
   }, []);
 
@@ -84,8 +91,25 @@ const SearchSection: React.FC = () => {
     fetchSubjects();
   }, [fetchInstitutions, fetchCities, fetchSubjects]);
 
+  // Debounced city search
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (citySearchQuery.trim()) {
+        fetchCities(citySearchQuery);
+      } else {
+        fetchCities();
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [citySearchQuery, fetchCities]);
+
   const filteredInstitutions = institutions.filter((institution) =>
     institution.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredCities = cities.filter((city) =>
+    city.name.toLowerCase().includes(citySearchQuery.toLowerCase())
   );
 
   const handleSearch = () => {
@@ -149,6 +173,8 @@ const SearchSection: React.FC = () => {
     if (city) {
       setSelectedCityName(city.name);
     }
+    setCitySearchQuery(""); // Clear search query on selection
+    setIsCityOpen(false); // Close dropdown after selection
   };
 
   const handleSubjectSelect = (value: string) => {
@@ -256,8 +282,10 @@ const SearchSection: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs text-gray-500 mb-1 dark:text-white">City</label>
+              <label className="block text-xs text-gray-500 mb-1 dark:text-white">Upazila</label>
               <Select
+                open={isCityOpen}
+                onOpenChange={setIsCityOpen}
                 value={selectedCity}
                 onValueChange={handleCitySelect}
               >
@@ -265,16 +293,31 @@ const SearchSection: React.FC = () => {
                   <SelectValue placeholder="Select City" />
                 </SelectTrigger>
                 <SelectContent>
+                  <div className="p-2 sticky top-0 bg-white z-10 dark:bg-gray-900">
+                    <Input
+                      placeholder="Search City..."
+                      value={citySearchQuery}
+                      onChange={(e) => setCitySearchQuery(e.target.value)}
+                      className="h-8 focus-visible:ring-1 focus-visible:ring-offset-0 text-black dark:text-white"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
                   <ScrollArea className="h-60">
-                    {cities.map((city) => (
-                      <SelectItem 
-                        key={city.id} 
-                        value={city.id.toString()}
-                        className="text-black"
-                      >
-                        {city.name}
-                      </SelectItem>
-                    ))}
+                    {filteredCities.length > 0 ? (
+                      filteredCities.map((city) => (
+                        <SelectItem 
+                          key={city.id} 
+                          value={city.id.toString()}
+                          className="text-black"
+                        >
+                          {city.name}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="p-2 text-sm text-gray-500 dark:text-white">
+                        No cities found.
+                      </div>
+                    )}
                   </ScrollArea>
                 </SelectContent>
               </Select>
@@ -318,7 +361,7 @@ const SearchSection: React.FC = () => {
                     onClick={() => clearFilter('institution')}
                     className="ml-2 hover:text-blue-900"
                   >
-                    <X size={16} onChange={handleSearch} />
+                    <X size={16} />
                   </button>
                 </div>
               )}
@@ -329,7 +372,7 @@ const SearchSection: React.FC = () => {
                     onClick={() => clearFilter('city')}
                     className="ml-2 hover:text-blue-900"
                   >
-                    <X size={16} onChange={handleSearch} />
+                    <X size={16} />
                   </button>
                 </div>
               )}
@@ -351,7 +394,7 @@ const SearchSection: React.FC = () => {
                     onClick={() => clearFilter('gender')}
                     className="ml-2 hover:text-blue-900"
                   >
-                    <X size={16} onChange={handleSearch} />
+                    <X size={16} />
                   </button>
                 </div>
               )}

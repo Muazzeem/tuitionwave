@@ -1,4 +1,3 @@
-// GeneralSettings.tsx
 import { useUserProfile, ProfileData } from '@/contexts/UserProfileContext';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/components/ui/use-toast';
@@ -7,15 +6,19 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useLocation } from 'react-router-dom';
 import { Camera, User, X } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const GeneralSettings = () => {
   const { profile, updateProfile, loading, refreshProfile } = useUserProfile();
+  const { userProfile, fetchProfile } = useAuth();
   const { toast } = useToast();
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isSaving, setIsSaving] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null); 
+
   const [formData, setFormData] = useState<Partial<ProfileData>>({
     first_name: '',
     last_name: '',
@@ -27,7 +30,6 @@ const GeneralSettings = () => {
     is_nid_verified: false
   });
 
-  // Refetch profile every time this page is routed to
   useEffect(() => {
     refreshProfile();
   }, [location.pathname]);
@@ -44,12 +46,9 @@ const GeneralSettings = () => {
         profile_picture: profile.profile_picture || null,
         is_nid_verified: profile.is_nid_verified || false
       });
-      
-      // Set preview URL if profile picture exists
-      if (profile.profile_picture) {
-        if (typeof profile.profile_picture === 'string') {
-          setPreviewUrl(profile.profile_picture);
-        }
+
+      if (profile.profile_picture && typeof profile.profile_picture === 'string') {
+        setPreviewUrl(profile.profile_picture);
       }
     }
   }, [profile]);
@@ -62,37 +61,32 @@ const GeneralSettings = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         toast({
-          title: "Error",
-          description: "Please select a valid image file.",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Please select a valid image file.',
+          variant: 'destructive',
         });
         return;
       }
 
-      // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         toast({
-          title: "Error",
-          description: "File size must be less than 5MB.",
-          variant: "destructive",
+          title: 'Error',
+          description: 'File size must be less than 5MB.',
+          variant: 'destructive',
         });
         return;
       }
 
-      // Create preview URL
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-      
-      // Update form data with the file
-      setFormData((prev) => ({ ...prev, profile_picture: file }));
+      setPreviewUrl(URL.createObjectURL(file));
+      setSelectedFile(file);
     }
   };
 
   const handleRemoveImage = () => {
     setPreviewUrl(null);
+    setSelectedFile(null);
     setFormData((prev) => ({ ...prev, profile_picture: null }));
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -107,38 +101,39 @@ const GeneralSettings = () => {
     e.preventDefault();
     try {
       setIsSaving(true);
-      
-      // Create FormData object to handle file uploads
+
       const submitData = new FormData();
-      
-      // Append all form fields
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key === 'profile_picture') {
-          // Handle file upload
-          if (value instanceof File) {
-            submitData.append(key, value);
-          } else if (value === null) {
-            // If explicitly set to null, we want to remove the image
-            submitData.append(key, '');
-          }
-          // If value is a string (existing URL), don't append it - keep existing
-        } else if (value !== null && value !== undefined) {
-          submitData.append(key, String(value));
-        }
-      });
+
+      submitData.append('first_name', formData.first_name || '');
+      submitData.append('last_name', formData.last_name || '');
+      submitData.append('phone', formData.phone || '');
+      submitData.append('address', formData.address || '');
+      submitData.append('user_type', formData.user_type || '');
+
+      if (selectedFile) {
+        submitData.append('profile_picture', selectedFile);
+      } else if (formData.profile_picture === null) {
+        submitData.append('profile_picture', ''); // ✅ force remove
+      }
+
+      // DEBUG
+      for (let pair of submitData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
 
       await updateProfile(submitData);
 
       toast({
-        title: "Success",
-        description: "Profile updated successfully.",
+        title: 'Success',
+        description: 'Profile updated successfully.',
       });
+      fetchProfile();
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to update profile. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsSaving(false);
@@ -153,7 +148,6 @@ const GeneralSettings = () => {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-6">General Settings</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Profile Picture Section */}
         <div className="flex flex-col items-center space-y-4">
           <div className="relative">
             <div className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden border-4 border-gray-300 dark:border-gray-600">
@@ -177,7 +171,7 @@ const GeneralSettings = () => {
               </button>
             )}
           </div>
-          
+
           <div className="flex space-x-2">
             <Button
               type="button"
@@ -189,7 +183,7 @@ const GeneralSettings = () => {
               <span>{previewUrl ? 'Change Picture' : 'Upload Picture'}</span>
             </Button>
           </div>
-          
+
           <input
             ref={fileInputRef}
             type="file"
@@ -197,7 +191,7 @@ const GeneralSettings = () => {
             onChange={handleFileChange}
             className="hidden"
           />
-          
+
           <p className="text-sm text-gray-500 text-center">
             Supported formats: JPG, PNG, GIF<br />
             Maximum size: 5MB

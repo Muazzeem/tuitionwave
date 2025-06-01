@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
 import { getAccessToken } from '@/utils/auth';
@@ -22,7 +21,7 @@ interface UserProfileContextType {
   loading: boolean;
   error: string | null;
   refreshProfile: () => Promise<void>;
-  updateProfile: (data: Partial<ProfileData>) => Promise<void>;
+  updateProfile: (data: Partial<ProfileData> | FormData) => Promise<void>;
 }
 
 const UserProfileContext = createContext<UserProfileContextType | undefined>(undefined);
@@ -44,26 +43,25 @@ export const UserProfileProvider = ({ children }: { children: ReactNode }) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const token = getAccessToken();
       if (!token) {
         setProfile(null);
         setLoading(false);
         return;
       }
-      
+
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/profile/`, {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      // Add default values for properties that might be missing
-      const profileData = {
+      const profileData: ProfileData = {
         ...response.data,
         is_nid_verified: response.data.is_nid_verified ?? false,
       };
-      
+
       setProfile(profileData);
     } catch (err) {
       console.error('Failed to fetch user profile:', err);
@@ -73,25 +71,26 @@ export const UserProfileProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateProfile = async (data: Partial<ProfileData>) => {
+  const updateProfile = async (data: Partial<ProfileData> | FormData) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const token = getAccessToken();
       if (!token) {
         throw new Error('Not authenticated');
       }
-      
+
+      const isFormData = data instanceof FormData;
+
       const response = await axios.patch(`${import.meta.env.VITE_API_URL}/api/profile/`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+        },
       });
-      
-      setProfile(prev => prev ? { ...prev, ...response.data } : response.data);
-      return Promise.resolve();
+
+      setProfile((prev) => (prev ? { ...prev, ...response.data } : response.data));
     } catch (err) {
       console.error('Failed to update user profile:', err);
       setError('Failed to update user profile');
@@ -106,13 +105,15 @@ export const UserProfileProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <UserProfileContext.Provider value={{
-      profile,
-      loading,
-      error,
-      refreshProfile: fetchProfile,
-      updateProfile
-    }}>
+    <UserProfileContext.Provider
+      value={{
+        profile,
+        loading,
+        error,
+        refreshProfile: fetchProfile,
+        updateProfile,
+      }}
+    >
       {children}
     </UserProfileContext.Provider>
   );

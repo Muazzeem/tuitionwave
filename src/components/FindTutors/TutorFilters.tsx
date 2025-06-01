@@ -66,15 +66,15 @@ const TutorFilters = () => {
 
   const fetchCities = useCallback(async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cities/`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upazilas/`);
       if (!response.ok) {
-        throw new Error(`Failed to fetch cities: ${response.status}`);
+        throw new Error(`Failed to fetch upazilas: ${response.status}`);
       }
       const data = await response.json();
       setCities(data.results || []);
     } catch (err: any) {           
-      setError(err.message || "An error occurred while fetching cities.");
-      toast.error("Failed to load cities");
+      setError(err.message || "An error occurred while fetching upazilas.");
+      toast.error("Failed to load upazilas");
     }
   }, []);
 
@@ -115,9 +115,9 @@ const TutorFilters = () => {
     }
     
     if (selectedCity) {
-      params.set("city", selectedCity);
+      params.set("preferred_upazila", selectedCity);
     } else {
-      params.delete("city");
+      params.delete("preferred_upazila");
     }
     
     if (selectedSubject) {
