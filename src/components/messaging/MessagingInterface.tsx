@@ -1,100 +1,171 @@
 
-import React, { useState, useEffect, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import ChatList from "./ChatList";
-import Conversation from "./Conversation";
-import { Chat } from "@/types/message";
-import { Friend } from "@/types/friends";
-import FriendsService from "@/services/FriendsService";
-import { useUserProfile } from "@/contexts/UserProfileContext";
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, Phone, Video, MoreVertical } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import ChatList from './ChatList';
+import Conversation from './Conversation';
+import { useAuth } from '@/contexts/AuthContext';
 
-const MessagingInterface: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [activeFriend, setActiveFriend] = useState<Friend | null>(null);
-  const [allFriends, setAllFriends] = useState<Friend[]>([]);
-  const { profile } = useUserProfile();
-  
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['friends', currentPage],
-    queryFn: () => FriendsService.getFriends(currentPage),
-  });
+interface Chat {
+  uid: string;
+  name: string;
+  lastMessage: string;
+  timestamp: string;
+  avatar?: string;
+  unreadCount?: number;
+}
 
-  // Accumulate friends from all pages
-  useEffect(() => {
-    if (data?.results) {
-      if (currentPage === 1) {
-        setAllFriends(data.results);
-      } else {
-        setAllFriends(prev => [...prev, ...data.results]);
-      }
+interface MessagingInterfaceProps {
+  onClose: () => void;
+}
+
+const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
+  const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const { userProfile } = useAuth();
+
+  // Mock data for demonstration
+  const [chats] = useState<Chat[]>([
+    {
+      uid: '1',
+      name: 'John Smith',
+      lastMessage: 'Hello, I am interested in your tutoring services',
+      timestamp: '10:30 AM',
+      unreadCount: 2
+    },
+    {
+      uid: '2',
+      name: 'Sarah Johnson',
+      lastMessage: 'Thank you for the session today',
+      timestamp: 'Yesterday',
+      unreadCount: 0
+    },
+    {
+      uid: '3',
+      name: 'Mike Wilson',
+      lastMessage: 'Can we schedule for tomorrow?',
+      timestamp: 'Monday',
+      unreadCount: 1
     }
-  }, [data, currentPage]);
+  ]);
 
-  // Convert Friend to Chat for the Conversation component
-  const activeChat = useMemo<Chat | null>(() => {
-    if (!activeFriend || !profile?.id) return null;
-    
-    return {
-      id: activeFriend.friend.id,
-      friend: activeFriend.friend,
-      last_message: activeFriend.last_message,
-      last_message_time: activeFriend.last_message_time,
-      friendship_created: activeFriend.friendship_created,
-      conversation_id: activeFriend.conversation_id,
-      unread_messages_count: activeFriend.unread_messages_count,
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
     };
-  }, [activeFriend, profile]);
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
-  const handleFriendSelect = (friend: Friend) => {
-    setActiveFriend(friend);
+  const handleChatSelect = (chat: Chat) => {
+    setSelectedChat(chat);
   };
 
-  const handleDeleteChat = (friendId: string) => {
-    if (activeFriend?.friend.id.toString() === friendId) {
-      setActiveFriend(null);
-    }
-    // In a real implementation, we would call an API to delete the chat
-    console.log("Delete chat for friend:", friendId);
+  const handleBackToList = () => {
+    setSelectedChat(null);
   };
 
-  const loadMoreFriends = () => {
-    if (data?.next) {
-      setCurrentPage(prev => prev + 1);
-    }
-  };
-
-  useEffect(() => {
-    // Set the first friend as active by default if none is selected
-    if (allFriends.length > 0 && !activeFriend) {
-      setActiveFriend(allFriends[0]);
-    }
-  }, [allFriends, activeFriend]);
+  if (isMobile && selectedChat) {
+    return (
+      <div className="fixed inset-0 bg-white dark:bg-gray-900 z-50">
+        <div className="h-full flex flex-col">
+          <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
+            <div className="flex items-center space-x-3">
+              <Button variant="ghost" size="sm" onClick={handleBackToList}>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                <span className="text-white text-sm font-medium">
+                  {selectedChat.name.charAt(0)}
+                </span>
+              </div>
+              <div>
+                <h3 className="font-medium">{selectedChat.name}</h3>
+                <p className="text-xs text-gray-500">Online</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" size="sm">
+                <Phone className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm">
+                <Video className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          <div className="flex-1">
+            <Conversation 
+              chat={selectedChat} 
+              currentUserId={userProfile?.uid || ''}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex h-full">
-      {/* Chat list sidebar */}
-      <div className="w-1/3 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-        <ChatList
-          friends={allFriends}
-          activeFriend={activeFriend}
-          onFriendSelect={handleFriendSelect}
-          onDeleteChat={handleDeleteChat}
-          onLoadMore={loadMoreFriends}
-          hasMoreFriends={!!data?.next}
-          isLoading={isLoading}
-        />
-      </div>
-
-      {/* Conversation area */}
-      <div className="w-2/3 bg-gray-50 dark:bg-gray-900">
-        {activeChat ? (
-          <Conversation
-            chat={activeChat}
-            onBack={() => setActiveFriend(null)}
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-6xl h-[600px] flex overflow-hidden">
+        {/* Chat List */}
+        <div className={`${isMobile && selectedChat ? 'hidden' : 'w-full md:w-1/3'} border-r dark:border-gray-700`}>
+          <div className="p-4 border-b dark:border-gray-700 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Messages</h2>
+            <Button variant="ghost" size="sm" onClick={onClose}>
+              ×
+            </Button>
+          </div>
+          <ChatList 
+            chats={chats} 
+            selectedChat={selectedChat} 
+            onChatSelect={handleChatSelect} 
           />
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <p className="text-gray-500 dark:text-gray-400">Select a chat to start messaging</p>
+        </div>
+
+        {/* Conversation */}
+        {!isMobile && (
+          <div className="flex-1">
+            {selectedChat ? (
+              <>
+                <div className="p-4 border-b dark:border-gray-700 flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-medium">
+                        {selectedChat.name.charAt(0)}
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{selectedChat.name}</h3>
+                      <p className="text-xs text-gray-500">Online</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button variant="ghost" size="sm">
+                      <Phone className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      <Video className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+                <Conversation 
+                  chat={selectedChat} 
+                  currentUserId={userProfile?.uid || ''}
+                />
+              </>
+            ) : (
+              <div className="h-full flex items-center justify-center text-gray-500">
+                <p>Select a conversation to start messaging</p>
+              </div>
+            )}
           </div>
         )}
       </div>

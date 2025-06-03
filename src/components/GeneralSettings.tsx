@@ -1,4 +1,3 @@
-
 import { useUserProfile, ProfileData } from '@/contexts/UserProfileContext';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/components/ui/use-toast';
@@ -63,9 +62,9 @@ const GeneralSettings = () => {
   const [showUpazilaDropdown, setShowUpazilaDropdown] = useState(false);
 
   const [formData, setFormData] = useState<Partial<ProfileData & {
-    division: number | null;
-    preferred_districts: number | null;
-    preferred_upazila: number | null;
+    division_id: number | null;
+    preferred_district_id: number | null;
+    preferred_upazila_id: number | null;
   }>>({
     first_name: '',
     last_name: '',
@@ -75,9 +74,9 @@ const GeneralSettings = () => {
     user_type: '',
     profile_picture: null,
     is_nid_verified: false,
-    division: null,
-    preferred_districts: null,
-    preferred_upazila: null
+    division_id: null,
+    preferred_district_id: null,
+    preferred_upazila_id: null
   });
 
   // Fetch divisions on component mount
@@ -87,24 +86,24 @@ const GeneralSettings = () => {
 
   // Fetch districts when division changes
   useEffect(() => {
-    if (formData.division) {
-      fetchDistricts(formData.division);
+    if (formData.division_id) {
+      fetchDistricts(formData.division_id);
     } else {
       setDistricts([]);
       setUpazilas([]);
-      setFormData(prev => ({ ...prev, preferred_districts: null, preferred_upazila: null }));
+      setFormData(prev => ({ ...prev, preferred_district_id: null, preferred_upazila_id: null }));
     }
-  }, [formData.division]);
+  }, [formData.division_id]);
 
   // Fetch upazilas when preferred district changes
   useEffect(() => {
-    if (formData.preferred_districts) {
-      fetchUpazilas(formData.preferred_districts);
+    if (formData.preferred_district_id) {
+      fetchUpazilas(formData.preferred_district_id);
     } else {
       setUpazilas([]);
-      setFormData(prev => ({ ...prev, preferred_upazila: null }));
+      setFormData(prev => ({ ...prev, preferred_upazila_id: null }));
     }
-  }, [formData.preferred_districts]);
+  }, [formData.preferred_district_id]);
 
   const fetchDivisions = async () => {
     try {
@@ -156,21 +155,21 @@ const GeneralSettings = () => {
   // Handle search with debouncing
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (formData.division && districtSearch !== '') {
-        fetchDistricts(formData.division, districtSearch);
+      if (formData.division_id && districtSearch !== '') {
+        fetchDistricts(formData.division_id, districtSearch);
       }
     }, 300);
     return () => clearTimeout(timer);
-  }, [districtSearch, formData.division]);
+  }, [districtSearch, formData.division_id]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (formData.preferred_districts && upazilaSearch !== '') {
-        fetchUpazilas(formData.preferred_districts, upazilaSearch);
+      if (formData.preferred_district_id && upazilaSearch !== '') {
+        fetchUpazilas(formData.preferred_district_id, upazilaSearch);
       }
     }, 300);
     return () => clearTimeout(timer);
-  }, [upazilaSearch, formData.preferred_districts]);
+  }, [upazilaSearch, formData.preferred_district_id]);
 
   useEffect(() => {
     refreshProfile();
@@ -187,13 +186,24 @@ const GeneralSettings = () => {
         user_type: profile.user_type || '',
         profile_picture: profile.profile_picture || null,
         is_nid_verified: profile.is_nid_verified || false,
-        division: profile.division || null,
-        preferred_districts: Array.isArray(profile.preferred_districts) ? profile.preferred_districts[0] || null : profile.preferred_districts || null,
-        preferred_upazila: Array.isArray(profile.preferred_upazila) ? profile.preferred_upazila[0] || null : profile.preferred_upazila || null
+        division_id: profile.division?.id || null,
+        preferred_district_id: profile.preferred_districts?.[0]?.id || null,
+        preferred_upazila_id: profile.preferred_upazila?.[0]?.id || null
       });
 
       if (profile.profile_picture && typeof profile.profile_picture === 'string') {
         setPreviewUrl(profile.profile_picture);
+      }
+
+      // Set search values to display selected names
+      if (profile.division) {
+        setDivisionSearch(profile.division.name);
+      }
+      if (profile.preferred_districts?.[0]) {
+        setDistrictSearch(profile.preferred_districts[0].name);
+      }
+      if (profile.preferred_upazila?.[0]) {
+        setUpazilaSearch(profile.preferred_upazila[0].name);
       }
     }
   }, [profile]);
@@ -245,9 +255,9 @@ const GeneralSettings = () => {
   const handleDivisionSelect = (division: Division) => {
     setFormData(prev => ({ 
       ...prev, 
-      division: division.id,
-      preferred_districts: null,
-      preferred_upazila: null
+      division_id: division.id,
+      preferred_district_id: null,
+      preferred_upazila_id: null
     }));
     setDivisionSearch(division.name);
     setShowDivisionDropdown(false);
@@ -256,8 +266,8 @@ const GeneralSettings = () => {
   const handleDistrictSelect = (district: District) => {
     setFormData(prev => ({ 
       ...prev, 
-      preferred_districts: district.id,
-      preferred_upazila: null
+      preferred_district_id: district.id,
+      preferred_upazila_id: null
     }));
     setDistrictSearch(district.name);
     setShowDistrictDropdown(false);
@@ -266,25 +276,25 @@ const GeneralSettings = () => {
   const handleUpazilaSelect = (upazila: Upazila) => {
     setFormData(prev => ({ 
       ...prev, 
-      preferred_upazila: upazila.id
+      preferred_upazila_id: upazila.id
     }));
     setUpazilaSearch(upazila.name);
     setShowUpazilaDropdown(false);
   };
 
   const getSelectedDivisionName = () => {
-    const selectedDivision = divisions.find(d => d.id === formData.division);
-    return selectedDivision ? selectedDivision.name : '';
+    const selectedDivision = divisions.find(d => d.id === formData.division_id);
+    return selectedDivision ? selectedDivision.name : divisionSearch;
   };
 
   const getSelectedDistrictName = () => {
-    const selectedDistrict = districts.find(d => d.id === formData.preferred_districts);
-    return selectedDistrict ? selectedDistrict.name : '';
+    const selectedDistrict = districts.find(d => d.id === formData.preferred_district_id);
+    return selectedDistrict ? selectedDistrict.name : districtSearch;
   };
 
   const getSelectedUpazilaName = () => {
-    const selectedUpazila = upazilas.find(u => u.id === formData.preferred_upazila);
-    return selectedUpazila ? selectedUpazila.name : '';
+    const selectedUpazila = upazilas.find(u => u.id === formData.preferred_upazila_id);
+    return selectedUpazila ? selectedUpazila.name : upazilaSearch;
   };
 
   const filteredDivisions = divisions.filter(division =>
@@ -312,17 +322,17 @@ const GeneralSettings = () => {
       submitData.append('address', formData.address || '');
       submitData.append('user_type', formData.user_type || '');
       
-      // Add location fields
-      if (formData.division) {
-        submitData.append('division', formData.division.toString());
+      // Add location fields as arrays to match backend expectation
+      if (formData.division_id) {
+        submitData.append('division', formData.division_id.toString());
       }
       
-      if (formData.preferred_districts) {
-        submitData.append('preferred_districts', formData.preferred_districts.toString());
+      if (formData.preferred_district_id) {
+        submitData.append('preferred_districts', `[${formData.preferred_district_id}]`);
       }
 
-      if (formData.preferred_upazila) {
-        submitData.append('preferred_upazila', formData.preferred_upazila.toString());
+      if (formData.preferred_upazila_id) {
+        submitData.append('preferred_upazila', `[${formData.preferred_upazila_id}]`);
       }
 
       if (selectedFile) {
@@ -517,7 +527,7 @@ const GeneralSettings = () => {
           </div>
 
           {/* District Selection */}
-          {formData.division && (
+          {formData.division_id && (
             <div className="relative">
               <Label>Preferred District</Label>
               <div className="relative mt-1">
@@ -562,7 +572,7 @@ const GeneralSettings = () => {
           )}
 
           {/* Upazila Selection */}
-          {formData.preferred_districts && (
+          {formData.preferred_district_id && (
             <div className="relative">
               <Label>Preferred Upazila</Label>
               <div className="relative mt-1">

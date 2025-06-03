@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
 import { getAccessToken } from '@/utils/auth';
@@ -14,6 +15,34 @@ export interface ProfileData {
   profile_picture: string | null;
   date_joined: string;
   is_nid_verified?: boolean;
+  division?: {
+    id: number;
+    name: string;
+  };
+  preferred_districts?: Array<{
+    id: number;
+    name: string;
+    division: {
+      id: number;
+      name: string;
+    };
+  }>;
+  preferred_upazila?: Array<{
+    id: number;
+    name: string;
+    district: {
+      id: number;
+      name: string;
+      division: {
+        id: number;
+        name: string;
+      };
+    };
+  }>;
+  preferred_areas?: Array<{
+    id: number;
+    name: string;
+  }>;
 }
 
 interface UserProfileContextType {
