@@ -1,3 +1,4 @@
+
 import { useUserProfile, ProfileData } from '@/contexts/UserProfileContext';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/components/ui/use-toast';
@@ -63,8 +64,8 @@ const GeneralSettings = () => {
 
   const [formData, setFormData] = useState<Partial<ProfileData & {
     division: number | null;
-    preferred_districts: number[];
-    preferred_upazila: number[];
+    preferred_districts: number | null;
+    preferred_upazila: number | null;
   }>>({
     first_name: '',
     last_name: '',
@@ -75,8 +76,8 @@ const GeneralSettings = () => {
     profile_picture: null,
     is_nid_verified: false,
     division: null,
-    preferred_districts: [],
-    preferred_upazila: []
+    preferred_districts: null,
+    preferred_upazila: null
   });
 
   // Fetch divisions on component mount
@@ -91,17 +92,17 @@ const GeneralSettings = () => {
     } else {
       setDistricts([]);
       setUpazilas([]);
-      setFormData(prev => ({ ...prev, preferred_districts: [], preferred_upazila: [] }));
+      setFormData(prev => ({ ...prev, preferred_districts: null, preferred_upazila: null }));
     }
   }, [formData.division]);
 
-  // Fetch upazilas when preferred districts change
+  // Fetch upazilas when preferred district changes
   useEffect(() => {
-    if (formData.preferred_districts && formData.preferred_districts.length > 0) {
+    if (formData.preferred_districts) {
       fetchUpazilas(formData.preferred_districts);
     } else {
       setUpazilas([]);
-      setFormData(prev => ({ ...prev, preferred_upazila: [] }));
+      setFormData(prev => ({ ...prev, preferred_upazila: null }));
     }
   }, [formData.preferred_districts]);
 
@@ -120,9 +121,10 @@ const GeneralSettings = () => {
     }
   };
 
-  const fetchDistricts = async (divisionId: number) => {
+  const fetchDistricts = async (divisionId: number, search = '') => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/districts/?division=${divisionId}`);
+      const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/districts/?division=${divisionId}${searchParam}`);
       const data = await response.json();
       setDistricts(data.results || []);
     } catch (error) {
@@ -135,15 +137,12 @@ const GeneralSettings = () => {
     }
   };
 
-  const fetchUpazilas = async (districtIds: number[]) => {
+  const fetchUpazilas = async (districtId: number, search = '') => {
     try {
-      const promises = districtIds.map(districtId =>
-        fetch(`${import.meta.env.VITE_API_URL || ''}/api/upazilas/?district=${districtId}`)
-          .then(res => res.json())
-      );
-      const results = await Promise.all(promises);
-      const allUpazilas = results.flatMap(result => result.results || []);
-      setUpazilas(allUpazilas);
+      const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/upazilas/?district=${districtId}${searchParam}`);
+      const data = await response.json();
+      setUpazilas(data.results || []);
     } catch (error) {
       console.error('Error fetching upazilas:', error);
       toast({
@@ -153,6 +152,25 @@ const GeneralSettings = () => {
       });
     }
   };
+
+  // Handle search with debouncing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (formData.division && districtSearch !== '') {
+        fetchDistricts(formData.division, districtSearch);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [districtSearch, formData.division]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (formData.preferred_districts && upazilaSearch !== '') {
+        fetchUpazilas(formData.preferred_districts, upazilaSearch);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [upazilaSearch, formData.preferred_districts]);
 
   useEffect(() => {
     refreshProfile();
@@ -170,8 +188,8 @@ const GeneralSettings = () => {
         profile_picture: profile.profile_picture || null,
         is_nid_verified: profile.is_nid_verified || false,
         division: profile.division || null,
-        preferred_districts: profile.preferred_districts || [],
-        preferred_upazila: profile.preferred_upazila || []
+        preferred_districts: Array.isArray(profile.preferred_districts) ? profile.preferred_districts[0] || null : profile.preferred_districts || null,
+        preferred_upazila: Array.isArray(profile.preferred_upazila) ? profile.preferred_upazila[0] || null : profile.preferred_upazila || null
       });
 
       if (profile.profile_picture && typeof profile.profile_picture === 'string') {
@@ -225,29 +243,33 @@ const GeneralSettings = () => {
   };
 
   const handleDivisionSelect = (division: Division) => {
-    setFormData(prev => ({ ...prev, division: division.id }));
+    setFormData(prev => ({ 
+      ...prev, 
+      division: division.id,
+      preferred_districts: null,
+      preferred_upazila: null
+    }));
     setDivisionSearch(division.name);
     setShowDivisionDropdown(false);
   };
 
-  const handleDistrictToggle = (districtId: number) => {
-    setFormData(prev => {
-      const currentDistricts = prev.preferred_districts || [];
-      const newDistricts = currentDistricts.includes(districtId)
-        ? currentDistricts.filter(id => id !== districtId)
-        : [...currentDistricts, districtId];
-      return { ...prev, preferred_districts: newDistricts };
-    });
+  const handleDistrictSelect = (district: District) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      preferred_districts: district.id,
+      preferred_upazila: null
+    }));
+    setDistrictSearch(district.name);
+    setShowDistrictDropdown(false);
   };
 
-  const handleUpazilaToggle = (upazilaId: number) => {
-    setFormData(prev => {
-      const currentUpazilas = prev.preferred_upazila || [];
-      const newUpazilas = currentUpazilas.includes(upazilaId)
-        ? currentUpazilas.filter(id => id !== upazilaId)
-        : [...currentUpazilas, upazilaId];
-      return { ...prev, preferred_upazila: newUpazilas };
-    });
+  const handleUpazilaSelect = (upazila: Upazila) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      preferred_upazila: upazila.id
+    }));
+    setUpazilaSearch(upazila.name);
+    setShowUpazilaDropdown(false);
   };
 
   const getSelectedDivisionName = () => {
@@ -255,14 +277,14 @@ const GeneralSettings = () => {
     return selectedDivision ? selectedDivision.name : '';
   };
 
-  const getSelectedDistrictsNames = () => {
-    const selectedDistricts = districts.filter(d => formData.preferred_districts?.includes(d.id));
-    return selectedDistricts.map(d => d.name).join(', ');
+  const getSelectedDistrictName = () => {
+    const selectedDistrict = districts.find(d => d.id === formData.preferred_districts);
+    return selectedDistrict ? selectedDistrict.name : '';
   };
 
-  const getSelectedUpazilasNames = () => {
-    const selectedUpazilas = upazilas.filter(u => formData.preferred_upazila?.includes(u.id));
-    return selectedUpazilas.map(u => u.name).join(', ');
+  const getSelectedUpazilaName = () => {
+    const selectedUpazila = upazilas.find(u => u.id === formData.preferred_upazila);
+    return selectedUpazila ? selectedUpazila.name : '';
   };
 
   const filteredDivisions = divisions.filter(division =>
@@ -290,21 +312,17 @@ const GeneralSettings = () => {
       submitData.append('address', formData.address || '');
       submitData.append('user_type', formData.user_type || '');
       
-      // Add new fields
+      // Add location fields
       if (formData.division) {
         submitData.append('division', formData.division.toString());
       }
       
       if (formData.preferred_districts) {
-        formData.preferred_districts.forEach((id) =>
-          submitData.append('preferred_districts', id.toString())
-        );
+        submitData.append('preferred_districts', formData.preferred_districts.toString());
       }
 
       if (formData.preferred_upazila) {
-        formData.preferred_upazila.forEach((id) =>
-          submitData.append('preferred_upazila', id.toString())
-        );
+        submitData.append('preferred_upazila', formData.preferred_upazila.toString());
       }
 
       if (selectedFile) {
@@ -345,6 +363,7 @@ const GeneralSettings = () => {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-6">General Settings</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Profile Picture Section */}
         <div className="flex flex-col items-center space-y-4">
           <div className="relative">
             <div className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden border-4 border-gray-300 dark:border-gray-600">
@@ -395,6 +414,7 @@ const GeneralSettings = () => {
           </p>
         </div>
 
+        {/* Basic Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <Label htmlFor="first_name">First Name</Label>
@@ -496,17 +516,17 @@ const GeneralSettings = () => {
             </div>
           </div>
 
-          {/* Districts Selection */}
+          {/* District Selection */}
           {formData.division && (
             <div className="relative">
-              <Label>Preferred Districts</Label>
+              <Label>Preferred District</Label>
               <div className="relative mt-1">
                 <div
                   className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between bg-white dark:bg-gray-800 dark:border-gray-600 min-h-[40px]"
                   onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
                 >
-                  <span className={getSelectedDistrictsNames() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
-                    {getSelectedDistrictsNames() || 'Select Districts'}
+                  <span className={getSelectedDistrictName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
+                    {getSelectedDistrictName() || 'Select District'}
                   </span>
                   <ChevronDown className="w-4 h-4 text-gray-400" />
                 </div>
@@ -528,15 +548,9 @@ const GeneralSettings = () => {
                       {filteredDistricts.map((district) => (
                         <div
                           key={district.id}
-                          className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center"
-                          onClick={() => handleDistrictToggle(district.id)}
+                          className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                          onClick={() => handleDistrictSelect(district)}
                         >
-                          <input
-                            type="checkbox"
-                            checked={formData.preferred_districts?.includes(district.id) || false}
-                            onChange={() => {}}
-                            className="mr-2"
-                          />
                           {district.name}
                         </div>
                       ))}
@@ -547,17 +561,17 @@ const GeneralSettings = () => {
             </div>
           )}
 
-          {/* Upazilas Selection */}
-          {formData.preferred_districts && formData.preferred_districts.length > 0 && (
+          {/* Upazila Selection */}
+          {formData.preferred_districts && (
             <div className="relative">
-              <Label>Preferred Upazilas</Label>
+              <Label>Preferred Upazila</Label>
               <div className="relative mt-1">
                 <div
                   className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between bg-white dark:bg-gray-800 dark:border-gray-600 min-h-[40px]"
                   onClick={() => setShowUpazilaDropdown(!showUpazilaDropdown)}
                 >
-                  <span className={getSelectedUpazilasNames() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
-                    {getSelectedUpazilasNames() || 'Select Upazilas'}
+                  <span className={getSelectedUpazilaName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
+                    {getSelectedUpazilaName() || 'Select Upazila'}
                   </span>
                   <ChevronDown className="w-4 h-4 text-gray-400" />
                 </div>
@@ -579,15 +593,9 @@ const GeneralSettings = () => {
                       {filteredUpazilas.map((upazila) => (
                         <div
                           key={upazila.id}
-                          className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center"
-                          onClick={() => handleUpazilaToggle(upazila.id)}
+                          className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                          onClick={() => handleUpazilaSelect(upazila)}
                         >
-                          <input
-                            type="checkbox"
-                            checked={formData.preferred_upazila?.includes(upazila.id) || false}
-                            onChange={() => {}}
-                            className="mr-2"
-                          />
                           {upazila.name}
                         </div>
                       ))}
