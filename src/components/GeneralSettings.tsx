@@ -50,12 +50,12 @@ const GeneralSettings = () => {
   const [divisions, setDivisions] = useState<Division[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
   const [upazilas, setUpazilas] = useState<Upazila[]>([]);
-  
+
   // Search states
   const [divisionSearch, setDivisionSearch] = useState('');
   const [districtSearch, setDistrictSearch] = useState('');
   const [upazilaSearch, setUpazilaSearch] = useState('');
-  
+
   // Dropdown states
   const [showDivisionDropdown, setShowDivisionDropdown] = useState(false);
   const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
@@ -253,8 +253,8 @@ const GeneralSettings = () => {
   };
 
   const handleDivisionSelect = (division: Division) => {
-    setFormData(prev => ({ 
-      ...prev, 
+    setFormData(prev => ({
+      ...prev,
       division_id: division.id,
       preferred_district_id: null,
       preferred_upazila_id: null
@@ -264,8 +264,8 @@ const GeneralSettings = () => {
   };
 
   const handleDistrictSelect = (district: District) => {
-    setFormData(prev => ({ 
-      ...prev, 
+    setFormData(prev => ({
+      ...prev,
       preferred_district_id: district.id,
       preferred_upazila_id: null
     }));
@@ -274,8 +274,8 @@ const GeneralSettings = () => {
   };
 
   const handleUpazilaSelect = (upazila: Upazila) => {
-    setFormData(prev => ({ 
-      ...prev, 
+    setFormData(prev => ({
+      ...prev,
       preferred_upazila_id: upazila.id
     }));
     setUpazilaSearch(upazila.name);
@@ -321,18 +321,18 @@ const GeneralSettings = () => {
       submitData.append('phone', formData.phone || '');
       submitData.append('address', formData.address || '');
       submitData.append('user_type', formData.user_type || '');
-      
+
       // Add location fields as arrays to match backend expectation
       if (formData.division_id) {
         submitData.append('division', formData.division_id.toString());
       }
-      
+
       if (formData.preferred_district_id) {
-        submitData.append('preferred_districts', `[${formData.preferred_district_id}]`);
+        submitData.append('preferred_districts', formData.preferred_district_id.toString());
       }
 
       if (formData.preferred_upazila_id) {
-        submitData.append('preferred_upazila', `[${formData.preferred_upazila_id}]`);
+        submitData.append('preferred_upazila', formData.preferred_upazila_id.toString());
       }
 
       if (selectedFile) {
@@ -467,6 +467,143 @@ const GeneralSettings = () => {
               className="mt-1"
             />
           </div>
+        </div>
+
+        {/* Location Fields */}
+        <div className="space-y-6">
+          <h3 className="text-sm font-semibold">Location Preferences</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Division Selection */}
+            <div className="relative">
+              <Label>Division</Label>
+              <div className="relative mt-1">
+                <div
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between bg-white dark:bg-gray-800 dark:border-gray-600"
+                  onClick={() => setShowDivisionDropdown(!showDivisionDropdown)}
+                >
+                  <span className={getSelectedDivisionName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
+                    {getSelectedDivisionName() || 'Select Division'}
+                  </span>
+                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                </div>
+                {showDivisionDropdown && (
+                  <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
+                    <div className="p-2 border-b border-gray-200 dark:border-gray-600">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Input
+                          placeholder="Search divisions..."
+                          value={divisionSearch}
+                          onChange={(e) => setDivisionSearch(e.target.value)}
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+                    <div className="max-h-60 overflow-y-auto">
+                      {filteredDivisions.map((division) => (
+                        <div
+                          key={division.id}
+                          className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                          onClick={() => handleDivisionSelect(division)}
+                        >
+                          {division.name}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* District Selection */}
+            {formData.division_id && (
+              <div className="relative">
+                <Label>District</Label>
+                <div className="relative mt-1">
+                  <div
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between bg-white dark:bg-gray-800 dark:border-gray-600"
+                    onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
+                  >
+                    <span className={getSelectedDistrictName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
+                      {getSelectedDistrictName() || 'Select District'}
+                    </span>
+                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                  </div>
+                  {showDistrictDropdown && (
+                    <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
+                      <div className="p-2 border-b border-gray-200 dark:border-gray-600">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                          <Input
+                            placeholder="Search districts..."
+                            value={districtSearch}
+                            onChange={(e) => setDistrictSearch(e.target.value)}
+                            className="pl-10"
+                          />
+                        </div>
+                      </div>
+                      <div className="max-h-60 overflow-y-auto">
+                        {filteredDistricts.map((district) => (
+                          <div
+                            key={district.id}
+                            className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                            onClick={() => handleDistrictSelect(district)}
+                          >
+                            {district.name}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Upazila Selection */}
+            {formData.preferred_district_id && (
+              <div className="relative">
+                <Label>Upazila</Label>
+                <div className="relative mt-1">
+                  <div
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between bg-white dark:bg-gray-800 dark:border-gray-600"
+                    onClick={() => setShowUpazilaDropdown(!showUpazilaDropdown)}
+                  >
+                    <span className={getSelectedUpazilaName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
+                      {getSelectedUpazilaName() || 'Select Upazila'}
+                    </span>
+                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                  </div>
+                  {showUpazilaDropdown && (
+                    <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
+                      <div className="p-2 border-b border-gray-200 dark:border-gray-600">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                          <Input
+                            placeholder="Search upazilas..."
+                            value={upazilaSearch}
+                            onChange={(e) => setUpazilaSearch(e.target.value)}
+                            className="pl-10"
+                          />
+                        </div>
+                      </div>
+                      <div className="max-h-60 overflow-y-auto">
+                        {filteredUpazilas.map((upazila) => (
+                          <div
+                            key={upazila.id}
+                            className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                            onClick={() => handleUpazilaSelect(upazila)}
+                          >
+                            {upazila.name}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+            )}
+          </div>
           <div className="md:col-span-2">
             <Label htmlFor="address">Address</Label>
             <Input
@@ -477,144 +614,7 @@ const GeneralSettings = () => {
               className="mt-1"
             />
           </div>
-        </div>
 
-        {/* Location Fields */}
-        <div className="space-y-6">
-          <h3 className="text-lg font-semibold">Location Preferences</h3>
-          
-          {/* Division Selection */}
-          <div className="relative">
-            <Label>Division</Label>
-            <div className="relative mt-1">
-              <div
-                className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between bg-white dark:bg-gray-800 dark:border-gray-600"
-                onClick={() => setShowDivisionDropdown(!showDivisionDropdown)}
-              >
-                <span className={getSelectedDivisionName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
-                  {getSelectedDivisionName() || 'Select Division'}
-                </span>
-                <ChevronDown className="w-4 h-4 text-gray-400" />
-              </div>
-              
-              {showDivisionDropdown && (
-                <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
-                  <div className="p-2 border-b border-gray-200 dark:border-gray-600">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input
-                        placeholder="Search divisions..."
-                        value={divisionSearch}
-                        onChange={(e) => setDivisionSearch(e.target.value)}
-                        className="pl-10"
-                      />
-                    </div>
-                  </div>
-                  <div className="max-h-60 overflow-y-auto">
-                    {filteredDivisions.map((division) => (
-                      <div
-                        key={division.id}
-                        className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                        onClick={() => handleDivisionSelect(division)}
-                      >
-                        {division.name}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* District Selection */}
-          {formData.division_id && (
-            <div className="relative">
-              <Label>Preferred District</Label>
-              <div className="relative mt-1">
-                <div
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between bg-white dark:bg-gray-800 dark:border-gray-600 min-h-[40px]"
-                  onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
-                >
-                  <span className={getSelectedDistrictName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
-                    {getSelectedDistrictName() || 'Select District'}
-                  </span>
-                  <ChevronDown className="w-4 h-4 text-gray-400" />
-                </div>
-                
-                {showDistrictDropdown && (
-                  <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
-                    <div className="p-2 border-b border-gray-200 dark:border-gray-600">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <Input
-                          placeholder="Search districts..."
-                          value={districtSearch}
-                          onChange={(e) => setDistrictSearch(e.target.value)}
-                          className="pl-10"
-                        />
-                      </div>
-                    </div>
-                    <div className="max-h-60 overflow-y-auto">
-                      {filteredDistricts.map((district) => (
-                        <div
-                          key={district.id}
-                          className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                          onClick={() => handleDistrictSelect(district)}
-                        >
-                          {district.name}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Upazila Selection */}
-          {formData.preferred_district_id && (
-            <div className="relative">
-              <Label>Preferred Upazila</Label>
-              <div className="relative mt-1">
-                <div
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between bg-white dark:bg-gray-800 dark:border-gray-600 min-h-[40px]"
-                  onClick={() => setShowUpazilaDropdown(!showUpazilaDropdown)}
-                >
-                  <span className={getSelectedUpazilaName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
-                    {getSelectedUpazilaName() || 'Select Upazila'}
-                  </span>
-                  <ChevronDown className="w-4 h-4 text-gray-400" />
-                </div>
-                
-                {showUpazilaDropdown && (
-                  <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
-                    <div className="p-2 border-b border-gray-200 dark:border-gray-600">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <Input
-                          placeholder="Search upazilas..."
-                          value={upazilaSearch}
-                          onChange={(e) => setUpazilaSearch(e.target.value)}
-                          className="pl-10"
-                        />
-                      </div>
-                    </div>
-                    <div className="max-h-60 overflow-y-auto">
-                      {filteredUpazilas.map((upazila) => (
-                        <div
-                          key={upazila.id}
-                          className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                          onClick={() => handleUpazilaSelect(upazila)}
-                        >
-                          {upazila.name}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="flex justify-end">

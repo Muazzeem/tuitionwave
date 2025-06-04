@@ -231,10 +231,11 @@ const SearchableMultiSelect: React.FC<Props> = ({
                     onSelect={() => toggleValue(idStr)}
                   >
                     <Checkbox
-                      checked={selectedValues.includes(idStr)}
-                      onCheckedChange={() => toggleValue(idStr)}
-                      className="mr-2"
-                    />
+                        checked={selectedValues.includes(idStr)}
+                        onCheckedChange={() => toggleValue(idStr)}
+                        className="mr-2"
+                        aria-checked={selectedValues.includes(idStr)}
+                      />
                     {item[labelKey]}
                   </CommandItem>
                 );

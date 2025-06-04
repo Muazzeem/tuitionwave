@@ -8,9 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from './ui/use-toast';
 import { getAccessToken } from '@/utils/auth';
-import SearchableSelect from './SearchableSelect';
 import SearchableMultiSelect from './SearchableMultiSelect';
-import LocationSelector from './LocationSelector';
 
 interface TuitionFormProps {
   formData: TuitionFormData;
@@ -28,12 +26,6 @@ interface TuitionFormData {
   maxHourlyCharge: string;
   subjects: string[];
   activeDays: string[];
-  preferredDistricts: string[];
-  preferredAreas: string[];
-  selectedDivision?: string;
-  selectedDistrict?: string;
-  selectedUpazila?: string;
-  selectedArea?: string;
 }
 
 interface TuitionInfoResponse {
@@ -67,8 +59,6 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
         updateFormData({
           daysPerWeek: tuitionData.days_per_week?.toString() || '',
           teachingType: tuitionData.teaching_type_display?.toUpperCase() || '',
-          preferredAreas: tuitionData.preferred_areas.map((a) => a.id.toString()),
-          preferredDistricts: tuitionData.preferred_districts.map((d) => d.id.toString()),
         });
       } catch (error) {
         console.error('Error fetching tuition data:', error);
@@ -91,8 +81,6 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
       const formDataToSend = {
         days_per_week: parseInt(formData.daysPerWeek, 10),
         teaching_type: formData.teachingType,
-        preferred_areas: formData.preferredAreas.map(Number),
-        preferred_districts: formData.preferredDistricts.map(Number),
       };
 
       await axios.put(`${import.meta.env.VITE_API_URL}/api/tutors/${uid}/`, formDataToSend, {
@@ -151,28 +139,16 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
         </Select>
       </div>
 
-      <div>
-        <Label className="text-base font-medium mb-4 block">Location Preferences</Label>
-        <LocationSelector
-          selectedDivision={formData.selectedDivision}
-          selectedDistrict={formData.selectedDistrict}
-          selectedUpazila={formData.selectedUpazila}
-          selectedArea={formData.selectedArea}
-          onDivisionChange={(value) => updateFormData({ selectedDivision: value })}
-          onDistrictChange={(value) => updateFormData({ selectedDistrict: value })}
-          onUpazilaChange={(value) => updateFormData({ selectedUpazila: value })}
-          onAreaChange={(value) => updateFormData({ selectedArea: value })}
+      {formData && (
+        <SearchableMultiSelect
+          label="Active Days"
+          placeholder="Select active days"
+          apiEndpoint="/api/active-days/"
+          selectedValues={formData.activeDays?.map(String) || []}
+          onChange={(vals) => updateFormData({ activeDays: vals })}
+          labelKey="day"
         />
-      </div>
-
-      <SearchableMultiSelect
-        label="Active Days"
-        placeholder="Select active days"
-        apiEndpoint="/api/active-days/"
-        selectedValues={formData.activeDays || []}
-        onChange={(vals) => updateFormData({ activeDays: vals })}
-        labelKey="day"
-      />
+      )}
 
       <div className="flex justify-between pt-4">
         <Button variant="outline" className="px-6" onClick={onPrev} disabled={isLoading}>
