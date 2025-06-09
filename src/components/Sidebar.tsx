@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 const Sidebar = () => {
     const { userProfile, clearProfile } = useAuth();
     const location = useLocation();
-    const [isExpanded, setIsExpanded] = useState(true);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const userType = userProfile?.user_type?.toLowerCase() === 'teacher' ? 'teacher' : 'guardian';
     
