@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, Settings } from 'lucide-react';
+import { Send, Settings, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Friend } from '@/types/friends';
 import FriendsService from '@/services/FriendsService';
@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { getAccessToken } from '@/utils/auth';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface MessagingInterfaceProps {
   onClose?: () => void;
@@ -44,6 +45,8 @@ interface MessageResponse {
 
 const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   const accessToken = getAccessToken();
+  const navigate = useNavigate();
+  const { friendId } = useParams();
   const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -56,6 +59,15 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   useEffect(() => {
     fetchFriends();
   }, []);
+
+  useEffect(() => {
+    if (friendId && friends.length > 0) {
+      const friend = friends.find(f => f.friend.id.toString() === friendId);
+      if (friend) {
+        setSelectedFriend(friend);
+      }
+    }
+  }, [friendId, friends]);
 
   useEffect(() => {
     if (selectedFriend?.friend.id) {
@@ -89,16 +101,20 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
       
       if (data.type === 'chat_message') {
         const newMsg: Message = {
-          id: Date.now(),
+          id: data.id || Date.now(),
           text: data.message,
-          sent_at: new Date().toISOString(),
+          sent_at: data.sent_at || new Date().toISOString(),
           sender_name: data.sender_name || '',
           sender_email: data.sender_email || '',
-          receiver_name: '',
-          receiver_email: userProfile?.email || '',
+          receiver_name: data.receiver_name || '',
+          receiver_email: data.receiver_email || userProfile?.email || '',
           is_read: false
         };
-        setMessages(prev => [...prev, newMsg]);
+        
+        // Only add if it's not from the current user (to avoid duplicates)
+        if (data.sender_email !== userProfile?.email) {
+          setMessages(prev => [...prev, newMsg]);
+        }
       }
     };
     
@@ -152,14 +168,12 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
       receiver_id: selectedFriend.friend.id
     };
 
-    socket.send(JSON.stringify(messageData));
-    
-    // Add message optimistically
+    // Add message optimistically first
     const tempMessage: Message = {
       id: Date.now(),
       text: newMessage,
       sent_at: new Date().toISOString(),
-      sender_name: userProfile?.first_name + ' ' + userProfile?.last_name || userProfile?.email || '',
+      sender_name: (userProfile?.first_name || '') + ' ' + (userProfile?.last_name || '') || userProfile?.email || '',
       sender_email: userProfile?.email || '',
       receiver_name: selectedFriend.friend.full_name,
       receiver_email: selectedFriend.friend.email,
@@ -168,6 +182,19 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
 
     setMessages(prev => [...prev, tempMessage]);
     setNewMessage('');
+
+    // Then send via WebSocket
+    socket.send(JSON.stringify(messageData));
+  };
+
+  const handleFriendSelect = (friend: Friend) => {
+    setSelectedFriend(friend);
+    navigate(`/message/${friend.friend.id}`);
+  };
+
+  const handleBackToList = () => {
+    setSelectedFriend(null);
+    navigate('/message');
   };
 
   const filteredFriends = friends.filter(friend =>
@@ -191,8 +218,8 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
 
   return (
     <div className="h-screen bg-white flex">
-      {/* Sidebar */}
-      <div className="w-80 bg-gray-50 border-r flex flex-col">
+      {/* Sidebar - Hide on mobile when friend is selected */}
+      <div className={`w-80 bg-gray-50 border-r flex flex-col ${selectedFriend ? 'hidden md:flex' : 'flex'}`}>
         <div className="p-4">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-bold">Message</h1>
@@ -226,7 +253,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
                 className={`flex items-center p-3 cursor-pointer hover:bg-gray-100 ${
                   isActive ? 'bg-blue-50 border-r-2 border-blue-500' : ''
                 }`}
-                onClick={() => setSelectedFriend(friend)}
+                onClick={() => handleFriendSelect(friend)}
               >
                 <Avatar className="h-12 w-12 mr-3">
                   <AvatarImage src="" alt={displayName} />
@@ -268,6 +295,14 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
             {/* Chat Header */}
             <div className="p-4 border-b bg-white flex items-center justify-between">
               <div className="flex items-center">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleBackToList}
+                  className="mr-3 md:hidden"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
                 <Avatar className="h-10 w-10 mr-3">
                   <AvatarImage src="" alt={selectedFriend.friend.full_name} />
                   <AvatarFallback className="bg-blue-500 text-white">

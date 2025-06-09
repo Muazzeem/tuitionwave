@@ -4,7 +4,7 @@ import MessagingInterface from "@/components/messaging/MessagingInterface";
 
 const MessagePage: React.FC = () => {
   return (
-    <div className="h-screen bg-gray-50">
+    <div className="flex-1">
       <MessagingInterface />
     </div>
   );

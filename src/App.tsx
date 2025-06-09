@@ -176,7 +176,12 @@ const App = () => (
                   } />
                   <Route path="/message" element={
                     <AuthGuard>
-                      <MessagePage />
+                      <MainLayout><MessagePage /></MainLayout>
+                    </AuthGuard>
+                  } />
+                  <Route path="/message/:friendId" element={
+                    <AuthGuard>
+                      <MainLayout><MessagePage /></MainLayout>
                     </AuthGuard>
                   } />
                   
