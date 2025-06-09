@@ -25,7 +25,7 @@ interface ChatListProps {
 }
 
 const ChatList: React.FC<ChatListProps> = ({
-  friends,
+  friends = [], // Add default empty array to prevent undefined
   activeFriend,
   onFriendSelect,
   onDeleteChat,
@@ -35,7 +35,8 @@ const ChatList: React.FC<ChatListProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredFriends = friends.filter((friend) =>
+  // Add safety check to ensure friends is an array before filtering
+  const filteredFriends = (friends || []).filter((friend) =>
     friend.friend.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     friend.friend.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
