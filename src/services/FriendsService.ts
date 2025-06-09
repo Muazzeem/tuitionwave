@@ -17,7 +17,6 @@ const FriendsService = {
       return response.data;
     } catch (error) {
       console.error('Error fetching friends:', error);
-      // Return empty response structure on error
       return {
         accepted_friends: []
       };

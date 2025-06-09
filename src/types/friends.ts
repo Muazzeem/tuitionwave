@@ -20,6 +20,9 @@ export interface Friend {
   last_message_time: string | null;
   friendship_created: string;
   unread_messages_count: number;
+  // Add missing properties to make it compatible with Chat
+  id: number;
+  conversation_id: number | null;
 }
 
 export interface FriendsApiResponse {
