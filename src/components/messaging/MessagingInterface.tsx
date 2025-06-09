@@ -11,6 +11,10 @@ import { format } from 'date-fns';
 import { getAccessToken } from '@/utils/auth';
 import { useNavigate, useParams } from 'react-router-dom';
 
+interface MessagingInterfaceProps {
+  onClose?: () => void;
+}
+
 interface Message {
   id: number;
   text: string;
@@ -38,7 +42,7 @@ interface MessageResponse {
   };
 }
 
-const MessagingInterface: React.FC = () => {
+const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   const accessToken = getAccessToken();
   const navigate = useNavigate();
   const { friendId } = useParams();
@@ -51,10 +55,11 @@ const MessagingInterface: React.FC = () => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const { userProfile } = useAuth();
 
+  // Helper function to log unread message IDs
   const logUnreadMessageIds = (messagesList: Message[], context: string = '') => {
     const unreadMessages = messagesList.filter(message => !message.is_read);
     const unreadIds = unreadMessages.map(message => message.id);
-    
+
     if (unreadIds.length > 0) {
       console.log(`${context} - Unread message IDs:`, unreadIds);
       console.log(`${context} - Unread messages details:`, unreadMessages);
@@ -76,36 +81,32 @@ const MessagingInterface: React.FC = () => {
     );
   };
 
+  // Mark messages as read API call
   const markMessagesAsRead = async (messageIds: number[]) => {
     if (messageIds.length === 0) return;
 
     try {
-      console.log('Marking messages as read:', messageIds);
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/messages/mark-read/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ message_ids: messageIds })
+        body: JSON.stringify({
+          message_ids: messageIds
+        })
       });
-      
+
       if (response.ok) {
-        console.log('Successfully marked messages as read:', messageIds);
-        setMessages(prev =>
-          prev.map(message =>
-            messageIds.includes(message.id)
-              ? { ...message, is_read: true }
-              : message
-          )
-        );
-        
-        // Update the friends list unread count
+        setMessages(prev => prev.map(message =>
+          messageIds.includes(message.id)
+            ? { ...message, is_read: true }
+            : message
+        ));
+        logUnreadMessageIds(messages.filter(m => !messageIds.includes(m.id) || m.is_read), 'After marking as read');
         if (selectedFriend) {
           updateFriendUnreadCount(selectedFriend.friend.id, messageIds.length);
         }
-        
-        logUnreadMessageIds(messages.filter(m => !messageIds.includes(m.id) || m.is_read), 'After marking as read');
       } else {
         console.error('Failed to mark messages as read:', response.status);
       }
@@ -114,11 +115,13 @@ const MessagingInterface: React.FC = () => {
     }
   };
 
+  // Mark all unread messages in current conversation as read
   const markAllUnreadAsRead = () => {
-    const unreadMessages = messages.filter(
-      message => !message.is_read && message.sender_email !== userProfile?.email
+    const unreadMessages = messages.filter(message =>
+      !message.is_read && message.sender_email !== userProfile?.email
     );
     const unreadIds = unreadMessages.map(message => message.id);
+
     if (unreadIds.length > 0) {
       markMessagesAsRead(unreadIds);
     }
@@ -144,19 +147,25 @@ const MessagingInterface: React.FC = () => {
     }
 
     return () => {
-      if (socket) socket.close();
+      if (socket) {
+        socket.close();
+      }
     };
   }, [selectedFriend]);
 
+  // Auto-mark messages as read when conversation is opened
   useEffect(() => {
     if (messages.length > 0 && selectedFriend) {
+      // Wait a bit for user to see the messages, then mark as read
       const timer = setTimeout(() => {
         markAllUnreadAsRead();
       }, 1000);
+
       return () => clearTimeout(timer);
     }
   }, [messages.length, selectedFriend]);
 
+  // Log unread messages whenever messages state changes
   useEffect(() => {
     if (messages.length > 0) {
       logUnreadMessageIds(messages, 'Messages state updated');
@@ -164,15 +173,22 @@ const MessagingInterface: React.FC = () => {
   }, [messages]);
 
   const connectWebSocket = () => {
-    if (socket) socket.close();
+    if (socket) {
+      socket.close();
+    }
 
     const wsUrl = `ws://127.0.0.1:9000/ws/chat/?token=${accessToken}`;
+
     const newSocket = new WebSocket(wsUrl);
 
-    newSocket.onopen = () => console.log('WebSocket connected');
+    newSocket.onopen = () => {
+      console.log('WebSocket connected');
+    };
 
     newSocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      console.log('WebSocket message received:', data);
+
       if (data.type === 'chat_message') {
         const newMsg: Message = {
           id: data.id || Date.now(),
@@ -185,35 +201,27 @@ const MessagingInterface: React.FC = () => {
           is_read: false
         };
 
+        // Only add if it's not from the current user (to avoid duplicates)
         if (data.sender_email !== userProfile?.email) {
+          console.log('New incoming message (unread):', newMsg.id);
+          logUnreadMessageIds([newMsg], 'New WebSocket message');
           setMessages(prev => {
-            const updated = [...prev, newMsg];
-            setTimeout(() => logUnreadMessageIds(updated, 'After WebSocket message added'), 0);
-            return updated;
+            const updatedMessages = [...prev, newMsg];
+            // Log after state update
+            setTimeout(() => logUnreadMessageIds(updatedMessages, 'After WebSocket message added'), 0);
+            return updatedMessages;
           });
-          
-          // Update friends list with new unread message count
-          const senderId = data.sender_id;
-          if (senderId && (!selectedFriend || selectedFriend.friend.id !== senderId)) {
-            setFriends(prev => 
-              prev.map(friend => 
-                friend.friend.id === senderId 
-                  ? {
-                      ...friend,
-                      unread_messages_count: friend.unread_messages_count + 1,
-                      last_message: { text: data.message },
-                      last_message_time: data.sent_at || new Date().toISOString()
-                    }
-                  : friend
-              )
-            );
-          }
         }
       }
     };
 
-    newSocket.onclose = () => console.log('WebSocket disconnected');
-    newSocket.onerror = (error) => console.error('WebSocket error:', error);
+    newSocket.onclose = () => {
+      console.log('WebSocket disconnected');
+    };
+
+    newSocket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
 
     setSocket(newSocket);
   };
@@ -241,8 +249,9 @@ const MessagingInterface: React.FC = () => {
 
       if (response.ok) {
         const data: MessageResponse = await response.json();
-        setMessages(data.results.messages);
+        console.log('Fetched messages from API:', data.results.messages.length);
         logUnreadMessageIds(data.results.messages, 'Fetched from API');
+        setMessages(data.results.messages);
       }
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -258,33 +267,23 @@ const MessagingInterface: React.FC = () => {
       receiver_id: selectedFriend.friend.id
     };
 
+    // Add message optimistically first
     const tempMessage: Message = {
       id: Date.now(),
       text: newMessage,
       sent_at: new Date().toISOString(),
-      sender_name: `${userProfile?.first_name || ''} ${userProfile?.last_name || ''}`.trim() || userProfile?.email || '',
+      sender_name: (userProfile?.first_name || '') + ' ' + (userProfile?.last_name || '') || userProfile?.email || '',
       sender_email: userProfile?.email || '',
       receiver_name: selectedFriend.friend.full_name,
       receiver_email: selectedFriend.friend.email,
-      is_read: false
+      is_read: false // Your own messages start as unread until confirmed
     };
 
+    console.log('Sending message (initially unread):', tempMessage.id);
     setMessages(prev => [...prev, tempMessage]);
-    
-    // Update the last message in friends list for sent messages
-    setFriends(prev => 
-      prev.map(friend => 
-        friend.friend.id === selectedFriend.friend.id 
-          ? {
-              ...friend,
-              last_message: { text: newMessage.trim() },
-              last_message_time: new Date().toISOString()
-            }
-          : friend
-      )
-    );
-    
     setNewMessage('');
+
+    // Then send via WebSocket
     socket.send(JSON.stringify(messageData));
   };
 
@@ -319,6 +318,7 @@ const MessagingInterface: React.FC = () => {
 
   return (
     <div className="h-screen bg-white flex">
+      {/* Sidebar - Hide on mobile when friend is selected */}
       <div className={`w-80 bg-gray-50 border-r flex flex-col ${selectedFriend ? 'hidden md:flex' : 'flex'}`}>
         <div className="p-4">
           <div className="flex items-center justify-between mb-4">
@@ -327,13 +327,19 @@ const MessagingInterface: React.FC = () => {
               <Settings className="h-4 w-4" />
             </Button>
           </div>
-          <Input
-            placeholder="Search name, chat, etc"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full"
-          />
+          <p className="text-sm text-gray-600 mb-4">Explore all the tuition request from guardian</p>
+
+          <div className="relative">
+            <Input
+              placeholder="Search name, chat, etc"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full"
+            />
+          </div>
         </div>
+
+        {/* Friends List */}
         <div className="flex-1 overflow-y-auto">
           {filteredFriends.map((friend) => {
             const isActive = selectedFriend?.friend.id === friend.friend.id;
@@ -344,9 +350,8 @@ const MessagingInterface: React.FC = () => {
             return (
               <div
                 key={friend.friend.id}
-                className={`flex items-center p-3 cursor-pointer hover:bg-gray-100 ${
-                  isActive ? 'bg-blue-50 border-r-2 border-blue-500' : ''
-                }`}
+                className={`flex items-center p-3 cursor-pointer hover:bg-gray-100 ${isActive ? 'bg-blue-50 border-r-2 border-blue-500' : ''
+                  }`}
                 onClick={() => handleFriendSelect(friend)}
               >
                 <Avatar className="h-12 w-12 mr-3">
@@ -355,13 +360,20 @@ const MessagingInterface: React.FC = () => {
                     {displayName.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
+
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-center">
-                    <h3 className="font-medium text-gray-900 truncate text-sm">{displayName}</h3>
-                    <span className="text-xs text-gray-500">{lastMessageTime}</span>
+                    <h3 className="font-medium text-gray-900 truncate text-sm">
+                      {displayName}
+                    </h3>
+                    <span className="text-xs text-gray-500">
+                      {lastMessageTime}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <p className="text-xs text-gray-500 truncate">{lastMessageText}</p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {lastMessageText}
+                    </p>
                     {friend.unread_messages_count > 0 && (
                       <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-blue-500 rounded-full">
                         {friend.unread_messages_count}
@@ -375,12 +387,19 @@ const MessagingInterface: React.FC = () => {
         </div>
       </div>
 
+      {/* Chat Area */}
       <div className="flex-1 flex flex-col">
         {selectedFriend ? (
           <>
+            {/* Chat Header */}
             <div className="p-4 border-b bg-white flex items-center justify-between">
               <div className="flex items-center">
-                <Button variant="ghost" size="sm" onClick={handleBackToList} className="mr-3 md:hidden">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleBackToList}
+                  className="mr-3 md:hidden"
+                >
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
                 <Avatar className="h-10 w-10 mr-3">
@@ -390,12 +409,15 @@ const MessagingInterface: React.FC = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h2 className="font-semibold text-gray-900 capitalize">{selectedFriend.friend.full_name}</h2>
+                  <h2 className="font-semibold text-gray-900">
+                    {selectedFriend.friend.full_name}
+                  </h2>
                   <p className="text-sm text-gray-500">last seen recently</p>
                 </div>
               </div>
             </div>
 
+            {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4 bg-gray-50 pl-5 pr-10">
               {messages.length > 0 && (
                 <div className="text-center mb-4">
@@ -404,10 +426,15 @@ const MessagingInterface: React.FC = () => {
                   </span>
                 </div>
               )}
+
               {messages.map((message) => {
                 const isOwnMessage = message.sender_email === userProfile?.email;
+
                 return (
-                  <div key={message.id} className={`flex mb-4 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
+                  <div
+                    key={message.id}
+                    className={`flex mb-4 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
+                  >
                     {!isOwnMessage && (
                       <Avatar className="h-8 w-8 mr-2">
                         <AvatarImage src="" alt={message.sender_name} />
@@ -416,13 +443,21 @@ const MessagingInterface: React.FC = () => {
                         </AvatarFallback>
                       </Avatar>
                     )}
-                    <div className={`max-w-xs lg:max-w-md ${isOwnMessage ? 'order-2' : 'order-1'}`}>
-                      <div className={`px-4 py-2 rounded-lg ${isOwnMessage ? 'bg-blue-500 text-white' : 'bg-white text-gray-900 shadow-sm'}`}>
-                        <p className="text-sm">{message.text}</p>
+                    <div className={`max-w-[280px] sm:max-w-xs lg:max-w-md xl:max-w-lg ${isOwnMessage ? 'ml-auto' : ''}`}>
+                      <div className={`px-3 sm:px-4 py-2 rounded-2xl ${isOwnMessage
+                          ? 'bg-blue-500 text-white rounded-br-md'
+                          : 'bg-white text-gray-900 shadow-sm border rounded-bl-md'
+                        }`}>
+                        <p className="text-sm leading-relaxed break-words">{message.text}</p>
                       </div>
-                      <div className={`text-xs mt-1 ${isOwnMessage ? 'text-right' : 'text-left'}`}>
+
+                      <div className={`text-xs mt-1 px-1 ${isOwnMessage ? 'text-right' : 'text-left'}`}>
                         <span className="text-gray-500">{formatTime(message.sent_at)}</span>
-                        {isOwnMessage && <span className="ml-1 text-blue-500">✓✓</span>}
+                        {isOwnMessage && (
+                          <span className="ml-1 text-blue-500">
+                            {message.is_read ? '✓✓' : '✓'}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -430,6 +465,7 @@ const MessagingInterface: React.FC = () => {
               })}
             </div>
 
+            {/* Message Input */}
             <div className="p-4 bg-white border-t">
               <div className="flex items-end space-x-2">
                 <Textarea
@@ -456,7 +492,16 @@ const MessagingInterface: React.FC = () => {
             </div>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center bg-gray-50" />
+          <div className="flex-1 flex items-center justify-center bg-gray-50">
+            <div className="text-center">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Select a conversation
+              </h3>
+              <p className="text-gray-500">
+                Choose a friend to start messaging
+              </p>
+            </div>
+          </div>
         )}
       </div>
     </div>
