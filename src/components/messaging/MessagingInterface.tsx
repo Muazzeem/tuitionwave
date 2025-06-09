@@ -9,6 +9,7 @@ import FriendsService from '@/services/FriendsService';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
+import { getAccessToken } from '@/utils/auth';
 
 interface MessagingInterfaceProps {
   onClose?: () => void;
@@ -42,6 +43,7 @@ interface MessageResponse {
 }
 
 const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
+  const accessToken = getAccessToken();
   const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -73,8 +75,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
       socket.close();
     }
 
-    const token = localStorage.getItem('access_token');
-    const wsUrl = `ws://127.0.0.1:9000/ws/chat/?token=${token}`;
+    const wsUrl = `ws://127.0.0.1:9000/ws/chat/?token=${accessToken}`;
     
     const newSocket = new WebSocket(wsUrl);
     
@@ -128,7 +129,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/conversations/${friendId}/messages/`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json'
         }
       });
