@@ -54,6 +54,7 @@ const ChatList: React.FC<ChatListProps> = ({
 
   const renderFriendItem = (friend: Friend, isActive: boolean) => {
     const displayName = friend.friend.full_name || friend.friend.email.split("@")[0];
+    const lastMessageText = friend.last_message?.text || "Start a conversation";
     
     return (
       <div
@@ -83,7 +84,7 @@ const ChatList: React.FC<ChatListProps> = ({
           </div>
           <div className="flex justify-between items-center">
             <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-              {friend.last_message || "Start a conversation"}
+              {lastMessageText}
             </p>
             {friend.unread_messages_count > 0 && (
               <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-blue-500 rounded-full">

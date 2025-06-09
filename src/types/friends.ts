@@ -7,18 +7,21 @@ export interface FriendUser {
   full_name: string;
 }
 
+export interface LastMessage {
+  text: string;
+  sender_id: number;
+  is_from_me: boolean;
+  sent_at: string;
+}
+
 export interface Friend {
   friend: FriendUser;
-  last_message: string | null;
+  last_message: LastMessage | null;
   last_message_time: string | null;
   friendship_created: string;
-  conversation_id: number | null;
   unread_messages_count: number;
 }
 
 export interface FriendsApiResponse {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: Friend[];
+  accepted_friends: Friend[];
 }
