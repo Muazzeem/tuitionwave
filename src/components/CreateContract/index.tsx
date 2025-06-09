@@ -24,7 +24,7 @@ interface DrawerState {
   isOpen: boolean;
 }
 
-const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type: string }> = ({ uid, drawer, teaching_type }) => {
+const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type: string, division: string }> = ({ uid, drawer, teaching_type, division }) => {
   const { userProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -257,6 +257,7 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
           <div className="p-6">
+            <p>{ division }</p>
             <TutorHeader
               name={tutor?.full_name}
               rating={tutor?.rating}

@@ -34,7 +34,7 @@ export const useLocationData = () => {
   const fetchCities = useCallback(async () => {
     setLoadingCities(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cities/`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upazilas/?district=4`);
       if (!response.ok) {
         throw new Error("Failed to fetch cities");
       }
@@ -57,7 +57,7 @@ export const useLocationData = () => {
     setLoadingAreas(true);
     try {
       // If cityId is provided, use it to filter areas
-      const cityParam = cityId ? `?city=${cityId}` : '';
+      const cityParam = cityId ? `?upazila=${cityId}` : '';
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/areas/${cityParam}`);
       
       if (!response.ok) {

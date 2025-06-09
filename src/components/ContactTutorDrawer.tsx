@@ -9,9 +9,10 @@ interface ContactTutorDrawerProps {
   onClose: () => void;
   uid: string;
   tuition_type: string;
+  division: string;
 }
 
-const ContactTutorDrawer: React.FC<ContactTutorDrawerProps> = ({ isOpen, onClose, uid, tuition_type }) => {
+const ContactTutorDrawer: React.FC<ContactTutorDrawerProps> = ({ isOpen, onClose, uid, tuition_type, division }) => {
   // Handle escape key to close drawer
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
@@ -60,6 +61,7 @@ const ContactTutorDrawer: React.FC<ContactTutorDrawerProps> = ({ isOpen, onClose
             uid={uid}
             teaching_type={tuition_type}
             drawer={{ isOpen: isOpen }}
+            division={division}
         />
       </div>
     </>

@@ -190,7 +190,6 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
       </div>
 
       <div>
-        <Label htmlFor="degree">Degree</Label>
         <SearchableSelect
           label="Degree"
           value={formData.degree}
@@ -202,7 +201,6 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
       </div>
 
       <div>
-        <Label htmlFor="institute">Institute</Label>
         <SearchableSelect
           label="Institute"
           value={formData.institute}
@@ -214,7 +212,6 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
       </div>
 
       <div>
-        <Label htmlFor="department">Department</Label>
         <SearchableSelect
           label="Department"
           value={formData.department}

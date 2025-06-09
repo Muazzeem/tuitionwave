@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -8,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from './ui/use-toast';
 import { getAccessToken } from '@/utils/auth';
-import SearchableMultiSelect from './SearchableMultiSelect';
 
 interface TuitionFormProps {
   formData: TuitionFormData;
@@ -24,20 +22,11 @@ interface TuitionFormData {
   maxSalary: string;
   minHourlyCharge: string;
   maxHourlyCharge: string;
-  subjects: string[];
-  activeDays: string[];
-  preferredDistricts: string[];
-  preferredAreas: string[];
-  selectedDivision?: string;
-  selectedDistrict?: string;
-  selectedUpazila?: string;
-  selectedArea?: string;
 }
 
 interface TuitionInfoResponse {
   days_per_week: number;
   teaching_type_display: string;
-  active_days: { id: number; day: string }[];
   expected_salary: {
     min_amount: number;
     max_amount: number;
@@ -46,9 +35,6 @@ interface TuitionInfoResponse {
     min_amount: number;
     max_amount: number;
   } | null;
-  subjects: { id: number; subject: string }[];
-  preferred_districts: { id: number; name: string }[];
-  preferred_areas: { id: number; name: string }[];
 }
 
 const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onNext, onPrev }) => {
@@ -72,18 +58,14 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
         const tuitionData: TuitionInfoResponse = response.data;
         setUid(response.data.uid);
 
-        // Map the response data to form data
+        // Map the response data to form data with proper null checks
         updateFormData({
           daysPerWeek: tuitionData.days_per_week?.toString() || '',
           teachingType: tuitionData.teaching_type_display?.toUpperCase() || '',
-          activeDays: tuitionData.active_days?.map(day => day.id.toString()) || [],
           minSalary: tuitionData.expected_salary?.min_amount?.toString() || '',
           maxSalary: tuitionData.expected_salary?.max_amount?.toString() || '',
           minHourlyCharge: tuitionData.expected_hourly_charge?.min_amount?.toString() || '',
           maxHourlyCharge: tuitionData.expected_hourly_charge?.max_amount?.toString() || '',
-          subjects: tuitionData.subjects?.map(subject => subject.id.toString()) || [],
-          preferredDistricts: tuitionData.preferred_districts?.map(district => district.id.toString()) || [],
-          preferredAreas: tuitionData.preferred_areas?.map(area => area.id.toString()) || [],
         });
       } catch (error) {
         console.error('Error fetching tuition data:', error);
@@ -103,10 +85,20 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
+      
+      // Validate required fields
+      if (!formData.daysPerWeek || !formData.teachingType) {
+        toast({
+          title: 'Validation Error',
+          description: 'Please fill in all required fields.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
       const formDataToSend = {
         days_per_week: parseInt(formData.daysPerWeek, 10),
         teaching_type: formData.teachingType,
-        active_days: formData.activeDays.map(id => parseInt(id, 10)),
         expected_salary: formData.minSalary && formData.maxSalary ? {
           min_amount: parseInt(formData.minSalary, 10),
           max_amount: parseInt(formData.maxSalary, 10),
@@ -115,9 +107,6 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
           min_amount: parseInt(formData.minHourlyCharge, 10),
           max_amount: parseInt(formData.maxHourlyCharge, 10),
         } : null,
-        subjects: formData.subjects.map(id => parseInt(id, 10)),
-        preferred_districts: formData.preferredDistricts.map(id => parseInt(id, 10)),
-        preferred_areas: formData.preferredAreas.map(id => parseInt(id, 10)),
       };
 
       await axios.put(`${import.meta.env.VITE_API_URL}/api/tutors/${uid}/`, formDataToSend, {
@@ -176,15 +165,6 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
         </Select>
       </div>
 
-      <SearchableMultiSelect
-        label="Active Days"
-        placeholder="Select active days"
-        apiEndpoint="/api/active-days/"
-        selectedValues={formData.activeDays || []}
-        onChange={(vals) => updateFormData({ activeDays: vals })}
-        labelKey="day"
-      />
-
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="minSalary">Min Expected Salary</Label>
@@ -234,34 +214,6 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
           />
         </div>
       </div>
-
-      <SearchableMultiSelect
-        label="Subjects"
-        placeholder="Select subjects"
-        apiEndpoint="/api/subjects/"
-        selectedValues={formData.subjects || []}
-        onChange={(vals) => updateFormData({ subjects: vals })}
-        labelKey="subject"
-        createEntityName="Subject"
-      />
-
-      <SearchableMultiSelect
-        label="Preferred Districts"
-        placeholder="Select preferred districts"
-        apiEndpoint="/api/districts/"
-        selectedValues={formData.preferredDistricts || []}
-        onChange={(vals) => updateFormData({ preferredDistricts: vals })}
-        labelKey="name"
-      />
-
-      <SearchableMultiSelect
-        label="Preferred Areas"
-        placeholder="Select preferred areas"
-        apiEndpoint="/api/areas/"
-        selectedValues={formData.preferredAreas || []}
-        onChange={(vals) => updateFormData({ preferredAreas: vals })}
-        labelKey="name"
-      />
 
       <div className="flex justify-between pt-4">
         <Button variant="outline" className="px-6" onClick={onPrev} disabled={isLoading}>

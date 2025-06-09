@@ -15,11 +15,15 @@ import { toast } from "sonner";
 
 const TutorFilters = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  
 
   const [institutions, setInstitutions] = useState<
     { id: number; name: string }[]
   >([]);
-  const [cities, setCities] = useState<{ id: number; name: string }[]>([]);
+  const [divisions, setDivisions] = useState<{ id: number; name: string }[]>([]);
+  const [districts, setDistricts] = useState<{ id: number; name: string }[]>([]);
+  const [upazilas, setUpazilas] = useState<{ id: number; name: string }[]>([]);
+  const [areas, setAreas] = useState<{ id: number; name: string }[]>([]);
   const [subjects, setSubjects] = useState<{ id: number; subject: string }[]>([]);
   
   const [loading, setLoading] = useState(true);
@@ -31,8 +35,17 @@ const TutorFilters = () => {
   const [selectedInstitute, setSelectedInstitute] = useState<string>(
     searchParams.get("institute") || ""
   );
-  const [selectedCity, setSelectedCity] = useState<string>(
-    searchParams.get("city") || ""
+  const [selectedDivision, setSelectedDivision] = useState<string>(
+    searchParams.get("division") || ""
+  );
+  const [selectedDistrict, setSelectedDistrict] = useState<string>(
+    searchParams.get("district") || ""
+  );
+  const [selectedUpazila, setSelectedUpazila] = useState<string>(
+    searchParams.get("upazila") || ""
+  );
+  const [selectedArea, setSelectedArea] = useState<string>(
+    searchParams.get("area") || ""
   );
   const [selectedSubject, setSelectedSubject] = useState<string>(
     searchParams.get("subjects") || ""
@@ -64,14 +77,72 @@ const TutorFilters = () => {
     }
   }, []);
 
-  const fetchCities = useCallback(async () => {
+  const fetchDivisions = useCallback(async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upazilas/`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/divisions/`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch divisions: ${response.status}`);
+      }
+      const data = await response.json();
+      setDivisions(data.results || []);
+    } catch (err: any) {           
+      setError(err.message || "An error occurred while fetching divisions.");
+      toast.error("Failed to load divisions");
+    }
+  }, []);
+
+  const fetchDistricts = useCallback(async (divisionId: string) => {
+    if (!divisionId) {
+      setDistricts([]);
+      return;
+    }
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/districts/?division=${divisionId}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch districts: ${response.status}`);
+      }
+      const data = await response.json();
+      setDistricts(data.results || []);
+    } catch (err: any) {           
+      setError(err.message || "An error occurred while fetching districts.");
+      toast.error("Failed to load districts");
+    }
+  }, []);
+
+  const fetchUpazilas = useCallback(async (districtId: string) => {
+    if (!districtId) {
+      setUpazilas([]);
+      return;
+    }
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upazilas/?district=${districtId}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch upazilas: ${response.status}`);
       }
       const data = await response.json();
-      setCities(data.results || []);
+      setUpazilas(data.results || []);
+    } catch (err: any) {           
+      setError(err.message || "An error occurred while fetching upazilas.");
+      toast.error("Failed to load upazilas");
+    }
+  }, []);
+
+
+  const fetchAreas = useCallback(async (districtId: string) => {
+    if (!districtId) {
+      setUpazilas([]);
+      return;
+    }
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upazilas/?district=${districtId}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch upazilas: ${response.status}`);
+      }
+      const data = await response.json();
+      setAreas(data.results || []);
     } catch (err: any) {           
       setError(err.message || "An error occurred while fetching upazilas.");
       toast.error("Failed to load upazilas");
@@ -94,14 +165,50 @@ const TutorFilters = () => {
     }
   }, []);
 
+  // Handle division change - reset district and upazila
+  const handleDivisionChange = useCallback((value: string) => {
+    setSelectedDivision(value);
+    setSelectedDistrict("");
+    setSelectedUpazila("");
+    setDistricts([]);
+    setUpazilas([]);
+    if (value) {
+      fetchDistricts(value);
+    }
+  }, [fetchDistricts]);
+
+  // Handle district change - reset upazila
+  const handleDistrictChange = useCallback((value: string) => {
+    setSelectedDistrict(value);
+    setSelectedUpazila("");
+    setUpazilas([]);
+    if (value) {
+      fetchUpazilas(value);
+    }
+  }, [fetchUpazilas]);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      await Promise.all([fetchInstitutions(), fetchCities(), fetchSubjects()]);
+      await Promise.all([fetchInstitutions(), fetchDivisions(), fetchSubjects()]);
+      
+      // If there's a pre-selected division, fetch its districts
+      const divisionFromUrl = searchParams.get("division");
+      if (divisionFromUrl) {
+        await fetchDistricts(divisionFromUrl);
+        
+        // If there's a pre-selected district, fetch its upazilas
+        const districtFromUrl = searchParams.get("district");
+        if (districtFromUrl) {
+          await fetchUpazilas(districtFromUrl);
+        }
+      }
     };
     
     fetchData();
-  }, [fetchInstitutions, fetchCities, fetchSubjects]);
+  }, [fetchInstitutions, fetchDivisions, fetchSubjects, fetchDistricts, fetchUpazilas, searchParams]);
+
+
 
   // Auto-apply filters whenever any filter value changes
   useEffect(() => {
@@ -114,10 +221,27 @@ const TutorFilters = () => {
       params.delete("institute");
     }
     
-    if (selectedCity) {
-      params.set("preferred_upazila", selectedCity);
+    if (selectedDivision) {
+      params.set("division", selectedDivision);
     } else {
-      params.delete("preferred_upazila");
+      params.delete("division");
+    }
+    
+    if (selectedDistrict) {
+      params.set("district", selectedDistrict);
+    } else {
+      params.delete("district");
+    }
+    
+    if (selectedUpazila) {
+      params.set("upazila", selectedUpazila);
+    } else {
+      params.delete("upazila");
+    }
+    if (selectedArea) {
+      params.set("area", selectedArea);
+    } else {
+      params.delete("area");
     }
     
     if (selectedSubject) {
@@ -153,7 +277,9 @@ const TutorFilters = () => {
     setSearchParams(params);
   }, [
     selectedInstitute,
-    selectedCity,
+    selectedDivision,
+    selectedDistrict,
+    selectedUpazila,
     selectedSubject,
     selectedTeachingType,
     selectedSalaryRange,
@@ -169,12 +295,18 @@ const TutorFilters = () => {
 
   const clearFilters = () => {
     setSelectedInstitute("");
-    setSelectedCity("");
+    setSelectedDivision("");
+    setSelectedDistrict("");
+    setSelectedUpazila("");
+    setSelectedArea("");
     setSelectedSubject("");
     setSelectedTeachingType("");
     setSelectedSalaryRange("");
     setSelectedRating("");
     setSelectedGender("");
+    setDistricts([]);
+    setUpazilas([]);
+    setAreas([]);
     setSearchParams(new URLSearchParams());
     toast.success("Filters cleared");
   };
@@ -190,6 +322,80 @@ const TutorFilters = () => {
   return (
     <div className="mb-8">
       <div className="flex flex-wrap gap-2 mb-4">
+        <Select value={selectedDivision} onValueChange={handleDivisionChange}>
+          <SelectTrigger className="w-[250px]">
+            <SelectValue placeholder="Division" />
+          </SelectTrigger>
+          <SelectContent>
+            <ScrollArea className="h-[200px]">
+              {divisions.map((division) => (
+                <SelectItem key={division.id} value={division.id.toString()}>
+                  {division.name}
+                </SelectItem>
+              ))}
+            </ScrollArea>
+          </SelectContent>
+        </Select>
+
+        <Select 
+          value={selectedDistrict} 
+          onValueChange={handleDistrictChange}
+          disabled={!selectedDivision}
+        >
+          <SelectTrigger className="w-[250px]">
+            <SelectValue placeholder="District" />
+          </SelectTrigger>
+          <SelectContent>
+            <ScrollArea className="h-[200px]">
+              {districts.map((district) => (
+                <SelectItem key={district.id} value={district.id.toString()}>
+                  {district.name}
+                </SelectItem>
+              ))}
+            </ScrollArea>
+          </SelectContent>
+        </Select>
+
+        <Select 
+          value={selectedUpazila} 
+          onValueChange={setSelectedUpazila}
+          disabled={!selectedDistrict}
+        >
+          <SelectTrigger className="w-[250px]">
+            <SelectValue placeholder="Upazila" />
+          </SelectTrigger>
+          <SelectContent>
+            <ScrollArea className="h-[200px]">
+              {upazilas.map((upazila) => (
+                <SelectItem key={upazila.id} value={upazila.id.toString()}>
+                  {upazila.name}
+                </SelectItem>
+              ))}
+            </ScrollArea>
+          </SelectContent>
+        </Select>
+
+        <Select 
+          value={selectedArea} 
+          onValueChange={setSelectedArea}
+          disabled={!selectedUpazila}
+        >
+          <SelectTrigger className="w-[250px]">
+            <SelectValue placeholder="Area" />
+          </SelectTrigger>
+          <SelectContent>
+            <ScrollArea className="h-[200px]">
+              {areas.map((area) => (
+                <SelectItem key={area.id} value={area.id.toString()}>
+                  {area.name}
+                </SelectItem>
+              ))}
+            </ScrollArea>
+          </SelectContent>
+        </Select>
+      </div>
+      <hr />
+      <div className="flex flex-wrap gap-2 mt-2 mb-4">
         <Select 
           value={selectedInstitute} 
           onValueChange={setSelectedInstitute}
@@ -228,21 +434,7 @@ const TutorFilters = () => {
           </SelectContent>
         </Select>
 
-        <Select value={selectedCity} onValueChange={setSelectedCity}>
-          <SelectTrigger className="w-[150px]">
-            <SelectValue placeholder="City" />
-          </SelectTrigger>
-          <SelectContent>
-            <ScrollArea className="h-[200px]">
-              {cities.map((city) => (
-                <SelectItem key={city.id} value={city.name.toString()}>
-                  {city.name}
-                </SelectItem>
-              ))}
-            </ScrollArea>
-          </SelectContent>
-        </Select>
-
+        
         <Select value={selectedSubject} onValueChange={setSelectedSubject}>
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Subject" />

@@ -21,12 +21,15 @@ const TutorGrid = () => {
     const params = new URLSearchParams(`page=${page}`);
     
     // Add any search filters from URL parameters
+    if (searchParams.get('search')) {
+      params.append('search', searchParams.get('search'));
+    }
     if (searchParams.get('institute')) {
       params.append('institute', searchParams.get('institute'));
     }
     
-    if (searchParams.get('city')) {
-      params.append('city', searchParams.get('city'));
+    if (searchParams.get('preferred_upazila')) {
+      params.append('preferred_upazila', searchParams.get('preferred_upazila'));
     }
     
     if (searchParams.get('subjects')) {
@@ -36,7 +39,9 @@ const TutorGrid = () => {
     if (searchParams.get('gender')) {
       params.append('gender', searchParams.get('gender'));
     }
-    
+    if (searchParams.get('teaching_type')) {
+      params.append('teaching_type', searchParams.get('teaching_type'));
+    }
     return `${import.meta.env.VITE_API_URL}/api/tutors/?${params.toString()}`;
   };
 

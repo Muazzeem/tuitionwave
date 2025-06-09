@@ -60,7 +60,7 @@ const LocationFields: React.FC<LocationFieldsProps> = ({
       <div className="col-span-6">
         <FormField
           id="studentCity"
-          label="Student City"
+          label="Student Upazila"
           type="select"
           value={studentCity}
           onChange={onCityChange}
@@ -80,7 +80,6 @@ const LocationFields: React.FC<LocationFieldsProps> = ({
           onChange={onAreaChange}
           placeholder={loadingAreas ? "Loading areas..." : "Select Area"}
           error={areaError}
-          required
           disabled={loadingAreas}
           options={areaOptions}
         />
