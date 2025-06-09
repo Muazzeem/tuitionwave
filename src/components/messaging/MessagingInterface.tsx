@@ -48,6 +48,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   const [newMessage, setNewMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [socket, setSocket] = useState<WebSocket | null>(null);
   const { userProfile } = useAuth();
 
   useEffect(() => {
@@ -57,20 +58,65 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   useEffect(() => {
     if (selectedFriend?.friend.id) {
       fetchMessages(selectedFriend.friend.id);
+      connectWebSocket();
     }
+
+    return () => {
+      if (socket) {
+        socket.close();
+      }
+    };
   }, [selectedFriend]);
+
+  const connectWebSocket = () => {
+    if (socket) {
+      socket.close();
+    }
+
+    const token = localStorage.getItem('access_token');
+    const wsUrl = `ws://127.0.0.1:9000/ws/chat/?token=${token}`;
+    
+    const newSocket = new WebSocket(wsUrl);
+    
+    newSocket.onopen = () => {
+      console.log('WebSocket connected');
+    };
+    
+    newSocket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log('WebSocket message received:', data);
+      
+      if (data.type === 'chat_message') {
+        const newMsg: Message = {
+          id: Date.now(),
+          text: data.message,
+          sent_at: new Date().toISOString(),
+          sender_name: data.sender_name || '',
+          sender_email: data.sender_email || '',
+          receiver_name: '',
+          receiver_email: userProfile?.email || '',
+          is_read: false
+        };
+        setMessages(prev => [...prev, newMsg]);
+      }
+    };
+    
+    newSocket.onclose = () => {
+      console.log('WebSocket disconnected');
+    };
+    
+    newSocket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+    
+    setSocket(newSocket);
+  };
 
   const fetchFriends = async () => {
     setIsLoading(true);
     try {
       const response = await FriendsService.getFriends();
-      // Add missing properties to make friends compatible
-      const friendsWithIds = response.accepted_friends.map((friend, index) => ({
-        ...friend,
-        id: friend.friend.id,
-        conversation_id: friend.friend.id // Using friend id as conversation id
-      }));
-      setFriends(friendsWithIds);
+      setFriends(response.accepted_friends);
     } catch (error) {
       console.error('Error fetching friends:', error);
     } finally {
@@ -97,33 +143,30 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   };
 
   const sendMessage = async () => {
-    if (!newMessage.trim() || !selectedFriend) return;
+    if (!newMessage.trim() || !selectedFriend || !socket) return;
 
-    try {
-      // For now, we'll add the message optimistically
-      const tempMessage: Message = {
-        id: Date.now(),
-        text: newMessage,
-        sent_at: new Date().toISOString(),
-        sender_name: userProfile?.full_name || '',
-        sender_email: userProfile?.email || '',
-        receiver_name: selectedFriend.friend.full_name,
-        receiver_email: selectedFriend.friend.email,
-        is_read: false
-      };
+    const messageData = {
+      type: 'chat_message',
+      message: newMessage.trim(),
+      receiver_id: selectedFriend.friend.id
+    };
 
-      setMessages(prev => [...prev, tempMessage]);
-      setNewMessage('');
+    socket.send(JSON.stringify(messageData));
+    
+    // Add message optimistically
+    const tempMessage: Message = {
+      id: Date.now(),
+      text: newMessage,
+      sent_at: new Date().toISOString(),
+      sender_name: userProfile?.first_name + ' ' + userProfile?.last_name || userProfile?.email || '',
+      sender_email: userProfile?.email || '',
+      receiver_name: selectedFriend.friend.full_name,
+      receiver_email: selectedFriend.friend.email,
+      is_read: false
+    };
 
-      // TODO: Implement WebSocket sending
-      console.log('Sending message via WebSocket:', {
-        type: 'chat_message',
-        message: newMessage,
-        receiver_id: selectedFriend.friend.id
-      });
-    } catch (error) {
-      console.error('Error sending message:', error);
-    }
+    setMessages(prev => [...prev, tempMessage]);
+    setNewMessage('');
   };
 
   const filteredFriends = friends.filter(friend =>
@@ -148,7 +191,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   return (
     <div className="h-screen bg-white flex">
       {/* Sidebar */}
-      <div className="w-64 bg-gray-50 border-r flex flex-col">
+      <div className="w-80 bg-gray-50 border-r flex flex-col">
         <div className="p-4">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-bold">Message</h1>
@@ -184,7 +227,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
                 }`}
                 onClick={() => setSelectedFriend(friend)}
               >
-                <Avatar className="h-10 w-10 mr-3">
+                <Avatar className="h-12 w-12 mr-3">
                   <AvatarImage src="" alt={displayName} />
                   <AvatarFallback className="bg-blue-500 text-white">
                     {displayName.slice(0, 2).toUpperCase()}
