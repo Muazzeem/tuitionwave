@@ -1,6 +1,8 @@
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import GeneralSettings from '@/components/GeneralSettings';
 import PasswordSettings from '@/components/PasswordSettings';
+import PackageSettings from '@/components/PackageSettings';
 import DashboardHeader from '@/components/DashboardHeader';
 
 const GuardianProfile = () => {
@@ -24,6 +26,12 @@ const GuardianProfile = () => {
                                 >
                                     Password
                                 </TabsTrigger>
+                                <TabsTrigger 
+                                    value="package"
+                                    className="rounded-md px-6 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-black"
+                                >
+                                    Package
+                                </TabsTrigger>
                             </TabsList>
                         </div>
                         <TabsContent value="general" className="mt-0">
@@ -31,6 +39,9 @@ const GuardianProfile = () => {
                         </TabsContent>
                         <TabsContent value="password" className="mt-0">
                             <PasswordSettings />
+                        </TabsContent>
+                        <TabsContent value="package" className="mt-0">
+                            <PackageSettings />
                         </TabsContent>
                     </Tabs>
                 </div>
