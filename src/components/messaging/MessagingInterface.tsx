@@ -10,7 +10,8 @@ import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { getAccessToken } from '@/utils/auth';
 import { useNavigate, useParams } from 'react-router-dom';
-import { on } from 'events';
+import LinkPreview from './LinkPreview';
+import { detectUrls } from '@/utils/linkUtils';
 
 interface MessagingInterfaceProps {
   onClose?: () => void;
@@ -52,6 +53,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -456,6 +458,15 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
               ref={messagesContainerRef}
               className="flex-1 overflow-y-auto p-4 bg-gray-50 pl-5 pr-10 dark:bg-gray-900"
             >
+              {/* Loading indicator for more messages */}
+              {isLoadingMore && (
+                <div className="text-center mb-4">
+                  <span className="bg-white px-3 py-1 rounded-full text-xs text-gray-500 shadow-sm">
+                    Loading more messages...
+                  </span>
+                </div>
+              )}
+
               {messages.length > 0 && (
                 <div className="text-center mb-4">
                   <span className="bg-white px-3 py-1 rounded-full text-xs text-gray-500 shadow-sm">
@@ -466,6 +477,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
 
               {messages.map((message) => {
                 const isOwnMessage = message.sender_email === userProfile?.email;
+                const urls = detectUrls(message.text);
 
                 return (
                   <div
@@ -487,6 +499,19 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
                         }`}>
                         <p className="text-sm leading-relaxed break-words">{message.text}</p>
                       </div>
+
+                      {/* Link Previews */}
+                      {urls.length > 0 && (
+                        <div className="mt-2">
+                          {urls.map((url, index) => (
+                            <LinkPreview 
+                              key={index} 
+                              url={url} 
+                              className={isOwnMessage ? 'bg-blue-50' : 'bg-white'}
+                            />
+                          ))}
+                        </div>
+                      )}
 
                       <div className={`text-xs mt-1 px-1 ${isOwnMessage ? 'text-right' : 'text-left'}`}>
                         <span className="text-gray-500">{formatTime(message.sent_at)}</span>
