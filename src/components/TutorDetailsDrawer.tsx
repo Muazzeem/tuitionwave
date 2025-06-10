@@ -59,6 +59,7 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
         }
         const data: Tutor = await response.json();
         setTutorDetails(data);
+        console.log(data);
       } catch (e: any) {
         setError("Failed to load tutor details.");
         console.error("Error fetching tutor details:", e);

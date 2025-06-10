@@ -41,15 +41,17 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
             onClick={toggleDropdown}
           >
             {userProfile.user_type === "TEACHER" ? (
-              <div className="relative w-10 h-10 crown-container">
+              <div className="relative w-10 h-10">
                 <img
                   src={userProfile?.profile_picture}
                   alt="User avatar"
                   className="h-full w-full object-cover rounded-full border-2 border-yellow-500 crown-image"
                 />
-                <div className="crown-icon absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  👑
-                </div>
+                {userProfile.is_verified && (
+                  <div className="crown-icon absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    👑
+                  </div>
+                )}
               </div>
             ) : (
               <div className="h-8 w-8 rounded-full bg-gray-300 overflow-hidden">

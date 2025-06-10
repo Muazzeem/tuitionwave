@@ -30,9 +30,10 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ url, className = '' }) => {
       setError(false);
 
       // Using a CORS proxy to fetch metadata
-      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-      const response = await fetch(proxyUrl);
-      const data = await response.json();
+      // const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+      // const response = await fetch(proxyUrl);
+      // const data = await response.json();
+      const data = null;
       
       if (data.contents) {
         const parser = new DOMParser();

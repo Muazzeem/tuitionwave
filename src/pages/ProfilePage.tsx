@@ -24,6 +24,8 @@ const ProfilePage: React.FC = () => {
     activeDays: string[];
     preferredDistricts: string[];
     preferredAreas: string[];
+    preferredTime: string;
+    description: string;
   }>({
     full_name: '',
     address: '',
@@ -51,7 +53,9 @@ const ProfilePage: React.FC = () => {
       teachingRate: 0,
       teachingType: 'ONLINE',
       subjects: []
-    }
+    },
+    preferredTime: '',
+    description: ''
   });
 
   const steps: Step[] = [

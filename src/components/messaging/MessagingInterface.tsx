@@ -126,18 +126,6 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
     }
   };
 
-  // Mark all unread messages in current conversation as read
-  const markAllUnreadAsRead = () => {
-    const unreadMessages = messages.filter(message =>
-      !message.is_read && message.sender_email !== userProfile?.email
-    );
-    const unreadIds = unreadMessages.map(message => message.id);
-
-    if (unreadIds.length > 0) {
-      markMessagesAsRead(unreadIds);
-    }
-  };
-
   useEffect(() => {
     fetchFriends();
     const urlParams = new URLSearchParams(window.location.search);
@@ -323,9 +311,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
 
   const handleFriendSelect = (friend: Friend) => {
     setSelectedFriend(friend);
-    navigate(`/message/?friend=${friend.friend.id}`);
-    // Reset pagination state when selecting new friend
-    setMessages([]);
+    navigate(`/message/?friend=${friend.friend.uid}`);
   };
 
   const handleBackToList = () => {

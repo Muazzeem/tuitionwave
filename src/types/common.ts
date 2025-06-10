@@ -34,6 +34,7 @@ export interface ProfileData {
   city: string;
   profile_picture: string;
   is_nid_verified: string;
+  is_verified: string;
 }
 
 

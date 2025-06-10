@@ -13,24 +13,26 @@ import PricingCards from "@/components/PricingCards";
 
 const Dashboard: React.FC = () => {
   const { userProfile } = useAuth();
-  const { completionData, loading, error } = useProfileCompletion();
+  const { completionData } = useProfileCompletion();
 
   return (
     <div className="flex-1 overflow-auto bg-white dark:bg-gray-900">
       <DashboardHeader userName="John" />
 
-      {userProfile?.user_type === "TEACHER" && completionData.completion_percentage < 80 && (
+      {userProfile?.user_type === "TEACHER" && completionData.completion_percentage < 50 && (
         <div className="p-6">
           <ProfileCompletionAlert />
         </div>
       )}
-      {userProfile?.user_type === "TEACHER" && (
+
+      {userProfile?.user_type === "TEACHER" && !userProfile.is_verified && (
         <PricingCards />
-      )
-      }
+      )}
+
       {userProfile.is_nid_verified}
       {/* <NIDUpload /> */}
-      {completionData.completion_percentage >= 80 && (
+
+      {completionData.completion_percentage >= 50 && userProfile.is_verified && (
         <div className="p-6">
           <h2 className="text-xl font-bold mb-6 dark:text-white">Dashboard</h2>
 

@@ -12,12 +12,14 @@ import axios from 'axios';
 import { useToast } from './ui/use-toast';
 import { getAccessToken } from '@/utils/auth';
 import { useAuth } from '@/contexts/AuthContext';
+import { Textarea } from './ui/textarea';
 
 interface ProfileFormData {
   uid?: string;
   gender: string;
   birthDate: Date | null;
   linkedinProfile: string;
+  description: string;
 }
 
 interface TutorProfileResponse {
@@ -25,7 +27,7 @@ interface TutorProfileResponse {
   gender_display: string;
   birth_date: string | null;
   linkedin_profile: string | null;
-  // Other fields from the API response that we're not using in this form
+  description: string | null;
 }
 
 interface PersonalInfoFormProps {
@@ -62,6 +64,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
           gender: profileData.gender_display ? profileData.gender_display.toUpperCase() : '',
           birthDate: profileData.birth_date ? parseISO(profileData.birth_date) : null,
           linkedinProfile: profileData.linkedin_profile || '',
+          description: profileData.description || '',
         });
 
       } catch (error) {
@@ -87,6 +90,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
         gender: formData.gender,
         birth_date: formData.birthDate ? format(formData.birthDate, 'yyyy-MM-dd') : null,
         linkedin_profile: formData.linkedinProfile,
+        description: formData.description,
       };
 
       await axios.put(
@@ -163,6 +167,17 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             </PopoverContent>
           </Popover>
         </div>
+      </div>
+
+      <div>
+        <Label htmlFor="description">Description</Label>
+        <Textarea
+          id="description"
+          placeholder="Enter description"
+          value={formData.description}
+          onChange={(e) => updateFormData({ description: e.target.value })}
+          className="mt-1"
+        />
       </div>
 
       <div>

@@ -59,6 +59,7 @@ const TutorGrid = () => {
       
       const data = await response.json();
       setTutors(data.results);
+      console.log('Tutors fetched:', data.results);
       setPagination({
         currentPage: data.current_page || 1,
         totalPages: data.total_pages || 1,
@@ -115,7 +116,7 @@ const TutorGrid = () => {
             name={`${tutor.first_name} ${tutor.last_name}`}
             teaching_type={tutor.teaching_type}
             university={tutor.institute ? tutor.institute.name : 'Not specified'}
-            division={tutor.division ? tutor.division.name : 'Not specified'}
+            division={tutor?.division?.name || 'Not specified'}
             monthlyRate={tutor.expected_salary ? tutor.expected_salary.display_range : 'Not specified'}
             rating={4.5}
             reviewCount={0}
