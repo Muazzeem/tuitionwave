@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Send, Settings, ArrowLeft } from 'lucide-react';
@@ -54,7 +54,15 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const { userProfile } = useAuth();
+
+  // Scroll to bottom function
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  };
 
   // Helper function to log unread message IDs
   const logUnreadMessageIds = (messagesList: Message[], context: string = '') => {
@@ -157,17 +165,32 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
     };
   }, [selectedFriend]);
 
-  // Auto-mark messages as read when conversation is opened
+  // Scroll to bottom when messages are loaded for a new friend
   useEffect(() => {
     if (messages.length > 0 && selectedFriend) {
-      // Wait a bit for user to see the messages, then mark as read
-      const timer = setTimeout(() => {
-        markAllUnreadAsRead();
-      }, 1000);
-
-      return () => clearTimeout(timer);
+      // Wait for messages to render, then scroll to bottom
+      setTimeout(() => {
+        scrollToBottom();
+      }, 100);
     }
-  }, [messages.length, selectedFriend]);
+  }, [messages.length, selectedFriend?.friend.id]);
+
+  // Scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (messages.length > 0) {
+      // Only auto-scroll if user is near the bottom (within 200px)
+      if (messagesContainerRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
+        const isNearBottom = scrollHeight - scrollTop - clientHeight < 200;
+        
+        if (isNearBottom) {
+          setTimeout(() => {
+            scrollToBottom();
+          }, 50);
+        }
+      }
+    }
+  }, [messages]);
 
   // Log unread messages whenever messages state changes
   useEffect(() => {
@@ -287,13 +310,20 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
     setMessages(prev => [...prev, tempMessage]);
     setNewMessage('');
 
+    // Scroll to bottom after sending message
+    setTimeout(() => {
+      scrollToBottom();
+    }, 50);
+
     // Then send via WebSocket
     socket.send(JSON.stringify(messageData));
   };
 
   const handleFriendSelect = (friend: Friend) => {
     setSelectedFriend(friend);
-    navigate(`/message/?friend=${friend.friend.uid}`);
+    navigate(`/message/?friend=${friend.friend.id}`);
+    // Reset pagination state when selecting new friend
+    setMessages([]);
   };
 
   const handleBackToList = () => {
@@ -421,8 +451,11 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
               </div>
             </div>
 
-            {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 bg-gray-50 pl-5 pr-10 dark:bg-gray-900">
+            {/* Messages Area with Infinite Scroll */}
+            <div 
+              ref={messagesContainerRef}
+              className="flex-1 overflow-y-auto p-4 bg-gray-50 pl-5 pr-10 dark:bg-gray-900"
+            >
               {messages.length > 0 && (
                 <div className="text-center mb-4">
                   <span className="bg-white px-3 py-1 rounded-full text-xs text-gray-500 shadow-sm">
