@@ -31,7 +31,6 @@ const AuthGuard = ({
           // Redirect to login if not authenticated
           navigate(fallbackPath, { replace: true });
         } else if (allowedRoles && !allowedRoles.includes(userProfile.user_type)) {
-          // Redirect to unauthorized if authenticated but not authorized
           navigate('/unauthorized', { replace: true });
         } else {
           // User is authenticated and authorized

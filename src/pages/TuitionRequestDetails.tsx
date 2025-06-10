@@ -88,7 +88,7 @@ const TuitionRequestDetails: React.FC = () => {
             title: "Request Deleted",
             description: "The tuition request has been deleted successfully.",
           });
-          navigate("/all-requests");
+          navigate(`/${userProfile.user_type.toLocaleLowerCase()}/requests`);
         })
         .catch((error) => {
           console.error("Error deleting request:", error);
@@ -185,7 +185,11 @@ const TuitionRequestDetails: React.FC = () => {
   };
 
   const handleSendMessage = () => {
-    navigate("/message");
+    if (userProfile?.user_type === 'TEACHER') {
+      navigate(`/message/?friend=${requestDetails.guardian.uid}`);
+    } else {
+      navigate(`/message/?friend=${requestDetails.tutor.uid}`);
+    }
   };
 
   const handleWriteReview = () => {

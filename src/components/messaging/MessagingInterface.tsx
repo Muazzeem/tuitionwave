@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { getAccessToken } from '@/utils/auth';
 import { useNavigate, useParams } from 'react-router-dom';
+import { on } from 'events';
 
 interface MessagingInterfaceProps {
   onClose?: () => void;
@@ -129,6 +130,9 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
 
   useEffect(() => {
     fetchFriends();
+    const urlParams = new URLSearchParams(window.location.search);
+    const friendId = urlParams.get('friend');
+    console.log('friendId:', friendId);
   }, []);
 
   useEffect(() => {
@@ -289,7 +293,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
 
   const handleFriendSelect = (friend: Friend) => {
     setSelectedFriend(friend);
-    navigate(`/message/${friend.friend.id}`);
+    navigate(`/message/?friend=${friend.friend.uid}`);
   };
 
   const handleBackToList = () => {
@@ -317,10 +321,10 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="h-screen bg-white flex">
+    <div className="h-screen bg-white flex dark:bg-gray-900">
       {/* Sidebar - Hide on mobile when friend is selected */}
       <div className={`w-80 bg-gray-50 border-r flex flex-col ${selectedFriend ? 'hidden md:flex' : 'flex'}`}>
-        <div className="p-4">
+        <div className="p-4 dark:bg-gray-900">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-bold">Message</h1>
             <Button variant="ghost" size="sm">
@@ -340,17 +344,17 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
         </div>
 
         {/* Friends List */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto dark:bg-gray-900">
           {filteredFriends.map((friend) => {
-            const isActive = selectedFriend?.friend.id === friend.friend.id;
+            const isActive = selectedFriend?.friend.uid === friend.friend.uid;
             const displayName = friend.friend.full_name || friend.friend.email.split('@')[0];
             const lastMessageText = friend.last_message?.text || 'Start a conversation';
             const lastMessageTime = friend.last_message_time ? formatTime(friend.last_message_time) : '';
 
             return (
               <div
-                key={friend.friend.id}
-                className={`flex items-center p-3 cursor-pointer hover:bg-gray-100 ${isActive ? 'bg-blue-50 border-r-2 border-blue-500' : ''
+                key={friend.friend.uid}
+                className={`flex items-center p-3 cursor-pointer hover:bg-gray-100 ${isActive ? 'bg-blue-50 border-r-2 border-blue-500 dark:bg-gray-800' : ''
                   }`}
                 onClick={() => handleFriendSelect(friend)}
               >
@@ -363,7 +367,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-center">
-                    <h3 className="font-medium text-gray-900 truncate text-sm">
+                    <h3 className="font-medium text-gray-900 truncate text-sm dark:text-white">
                       {displayName}
                     </h3>
                     <span className="text-xs text-gray-500">
@@ -392,7 +396,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
         {selectedFriend ? (
           <>
             {/* Chat Header */}
-            <div className="p-4 border-b bg-white flex items-center justify-between">
+            <div className="p-4 border-b bg-white flex items-center justify-between dark:bg-gray-900">
               <div className="flex items-center">
                 <Button
                   variant="ghost"
@@ -409,7 +413,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h2 className="font-semibold text-gray-900">
+                  <h2 className="font-semibold text-gray-900 dark:text-white">
                     {selectedFriend.friend.full_name}
                   </h2>
                   <p className="text-sm text-gray-500">last seen recently</p>
@@ -418,7 +422,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 bg-gray-50 pl-5 pr-10">
+            <div className="flex-1 overflow-y-auto p-4 bg-gray-50 pl-5 pr-10 dark:bg-gray-900">
               {messages.length > 0 && (
                 <div className="text-center mb-4">
                   <span className="bg-white px-3 py-1 rounded-full text-xs text-gray-500 shadow-sm">
@@ -466,7 +470,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
             </div>
 
             {/* Message Input */}
-            <div className="p-4 bg-white border-t">
+            <div className="p-4 bg-white border-t dark:bg-gray-900">
               <div className="flex items-end space-x-2">
                 <Textarea
                   value={newMessage}
@@ -486,15 +490,15 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
                   className="bg-blue-500 hover:bg-blue-600"
                   size="sm"
                 >
-                  <Send className="h-4 w-4" />
+                  <Send className="h-4 w-4 dark:text-white" />
                 </Button>
               </div>
             </div>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center bg-gray-50">
+          <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900">
             <div className="text-center">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium text-gray-900 mb-2 dark:text-white">
                 Select a conversation
               </h3>
               <p className="text-gray-500">

@@ -1,5 +1,6 @@
 
 export interface FriendUser {
+  uid: any;
   id: number;
   email: string;
   first_name: string;
@@ -22,6 +23,7 @@ export interface Friend {
   unread_messages_count: number;
   // Add missing properties to make it compatible with Chat
   id: number;
+  uid: string;
   conversation_id: number | null;
 }
 

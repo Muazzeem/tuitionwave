@@ -24,8 +24,10 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { getAccessToken } from "@/utils/auth";
 import { ContractResponse } from "@/types/contract";
+import { useAuth } from "@/contexts/AuthContext";
 
 const MyRequest: React.FC = () => {
+  const { userProfile } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -159,7 +161,9 @@ const MyRequest: React.FC = () => {
   };
 
   const handleRequestClick = (requestId: string) => {
-    navigate(`/request-details/${requestId}`);
+    // Navigate to the request details page
+    const userType = userProfile?.user_type?.toLowerCase() === 'teacher' ? 'teacher' : 'guardian';
+    navigate(`/${userType}/request-details/${requestId}`);
   };
 
   const handlePreviousPage = () => {
