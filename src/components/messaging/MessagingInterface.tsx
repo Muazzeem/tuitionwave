@@ -12,9 +12,17 @@ import { getAccessToken } from '@/utils/auth';
 import { useNavigate, useParams } from 'react-router-dom';
 import LinkPreview from './LinkPreview';
 import { detectUrls } from '@/utils/linkUtils';
+import FileUpload from './FileUpload';
+import { useToast } from '@/hooks/use-toast';
 
 interface MessagingInterfaceProps {
   onClose?: () => void;
+}
+
+interface FileWithPreview {
+  file: File;
+  preview: string | null;
+  id: string;
 }
 
 interface Message {
@@ -206,12 +214,14 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const [selectedFiles, setSelectedFiles] = useState<FileWithPreview[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const { userProfile } = useAuth();
+  const { toast } = useToast();
 
   // Scroll to bottom function
   const scrollToBottom = () => {
@@ -288,6 +298,20 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
     if (unreadIds.length > 0) {
       markMessagesAsRead(unreadIds);
     }
+  };
+
+  // Convert file to base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const result = reader.result as string;
+        // Remove the data:mime/type;base64, prefix
+        resolve(result.split(',')[1]);
+      };
+      reader.onerror = reject;
+    });
   };
 
   useEffect(() => {
@@ -450,37 +474,109 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   };
 
   const sendMessage = async () => {
-    if (!newMessage.trim() || !selectedFriend || !socket) return;
+    if ((!newMessage.trim() && selectedFiles.length === 0) || !selectedFriend || !socket) return;
 
-    const messageData = {
-      type: 'chat_message',
-      message: newMessage.trim(),
-      receiver_id: selectedFriend.friend.id
-    };
+    try {
+      // Send text message first if there's text
+      if (newMessage.trim()) {
+        const messageData = {
+          type: 'chat_message',
+          message: newMessage.trim(),
+          receiver_id: selectedFriend.friend.id
+        };
 
-    // Add message optimistically first
-    const tempMessage: Message = {
-      id: Date.now(),
-      text: newMessage,
-      sent_at: new Date().toISOString(),
-      sender_name: (userProfile?.first_name || '') + ' ' + (userProfile?.last_name || '') || userProfile?.email || '',
-      sender_email: userProfile?.email || '',
-      receiver_name: selectedFriend.friend.full_name,
-      receiver_email: selectedFriend.friend.email,
-      is_read: false // Your own messages start as unread until confirmed
-    };
+        const tempMessage: Message = {
+          id: Date.now(),
+          text: newMessage,
+          sent_at: new Date().toISOString(),
+          sender_name: (userProfile?.first_name || '') + ' ' + (userProfile?.last_name || '') || userProfile?.email || '',
+          sender_email: userProfile?.email || '',
+          receiver_name: selectedFriend.friend.full_name,
+          receiver_email: selectedFriend.friend.email,
+          is_read: false
+        };
 
-    console.log('Sending message (initially unread):', tempMessage.id);
-    setMessages(prev => [...prev, tempMessage]);
-    setNewMessage('');
+        setMessages(prev => [...prev, tempMessage]);
+        socket.send(JSON.stringify(messageData));
+      }
 
-    // Scroll to bottom after sending message
-    setTimeout(() => {
-      scrollToBottom();
-    }, 50);
+      // Send files if any
+      if (selectedFiles.length > 0) {
+        for (const fileWithPreview of selectedFiles) {
+          try {
+            const base64Data = await fileToBase64(fileWithPreview.file);
+            
+            const fileMessageData = {
+              type: 'file_message',
+              receiver_id: selectedFriend.friend.id,
+              message: newMessage.trim() || `Sent ${fileWithPreview.file.name}`,
+              file_data: base64Data,
+              file_name: fileWithPreview.file.name,
+              file_type: fileWithPreview.file.type,
+              file_size: fileWithPreview.file.size
+            };
 
-    // Then send via WebSocket
-    socket.send(JSON.stringify(messageData));
+            const tempFileMessage: Message = {
+              id: Date.now() + Math.random(),
+              text: `Sent ${fileWithPreview.file.name}`,
+              attachment: fileWithPreview.preview || fileWithPreview.file.name,
+              sent_at: new Date().toISOString(),
+              sender_name: (userProfile?.first_name || '') + ' ' + (userProfile?.last_name || '') || userProfile?.email || '',
+              sender_email: userProfile?.email || '',
+              receiver_name: selectedFriend.friend.full_name,
+              receiver_email: selectedFriend.friend.email,
+              is_read: false
+            };
+
+            setMessages(prev => [...prev, tempFileMessage]);
+            socket.send(JSON.stringify(fileMessageData));
+
+            // Clean up preview URL
+            if (fileWithPreview.preview) {
+              URL.revokeObjectURL(fileWithPreview.preview);
+            }
+          } catch (error) {
+            console.error('Error sending file:', error);
+            toast({
+              title: "Error",
+              description: `Failed to send ${fileWithPreview.file.name}`,
+              variant: "destructive"
+            });
+          }
+        }
+      }
+
+      // Clear input and files
+      setNewMessage('');
+      setSelectedFiles([]);
+
+      // Scroll to bottom after sending
+      setTimeout(() => {
+        scrollToBottom();
+      }, 50);
+
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send message",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleFileSelect = (files: FileWithPreview[]) => {
+    setSelectedFiles(prev => [...prev, ...files]);
+  };
+
+  const handleRemoveFile = (id: string) => {
+    setSelectedFiles(prev => {
+      const fileToRemove = prev.find(f => f.id === id);
+      if (fileToRemove?.preview) {
+        URL.revokeObjectURL(fileToRemove.preview);
+      }
+      return prev.filter(f => f.id !== id);
+    });
   };
 
   const handleFriendSelect = (friend: Friend) => {
@@ -699,9 +795,16 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
               })}
             </div>
 
-            {/* Message Input */}
+            {/* Message Input with File Upload */}
             <div className="p-4 bg-white border-t dark:bg-gray-900">
-              <div className="flex items-end space-x-2">
+              {/* File Upload Component */}
+              <FileUpload 
+                onFileSelect={handleFileSelect}
+                selectedFiles={selectedFiles}
+                onRemoveFile={handleRemoveFile}
+              />
+              
+              <div className="flex items-end space-x-2 mt-2">
                 <Textarea
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
@@ -716,7 +819,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
                 />
                 <Button
                   onClick={sendMessage}
-                  disabled={!newMessage.trim()}
+                  disabled={!newMessage.trim() && selectedFiles.length === 0}
                   className="bg-blue-500 hover:bg-blue-600"
                   size="sm"
                 >
