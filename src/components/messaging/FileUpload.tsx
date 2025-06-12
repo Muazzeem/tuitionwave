@@ -86,15 +86,6 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, selectedFiles, on
         accept="image/*,video/*,application/pdf,.doc,.docx,.txt"
       />
       
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={handleButtonClick}
-        className="p-2"
-      >
-        <Paperclip className="h-4 w-4" />
-      </Button>
 
       {/* File Previews */}
       {selectedFiles.length > 0 && (
@@ -138,6 +129,15 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, selectedFiles, on
           ))}
         </div>
       )}
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={handleButtonClick}
+        className="p-2"
+      >
+        <Paperclip className="h-4 w-4" />
+      </Button>
     </div>
   );
 };
