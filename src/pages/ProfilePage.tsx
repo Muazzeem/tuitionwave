@@ -8,6 +8,7 @@ import { ProfileFormData } from '@/types/tutor';
 import EducationForm from '@/components/EducationForm';
 import TuitionForm from '@/components/TuitionForm';
 import { useProfileCompletion } from '@/components/ProfileCompletionContext';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const ProfilePage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -84,52 +85,54 @@ const ProfilePage: React.FC = () => {
     <div className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900">
       <DashboardHeader userName="Tutor" />
 
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
+       <ScrollArea type="always" style={{ height: 900 }}>
+        <div className="p-6">
+          <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
 
-        <ProfileCompletionAlert />
+          <ProfileCompletionAlert />
 
-        <div className="flex justify-center w-full">
-          <div className="col-6 w-full md:w-2/3 lg:w-1/2">
-            <div className="bg-white p-8 rounded-lg border dark:bg-gray-900 :dark:border-gray-400">
-              <ProfileStepper
-                steps={steps}
-                currentStep={currentStep}
-                onNext={handleNext}
-                onPrev={handleBack}
-              />
+          <div className="flex justify-center w-full">
+            <div className="col-6 w-full md:w-2/3 lg:w-1/2">
+              <div className="bg-white p-8 rounded-lg border dark:bg-gray-900 :dark:border-gray-400">
+                <ProfileStepper
+                  steps={steps}
+                  currentStep={currentStep}
+                  onNext={handleNext}
+                  onPrev={handleBack}
+                />
 
-              <div className="mt-8 mb-10">
-                {currentStep === 1 && (
-                  <PersonalInfoForm
-                    formData={formData}
-                    updateFormData={updateFormData}
-                    onNext={handleNext}
-                  />
-                )}
+                <div className="mt-8 mb-10">
+                  {currentStep === 1 && (
+                    <PersonalInfoForm
+                      formData={formData}
+                      updateFormData={updateFormData}
+                      onNext={handleNext}
+                    />
+                  )}
 
-                {currentStep === 2 && (
-                  <EducationForm
-                    formData={formData}
-                    updateFormData={updateFormData}
-                    onNext={handleNext}
-                    onPrev={handleBack}
-                  />
-                )}
+                  {currentStep === 2 && (
+                    <EducationForm
+                      formData={formData}
+                      updateFormData={updateFormData}
+                      onNext={handleNext}
+                      onPrev={handleBack}
+                    />
+                  )}
 
-                {currentStep === 3 && (
-                  <TuitionForm
-                    formData={formData}
-                    updateFormData={updateFormData}
-                    onNext={handleNext}
-                    onPrev={handleBack}
-                  />
-                )}
+                  {currentStep === 3 && (
+                    <TuitionForm
+                      formData={formData}
+                      updateFormData={updateFormData}
+                      onNext={handleNext}
+                      onPrev={handleBack}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </ScrollArea>
     </div>
   );
 };

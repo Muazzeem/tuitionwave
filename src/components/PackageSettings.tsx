@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Package } from 'lucide-react';
-import { format, differenceInDays, differenceInHours, differenceInMinutes } from 'date-fns';
+import { format, differenceInDays} from 'date-fns';
+import PricingCards from './PricingCards';
 
 interface PackageData {
   id: number;
@@ -95,7 +96,7 @@ const PackageSettings = () => {
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Price:</span>
               <span className="text-sm font-semibold text-green-600 dark:text-green-400">
-                ${packageData.price}
+                ৳{packageData.price}
               </span>
             </div>
             
@@ -158,20 +159,6 @@ const PackageSettings = () => {
                   </div>
                   <div className="text-xs text-gray-600 dark:text-gray-400">Hours</div>
                 </div>
-                
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-3">
-                  <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-                    {timeRemaining.minutes}
-                  </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">Minutes</div>
-                </div>
-                
-                <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-3">
-                  <div className="text-2xl font-bold text-red-600 dark:text-red-400">
-                    {timeRemaining.seconds}
-                  </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">Seconds</div>
-                </div>
               </div>
             )}
             
@@ -184,6 +171,7 @@ const PackageSettings = () => {
           </CardContent>
         </Card>
       </div>
+      <PricingCards />
     </div>
   );
 };

@@ -73,7 +73,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
               <a
                 href={`/profile/${userProfile?.user_type?.toLowerCase()}`}
-                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900"
               >
                 <User className="h-4 w-4 mr-2" />
                 <span className="text-gray-700 dark:text-white">Profile</span>
@@ -87,10 +87,10 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                 userProfile?.user_type?.toLowerCase() === "teacher" &&
                 <a
                   href="/settings"
-                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900"
                 >
                   <Settings className="h-4 w-4 mr-2" />
-                  Settings
+                  <span className="dark:text-white ">Settings</span>
                 </a>
               }
               <hr className="my-1 border-gray-200" />

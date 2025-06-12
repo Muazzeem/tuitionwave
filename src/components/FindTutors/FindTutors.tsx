@@ -11,7 +11,7 @@ import { useSearchParams } from 'react-router-dom';
 
 const FindTutorsList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [showFilters, setShowFilters] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (e) => {
@@ -43,7 +43,7 @@ const FindTutorsList = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4 mt-5">
         <h2 className="text-2xl font-semibold ml-5">Search Tutors</h2>
         <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative">
+          {/* <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <Input
               className="pl-10 w-full sm:w-[300px]"
@@ -53,7 +53,7 @@ const FindTutorsList = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={handleSearch}
             />
-          </div>
+          </div> */}
           <Button 
             variant="default" 
             className="gap-2 dark:text-white"

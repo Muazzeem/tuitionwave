@@ -4,11 +4,13 @@ import GeneralSettings from '@/components/GeneralSettings';
 import PasswordSettings from '@/components/PasswordSettings';
 import PackageSettings from '@/components/PackageSettings';
 import DashboardHeader from '@/components/DashboardHeader';
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Settings = () => {
     return (
         <div className="flex-1 bg-white dark:bg-gray-900">
             <DashboardHeader userName="Settings" />
+            <ScrollArea type="always" style={{ height: 900 }}>
             <div className="p-6 max-w-[1211px] mx-auto">
                 <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                     <Tabs defaultValue="general" className="w-full">
@@ -46,6 +48,7 @@ const Settings = () => {
                     </Tabs>
                 </div>
             </div>
+            </ScrollArea>
         </div>
     );
 };

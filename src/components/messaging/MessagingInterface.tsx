@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, Settings, ArrowLeft } from 'lucide-react';
+import { Send, Settings, ArrowLeft, FileText, Video, Image, Download, Paperclip } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Friend } from '@/types/friends';
 import FriendsService from '@/services/FriendsService';
@@ -20,6 +20,12 @@ interface MessagingInterfaceProps {
 interface Message {
   id: number;
   text: string;
+  attachment?: {
+    url: string;
+    name: string;
+    size: number;
+    type: string;
+  } | string | null;
   sent_at: string;
   sender_name: string;
   sender_email: string;
@@ -43,6 +49,154 @@ interface MessageResponse {
     };
   };
 }
+
+// Attachment Display Component
+const AttachmentDisplay: React.FC<{ attachment: string, isOwnMessage: boolean }> = ({ 
+  attachment, 
+  isOwnMessage 
+}) => {
+  const getFileExtension = (url: string) => {
+    return url.split('.').pop()?.toLowerCase() || '';
+  };
+
+  const getFileName = (url: string) => {
+    const parts = url.split('/');
+    const fileName = parts[parts.length - 1];
+    // Remove UUID prefix if present
+    const cleanName = fileName.replace(/^[a-f0-9-]+\./, '');
+    return cleanName || 'Attachment';
+  };
+
+  const isImage = (url: string) => {
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+    return imageExtensions.includes(getFileExtension(url));
+  };
+
+  const isVideo = (url: string) => {
+    const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'];
+    return videoExtensions.includes(getFileExtension(url));
+  };
+
+  const isPDF = (url: string) => {
+    return getFileExtension(url) === 'pdf';
+  };
+
+  const getFullUrl = (url: string) => {
+    if (url.startsWith('http')) return url;
+    return `${import.meta.env.VITE_API_URL}${url}`;
+  };
+
+  const handleDownload = () => {
+    const fullUrl = getFullUrl(attachment);
+    const link = document.createElement('a');
+    link.href = fullUrl;
+    link.download = getFileName(attachment);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const fileName = getFileName(attachment);
+  const fullUrl = getFullUrl(attachment);
+
+  if (isImage(attachment)) {
+    return (
+      <div className={`mt-2 rounded-lg overflow-hidden max-w-xs ${isOwnMessage ? 'ml-auto' : ''}`}>
+        <img 
+          src={fullUrl} 
+          alt="Shared image" 
+          className="w-full h-auto max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+          onClick={() => window.open(fullUrl, '_blank')}
+        />
+        <div className={`px-2 py-1 text-xs ${isOwnMessage ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
+          <span className="flex items-center justify-between">
+            <span className="truncate">{fileName}</span>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-4 w-4 p-0 ml-2" 
+              onClick={handleDownload}
+            >
+              <Download className="h-3 w-3" />
+            </Button>
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  if (isVideo(attachment)) {
+    return (
+      <div className={`mt-2 rounded-lg overflow-hidden max-w-xs ${isOwnMessage ? 'ml-auto' : ''}`}>
+        <video 
+          controls 
+          className="w-full h-auto max-h-64"
+          preload="metadata"
+        >
+          <source src={fullUrl} type={`video/${getFileExtension(attachment)}`} />
+          Your browser does not support the video tag.
+        </video>
+        <div className={`px-2 py-1 text-xs ${isOwnMessage ? 'bg-blue-400 text-white' : 'bg-gray-100 text-gray-600'}`}>
+          <span className="flex items-center justify-between">
+            <span className="truncate">{fileName}</span>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-4 w-4 p-0 ml-2" 
+              onClick={handleDownload}
+            >
+              <Download className="h-3 w-3" />
+            </Button>
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // File attachment (PDF, DOC, etc.)
+  const getFileIcon = () => {
+    if (isPDF(attachment)) return <FileText className="h-5 w-5" />;
+    if (isVideo(attachment)) return <Video className="h-5 w-5" />;
+    if (isImage(attachment)) return <Image className="h-5 w-5" />;
+    return <Paperclip className="h-5 w-5" />;
+  };
+
+  return (
+    <div className={`mt-2 ${isOwnMessage ? 'ml-auto' : ''}`}>
+      <div 
+        className={`flex items-center p-3 rounded-lg border cursor-pointer hover:bg-opacity-80 transition-colors max-w-xs ${
+          isOwnMessage 
+            ? 'bg-blue-500 text-white border-blue-300' 
+            : 'bg-white text-gray-700 border-gray-200'
+        }`}
+        onClick={() => window.open(fullUrl, '_blank')}
+      >
+        <div className="mr-3">
+          {getFileIcon()}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-medium truncate">
+            {fileName}
+          </div>
+          <div className={`text-xs ${isOwnMessage ? 'text-blue-100' : 'text-gray-500'}`}>
+            Click to open
+          </div>
+        </div>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="h-6 w-6 p-0 ml-2" 
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDownload();
+          }}
+        >
+          <Download className="h-3 w-3" />
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   const accessToken = getAccessToken();
@@ -126,6 +280,16 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
     }
   };
 
+  const markAllUnreadAsRead = () => {
+    const unreadMessages = messages.filter(
+      message => !message.is_read && message.sender_email !== userProfile?.email
+    );
+    const unreadIds = unreadMessages.map(message => message.id);
+    if (unreadIds.length > 0) {
+      markMessagesAsRead(unreadIds);
+    }
+  };
+
   useEffect(() => {
     fetchFriends();
     const urlParams = new URLSearchParams(window.location.search);
@@ -182,6 +346,15 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
     }
   }, [messages]);
 
+  useEffect(() => {
+    if (messages.length > 0 && selectedFriend) {
+      const timer = setTimeout(() => {
+        markAllUnreadAsRead();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [messages.length, selectedFriend]);
+
   // Log unread messages whenever messages state changes
   useEffect(() => {
     if (messages.length > 0) {
@@ -210,6 +383,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
         const newMsg: Message = {
           id: data.id || Date.now(),
           text: data.message,
+          attachment: data.attachment || null,
           sent_at: data.sent_at || new Date().toISOString(),
           sender_name: data.sender_name || '',
           sender_email: data.sender_email || '',
@@ -464,6 +638,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
               {messages.map((message) => {
                 const isOwnMessage = message.sender_email === userProfile?.email;
                 const urls = detectUrls(message.text);
+                const hasAttachment = message.attachment && typeof message.attachment === 'string';
 
                 return (
                   <div
@@ -479,12 +654,23 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
                       </Avatar>
                     )}
                     <div className={`max-w-[280px] sm:max-w-xs lg:max-w-md xl:max-w-lg ${isOwnMessage ? 'ml-auto' : ''}`}>
-                      <div className={`px-3 sm:px-4 py-2 rounded-2xl ${isOwnMessage
-                          ? 'bg-blue-500 text-white rounded-br-md'
-                          : 'bg-white text-gray-900 shadow-sm border rounded-bl-md'
-                        }`}>
-                        <p className="text-sm leading-relaxed break-words">{message.text}</p>
-                      </div>
+                      {/* Text Message */}
+                      {message.text && (
+                        <div className={`px-3 sm:px-4 py-2 rounded-2xl ${isOwnMessage
+                            ? 'bg-blue-500 text-white rounded-br-md'
+                            : 'bg-white text-gray-900 shadow-sm border rounded-bl-md'
+                          }`}>
+                          <p className="text-sm leading-relaxed break-words">{message.text}</p>
+                        </div>
+                      )}
+
+                      {/* Attachment Display */}
+                      {hasAttachment && (
+                        <AttachmentDisplay 
+                          attachment={message.attachment as string} 
+                          isOwnMessage={isOwnMessage}
+                        />
+                      )}
 
                       {/* Link Previews */}
                       {urls.length > 0 && (

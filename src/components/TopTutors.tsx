@@ -107,15 +107,15 @@ const TopTutors: React.FC = () => {
   }
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-none border border-gray-100">
+    <div className="bg-white p-4 rounded-lg shadow-none border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold">Top Tutors</h2>
+        <h2 className="text-lg font-bold">New Tutors</h2>
         <button className="text-sm text-tuitionwave-blue hover:underline">
           View All
         </button>
       </div>
 
-      <div className="space-y-1">
+      <div className="dark:divide-gray-700">
         {tutors.map((tutor) => (
           <TutorCard key={tutor.uid} tutor={tutor} />
         ))}

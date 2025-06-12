@@ -161,7 +161,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
             </Button>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent className="w-56">
+          <DropdownMenuContent className="w-56 dark:bg-gray-800">
             <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>

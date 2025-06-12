@@ -366,13 +366,13 @@ const GeneralSettings = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 dark:bg-gray-900">
       <h2 className="text-2xl font-bold mb-6">General Settings</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Profile Picture Section */}
         <div className="flex flex-col items-center space-y-4">
           <div className="relative">
-            <div className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden border-4 border-gray-300 dark:border-gray-600">
+            <div className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center overflow-hidden border-4 border-gray-300 dark:border-gray-600">
               {previewUrl ? (
                 <img
                   src={previewUrl}

@@ -29,7 +29,6 @@ const TutorFilters = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
 
   // State for selected filters
   const [selectedInstitute, setSelectedInstitute] = useState<string>(
