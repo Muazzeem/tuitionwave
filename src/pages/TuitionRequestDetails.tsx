@@ -60,7 +60,7 @@ const TuitionRequestDetails: React.FC = () => {
   }, [id]);
 
   const handleBack = () => {
-    navigate("/all-requests");
+    navigate(`/${userProfile.user_type.toLocaleLowerCase()}/requests`);
   };
 
   const handleDelete = () => {

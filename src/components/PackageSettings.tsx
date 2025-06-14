@@ -5,25 +5,13 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Package } from 'lucide-react';
 import { format, differenceInDays} from 'date-fns';
 import PricingCards from './PricingCards';
+import { useAuth } from '@/contexts/AuthContext';
 
-interface PackageData {
-  id: number;
-  name: string;
-  price: string;
-  period: string;
-  package_expiry_date: string;
-  created_at: string;
-}
 
 const PackageSettings = () => {
-  const [packageData] = useState<PackageData>({
-    id: 1,
-    name: "ABC",
-    price: "100.00",
-    period: "4 Months",
-    package_expiry_date: "2025-10-10",
-    created_at: "2025-06-01T11:26:29.812177+06:00"
-  });
+  const { userProfile } = useAuth();
+  const [packageData] = useState(userProfile.package);
+
 
   const [timeRemaining, setTimeRemaining] = useState({
     days: 0,

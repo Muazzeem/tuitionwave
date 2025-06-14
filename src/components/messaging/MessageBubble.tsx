@@ -25,10 +25,10 @@ interface MessageBubbleProps {
   showAvatar?: boolean;
 }
 
-const MessageBubble: React.FC<MessageBubbleProps> = ({ 
-  message, 
-  isOwnMessage, 
-  showAvatar = true 
+const MessageBubble: React.FC<MessageBubbleProps> = ({
+  message,
+  isOwnMessage,
+  showAvatar = true
 }) => {
   const urls = detectUrls(message.text);
   const hasAttachment = message.attachment && typeof message.attachment === 'string';
@@ -83,9 +83,9 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
     if (isImage(attachment)) {
       return (
         <div className="mt-2 rounded-lg overflow-hidden max-w-xs">
-          <img 
-            src={fullUrl} 
-            alt="Shared image" 
+          <img
+            src={fullUrl}
+            alt="Shared image"
             className="w-full h-auto max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-lg"
             onClick={() => window.open(fullUrl, '_blank')}
           />
@@ -96,8 +96,8 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
     if (isVideo(attachment)) {
       return (
         <div className="mt-2 rounded-lg overflow-hidden max-w-xs">
-          <video 
-            controls 
+          <video
+            controls
             className="w-full h-auto max-h-64 rounded-lg"
             preload="metadata"
           >
@@ -111,12 +111,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
     // File attachment
     return (
       <div className="mt-2">
-        <div 
-          className={`flex items-center p-3 rounded-lg border cursor-pointer hover:bg-opacity-80 transition-colors max-w-xs ${
-            isOwnMessage 
-              ? 'bg-blue-400 text-white border-blue-300' 
+        <div
+          className={`flex items-center p-3 rounded-lg border cursor-pointer hover:bg-opacity-80 transition-colors max-w-xs ${isOwnMessage
+              ? 'bg-blue-400 text-white border-blue-300'
               : 'bg-white text-gray-700 border-gray-200 shadow-sm'
-          }`}
+            }`}
           onClick={() => window.open(fullUrl, '_blank')}
         >
           <div className="mr-3">
@@ -130,10 +129,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
               Click to open
             </div>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-6 w-6 p-0 ml-2" 
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 w-6 p-0 ml-2"
             onClick={(e) => {
               e.stopPropagation();
               handleDownload(attachment);
@@ -148,26 +147,33 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
 
   return (
     <div className={`flex mb-4 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
-      {!isOwnMessage && showAvatar && (
-        <Avatar className="h-8 w-8 mr-3 mt-1">
-          <AvatarImage src="" alt={message.sender_name} />
-          <AvatarFallback className="bg-gray-400 text-white text-xs">
-            {message.sender_name.slice(0, 2).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-      )}
-      
+
+
       <div className={`max-w-[70%] ${isOwnMessage ? 'ml-auto' : ''}`}>
+
         {/* Text Message */}
-        {message.text && (
-          <div className={`px-4 py-2 rounded-2xl shadow-sm ${
-            isOwnMessage
-              ? 'bg-blue-500 text-white rounded-br-md'
-              : 'bg-white text-gray-900 border rounded-bl-md'
-          }`}>
-            <p className="text-sm leading-relaxed break-words">{message.text}</p>
-          </div>
-        )}
+        <div className={`flex items-end ${isOwnMessage ? 'justify-end' : 'justify-start'} mb-2`}>
+          {!isOwnMessage && (
+            <Avatar className="h-8 w-8 mr-2">
+              <AvatarImage src="" alt={message.sender_email} />
+              <AvatarFallback className="bg-blue-500 text-white text-xs">
+                {message.sender_email.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          )}
+
+          {message.text && (
+            <div
+              className={`px-4 py-2 rounded-2xl shadow-sm max-w-xs break-words ${isOwnMessage
+                  ? 'bg-blue-500 text-white rounded-br-md'
+                  : 'bg-white text-gray-900 border rounded-bl-md'
+                }`}
+            >
+              <p className="text-sm leading-relaxed">{message.text}</p>
+            </div>
+          )}
+        </div>
+
 
         {/* Attachment */}
         {renderAttachment()}
@@ -176,9 +182,9 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
         {urls.length > 0 && (
           <div className="mt-2">
             {urls.map((url, index) => (
-              <LinkPreview 
-                key={index} 
-                url={url} 
+              <LinkPreview
+                key={index}
+                url={url}
                 className={isOwnMessage ? 'bg-blue-50' : 'bg-white'}
               />
             ))}
@@ -186,9 +192,8 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
         )}
 
         {/* Message Info */}
-        <div className={`flex items-center gap-2 mt-1 px-1 ${
-          isOwnMessage ? 'justify-end' : 'justify-start'
-        }`}>
+        <div className={`flex items-center gap-2 mt-1 px-1 ${isOwnMessage ? 'justify-end' : 'justify-start'
+          }`}>
           <span className="text-xs text-gray-500">
             {formatTime(message.sent_at)}
           </span>

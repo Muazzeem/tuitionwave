@@ -22,6 +22,15 @@ export interface RegistrationData {
   nid_document?: File;
 }
 
+export interface PackageData {
+  id: number;
+  name: string;
+  price: string;
+  period: string;
+  package_expiry_date: string;
+  created_at: string;
+}
+
 export interface ProfileData {
   user_type: string;
   id?: number;
@@ -35,6 +44,7 @@ export interface ProfileData {
   profile_picture: string;
   is_nid_verified: string;
   is_verified: string;
+  package: PackageData;
 }
 
 

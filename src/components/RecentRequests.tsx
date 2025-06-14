@@ -20,11 +20,13 @@ import {
 import { Eye, Pen, Trash2 } from "lucide-react";
 
 import { RequestRowProps } from "@/types/common";
+import { useAuth } from "@/contexts/AuthContext";
 
 const RequestRow: React.FC<RequestRowProps> = ({
   request,
   showConfirmationDialog,
 }) => {
+  const { userProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -63,7 +65,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
   });
 
   const handleDetailsClick = () => {
-    navigate(`/request-details/${request.uid}`);
+    navigate(`/${userProfile.user_type.toLocaleLowerCase()}/request-details/${request.uid}`);
   };
 
   const handleDeleteClick = () => {
@@ -83,6 +85,8 @@ const RequestRow: React.FC<RequestRowProps> = ({
         return "text-tuitionwave-red";
       case "pending":
         return "text-tuitionwave-yellow";
+      case "completed":
+        return "text-tuitionwave-green";
       default:
         return "text-gray-500 dark:text-gray-400";
     }
@@ -96,6 +100,8 @@ const RequestRow: React.FC<RequestRowProps> = ({
         return "bg-tuitionwave-red";
       case "pending":
         return "bg-tuitionwave-yellow";
+      case "completed":
+        return "bg-tuitionwave-green";
       default:
         return "bg-gray-500";
     }
@@ -224,7 +230,7 @@ const RecentRequests: React.FC = () => {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded-md shadow-none border border-gray-100 dark:border-gray-700">
+    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-bold dark:text-white">Recent Request</h2>
         <Link to="/all-requests">

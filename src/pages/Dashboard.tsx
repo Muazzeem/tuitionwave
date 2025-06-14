@@ -16,7 +16,7 @@ const Dashboard: React.FC = () => {
   const { completionData } = useProfileCompletion();
 
   return (
-    <div className="flex-1 overflow-auto bg-white dark:bg-gray-900">
+    <div className="flex-1 overflow-auto dark:bg-gray-900">
       <DashboardHeader userName="John" />
 
       {userProfile?.user_type === "TEACHER" && completionData.completion_percentage < 50 && (
@@ -39,11 +39,11 @@ const Dashboard: React.FC = () => {
           <StatsCards />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
               <RecentRequests />
             </div>
             <div>
-              <TopTutors />
+              {/* <TopTutors /> */}
             </div>
           </div>
         </div>

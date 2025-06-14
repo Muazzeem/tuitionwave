@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { X, Copy, Phone } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const PricingCards: React.FC = () => {
+  const { userProfile } = useAuth();
   const [selectedTier, setSelectedTier] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
 
-  // bKash number - you can change this to your actual number
   const bkashNumber = "01712345678";
 
   const pricingTiers = [
@@ -29,7 +30,8 @@ const PricingCards: React.FC = () => {
       ],
       buttonText: 'Subscribe Now',
       buttonVariant: 'default' as const,
-      cardStyle: 'bg-purple-50 border-purple-200'
+      cardStyle: 'bg-purple-50 border-purple-200',
+      isSubscribed: userProfile.package.name === 'Basic'
     },
     {
       name: 'Standard',
@@ -48,7 +50,8 @@ const PricingCards: React.FC = () => {
       ],
       buttonText: 'Subscribe Now',
       buttonVariant: 'default' as const,
-      cardStyle: 'bg-blue-50 border-blue-200'
+      cardStyle: 'bg-blue-50 border-blue-200',
+      isSubscribed: userProfile.package.name === 'Standard'
     },
     {
       name: 'Premium',
@@ -67,7 +70,8 @@ const PricingCards: React.FC = () => {
       ],
       buttonText: 'Subscribe Now',
       buttonVariant: 'default' as const,
-      cardStyle: 'bg-orange-50 border-orange-200'
+      cardStyle: 'bg-orange-50 border-orange-200',
+      isSubscribed: userProfile.package.name === 'Premium'
     }
   ];
 
@@ -134,7 +138,7 @@ const PricingCards: React.FC = () => {
                 </div>
 
                 <div className="mt-auto">
-                  <Button 
+                  <Button  disabled={tier.isSubscribed}
                     onClick={() => handleSubscribeClick(tier)}
                     className={`w-full py-3 text-white font-medium rounded-lg transition-colors ${
                       tier.name === 'Basic' 
@@ -145,7 +149,7 @@ const PricingCards: React.FC = () => {
                     }`}
                     variant={tier.buttonVariant}
                   >
-                    {tier.buttonText}
+                    {tier.isSubscribed ? 'Current Plan' : 'Subscribe Now'}
                   </Button>
                 </div>
               </CardContent>
