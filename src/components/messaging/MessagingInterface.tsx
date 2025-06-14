@@ -149,6 +149,45 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
     });
   };
 
+  const updateFriendLastMessage = (friendId: number, messageText: string, timestamp: string) => {
+    setFriends(prev => 
+      prev.map(friend => 
+        friend.friend.id === friendId 
+          ? {
+              ...friend,
+              last_message: {
+                text: messageText,
+                sender_id: userProfile?.id || 0,
+                is_from_me: true,
+                sent_at: timestamp
+              },
+              last_message_time: timestamp
+            }
+          : friend
+      )
+    );
+  };
+
+  const updateFriendLastMessageFromReceived = (senderId: number, messageText: string, timestamp: string) => {
+    setFriends(prev => 
+      prev.map(friend => 
+        friend.friend.id === senderId 
+          ? {
+              ...friend,
+              last_message: {
+                text: messageText,
+                sender_id: senderId,
+                is_from_me: false,
+                sent_at: timestamp
+              },
+              last_message_time: timestamp,
+              unread_messages_count: friend.unread_messages_count + 1
+            }
+          : friend
+      )
+    );
+  };
+
   useEffect(() => {
     fetchFriends();
   }, []);
@@ -239,6 +278,12 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
             setTimeout(() => logUnreadMessageIds(updatedMessages, 'After WebSocket message added'), 0);
             return updatedMessages;
           });
+          
+          // Update friend's last message for received message
+          const senderId = data.sender_id || data.sender_email;
+          if (senderId) {
+            updateFriendLastMessageFromReceived(senderId, data.message, newMsg.sent_at);
+          }
         }
       }
     };
@@ -289,6 +334,8 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   const sendMessage = async () => {
     if ((!newMessage.trim() && selectedFiles.length === 0) || !selectedFriend || !socket) return;
 
+    const timestamp = new Date().toISOString();
+
     try {
       if (newMessage.trim()) {
         const messageData = {
@@ -300,7 +347,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
         const tempMessage: Message = {
           id: Date.now(),
           text: newMessage,
-          sent_at: new Date().toISOString(),
+          sent_at: timestamp,
           sender_name: (userProfile?.first_name || '') + ' ' + (userProfile?.last_name || '') || userProfile?.email || '',
           sender_email: userProfile?.email || '',
           receiver_name: selectedFriend.friend.full_name,
@@ -310,6 +357,9 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
 
         setMessages(prev => [...prev, tempMessage]);
         socket.send(JSON.stringify(messageData));
+        
+        // Update friend's last message for sent message
+        updateFriendLastMessage(selectedFriend.friend.id, newMessage.trim(), timestamp);
       }
 
       if (selectedFiles.length > 0) {
@@ -327,11 +377,12 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
               file_size: fileWithPreview.file.size
             };
 
+            const fileMessage = `Sent ${fileWithPreview.file.name}`;
             const tempFileMessage: Message = {
               id: Date.now() + Math.random(),
-              text: `Sent ${fileWithPreview.file.name}`,
+              text: fileMessage,
               attachment: fileWithPreview.preview || fileWithPreview.file.name,
-              sent_at: new Date().toISOString(),
+              sent_at: timestamp,
               sender_name: (userProfile?.first_name || '') + ' ' + (userProfile?.last_name || '') || userProfile?.email || '',
               sender_email: userProfile?.email || '',
               receiver_name: selectedFriend.friend.full_name,
@@ -341,6 +392,9 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
 
             setMessages(prev => [...prev, tempFileMessage]);
             socket.send(JSON.stringify(fileMessageData));
+            
+            // Update friend's last message for sent file
+            updateFriendLastMessage(selectedFriend.friend.id, fileMessage, timestamp);
 
             if (fileWithPreview.preview) {
               URL.revokeObjectURL(fileWithPreview.preview);
