@@ -57,7 +57,7 @@ interface MessageResponse {
 const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   const accessToken = getAccessToken();
   const navigate = useNavigate();
-  const { friendId } = useParams();
+  const { userId } = useParams(); // Get userId from URL params
   const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -151,18 +151,28 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
 
   useEffect(() => {
     fetchFriends();
-    const urlParams = new URLSearchParams(window.location.search);
-    const friendId = urlParams.get('friend');
   }, []);
 
+  // Handle URL parameter changes
   useEffect(() => {
-    if (friendId && friends.length > 0) {
-      const friend = friends.find(f => f.friend.id.toString() === friendId);
-      if (friend) {
+    if (userId && friends.length > 0) {
+      const friend = friends.find(f => f.friend.id.toString() === userId);
+      if (friend && friend !== selectedFriend) {
         setSelectedFriend(friend);
+      } else if (!friend && userId) {
+        // If friend not found in the list, clear selection and show error
+        console.error('Friend not found with ID:', userId);
+        setSelectedFriend(null);
+        toast({
+          title: "User not found",
+          description: "The user you're trying to message could not be found.",
+          variant: "destructive"
+        });
       }
+    } else if (!userId) {
+      setSelectedFriend(null);
     }
-  }, [friendId, friends]);
+  }, [userId, friends, selectedFriend]);
 
   useEffect(() => {
     if (selectedFriend?.friend.id) {
@@ -375,7 +385,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
 
   const handleFriendSelect = (friend: Friend) => {
     setSelectedFriend(friend);
-    navigate(`/message/?friend=${friend.friend.uid}`);
+    navigate(`/message/${friend.friend.id}`);
   };
 
   const handleBackToList = () => {
