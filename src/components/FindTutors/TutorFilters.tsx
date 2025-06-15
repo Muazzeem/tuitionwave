@@ -38,7 +38,7 @@ const TutorFilters = () => {
     searchParams.get("division") || ""
   );
   const [selectedDistrict, setSelectedDistrict] = useState<string>(
-    searchParams.get("district") || ""
+    searchParams.get("districts") || ""
   );
   const [selectedUpazila, setSelectedUpazila] = useState<string>(
     searchParams.get("upazila") || ""
@@ -227,9 +227,9 @@ const TutorFilters = () => {
     }
     
     if (selectedDistrict) {
-      params.set("district", selectedDistrict);
+      params.set("districts", selectedDistrict);
     } else {
-      params.delete("district");
+      params.delete("districts");
     }
     
     if (selectedUpazila) {

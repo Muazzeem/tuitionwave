@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Star, MapPin, Clock, BookOpen, GraduationCap, Users, FileText, Lock, AlertCircle, ArrowLeft, User } from "lucide-react";
+import { Star, MapPin, Clock, BookOpen, GraduationCap, Users, FileText, Lock, AlertCircle, ArrowLeft, User, ShieldAlert } from "lucide-react";
 import { useParams } from "react-router-dom";
 import ReviewSection from "./ReviewSection";
 import { getAccessToken } from "@/utils/auth";
@@ -185,7 +185,8 @@ const TutorDetails: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-5">
           {/* Left Column - Profile */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-none border border-gray-100 overflow-hidden sticky top-4">
@@ -242,6 +243,27 @@ const TutorDetails: React.FC = () => {
 
           {/* Right Column - Details */}
           <div className="lg:col-span-2 space-y-6">
+            {tutor.user.is_verified === false && (
+
+                <div className="flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                      <ShieldAlert className="w-12 h-12 text-red-400" />
+                    </div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-2">Tutor is not verified</h2>
+                    <p className="text-gray-600 mb-6">The tutor you're looking for doesn't verified their profile. 
+                      Tuition Wave will be remove this profile soon.
+                    </p>
+                    <button 
+                      onClick={() => window.history.back()}
+                      className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                    >
+                      Go Back
+                    </button>
+                  </div>
+                </div>
+
+            )}
             {/* Personal Information */}
             <InfoCard icon={Users} title="Personal Information">
               <InfoItem label="Gender" value={tutor.gender_display} />
@@ -319,12 +341,10 @@ const TutorDetails: React.FC = () => {
                     <span className="text-sm font-medium text-gray-900">National ID Document</span>
                   </div>
                   <a
-                    href={tutor.nid_document}
-                    target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
+                    className="text-green-600 text-sm font-bold transition-colors"
                   >
-                    View Document
+                    Verified
                   </a>
                 </div>
               </InfoCard>

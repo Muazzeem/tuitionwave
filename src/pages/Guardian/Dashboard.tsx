@@ -1,5 +1,4 @@
 
-import React from 'react';
 import DashboardHeader from '@/components/DashboardHeader';
 import StatsCards from '@/components/StatsCards';
 import RecentRequests from '@/components/RecentRequests';

@@ -24,6 +24,18 @@ const TutorGrid = () => {
     if (searchParams.get('search')) {
       params.append('search', searchParams.get('search'));
     }
+    if (searchParams.get('division')) {
+      params.append('division', searchParams.get('division'));
+    }
+    if (searchParams.get('districts')) {
+      params.append('districts', searchParams.get('districts'));
+    }
+    if (searchParams.get('upazila')) {
+      params.append('upazila', searchParams.get('upazila'));
+    }
+    if (searchParams.get('areas')) {
+      params.append('areas', searchParams.get('areas'));
+    }
     if (searchParams.get('institute')) {
       params.append('institute', searchParams.get('institute'));
     }

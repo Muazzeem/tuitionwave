@@ -20,7 +20,6 @@ const TutorCard: React.FC<TutorCardProps> = ({
   name,
   university,
   division,
-  monthlyRate,
   teaching_type,
   rating,
   reviewCount,
@@ -82,7 +81,7 @@ const TutorCard: React.FC<TutorCardProps> = ({
           <div className="flex items-center gap-2 mb-5">
             <div className="flex items-center gap-1">
                 <MapPin className="w-4 h-4 text-dark-400" />
-                <span className="font-medium">{division}</span>
+                <span className="font-medium text-sm">{division}</span>
             </div>
             <div className="ml-auto flex gap-2">
               {teaching_type === "ONLINE" && (
