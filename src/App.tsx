@@ -141,7 +141,7 @@ const App = () => (
                   <Route path="/" element={<HomePage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/auth/registration" element={<RegistrationPage />} />
-                  <Route path="/tutor/:id" element={
+                  <Route path="/private-profile/tutor/:id" element={
                     <AuthGuard><TutorProfile /></AuthGuard>
                   } />
                   <Route path="/unauthorized" element={<Unauthorized />} />

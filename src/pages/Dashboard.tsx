@@ -1,4 +1,3 @@
-
 import React from "react";
 import DashboardHeader from "@/components/DashboardHeader";
 import StatsCards from "@/components/StatsCards";
@@ -7,9 +6,9 @@ import RecentRequests from "@/components/RecentRequests";
 import NIDUpload from "@/components/Registration/NIDUpload";
 import { useAuth } from "@/contexts/AuthContext";
 import ProfileCompletionAlert from "@/components/ProfileCompletionAlert";
-
 import { useProfileCompletion } from "@/components/ProfileCompletionContext";
 import PricingCards from "@/components/PricingCards";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Dashboard: React.FC = () => {
   const { userProfile } = useAuth();
@@ -19,20 +18,23 @@ const Dashboard: React.FC = () => {
     <div className="flex-1 overflow-auto dark:bg-gray-900">
       <DashboardHeader userName="John" />
 
+      <ScrollArea type="always" style={{ height: 900 }}>
+
       {userProfile?.user_type === "TEACHER" && completionData.completion_percentage < 50 && (
         <div className="p-6">
           <ProfileCompletionAlert />
         </div>
       )}
 
-      {userProfile?.user_type === "TEACHER" && !userProfile.is_verified && (
+      {userProfile?.user_type === "TEACHER" && !userProfile.package && (
         <PricingCards />
       )}
 
-      {userProfile.is_nid_verified}
-      {/* <NIDUpload /> */}
+      {!userProfile?.is_verified && (
+        <NIDUpload />
+      )}
 
-      {completionData.completion_percentage >= 50 && userProfile.is_verified && (
+      {completionData.completion_percentage >= 50 && userProfile?.is_verified && (
         <div className="p-6">
           <h2 className="text-xl font-bold mb-6 dark:text-white">Dashboard</h2>
 
@@ -48,6 +50,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       )}
+      </ScrollArea>
     </div>
   );
 };
