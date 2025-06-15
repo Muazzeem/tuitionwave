@@ -50,11 +50,11 @@ const FriendsList: React.FC<FriendsListProps> = ({
   });
 
   return (
-    <div className="w-80 bg-white border-r flex flex-col h-full">
+    <div className="w-80 bg-white border-r flex flex-col h-full dark:bg-gray-800">
       {/* Header */}
-      <div className="p-4 border-b bg-gray-50">
+      <div className="p-4 border-b bg-gray-50 dark:bg-gray-800">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-bold text-gray-900">Messages</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Messages</h1>
           <Button variant="ghost" size="sm" className="p-2 hover:bg-gray-200">
             <Settings className="h-4 w-4" />
           </Button>
@@ -66,7 +66,7 @@ const FriendsList: React.FC<FriendsListProps> = ({
             placeholder="Search conversations..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-10 bg-white border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="pl-10 bg-white border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:bg-gray-900 dark:border-gray-700"
           />
         </div>
       </div>
@@ -98,24 +98,24 @@ const FriendsList: React.FC<FriendsListProps> = ({
               return (
                 <div
                   key={friend.friend.id}
-                  className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 transition-all duration-200 ${
-                    isActive ? 'bg-blue-50 border-r-3 border-blue-500' : ''
+                  className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 transition-all duration-200 dark:hover:bg-gray-700 ${
+                    isActive ? 'bg-blue-50 border-r-3 border-blue-500 dark:bg-gray-900' : ''
                   }`}
                   onClick={() => onFriendSelect(friend)}
                 >
                   <div className="relative">
                     <Avatar className="h-12 w-12 ring-2 ring-gray-100">
                       <AvatarImage src="" alt={displayName} />
-                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold">
+                      <AvatarFallback className="bg-blue-500 text-white">
                         {displayName.slice(0, 2).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                    {/* <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div> */}
                   </div>
 
                   <div className="flex-1 min-w-0 ml-3">
                     <div className="flex justify-between items-start mb-1">
-                      <h3 className={`font-medium truncate ${isActive ? 'text-blue-700' : 'text-gray-900'}`}>
+                      <h3 className={`font-medium truncate ${isActive ? 'text-blue-700 dark:text-white' : 'text-gray-900 dark:text-white'}`}>
                         {displayName}
                       </h3>
                       {lastMessageTime && (

@@ -109,10 +109,11 @@ const RequestRow: React.FC<RequestRowProps> = ({
 
   return (
     <tr className="border-b border-gray-100 dark:border-gray-700">
-      <td className="py-3 px-2 text-sm uppercase dark:text-gray-300">
+      <td className="font-medium text-sm cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 uppercase dark:text-white" onClick={() => handleDetailsClick()}>
         #{request.uid.slice(0, 8)}
       </td>
       <td className="py-3 px-2">
+        {userProfile.user_type === 'GUARDIAN' && (
         <div className="flex items-center">
           <div className="h-8 w-8 rounded-full overflow-hidden mr-2">
             <img
@@ -121,6 +122,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
               className="h-full w-full object-cover"
             />
           </div>
+          
           <div>
             <p className="text-sm font-medium dark:text-white">{request.tutor.full_name}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -128,6 +130,24 @@ const RequestRow: React.FC<RequestRowProps> = ({
             </p>
           </div>
         </div>
+        )}
+        {userProfile.user_type === 'TEACHER' && (
+          <div className="flex items-center">
+            <div className="h-8 w-8 rounded-full overflow-hidden mr-2">
+              <img
+                src={request.guardian.profile_picture}
+                alt={`${request.guardian.first_name}`}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div>
+              <p className="text-sm font-medium dark:text-white">{request.guardian.first_name} {request.guardian.last_name}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {request.guardian.email}
+              </p>
+            </div>
+          </div>
+        )}
       </td>
       <td className="py-3 px-2 text-sm dark:text-gray-300">
         {request.subjects.map((s) => s.subject).join(", ")}
@@ -202,6 +222,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
 };
 
 const RecentRequests: React.FC = () => {
+  const { userProfile } = useAuth();
   const { Confirmation: ConfirmationComponent, showConfirmationDialog } =
     useConfirmationDialog();
 
@@ -233,7 +254,7 @@ const RecentRequests: React.FC = () => {
     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-bold dark:text-white">Recent Request</h2>
-        <Link to="/all-requests">
+        <Link to={`/${userProfile.user_type.toLowerCase()}/requests`}>
           <Button className="text-sm text-tuitionwave-blue hover:underline text-white">
             View All
           </Button>
@@ -245,7 +266,12 @@ const RecentRequests: React.FC = () => {
           <thead>
             <tr className="text-left text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
               <th className="py-2 px-2">Req. ID</th>
-              <th className="py-2 px-2">Tutor Name</th>
+              {userProfile.user_type === 'GUARDIAN' && (
+                <th className="py-2 px-2">Tutor</th>
+              )}
+              {userProfile.user_type === 'TEACHER' && (
+                <th className="py-2 px-2">Guardian</th>
+              )}
               <th className="py-2 px-2">Subject</th>
               <th className="py-2 px-2">Tuition Period</th>
               <th className="py-2 px-2">Requested Amount</th>

@@ -38,7 +38,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   return (
-    <div className="p-4 bg-white border-t">
+    <div className="p-4 bg-white border-t dark:bg-gray-900">
       {/* File Upload */}
       <FileUpload 
         onFileSelect={onFileSelect}
@@ -53,7 +53,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
             value={message}
             onChange={(e) => onMessageChange(e.target.value)}
             placeholder="Type a message..."
-            className="min-h-[44px] max-h-32 resize-none pr-20 rounded-full border-gray-200"
+            className="min-h-[44px] max-h-32 resize-none pr-20 rounded-full border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             onKeyPress={handleKeyPress}
           />          
         </div>
@@ -61,9 +61,9 @@ const MessageInput: React.FC<MessageInputProps> = ({
         <Button
           onClick={onSendMessage}
           disabled={disabled || (!message.trim() && selectedFiles.length === 0)}
-          className="bg-blue-500 hover:bg-blue-600 rounded-full h-11 w-11 p-0"
+          className="bg-blue-500 hover:bg-blue-600 rounded-full h-11 w-11 p-0 dark:bg-blue-400 dark:hover:bg-blue-300"
         >
-          <Send className="h-4 w-4" />
+          <Send className="h-4 w-4 dark:text-white" />
         </Button>
       </div>
     </div>

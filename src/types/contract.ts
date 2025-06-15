@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 
 export interface Guardian {
+  profile_picture: string;
   uid: number;
   username: string | null;
   email: string;

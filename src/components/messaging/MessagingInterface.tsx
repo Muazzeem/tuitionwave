@@ -5,11 +5,12 @@ import FriendsService from '@/services/FriendsService';
 import { getAccessToken } from '@/utils/auth';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import FriendsList from './FriendsList';
 import ChatHeader from './ChatHeader';
 import MessagesContainer from './MessagesContainer';
 import MessageInput from './MessageInput';
 import EmptyState from './EmptyState';
+import FriendsList from './FriendsList';
+
 
 interface MessagingInterfaceProps {
   onClose?: () => void;
@@ -169,6 +170,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   };
 
   const updateFriendLastMessageFromReceived = (senderId: number, messageText: string, timestamp: string) => {
+    fetchFriends();
     setFriends(prev => 
       prev.map(friend => 
         friend.friend.id === senderId 
@@ -282,7 +284,9 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
           // Update friend's last message for received message
           const senderId = data.sender_id || data.sender_email;
           if (senderId) {
-            updateFriendLastMessageFromReceived(senderId, data.message, newMsg.sent_at);
+            setTimeout(() => {
+              updateFriendLastMessageFromReceived(senderId, data.message, newMsg.sent_at);
+            }, 1000);
           }
         }
       }
@@ -359,7 +363,9 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
         socket.send(JSON.stringify(messageData));
         
         // Update friend's last message for sent message
-        updateFriendLastMessage(selectedFriend.friend.id, newMessage.trim(), timestamp);
+        setTimeout(() => {
+          updateFriendLastMessage(selectedFriend.friend.id, newMessage, timestamp);
+        }, 1000);
       }
 
       if (selectedFiles.length > 0) {
@@ -394,7 +400,9 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
             socket.send(JSON.stringify(fileMessageData));
             
             // Update friend's last message for sent file
-            updateFriendLastMessage(selectedFriend.friend.id, fileMessage, timestamp);
+            setTimeout(() => {
+              updateFriendLastMessage(selectedFriend.friend.id, fileMessage, timestamp);
+            }, 1000);
 
             if (fileWithPreview.preview) {
               URL.revokeObjectURL(fileWithPreview.preview);
@@ -448,7 +456,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="h-screen bg-white flex">
+    <div className="h-screen bg-white flex dark:bg-gray-800">
       {/* Friends List Sidebar */}
       <div className={`${selectedFriend ? 'hidden md:flex' : 'flex'}`}>
         <FriendsList

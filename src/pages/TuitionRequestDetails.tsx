@@ -1,5 +1,5 @@
 import React, { useEffect, useState, FC } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -58,10 +58,6 @@ const TuitionRequestDetails: React.FC = () => {
         .finally(() => setLoading(false));
     }
   }, [id]);
-
-  const handleBack = () => {
-    navigate(`/${userProfile.user_type.toLocaleLowerCase()}/requests`);
-  };
 
   const handleDelete = () => {
     showConfirmationDialog({
@@ -235,7 +231,7 @@ const TuitionRequestDetails: React.FC = () => {
             Explore all the tuition request from guardian
           </p>
           <Button
-            onClick={handleBack}
+            onClick={() => window.history.back()}
             className="flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white mb-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 mt-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -244,11 +240,16 @@ const TuitionRequestDetails: React.FC = () => {
         </div>
 
         <div className="container">
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-white-200 dark:border-gray-700">
-            <div className="ml-auto flex gap-2 mb-3">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-white-200 dark:border-gray-700">
+            <div className="ml-auto flex mb-3 justify-between h-7">
               <span className={`${getBgColorClass(requestDetails?.status_display)} px-3 py-1 rounded-lg text-sm font-medium`}>
                 {requestDetails?.status_display}
               </span>
+              <Link to={`/tutor/${requestDetails?.tutor?.uid}`} target="_blank" rel="noopener noreferrer">
+                <Button size="sm" className="w-[150px] text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700">
+                  Tutor Profile
+                </Button>
+              </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
@@ -268,7 +269,7 @@ const TuitionRequestDetails: React.FC = () => {
                 />
                 <DetailItem
                   label="Department"
-                  value={requestDetails?.student_department}
+                  value={requestDetails?.student_department || "N/A"}
                 />
                 <DetailItem
                   label="Gender"
@@ -295,7 +296,7 @@ const TuitionRequestDetails: React.FC = () => {
                     .join(", ")}
                 />
                 <DetailItem
-                  label="Payment"
+                  label="Tuition Fee"
                   value={requestDetails?.proposed_salary}
                 />
               </div>

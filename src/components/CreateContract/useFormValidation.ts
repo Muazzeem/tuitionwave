@@ -5,7 +5,6 @@ interface ValidationErrors {
   selectedDays?: string;
   selectedSubjects?: string;
   studentCity?: string;
-  studentArea?: string;
   studentInstitution?: string;
   studentClass?: string;
   studentDepartment?: string;
@@ -13,6 +12,8 @@ interface ValidationErrors {
   memberCount?: string;
   preferredGender?: string;
   selectedAmount?: string;
+  versionBanglaEnglish?: string;
+  studentAddress?: string;
 }
 
 interface FormValues {
@@ -27,6 +28,8 @@ interface FormValues {
   memberCount: string;
   preferredGender: string;
   selectedAmount: string;
+  versionBanglaEnglish: string;
+  studentAddress: string;
 }
 
 export const useFormValidation = () => {
@@ -57,11 +60,6 @@ export const useFormValidation = () => {
       isValid = false;
     }
 
-    if (!values.studentArea) {
-      newErrors.studentArea = "Area is required";
-      isValid = false;
-    }
-
     if (!values.studentInstitution.trim()) {
       newErrors.studentInstitution = "Institution is required";
       isValid = false;
@@ -69,11 +67,6 @@ export const useFormValidation = () => {
 
     if (!values.studentClass) {
       newErrors.studentClass = "Class is required";
-      isValid = false;
-    }
-
-    if (!values.studentDepartment) {
-      newErrors.studentDepartment = "Department is required";
       isValid = false;
     }
 
@@ -94,6 +87,11 @@ export const useFormValidation = () => {
 
     if (!values.selectedAmount || parseFloat(values.selectedAmount) <= 0) {
       newErrors.selectedAmount = "Please enter a valid amount";
+      isValid = false;
+    }
+
+    if (!values.versionBanglaEnglish) { 
+      newErrors.versionBanglaEnglish = "Version is required";
       isValid = false;
     }
 

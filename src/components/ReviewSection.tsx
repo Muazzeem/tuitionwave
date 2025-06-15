@@ -1,46 +1,60 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Star } from 'lucide-react';
+import { Star, MessageCircle, Users, TrendingUp } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Card } from './ui/card';
-import { useParams } from 'react-router-dom';
+import { Card, CardContent, CardHeader } from './ui/card';
 
 import { FeedbackItem, FeedbackResponse, ReviewItemProps } from '@/types/common';
 
-
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric' 
+  });
 };
 
 const ReviewItem = ({ name, comment, rating, date }: ReviewItemProps) => (
-  <div className="py-6 border-b">
-    <div className="flex justify-between items-center mb-2">
-      <div className="flex items-center gap-1">
-        {Array.from({ length: 5 }).map((_, index) => (
-          <Star
-            key={index}
-            size={16}
-            className={index < rating ? "text-yellow-500 fill-yellow-500" : "text-gray-300"}
-          />
-        ))}
-        <span className="ml-1 text-sm text-gray-600">{rating.toFixed(1)}</span>
+  <Card className="mb-6 border-0 shadow-none">
+    <CardContent className="p-1">
+      <div className="flex justify-between items-start mb-3">
+        <div className="flex items-center gap-3">
+          <div className="h-12 w-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-lg shadow-sm">
+            {name.charAt(0)}
+          </div>
+          <div>
+            <h4 className="font-semibold text-gray-900 dark:text-gray-100">{name}</h4>
+            <div className="flex items-center gap-2 mt-1">
+              <div className="flex items-center gap-1">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <Star
+                    key={index}
+                    size={14}
+                    className={index < rating ? "text-yellow-500 fill-yellow-500" : "text-gray-300"}
+                  />
+                ))}
+              </div>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {rating.toFixed(1)}
+              </span>
+            </div>
+          </div>
+        </div>
+        <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 px-3 py-1 rounded-full">
+          {date}
+        </span>
       </div>
-      <span className="text-sm text-gray-500 dark:text-gray-400">{date}</span>
-    </div>
 
-    <p className="my-4 text-gray-700 dark:text-gray-300">{comment}</p>
-
-    <div className="flex items-center">
-      <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
-        {name.charAt(0)}
+      <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 border-l-4 border-blue-500">
+        <p className="text-gray-700 dark:text-gray-300 leading-relaxed italic">
+          "{comment}"
+        </p>
       </div>
-      <div className="ml-3">
-        <h4 className="font-medium">{name}</h4>
-      </div>
-    </div>
-  </div>
+    </CardContent>
+    <hr className='mt-2' />
+  </Card>
 );
 
 const RatingsSummary = ({ feedbacks }: { feedbacks: FeedbackItem[] }) => {
@@ -62,42 +76,82 @@ const RatingsSummary = ({ feedbacks }: { feedbacks: FeedbackItem[] }) => {
     return { rating, count, percentage };
   });
 
+  const getRatingColor = (rating: number) => {
+    if (rating >= 4.5) return 'text-green-600';
+    if (rating >= 4.0) return 'text-blue-600';
+    if (rating >= 3.0) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+
+  const getRatingBadge = (rating: number) => {
+    if (rating >= 4.5) return { text: 'Excellent', variant: 'default' as const, className: 'bg-green-100 text-green-800 border-green-200' };
+    if (rating >= 4.0) return { text: 'Very Good', variant: 'secondary' as const, className: 'bg-blue-100 text-blue-800 border-blue-200' };
+    if (rating >= 3.0) return { text: 'Good', variant: 'outline' as const, className: 'bg-yellow-100 text-yellow-800 border-yellow-200' };
+    return { text: 'Needs Improvement', variant: 'destructive' as const, className: 'bg-red-100 text-red-800 border-red-200' };
+  };
+
+  const badgeInfo = getRatingBadge(parseFloat(avgRating));
+
   return (
-    <div className="p-6 bg-gray-50 rounded-lg dark:bg-gray-800 shadow-md">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-xl font-bold">{avgRating} Rating</h3>
-        {parseFloat(avgRating) >= 4.5 && (
-          <Badge variant="outline" className="text-yellow-500 bg-yellow-50 border-yellow-200 px-2 py-1">
-            Top Rated
+    <Card className="shadow-sm border-0 bg-white dark:from-gray-800 dark:to-gray-900">
+      <CardHeader className="pb-4">
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+              <TrendingUp className="h-6 w-6 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                {avgRating}
+              </h3>
+            </div>
+          </div>
+
+          <div className="flex justify-center mb-4">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <Star
+                key={index}
+                size={24}
+                className={index < Math.round(parseFloat(avgRating)) ? "text-yellow-500 fill-yellow-500" : "text-gray-300"}
+              />
+            ))}
+          </div>
+
+          <Badge className={`mb-4 ${badgeInfo.className}`}>
+            {badgeInfo.text}
           </Badge>
-        )}
-      </div>
 
-      <div className="flex mb-4">
-        {Array.from({ length: 5 }).map((_, index) => (
-          <Star
-            key={index}
-            size={20}
-            className={index < Math.round(parseFloat(avgRating)) ? "text-yellow-500 fill-yellow-500" : "text-gray-300"}
-          />
-        ))}
-      </div>
-
-      <p className="text-sm text-gray-500 mb-6 dark:text-gray-300">Based on {feedbacks.length}+ Reviews</p>
-
-      {ratingCounts.map(({ rating, count, percentage }) => (
-        <div key={rating} className="flex items-center mb-3">
-          <span className="w-3 text-gray-600 mr-2 dark:text-gray-300">{rating}</span>
-          <Progress
-            className="h-2 flex-1 bg-gray-200 dark:text-gray-200"
-            value={percentage}
-          />
-          <span className="w-8 text-right text-xs text-gray-600 ml-2 dark:text-gray-300">
-            {count.toString().padStart(2, '0')}
-          </span>
+          <div className="flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <Users size={16} />
+            <span>{feedbacks.length}+ Reviews</span>
+          </div>
         </div>
-      ))}
-    </div>
+      </CardHeader>
+
+      <CardContent className="pt-0">
+        <div className="space-y-3">
+          {ratingCounts.map(({ rating, count, percentage }) => (
+            <div key={rating} className="flex items-center gap-3">
+              <div className="flex items-center gap-1 w-12">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{rating}</span>
+                <Star size={12} className="text-yellow-500 fill-yellow-500" />
+              </div>
+              
+              <div className="flex-1">
+                <Progress
+                  className="h-2.5 bg-gray-200 dark:bg-gray-700"
+                  value={percentage}
+                />
+              </div>
+              
+              <span className="w-8 text-right text-sm font-medium text-gray-600 dark:text-gray-300">
+                {count}
+              </span>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
@@ -152,69 +206,125 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ id, condition }) => {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-12 flex justify-center">
-        <div className="animate-pulse">Loading reviews...</div>
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="animate-pulse space-y-4">
+            <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+          </div>
+          <div className="lg:col-span-2 animate-pulse space-y-4">
+            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-12 text-red-500">
-        {error}
+      <div className="container mx-auto px-4 py-16">
+        <Card className="border-red-200 bg-red-50 dark:bg-red-900/20">
+          <CardContent className="p-8 text-center">
+            <div className="text-red-600 dark:text-red-400 text-lg font-medium">
+              {error}
+            </div>
+            <p className="text-red-500 dark:text-red-300 mt-2">
+              Please try refreshing the page or contact support if the problem persists.
+            </p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className='container-fluid'>
-      <div className='mt-5'>
-        {/* <RatingsSummary feedbacks={feedbacks} /> */}
-      </div>
-        <div className="mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="md:col-span-3">
-              <Tabs defaultValue="reviews">
-                <TabsList className="border-b w-full justify-start rounded-none bg-transparent p-0">
-                  <TabsTrigger
-                    value="description"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 bg-transparent px-4 py-2"
-                  >
-                    Description
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="reviews"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 bg-transparent px-4 py-2"
-                  >
-                    Guardian Reviews ({feedbacks.length})
-                  </TabsTrigger>
-                </TabsList>
+    <div className="container mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-2">
+        {/* Ratings Summary - Left Column */}
+        {/* <div className="lg:col-span-1">
+          <RatingsSummary feedbacks={feedbacks} />
+        </div> */}
 
-                <TabsContent value="description" className="pt-6">
-                  <p className="text-gray-700 dark:text-gray-300">
-                    {tutorData?.description || "No description available."}
-                  </p>
+        {/* Reviews Content - Right Column */}
+        <div className="lg:col-span-3">
+          <Card className="shadow-sm border-0">
+            <CardContent className="p-0">
+              <Tabs defaultValue="reviews" className="w-full">
+                <div className="border-b bg-gray-50 dark:bg-gray-800/50 px-6 py-2">
+                  <TabsList className="bg-transparent p-0 h-auto">
+                    <TabsTrigger
+                      value="description"
+                      className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-700"
+                    >
+                      Description
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="reviews"
+                      className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm dark:data-[state=active]:bg-gray-700"
+                    >
+                      <div className="flex items-center gap-2">
+                        <MessageCircle size={16} />
+                        Reviews ({feedbacks.length})
+                      </div>
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+
+                <TabsContent value="description" className="p-6 mt-0">
+                  <div className="prose dark:prose-invert max-w-none">
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                      {tutorData?.description || "No description available."}
+                    </p>
+                  </div>
                 </TabsContent>
 
-                <TabsContent value="reviews" className="pt-6">
+                <TabsContent value="reviews" className="p-3 mt-0">
                   {feedbacks.length > 0 ? (
-                    feedbacks.map(feedback => (
-                      <ReviewItem
-                        key={feedback.uid}
-                        name={`${feedback.student.first_name} ${feedback.student.last_name}`}
-                        comment={feedback.comment}
-                        rating={feedback.avg_ratting}
-                        date={formatDate(feedback.created_at)}
-                      />
-                    ))
+                    <div className="space-y-0">
+                      <div className="mb-6 flex items-center justify-between">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                          What Parents Say
+                        </h3>
+                        <Badge variant="outline" className="text-xs">
+                          {feedbacks.length} Review{feedbacks.length !== 1 ? 's' : ''}
+                        </Badge>
+                      </div>
+                      
+                      <div className="max-h-96 overflow-y-auto pr-2 space-y-0">
+                        {feedbacks.map(feedback => (
+                          <ReviewItem
+                            key={feedback.uid}
+                            name={`${feedback.student.first_name} ${feedback.student.last_name}`}
+                            comment={feedback.comment}
+                            rating={feedback.avg_ratting}
+                            date={formatDate(feedback.created_at)}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   ) : (
-                    <p className="text-gray-500 py-4">No reviews yet.</p>
+                    <div className="text-center py-12">
+                      <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                        <MessageCircle className="h-8 w-8 text-gray-400" />
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                        No reviews yet
+                      </h3>
+                      <p className="text-gray-500 dark:text-gray-400">
+                        Be the first to share your experience with this tutor.
+                      </p>
+                    </div>
                   )}
                 </TabsContent>
               </Tabs>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
+      </div>
     </div>
   );
 };

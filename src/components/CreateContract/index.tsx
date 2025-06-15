@@ -33,13 +33,14 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [selectedAmount, setSelectedAmount] = useState<string>("5000.00");
-  const [customMessage, setCustomMessage] = useState<string>("");
   const [studentInstitution, setStudentInstitution] = useState<string>("");
   const [studentClass, setStudentClass] = useState<string>("");
   const [studentDepartment, setStudentDepartment] = useState<string>("");
   const [tuitionType, setTuitionType] = useState<string>("");
   const [memberCount, setMemberCount] = useState<string>("");
   const [preferredGender, setPreferredGender] = useState<string>("");
+  const [versionBanglaEnglish, setVersionBanglaEnglish] = useState<string>("");
+  const [studentAddress, setStudentAddress] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [showApproveConfirm, setShowApproveConfirm] = useState(false);
 
@@ -59,6 +60,31 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
     handleAreaChange
   } = useLocationData();
 
+  // Helper function to check if class is greater than 8
+  const shouldShowDepartment = () => {
+    if (!studentClass) return false;
+    
+    // Check if it's a numeric class
+    const numericClass = parseInt(studentClass);
+    if (!isNaN(numericClass)) {
+      return numericClass > 8;
+    }
+    
+    // For non-numeric classes, show department for higher education levels
+    const higherEducationLevels = ["A Level", "HSC", "Undergraduate", "Graduate"];
+    return higherEducationLevels.includes(studentClass);
+  };
+
+  // Helper function to check if address is required
+  const shouldShowAddress = () => {
+    // If teaching_type prop is 'BOTH', check the selected tuitionType
+    if (teaching_type === 'BOTH') {
+      return tuitionType === 'Home';
+    }
+    // If teaching_type prop is 'HOME', always show address
+    return teaching_type === 'HOME';
+  };
+
   // Fetch cities and areas when drawer opens
   useEffect(() => {
     if (drawer.isOpen) {
@@ -66,6 +92,22 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
       fetchAreas();
     }
   }, [drawer.isOpen, fetchCities, fetchAreas]);
+
+  // Clear department when class changes and department should not be shown
+  useEffect(() => {
+    if (!shouldShowDepartment() && studentDepartment) {
+      setStudentDepartment("");
+      clearFieldError('studentDepartment');
+    }
+  }, [studentClass]);
+
+  // Clear address when tuition type changes and address should not be shown
+  useEffect(() => {
+    if (!shouldShowAddress() && studentAddress) {
+      setStudentAddress("");
+      clearFieldError('studentAddress');
+    }
+  }, [tuitionType, teaching_type]);
 
   // Handle field changes
   const handleFieldChange = (field: string, value: any) => {
@@ -96,8 +138,11 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
       case 'selectedAmount':
         setSelectedAmount(value);
         break;
-      case 'customMessage':
-        setCustomMessage(value);
+      case 'versionBanglaEnglish':
+        setVersionBanglaEnglish(value);
+        break;
+      case 'studentAddress':
+        setStudentAddress(value);
         break;
     }
   };
@@ -117,11 +162,13 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
       studentArea,
       studentInstitution,
       studentClass,
-      studentDepartment,
+      studentDepartment: shouldShowDepartment() ? studentDepartment : "", // Only validate if shown
       tuitionType,
       memberCount,
       preferredGender,
-      selectedAmount
+      selectedAmount,
+      versionBanglaEnglish,
+      studentAddress: shouldShowAddress() ? studentAddress : "" // Only validate if address is required
     });
 
     if (!isValid) {
@@ -140,19 +187,20 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
 
     // Send the IDs directly without looking up names
     const payload = {
-      student_city: studentCity, // City ID
+      student_upazila: studentCity, // City ID
       student_area: studentArea, // Area ID
       student_institution: studentInstitution,
       student_class: studentClass,
-      student_department: studentDepartment,
+      student_department: shouldShowDepartment() ? studentDepartment : "", // Only send if applicable
       tuition_type: tuitionType.toUpperCase(),
-      members: memberCount,
-      gender_preference: preferredGender,
+      family_members: memberCount,
+      student_gender: preferredGender,
       proposed_salary: parseFloat(selectedAmount),
       tutor: uid,
       subjects: subjectIds,
       active_days: dayIds,
-      message: customMessage,
+      version_bangla_english: versionBanglaEnglish,
+      student_address: shouldShowAddress() ? studentAddress : "", // Only send if address is required
     };
 
     console.log("Sending contract request:", payload);
@@ -178,7 +226,7 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
         title: "Success",
         description: "Your tutor request has been submitted successfully.",
       });
-      navigate("/all-requests");
+      navigate(`/${userProfile.user_type.toLocaleLowerCase()}/requests`);
     } catch (err) {
       toast({
         title: "Error",
@@ -199,11 +247,13 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
       studentArea,
       studentInstitution,
       studentClass,
-      studentDepartment,
+      studentDepartment: shouldShowDepartment() ? studentDepartment : "", // Only validate if shown
       tuitionType,
       memberCount,
       preferredGender,
-      selectedAmount
+      selectedAmount,
+      versionBanglaEnglish,
+      studentAddress: shouldShowAddress() ? studentAddress : "" // Only validate if address is required
     });
 
     if (isValid) {
@@ -235,12 +285,18 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
     label: dept
   }));
 
+  const versionOptions = [
+    { value: "Bangla", label: "Bangla" },
+    { value: "English", label: "English" },
+    { value: "Both", label: "Both" }
+  ];
+
   const tuitionTypeOptions = [
     { value: "Home", label: "Home" },
     { value: "Online", label: "Online" }
   ];
 
-  const memberOptions = ["1", "2+"].map(member => ({
+  const memberOptions = [1, 2, 3, 4].map(member => ({
     value: member,
     label: member
   }));
@@ -289,14 +345,12 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
                 }}
                 onAreaChange={(value) => {
                   handleAreaChange(value);
-                  clearFieldError('studentArea');
                 }}
                 cities={cities}
                 areas={areas}
                 loadingCities={loadingCities}
                 loadingAreas={loadingAreas}
                 cityError={errors.studentCity}
-                areaError={errors.studentArea}
               />
               
               <div className="col-span-6">
@@ -325,16 +379,31 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
                 />
               </div>
               
+              {/* Conditionally render Department field */}
+              {shouldShowDepartment() && (
+                <div className="col-span-6">
+                  <FormField
+                    id="studentDepartment"
+                    label="Department"
+                    type="select"
+                    value={studentDepartment}
+                    onChange={(value) => handleFieldChange('studentDepartment', value)}
+                    error={errors.studentDepartment}
+                    options={departmentOptions}
+                  />
+                </div>
+              )}
+              
               <div className="col-span-6">
                 <FormField
-                  id="studentDepartment"
-                  label="Department"
+                  id="versionBanglaEnglish"
+                  label="Version (Bangla/English)"
                   type="select"
-                  value={studentDepartment}
-                  onChange={(value) => handleFieldChange('studentDepartment', value)}
-                  error={errors.studentDepartment}
+                  value={versionBanglaEnglish}
+                  onChange={(value) => handleFieldChange('versionBanglaEnglish', value)}
+                  error={errors.versionBanglaEnglish}
                   required
-                  options={departmentOptions}
+                  options={versionOptions}
                 />
               </div>
               
@@ -366,6 +435,23 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
                   )
                 }
               </div>
+
+              {/* Conditionally render Address field based on teaching type */}
+              {shouldShowAddress() && (
+                <div className="col-span-12">
+                  <FormField
+                    id="studentAddress"
+                    label="Address"
+                    type="textarea"
+                    value={studentAddress}
+                    onChange={(value) => handleFieldChange('studentAddress', value)}
+                    placeholder="Enter full home address"
+                    error={errors.studentAddress}
+                    required
+                    rows={3}
+                  />
+                </div>
+              )}
               
               <div className="col-span-6">
                 <FormField
@@ -403,19 +489,6 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
                   placeholder="Enter amount"
                   error={errors.selectedAmount}
                   required
-                />
-              </div>
-              
-              <div className="col-span-12">
-                <FormField
-                  id="customMessage"
-                  label="Custom Message (Optional)"
-                  type="textarea"
-                  value={customMessage}
-                  onChange={(value) => handleFieldChange('customMessage', value)}
-                  placeholder="Add any additional information or special requirements"
-                  required={false}
-                  rows={4}
                 />
               </div>
             </div>

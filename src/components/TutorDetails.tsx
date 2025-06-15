@@ -1,50 +1,151 @@
 import React, { useState, useEffect } from "react";
-import { Star, MapPin, Calendar, Clock, BookOpen, GraduationCap, Users, FileText, ChevronLeft, Phone, Mail } from "lucide-react";
+import { Star, MapPin, Clock, BookOpen, GraduationCap, Users, FileText, Lock, AlertCircle, ArrowLeft, User } from "lucide-react";
 import { useParams } from "react-router-dom";
 import ReviewSection from "./ReviewSection";
+import { getAccessToken } from "@/utils/auth";
 
 const TutorDetails: React.FC = () => {
+  const accessToken = getAccessToken();
   const [loading, setLoading] = useState<boolean>(true);
   const [tutor, setTutor] = useState(null);
-  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [error, setError] = useState(null);
   const { id } = useParams();
+
   useEffect(() => {
     setLoading(true);
     if (id) {
-      fetch(`${import.meta.env.VITE_API_URL}/api/tutors/${id}`)
+      fetch(`${import.meta.env.VITE_API_URL}/api/tutors/private-profile/?uid=${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      })
         .then((response) => response.json())
         .then((data) => {
           setTutor(data);
           console.log(data);
+          setError(data.error);
         })
         .catch((error) => console.error("Error fetching tutor details:", error))
         .finally(() => setLoading(false));
     }
   }, [id]);
 
-  if (loading || !tutor) {
-    return <div className="container mx-auto px-4 py-8">Loading...</div>;
-  }
-
-
-  const handleNext = () => {
-    setSubmitting(true);
-    setTimeout(() => {
-      alert("Request sent successfully!");
-      setSubmitting(false);
-    }, 1500);
-  };
-
-  const handleBack = () => {
-    console.log("Navigate back");
-  };
-
-  if (loading || !tutor) {
+  // Loading state
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           <p className="text-gray-600">Loading tutor details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state - Enhanced UI
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8 max-w-4xl">
+          <div className="bg-white rounded-lg overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-red-400 to-red-500 px-8 py-6">
+              <div className="flex items-center gap-4 text-white">
+                <div className="p-3 bg-white/20 rounded-full">
+                  <Lock className="w-6 h-6" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold">Access Restricted</h1>
+                  <p className="text-orange-100 mt-1">Unable to view tutor profile</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Error Content */}
+            <div className="p-8">
+              <div className="text-center mb-8">
+                <div className="mx-auto w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mb-6">
+                  <AlertCircle className="w-12 h-12 text-orange-500" />
+                </div>
+                
+                <h2 className="text-xl font-semibold text-gray-900 mb-3">
+                  Contract Required
+                </h2>
+                
+                <p className="text-gray-500 text-lg mb-2">
+                  {error}
+                </p>
+              </div>
+
+              {/* Available Actions */}
+              <div className="bg-gray-50 rounded-xl p-6 mb-6">
+                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <User className="w-5 h-5" />
+                  What you can do:
+                </h3>
+                
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <div>
+                      <p className="font-medium text-gray-900">Browse Public Profile</p>
+                      <p className="text-sm text-gray-600">View basic information and teaching subjects</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <div>
+                      <p className="font-medium text-gray-900">Send Contract Request</p>
+                      <p className="text-sm text-gray-600">Request to connect with this tutor</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <div>
+                      <p className="font-medium text-gray-900">Find Similar Tutors</p>
+                      <p className="text-sm text-gray-600">Explore other tutors in your area</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button 
+                  onClick={() => window.history.back()}
+                  className="flex items-center justify-center gap-2 px-10 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Go Back
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // No tutor data
+  if (!tutor) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+            <User className="w-12 h-12 text-gray-400" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Tutor Not Found</h2>
+          <p className="text-gray-600 mb-6">The tutor you're looking for doesn't exist or has been removed.</p>
+          <button 
+            onClick={() => window.history.back()}
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+          >
+            Go Back
+          </button>
         </div>
       </div>
     );
@@ -80,6 +181,7 @@ const TutorDetails: React.FC = () => {
     </div>
   );
 
+  // Main tutor details view
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -90,7 +192,7 @@ const TutorDetails: React.FC = () => {
               {/* Profile Image */}
               <div className="aspect-square relative">
                 <img
-                  src={tutor.profile_picture}
+                  src={tutor.profile_picture_url}
                   alt="Tutor Profile"
                   className="w-full h-full object-cover"
                 />
@@ -114,7 +216,7 @@ const TutorDetails: React.FC = () => {
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center gap-3 text-gray-600">
                     <MapPin className="w-4 h-4" />
-                    <span className="text-sm">{tutor.address}, {tutor.city?.district?.name}</span>
+                    <span className="text-sm">{tutor.user?.address}, {tutor.user?.division?.name}</span>
                   </div>
                   <div className="flex items-center gap-3 text-gray-600">
                     <GraduationCap className="w-4 h-4" />
@@ -144,7 +246,7 @@ const TutorDetails: React.FC = () => {
             <InfoCard icon={Users} title="Personal Information">
               <InfoItem label="Gender" value={tutor.gender_display} />
               <InfoItem label="Birth Date" value={birthDate} />
-              <InfoItem label="Address" value={tutor.address} />
+              <InfoItem label="Address" value={tutor.user?.address} />
             </InfoCard>
 
             {/* Education */}
@@ -158,7 +260,7 @@ const TutorDetails: React.FC = () => {
             {/* Subjects */}
             <InfoCard icon={BookOpen} title="Teaching Subjects">
               <div className="flex flex-wrap gap-2">
-                {tutor.subjects.map((subj, index) => (
+                {tutor?.subjects?.map((subj, index) => (
                   <span
                     key={index}
                     className="px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm font-medium"
@@ -175,7 +277,7 @@ const TutorDetails: React.FC = () => {
                 <div>
                   <h5 className="font-medium text-gray-900 mb-2">Preferred Districts</h5>
                   <div className="flex flex-wrap gap-2">
-                    {tutor?.preferred_districts?.map((dist, index) => (
+                    {tutor?.user?.preferred_districts?.map((dist, index) => (
                       <span
                         key={index}
                         className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm"
@@ -188,7 +290,7 @@ const TutorDetails: React.FC = () => {
                 <div>
                   <h5 className="font-medium text-gray-900 mb-2">Preferred Areas</h5>
                   <div className="flex flex-wrap gap-2">
-                    {tutor?.preferred_areas?.map((area, index) => (
+                    {tutor?.user?.preferred_areas?.map((area, index) => (
                       <span
                         key={index}
                         className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-sm"
@@ -203,8 +305,8 @@ const TutorDetails: React.FC = () => {
 
             {/* Availability */}
             <InfoCard icon={Clock} title="Availability & Schedule">
-              <InfoItem label="Active Days" value={tutor.active_days.map((day) => day.day).join(", ")} />
-              <InfoItem label="Days per Week" value={tutor.days_per_week} />
+              <InfoItem label="Active Days" value={tutor?.active_days?.map((day) => day.day).join(", ")} />
+              <InfoItem label="Days per Week" value={tutor?.active_days?.length || 0} />
               <InfoItem label="Preferred Time" value={tutor.preferred_time} />
             </InfoCard>
 

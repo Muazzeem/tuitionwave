@@ -13,7 +13,7 @@ interface ChatHeaderProps {
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({ friend, onBack, showBackButton = true }) => {
   return (
-    <div className="px-4 py-3 border-b bg-white flex items-center justify-between shadow-sm">
+    <div className="px-4 py-3 border-b bg-white flex items-center justify-between shadow-sm dark:bg-gray-800">
       <div className="flex items-center gap-3">
         {showBackButton && (
           <Button
@@ -34,10 +34,10 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ friend, onBack, showBackButton 
         </Avatar>
         
         <div>
-          <h2 className="font-semibold text-gray-900">
+          <h2 className="font-semibold text-gray-900 dark:text-white">
             {friend.friend.full_name}
           </h2>
-          <p className="text-sm text-green-500">Online</p>
+          {/* <p className="text-sm text-green-500">Online</p> */}
         </div>
       </div>
       

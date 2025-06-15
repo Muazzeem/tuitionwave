@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import MessageBubble from './MessageBubble';
 import { format } from 'date-fns';
+import EmptyState from './EmptyState';
 
 interface Message {
   id: number;
@@ -63,7 +64,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
   return (
     <div 
       ref={containerRef}
-      className="flex-1 overflow-y-auto bg-gray-50 px-4 py-6"
+      className="flex-1 overflow-y-auto bg-gray-50 px-4 py-6 dark:bg-gray-900"
     >
       {isLoading && (
         <div className="text-center mb-4">
@@ -91,6 +92,10 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
       ))}
 
       <div ref={messagesEndRef} />
+
+      {(messages.length === 0 &&
+        <EmptyState />
+      )}
     </div>
   );
 };

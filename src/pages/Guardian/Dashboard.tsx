@@ -9,7 +9,7 @@ export default function GuardianDashboard() {
     const { userProfile } = useAuth();
     
     return (
-        <div className="flex-1 overflow-auto bg-white dark:bg-gray-900">
+        <div className="flex-1 overflow-auto dark:bg-gray-900">
             <DashboardHeader userName={userProfile?.first_name || 'Guardian'} />
 
             <div className="p-6">

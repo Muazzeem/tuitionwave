@@ -230,12 +230,17 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
                         </div>
                       </div>
 
+                      <div className="flex items-center gap-2 mb-5">
+                        <div className="flex items-center gap-1">
+                          <span className="font-medium">Per Week</span>
+                        </div>
+                        <div className="ml-auto flex gap-2">
+                        {tutorDetails.active_days.length}
+                        </div>
+                      </div>
+
                   <div>
                     <div className="text-gray-700 mt-1 dark:text-gray-300">
-                      
-                      {tutorDetails.days_per_week !== null && (
-                        <p>Per Week: {tutorDetails.days_per_week}</p>
-                      )}
                       <ReviewSection id={uid} condition='False' />
                       {(tutorDetails.active_days === null ||
                         tutorDetails.active_days.length === 0) &&
