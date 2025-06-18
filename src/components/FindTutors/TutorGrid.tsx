@@ -129,9 +129,11 @@ const TutorGrid = () => {
             teaching_type={tutor.teaching_type}
             university={tutor.institute ? tutor.institute.name : 'Not specified'}
             division={tutor?.division?.name || 'Not specified'}
+            upazila={tutor?.upazilas?.[0]?.name || 'Not specified'}
+            district={tutor?.districts?.[0]?.name || 'Not specified'}
             monthlyRate={tutor.expected_salary ? tutor.expected_salary.display_range : 'Not specified'}
-            rating={4.5}
-            reviewCount={0}
+            rating={tutor.avg_rating}
+            reviewCount={tutor.review_count}
             image={tutor.profile_picture || '/lovable-uploads/ced7cd19-6baa-4f95-a194-cd4c9c7c3f0c.png'}
           />
         ))}

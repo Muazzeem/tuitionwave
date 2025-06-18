@@ -9,12 +9,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { X } from "lucide-react";
+import { X, Search } from "lucide-react";
 
 const SearchSection: React.FC = () => {
-  const navigate = useNavigate();
   
   const [institutions, setInstitutions] = useState<
     { id: number; name: string }[]
@@ -27,6 +25,7 @@ const SearchSection: React.FC = () => {
   const [selectedInstitutionName, setSelectedInstitutionName] = useState<string>("");
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [selectedCityName, setSelectedCityName] = useState<string>("");
+  const [selectedCityID, setSelectedCityID] = useState<string>("");
   const [selectedSubject, setSelectedSubject] = useState<string>("");
   const [selectedSubjectName, setSelectedSubjectName] = useState<string>("");
   const [selectedGender, setSelectedGender] = useState<string>("");
@@ -34,6 +33,7 @@ const SearchSection: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [cities, setCities] = useState<{id: number, name: string}[]>([]);
   const [subjects, setSubjects] = useState<{id: number, subject: string}[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   const fetchInstitutions = useCallback(async () => {
     try {
@@ -112,7 +112,9 @@ const SearchSection: React.FC = () => {
     city.name.toLowerCase().includes(citySearchQuery.toLowerCase())
   );
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
+    setIsSearching(true);
+    
     // Build URL params
     const params = new URLSearchParams();
     
@@ -120,8 +122,8 @@ const SearchSection: React.FC = () => {
       params.append("institute", selectedInstitutionName);
     }
     
-    if (selectedCityName) {
-      params.append("city", selectedCityName);
+    if (selectedCityID) {
+      params.append("upazila", selectedCityID.toString());
     }
     
     if (selectedSubjectName) {
@@ -132,28 +134,28 @@ const SearchSection: React.FC = () => {
       params.append("gender", selectedGender);
     }
     
-    // Update the URL without causing a page navigation
     window.history.replaceState(null, '', `?${params.toString()}`);
-    
-    console.log("Search initiated with params:", {
-      institute: selectedInstitutionName,
-      city: selectedCityName,
-      subject: selectedSubjectName,
-      gender: selectedGender
-    });
     
     // Dispatch the custom event for components that listen to it
     window.dispatchEvent(
       new CustomEvent("tutor-search", {
         detail: {
           institute: selectedInstitutionName,
-          city: selectedCityName,
+          upazila: selectedCityID,
           subject: selectedSubjectName,
           gender: selectedGender,
         },
       })
     );
-  };
+
+    // Reset searching state after a short delay
+    setTimeout(() => setIsSearching(false), 1000);
+  }, [selectedInstitutionName, selectedCityName, selectedSubjectName, selectedGender]);
+
+  // Auto-trigger search when any filter changes
+  useEffect(() => {
+    handleSearch();
+  }, [selectedInstitutionName, selectedCityName, selectedSubjectName, selectedGender, handleSearch]);
 
   const handleInstitutionSelect = (value: string) => {
     setSelectedInstitution(value);
@@ -172,6 +174,7 @@ const SearchSection: React.FC = () => {
     const city = cities.find(c => c.id.toString() === value);
     if (city) {
       setSelectedCityName(city.name);
+      setSelectedCityID(city.id.toString());
     }
     setCitySearchQuery(""); // Clear search query on selection
     setIsCityOpen(false); // Close dropdown after selection
@@ -186,6 +189,10 @@ const SearchSection: React.FC = () => {
     }
   };
 
+  const handleGenderSelect = (gender: string) => {
+    setSelectedGender(selectedGender === gender ? "" : gender);
+  };
+
   const clearFilter = (filterType: 'institution' | 'city' | 'subject' | 'gender') => {
     switch (filterType) {
       case 'institution':
@@ -195,6 +202,7 @@ const SearchSection: React.FC = () => {
       case 'city':
         setSelectedCity("");
         setSelectedCityName("");
+        setSelectedCityID('');
         break;
       case 'subject':
         setSelectedSubject("");
@@ -206,12 +214,44 @@ const SearchSection: React.FC = () => {
     }
   };
 
+  const clearAllFilters = () => {
+    setSelectedInstitution("");
+    setSelectedInstitutionName("");
+    setSelectedCity("");
+    setSelectedCityName("");
+    setSelectedCityID('');
+    setSelectedSubject("");
+    setSelectedSubjectName("");
+    setSelectedGender("");
+  };
+
+  const hasActiveFilters = selectedInstitutionName || selectedCityName || selectedSubjectName || selectedGender;
+
   if (loading) {
-    return <div className="p-4 text-center">Loading Institutions...</div>;
+    return (
+      <div className="p-8 text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-2 text-gray-600">Loading Institutions...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="p-4 text-center text-red-500">Error: {error}</div>;
+    return (
+      <div className="p-8 text-center">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
+          <p className="text-red-600 font-medium">Error loading data</p>
+          <p className="text-red-500 text-sm mt-1">{error}</p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            variant="outline" 
+            className="mt-3 text-red-600 border-red-200"
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -231,14 +271,27 @@ const SearchSection: React.FC = () => {
           <p className="text-xl">FIND A RIGHT TUTOR IN YOUR AREA.</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6 dark:bg-gray-900">
-          <h3 className="text-gray-800 font-medium text-lg mb-4 dark:text-white">
-            SEARCH TUTOR
-          </h3>
+        <div className="bg-white rounded-lg shadow-xl p-6 dark:bg-gray-900 backdrop-blur-sm bg-opacity-95">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-gray-800 font-medium text-lg dark:text-white flex items-center gap-2">
+              <Search className="h-5 w-5" />
+              SEARCH TUTOR
+            </h3>
+            {hasActiveFilters && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={clearAllFilters}
+                className="text-gray-600 hover:text-red-600 border-gray-300"
+              >
+                Clear All
+              </Button>
+            )}
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div>
-              <label className="block text-xs text-gray-500 mb-1 dark:text-white">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-600 mb-2 dark:text-gray-300">
                 Institution
               </label>
               <Select 
@@ -247,8 +300,8 @@ const SearchSection: React.FC = () => {
                 value={selectedInstitution}
                 onValueChange={handleInstitutionSelect}
               >
-                <SelectTrigger className="w-full text-black dark:text-white">
-                  <SelectValue placeholder="Institution" className="text-black dark:text-white" />
+                <SelectTrigger className="w-full text-black dark:text-white border-gray-300 hover:border-blue-400 transition-colors dark:border-gray-700">
+                  <SelectValue placeholder="Select Institution" className="text-black dark:text-white" />
                 </SelectTrigger>
                 <SelectContent>
                   <div className="p-2 sticky top-0 bg-white z-10 dark:bg-gray-900">
@@ -266,7 +319,7 @@ const SearchSection: React.FC = () => {
                         <SelectItem
                           key={institution.id}
                           value={institution.id.toString()}
-                          className="text-black"
+                          className="text-black hover:bg-blue-50 dark:text-white"
                         >
                           {institution.name}
                         </SelectItem>
@@ -281,15 +334,17 @@ const SearchSection: React.FC = () => {
               </Select>
             </div>
 
-            <div>
-              <label className="block text-xs text-gray-500 mb-1 dark:text-white">Upazila</label>
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-600 mb-2 dark:text-gray-300">
+                Upazila
+              </label>
               <Select
                 open={isCityOpen}
                 onOpenChange={setIsCityOpen}
                 value={selectedCity}
                 onValueChange={handleCitySelect}
               >
-                <SelectTrigger className="w-full h-10 text-black dark:text-white">
+                <SelectTrigger className="w-full h-10 text-black dark:text-white border-gray-300 hover:border-blue-400 transition-colors dark:border-gray-700">
                   <SelectValue placeholder="Select City" />
                 </SelectTrigger>
                 <SelectContent>
@@ -308,7 +363,7 @@ const SearchSection: React.FC = () => {
                         <SelectItem 
                           key={city.id} 
                           value={city.id.toString()}
-                          className="text-black"
+                          className="text-black hover:bg-blue-50 dark:text-white"
                         >
                           {city.name}
                         </SelectItem>
@@ -323,15 +378,15 @@ const SearchSection: React.FC = () => {
               </Select>
             </div>
 
-            <div>
-              <label className="block text-xs text-gray-500 mb-1 dark:text-white">
+            <div className="space-y-1">
+              <label className="block text-xs font-medium text-gray-600 mb-2 dark:text-gray-300">
                 Subject
               </label>
               <Select
                 value={selectedSubject}
                 onValueChange={handleSubjectSelect}
               >
-                <SelectTrigger className="w-full h-10 text-black dark:text-white">
+                <SelectTrigger className="w-full h-10 text-black dark:text-white border-gray-300 hover:border-blue-400 transition-colors dark:border-gray-700">
                   <SelectValue placeholder="Select Subject" />
                 </SelectTrigger>
                 <SelectContent>
@@ -340,7 +395,7 @@ const SearchSection: React.FC = () => {
                       <SelectItem 
                         key={subject.id} 
                         value={subject.id.toString()}
-                        className="text-black"
+                        className="text-black hover:bg-blue-50 dark:text-white"
                       >
                         {subject.subject}
                       </SelectItem>
@@ -352,84 +407,111 @@ const SearchSection: React.FC = () => {
           </div>
 
           {/* Active Filters Section */}
-          {(selectedInstitutionName || selectedCityName || selectedSubjectName || selectedGender) && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {selectedInstitutionName && (
-                <div className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                  <span>Institution: {selectedInstitutionName}</span>
-                  <button 
-                    onClick={() => clearFilter('institution')}
-                    className="ml-2 hover:text-blue-900"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-              )}
-              {selectedCityName && (
-                <div className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                  <span>City: {selectedCityName}</span>
-                  <button 
-                    onClick={() => clearFilter('city')}
-                    className="ml-2 hover:text-blue-900"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-              )}
-              {selectedSubjectName && (
-                <div className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                  <span>Subject: {selectedSubjectName}</span>
-                  <button 
-                    onClick={() => clearFilter('subject')}
-                    className="ml-2 hover:text-blue-900"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-              )}
-              {selectedGender && (
-                <div className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                  <span>Gender: {selectedGender}</span>
-                  <button 
-                    onClick={() => clearFilter('gender')}
-                    className="ml-2 hover:text-blue-900"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-              )}
+          {hasActiveFilters && (
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Active Filters:</h4>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {[selectedInstitutionName, selectedCityName, selectedSubjectName, selectedGender].filter(Boolean).length} active
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {selectedInstitutionName && (
+                  <div className="flex items-center bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 px-3 py-2 rounded-full text-sm font-medium shadow-sm">
+                    <span>Institution: {selectedInstitutionName}</span>
+                    <button 
+                      onClick={() => clearFilter('institution')}
+                      className="ml-2 hover:text-blue-900 dark:hover:text-blue-200 transition-colors"
+                      title="Remove filter"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                )}
+                {selectedCityName && (
+                  <div className="flex items-center bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 px-3 py-2 rounded-full text-sm font-medium shadow-sm">
+                    <span>City: {selectedCityName}</span>
+                    <button 
+                      onClick={() => clearFilter('city')}
+                      className="ml-2 hover:text-green-900 dark:hover:text-green-200 transition-colors"
+                      title="Remove filter"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                )}
+                {selectedSubjectName && (
+                  <div className="flex items-center bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-100 px-3 py-2 rounded-full text-sm font-medium shadow-sm">
+                    <span>Subject: {selectedSubjectName}</span>
+                    <button 
+                      onClick={() => clearFilter('subject')}
+                      className="ml-2 hover:text-purple-900 dark:hover:text-purple-200 transition-colors"
+                      title="Remove filter"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                )}
+                {selectedGender && (
+                  <div className="flex items-center bg-pink-100 dark:bg-pink-800 text-pink-800 dark:text-pink-100 px-3 py-2 rounded-full text-sm font-medium shadow-sm">
+                    <span>Gender: {selectedGender}</span>
+                    <button 
+                      onClick={() => clearFilter('gender')}
+                      className="ml-2 hover:text-pink-900 dark:hover:text-pink-200 transition-colors"
+                      title="Remove filter"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
           <div className="flex justify-between items-center">
-            <div className="flex space-x-4">
-              <label className="flex items-center space-x-2">
+            <div className="flex space-x-6">
+              <label className="flex items-center space-x-2 cursor-pointer group">
                 <input 
                   type="radio" 
                   name="gender" 
-                  className="h-4 w-4"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
                   checked={selectedGender === "MALE"}
-                  onChange={() => setSelectedGender("MALE")}
+                  onChange={() => handleGenderSelect("MALE")}
                 />
-                <span className="text-gray-600 dark:text-white">Male</span>
+                <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                  Male
+                </span>
               </label>
-              <label className="flex items-center space-x-2">
+              <label className="flex items-center space-x-2 cursor-pointer group">
                 <input 
                   type="radio" 
                   name="gender" 
-                  className="h-4 w-4"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
                   checked={selectedGender === "FEMALE"}
-                  onChange={() => setSelectedGender("FEMALE")}
+                  onChange={() => handleGenderSelect("FEMALE")}
                 />
-                <span className="text-gray-600 dark:text-white">Female</span>
+                <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                  Female
+                </span>
               </label>
             </div>
 
             <Button 
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 dark:text-white"
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 dark:text-white font-medium px-6 py-2 transition-all duration-200 shadow-lg hover:shadow-xl"
               onClick={handleSearch}
+              disabled={isSearching}
             >
-              SEARCH TUTOR
+              {isSearching ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Searching...
+                </>
+              ) : (
+                <>
+                  <Search className="h-4 w-4 mr-2" />
+                  Search Tutor
+                </>
+              )}
             </Button>
           </div>
         </div>

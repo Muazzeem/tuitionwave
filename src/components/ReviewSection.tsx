@@ -17,7 +17,7 @@ const formatDate = (dateString: string) => {
 };
 
 const ReviewItem = ({ name, comment, rating, date }: ReviewItemProps) => (
-  <Card className="mb-6 border-0 shadow-none">
+  <Card className="mb-6 border-0 shadow-none bg-white dark:bg-gray-900 dark:border-gray-700">
     <CardContent className="p-1">
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center gap-3">
@@ -243,7 +243,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ id, condition }) => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-2 ">
         {/* Ratings Summary - Left Column */}
         {/* <div className="lg:col-span-1">
           <RatingsSummary feedbacks={feedbacks} />
@@ -274,7 +274,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ id, condition }) => {
                   </TabsList>
                 </div>
 
-                <TabsContent value="description" className="p-6 mt-0">
+                <TabsContent value="description" className="p-6 mt-0 bg-white dark:bg-gray-800 dark:border-gray-700 rounded-lg">
                   <div className="prose dark:prose-invert max-w-none">
                     <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                       {tutorData?.description || "No description available."}
@@ -282,7 +282,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ id, condition }) => {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="reviews" className="p-3 mt-0">
+                <TabsContent value="reviews" className="p-3 mt-0 bg-white dark:bg-gray-800 dark:border-gray-700 rounded-lg">
                   {feedbacks.length > 0 ? (
                     <div className="space-y-0">
                       <div className="mb-6 flex items-center justify-between">

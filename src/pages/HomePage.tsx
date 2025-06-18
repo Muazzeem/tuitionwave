@@ -8,7 +8,7 @@ import Footer from '@/components/Footer';
 
 const HomePage: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col dark:bg-gray-900">
       <Header />
       <SearchSection />
       <TutorSearchResults />

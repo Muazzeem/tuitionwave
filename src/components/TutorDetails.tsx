@@ -159,14 +159,14 @@ const TutorDetails: React.FC = () => {
   });
 
   const InfoCard = ({ icon: Icon, title, children, className = "" }) => (
-    <div className={`bg-white rounded-lg p-6 shadow-none border border-gray-100 hover:shadow-sm transition-shadow ${className}`}>
+    <div className={`bg-white dark:bg-gray-900 dark:border-gray-700 rounded-lg p-6 shadow-none border border-gray-100 hover:shadow-sm transition-shadow ${className}`}>
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 bg-blue-50 rounded-lg">
           <Icon className="w-5 h-5 text-blue-600" />
         </div>
-        <h3 className="font-semibold text-gray-900">{title}</h3>
+        <h3 className="font-semibold text-gray-900 dark:text-gray-300">{title}</h3>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-2 dark:text-gray-300">
         {children}
       </div>
     </div>
@@ -174,8 +174,8 @@ const TutorDetails: React.FC = () => {
 
   const InfoItem = ({ label, value, highlight = false }) => (
     <div className="flex justify-between items-start">
-      <span className="text-gray-600 text-sm font-medium">{label}:</span>
-      <span className={`text-sm text-right ml-4 ${highlight ? 'text-blue-600 font-semibold' : 'text-gray-900'}`}>
+      <span className="text-gray-600 text-sm font-medium dark:text-gray-300">{label}:</span>
+      <span className={`text-sm text-right ml-4 ${highlight ? 'text-blue-600 font-semibold' : 'text-gray-900 dark:text-gray-300'}`}>
         {value}
       </span>
     </div>
@@ -183,13 +183,13 @@ const TutorDetails: React.FC = () => {
 
   // Main tutor details view
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-5">
           {/* Left Column - Profile */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-none border border-gray-100 overflow-hidden sticky top-4">
+            <div className="bg-white dark:bg-gray-900 dark:border-gray-700 rounded-xl shadow-none border border-gray-100 overflow-hidden sticky top-4">
               {/* Profile Image */}
               <div className="aspect-square relative">
                 <img
@@ -202,7 +202,7 @@ const TutorDetails: React.FC = () => {
 
               {/* Profile Info */}
               <div className="p-6">
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">{tutor.full_name}</h1>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-300">{tutor.full_name}</h1>
                 
                 {/* Rating */}
                 <div className="flex items-center gap-2 mb-4">
@@ -210,20 +210,20 @@ const TutorDetails: React.FC = () => {
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                     <span className="ml-1 font-semibold text-gray-900">4.7</span>
                   </div>
-                  <span className="text-gray-500 text-sm">(54 reviews)</span>
+                  <span className="text-gray-500 text-sm dark:text-gray-300">(54 reviews)</span>
                 </div>
 
                 {/* Quick Stats */}
                 <div className="space-y-3 mb-6">
-                  <div className="flex items-center gap-3 text-gray-600">
+                  <div className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
                     <MapPin className="w-4 h-4" />
                     <span className="text-sm">{tutor.user?.address}, {tutor.user?.division?.name}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-gray-600">
+                  <div className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
                     <GraduationCap className="w-4 h-4" />
                     <span className="text-sm">{tutor.institute?.name}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-gray-600">
+                  <div className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
                     <Users className="w-4 h-4" />
                     <span className="text-sm">{tutor.teaching_type_display}</span>
                   </div>
@@ -297,7 +297,7 @@ const TutorDetails: React.FC = () => {
             <InfoCard icon={MapPin} title="Teaching Locations">
               <div className="space-y-3">
                 <div>
-                  <h5 className="font-medium text-gray-900 mb-2">Preferred Districts</h5>
+                  <h5 className="font-medium text-gray-900 mb-2 dark:text-gray-300">Preferred Districts</h5>
                   <div className="flex flex-wrap gap-2">
                     {tutor?.user?.preferred_districts?.map((dist, index) => (
                       <span
@@ -310,7 +310,7 @@ const TutorDetails: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <h5 className="font-medium text-gray-900 mb-2">Preferred Areas</h5>
+                  <h5 className="font-medium text-gray-900 mb-2 dark:text-gray-300">Preferred Areas</h5>
                   <div className="flex flex-wrap gap-2">
                     {tutor?.user?.preferred_areas?.map((area, index) => (
                       <span

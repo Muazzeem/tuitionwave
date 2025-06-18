@@ -63,6 +63,12 @@ export interface City {
 }
 
 export interface Tutor {
+  expected_salary: any;
+  districts: any;
+  upazilas: any;
+  division: any;
+  review_count: number;
+  avg_rating: number;
   full_name: ReactNode;
   preferred_city: string;
   tuition_type: string;
@@ -96,7 +102,6 @@ export interface Tutor {
   subjects: Subject[];
   active_days: ActiveDay[];
   days_per_week: number;
-  expected_salary: SalaryRange;
   teaching_type_display: string;
   expected_hourly_charge: SalaryRange;
   created_at: string;

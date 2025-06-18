@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import TutorCard from './TutorCard';
 import { Tutor, TutorListResponse } from '@/types/tutor';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from './ui/card';
+import TutorCard from './FindTutors/TutorCard';
 
 const RecommendedTutors: React.FC = () => {
   const [tutors, setTutors] = useState<Tutor[]>([]);
@@ -70,7 +70,20 @@ const RecommendedTutors: React.FC = () => {
         ) : tutors.length > 0 ? (
           // Display tutors
           tutors.map((tutor) => (
-            <TutorCard key={tutor.id} tutor={tutor} />
+            <TutorCard
+              key={tutor.uid}
+              uid={tutor.uid}
+              name={`${tutor?.first_name} ${tutor?.last_name}`}
+              teaching_type={tutor.teaching_type}
+              university={tutor.institute ? tutor.institute.name : 'Not specified'}
+              division={tutor?.division?.name || 'Not specified'}
+              upazila={tutor?.upazilas?.[0]?.name || 'Not specified'}
+              district={tutor?.districts?.[0]?.name || 'Not specified'}
+              monthlyRate={tutor.expected_salary ? tutor.expected_salary.display_range : 'Not specified'}
+              rating={tutor.avg_rating}
+              reviewCount={tutor.review_count}
+              image={tutor.profile_picture || '/lovable-uploads/ced7cd19-6baa-4f95-a194-cd4c9c7c3f0c.png'}
+            />
           ))
         ) : (
           // No tutors found

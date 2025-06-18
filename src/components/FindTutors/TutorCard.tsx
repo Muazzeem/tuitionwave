@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MapPin, Star } from "lucide-react";
+import { MapPin, Star, GraduationCap, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TutorDetailsDrawer from "@/components/TutorDetailsDrawer";
 import { Badge } from "../ui/badge";
@@ -8,6 +8,8 @@ interface TutorCardProps {
   name: string;
   university: string;
   division: string;
+  upazila: string;
+  district: string;
   monthlyRate: number;
   teaching_type: string;
   rating: number;
@@ -20,6 +22,9 @@ const TutorCard: React.FC<TutorCardProps> = ({
   name,
   university,
   division,
+  upazila,
+  district,
+  monthlyRate,
   teaching_type,
   rating,
   reviewCount,
@@ -42,7 +47,7 @@ const TutorCard: React.FC<TutorCardProps> = ({
 
   const openDrawer = (e: React.MouseEvent) => {
     // Don't open drawer if clicking on the button
-    if (!(e.target as HTMLElement).closest("a")) {
+    if (!(e.target as HTMLElement).closest("button")) {
       setIsDrawerOpen(true);
       // Add class to prevent scrolling
       document.body.classList.add("overflow-hidden");
@@ -55,58 +60,102 @@ const TutorCard: React.FC<TutorCardProps> = ({
     document.body.classList.remove("overflow-hidden");
   };
 
+
+  const getTeachingTypeBadge = () => {
+    switch (teaching_type) {
+      case "ONLINE":
+        return (
+          <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-full text-xs font-medium border-0">
+            🌐 Online
+          </Badge>
+        );
+      case "OFFLINE":
+        return (
+          <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-200 rounded-full text-xs font-medium border-0">
+            🏠 Home Visit
+          </Badge>
+        );
+      case "BOTH":
+        return (
+          <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-full text-xs font-medium border-0">
+            🌐 Online & Home
+          </Badge>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <>
       <div
-        className="bg-white rounded-lg overflow-hidden cursor-pointer dark:bg-gray-800 border dark:border-gray-700 shadow-md hover:shadow-lg transition-shadow duration-300"
+        className="bg-white rounded-xl overflow-hidden cursor-pointer dark:bg-gray-800 border dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group"
         onClick={openDrawer}
       >
-        <div className="relative w-100" style={{ paddingBottom: "56.25%" }}>
+        {/* Image Section */}
+        <div className="relative overflow-hidden" style={{ paddingBottom: "50%" }}>
           <img
             src={image}
             alt={name}
-            className="absolute top-0 left-0 h-full w-full object-cover p-3"
+            className="absolute top-0 left-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
+          <div className="absolute top-3 right-3">
+            {getTeachingTypeBadge()}
+          </div>
+          {/* Rating Badge */}
+          <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1 shadow-sm">
+            <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+            <span className="text-xs font-semibold text-gray-800">{rating}</span>
+          </div>
         </div>
-        <div className="p-4">
-          <p className="text-gray-600 text-sm dark:text-gray-300">{university}</p>
-          <h3 className="text-lg font-semibold mt-1 text-shadow-lg capitalize">{name}</h3>
-          <div className="flex items-center gap-1 mt-2 mb-5">
-              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-              <span className="font-medium">{rating}</span>
-              <span className="text-blue-600 text-sm">
+
+        {/* Content Section */}
+        <div className="p-5">
+          {/* University */}
+          <div className="flex items-center gap-2 mb-2">
+            <GraduationCap className="w-4 h-4 text-blue-500" />
+            <p className="text-blue-600 text-sm font-medium dark:text-blue-400 truncate">
+              {university}
+            </p>
+          </div>
+
+          {/* Name */}
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white capitalize mb-3 line-clamp-1">
+            {name}
+          </h3>
+
+          {/* Location Information */}
+          <div className="space-y-2 mb-4">
+            <div className="flex items-start gap-2">
+              <MapPin className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0 dark:text-white" />
+              <div className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                <div className="font-medium text-gray-800 dark:text-gray-200">
+                  {district}
+                </div>
+                <div className="text-gray-500 dark:text-gray-400">
+                  {upazila} • {division}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Rating and Reviews */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                <span className="font-semibold text-gray-800 dark:text-white">{rating}</span>
+              </div>
+              <span className="text-gray-500 text-sm dark:text-gray-400">
                 ({reviewCount} reviews)
               </span>
-          </div>
-          <div className="flex items-center gap-2 mb-5">
-            <div className="flex items-center gap-1">
-                <MapPin className="w-4 h-4 text-dark-400" />
-                <span className="font-medium text-sm">{division}</span>
-            </div>
-            <div className="ml-auto flex gap-2">
-              {teaching_type === "ONLINE" && (
-                <Badge className="bg-green-100 text-green-800 hover:bg-green-200 rounded-lg">
-                  Online
-                </Badge>
-              )}
-              {teaching_type === "OFFLINE" && (
-                <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200 rounded-lg">
-                  Offline
-                </Badge>
-              )}
-              {teaching_type === "BOTH" && (
-                <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 rounded-lg">
-                  Online & Home
-                </Badge>
-              )}
             </div>
           </div>
-          <Button
-            className="w-full text-blue-600 bg-white border border-blue-600 hover:bg-blue-50 uppercase dark:bg-black dark:border-gray-600 dark:text-gray-300"
-            onClick={openDrawer}
-          >
-            View Details
-          </Button>
+          <div className="flex items-center gap-1 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-lg">
+            <span className="font-bold text-green-700 dark:text-green-400 text-sm">
+              ৳{monthlyRate.toLocaleString()}/mo
+            </span>
+          </div>
         </div>
       </div>
 

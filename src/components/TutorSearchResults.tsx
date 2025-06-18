@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
-import TutorCard from './TutorCard';
 import { Tutor, TutorListResponse } from '@/types/tutor';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { Card } from './ui/card';
+import TutorCard from './FindTutors/TutorCard';
 
 const TutorSearchResults: React.FC = () => {
   const [tutors, setTutors] = useState<Tutor[]>([]);
@@ -14,7 +14,7 @@ const TutorSearchResults: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [searchFilters, setSearchFilters] = useState({
     institute: searchParams.get('institute') || '',
-    city: searchParams.get('city') || '',
+    upazila: searchParams.get('upazila') || '',
     subject: searchParams.get('subject') || '', // Note: Changed from 'subjects' to 'subject'
     gender: searchParams.get('gender') || ''
   });
@@ -22,23 +22,23 @@ const TutorSearchResults: React.FC = () => {
   const buildApiUrl = (filters: any) => {
     // Get any search parameters from the URL
     const params = new URLSearchParams();
-    
+
     if (filters.institute) {
       params.append('institute', filters.institute);
     }
-    
-    if (filters.city) {
-      params.append('city', filters.city);
+
+    if (filters.upazila) {
+      params.append('upazila', filters.upazila);
     }
-    
+
     if (filters.subject) {
       params.append('subjects', filters.subject); // Backend expects 'subjects'
     }
-    
+
     if (filters.gender) {
       params.append('gender', filters.gender);
     }
-    
+
     const apiUrl = `${import.meta.env.VITE_API_URL}/api/tutors/?${params.toString()}`;
     console.log("Built API URL:", apiUrl);
     return apiUrl;
@@ -49,13 +49,13 @@ const TutorSearchResults: React.FC = () => {
       setLoading(true);
       const apiUrl = buildApiUrl(filters);
       console.log("Fetching tutors with filters:", filters);
-      
+
       const response = await fetch(apiUrl);
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch tutors: ${response.status}`);
       }
-      
+
       const data: TutorListResponse = await response.json();
       setTutors(data.results.slice(0, 4));
       setError(null);
@@ -73,21 +73,21 @@ const TutorSearchResults: React.FC = () => {
     const handleTutorSearch = (event: CustomEvent) => {
       const eventDetail = event.detail;
       console.log("Search event received:", eventDetail);
-      
+
       // Update our filters with the new search criteria
       const newFilters = {
         institute: eventDetail.institute || '',
-        city: eventDetail.city || '',
+        upazila: eventDetail.upazila || '',
         subject: eventDetail.subject || '',
         gender: eventDetail.gender || ''
       };
-      
+
       setSearchFilters(newFilters);
       fetchTutors(newFilters);
     };
 
     window.addEventListener('tutor-search', handleTutorSearch as EventListener);
-    
+
     return () => {
       window.removeEventListener('tutor-search', handleTutorSearch as EventListener);
     };
@@ -97,11 +97,11 @@ const TutorSearchResults: React.FC = () => {
   useEffect(() => {
     const urlFilters = {
       institute: searchParams.get('institute') || '',
-      city: searchParams.get('city') || '',
+      upazila: searchParams.get('upazila') || '',
       subject: searchParams.get('subject') || '',
       gender: searchParams.get('gender') || ''
     };
-    
+
     setSearchFilters(urlFilters);
     fetchTutors(urlFilters);
   }, [searchParams]);
@@ -114,13 +114,13 @@ const TutorSearchResults: React.FC = () => {
           View all Tutors <ArrowRight size={16} className="ml-1" />
         </Link>
       </div>
-      
+
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
           {error}
         </div>
       )}
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-10">
         {loading ? (
           // Loading skeletons
@@ -139,7 +139,20 @@ const TutorSearchResults: React.FC = () => {
         ) : tutors.length > 0 ? (
           // Display tutors
           tutors.map((tutor) => (
-            <TutorCard key={tutor.uid} tutor={tutor} />
+            <TutorCard
+              key={tutor.uid}
+              uid={tutor.uid}
+              name={`${tutor?.first_name} ${tutor?.last_name}`}
+              teaching_type={tutor.teaching_type}
+              university={tutor.institute ? tutor.institute.name : 'Not specified'}
+              division={tutor?.division?.name || 'Not specified'}
+              upazila={tutor?.upazilas?.[0]?.name || 'Not specified'}
+              district={tutor?.districts?.[0]?.name || 'Not specified'}
+              monthlyRate={tutor.expected_salary ? tutor.expected_salary.display_range : 'Not specified'}
+              rating={tutor.avg_rating}
+              reviewCount={tutor.review_count}
+              image={tutor.profile_picture || '/lovable-uploads/ced7cd19-6baa-4f95-a194-cd4c9c7c3f0c.png'}
+            />
           ))
         ) : (
           // No tutors found
