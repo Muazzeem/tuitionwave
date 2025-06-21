@@ -5,8 +5,11 @@ import PasswordSettings from '@/components/PasswordSettings';
 import PackageSettings from '@/components/PackageSettings';
 import DashboardHeader from '@/components/DashboardHeader';
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Settings = () => {
+    const { userProfile } = useAuth();
+    console.log(userProfile);
     return (
         <div className="flex-1 bg-white dark:bg-gray-900">
             <DashboardHeader userName="Settings" />
@@ -28,12 +31,14 @@ const Settings = () => {
                                 >
                                     Password
                                 </TabsTrigger>
-                                <TabsTrigger 
+                                {(userProfile.package.package_expiry_date &&
+                                    <TabsTrigger 
                                     value="package"
                                     className="rounded-md px-6 py-2 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-sm"
                                 >
                                     Package
                                 </TabsTrigger>
+                                )}
                             </TabsList>
                         </div>
                         <TabsContent value="general" className="mt-0">

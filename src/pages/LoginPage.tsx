@@ -7,12 +7,13 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { setAuthTokens } from '@/utils/auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
+import GoogleLoginButton from '@/components/GoogleLoginButton';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { fetchProfile, userProfile } = useAuth();
   const [step, setStep] = useState<1 | 2>(1);
-  const [userType, setUserType] = useState<'tutor' | 'guardian' | null>(null);
+  const [userType, setUserType] = useState<'teacher' | 'guardian' | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -31,9 +32,9 @@ const LoginPage: React.FC = () => {
   }, [userProfile, navigate]);
 
   // Handle user type selection and automatically advance to step 2
-  const handleUserTypeChange = (value: 'tutor' | 'guardian') => {
+  const handleUserTypeChange = (value: 'teacher' | 'guardian') => {
     setUserType(value);
-    // Add a small delay for better UX
+    localStorage.setItem('userType', value);
     setTimeout(() => {
       setStep(2);
     }, 300);
@@ -69,7 +70,7 @@ const LoginPage: React.FC = () => {
       });
       
       // Navigate based on user type
-      if (userType === 'tutor') {
+      if (userType === 'teacher') {
         navigate('/teacher/dashboard');
       } else {
         navigate('/guardian/dashboard');
@@ -82,6 +83,34 @@ const LoginPage: React.FC = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleLoginSuccess = async (userData: any) => {
+    try {
+      // Save tokens from Google login response
+      setAuthTokens(userData);
+      
+      // Fetch user profile after successful Google login
+      await fetchProfile();
+      
+      toast({
+        title: "Google Login Success",
+        description: "Successfully logged in with Google!",
+      });
+      
+      // Navigate based on user type
+      if (userType === 'teacher') {
+        navigate('/teacher/dashboard');
+      } else {
+        navigate('/guardian/dashboard');
+      }
+    } catch (error) {
+      toast({
+        title: "Login Failed",
+        description: "Failed to complete Google login process.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -121,7 +150,7 @@ const LoginPage: React.FC = () => {
                 {/* Teacher Card */}
                 <div 
                   className="border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200 dark:border-gray-700 dark:hover:border-blue-400 dark:hover:bg-blue-900/20"
-                  onClick={() => handleUserTypeChange('tutor')}
+                  onClick={() => handleUserTypeChange('teacher')}
                 >
                   <div className="text-center">
                     <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 dark:bg-blue-900">
@@ -153,8 +182,38 @@ const LoginPage: React.FC = () => {
             </div>
           ) : (
             <div className="bg-white rounded-lg p-6 shadow-sm border dark:bg-gray-900">
-              <h2 className="text-2xl font-bold mb-2">Log in to {userType === 'tutor' ? 'Teacher' : 'Guardian'} Panel</h2>
-              <p className="text-gray-500 mb-6 dark:text-gray-400">Welcome! Please enter your email and password.</p>
+              <div className="flex items-center mb-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setStep(1)}
+                  className="text-gray-500 hover:text-gray-700 p-0 h-auto"
+                >
+                  ← Back
+                </Button>
+              </div>
+              
+              <h2 className="text-2xl font-bold mb-2">Log in to {userType === 'teacher' ? 'Teacher' : 'Guardian'} Panel</h2>
+              <p className="text-gray-500 mb-6 dark:text-gray-400">Welcome! Please enter your credentials or continue with Google.</p>
+              
+              {/* Google Login Button */}
+              <div className="mb-6">
+                <GoogleLoginButton
+                  userType={userType}
+                  onSuccess={handleGoogleLoginSuccess}
+                  disabled={loading}
+                />
+              </div>
+              
+              {/* Divider */}
+              <div className="relative mb-6">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-gray-300 dark:border-gray-600" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500 dark:bg-gray-900 dark:text-gray-400">Or continue with email</span>
+                </div>
+              </div>
               
               <form onSubmit={handleLogin}>
                 <div className="space-y-4">

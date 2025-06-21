@@ -18,7 +18,7 @@ const Dashboard: React.FC = () => {
     <div className="flex-1 overflow-auto dark:bg-gray-900">
       <DashboardHeader userName="John" />
 
-      <ScrollArea type="always" style={{ height: 900 }}>
+      <ScrollArea type="always" style={{ height: 800 }}>
 
       {userProfile?.user_type === "TEACHER" && completionData.completion_percentage < 50 && (
         <div className="p-6">
@@ -26,13 +26,13 @@ const Dashboard: React.FC = () => {
         </div>
       )}
 
-      {userProfile?.user_type === "TEACHER" && !userProfile.package && (
+      {userProfile?.user_type === "TEACHER" && !userProfile?.is_verified && (
         <PricingCards />
       )}
 
-      {!userProfile?.is_verified && (
+      {/* {!userProfile?.is_verified && (
         <NIDUpload />
-      )}
+      )} */}
 
       {completionData.completion_percentage >= 50 && userProfile?.is_verified && (
         <div className="p-6">

@@ -153,7 +153,7 @@ const TutorCard: React.FC<TutorCardProps> = ({
           </div>
           <div className="flex items-center gap-1 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-lg">
             <span className="font-bold text-green-700 dark:text-green-400 text-sm">
-              ৳{monthlyRate.toLocaleString()}/mo
+              {monthlyRate.toLocaleString()}/mo
             </span>
           </div>
         </div>

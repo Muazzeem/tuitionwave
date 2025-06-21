@@ -85,7 +85,7 @@ const ProfilePage: React.FC = () => {
     <div className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900">
       <DashboardHeader userName="Tutor" />
 
-       <ScrollArea type="always" style={{ height: 900 }}>
+       <ScrollArea type="always" style={{ height: 800 }}>
         <div className="p-6">
           <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
 

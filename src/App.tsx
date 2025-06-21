@@ -33,6 +33,9 @@ import JobPreparationPage from "./pages/JobPreparationPage";
 
 const queryClient = new QueryClient();
 
+
+console.log('API URL:', import.meta.env.VITE_API_URL);
+
 // Component to handle token validation and auto-redirect
 const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
