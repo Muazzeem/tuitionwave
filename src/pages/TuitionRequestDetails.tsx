@@ -245,11 +245,14 @@ const TuitionRequestDetails: React.FC = () => {
               <span className={`${getBgColorClass(requestDetails?.status_display)} px-3 py-1 rounded-lg text-sm font-medium`}>
                 {requestDetails?.status_display}
               </span>
-              <Link to={`/private-profile/tutor/${requestDetails?.tutor?.uid}`}>
+              {(
+                userProfile?.user_type === 'GUARDIAN' &&
+                <Link to={`/private-profile/tutor/${requestDetails?.tutor?.uid}`}>
                 <Button size="sm" className="w-[150px] text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700">
                   Tutor Profile
                 </Button>
               </Link>
+              )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">

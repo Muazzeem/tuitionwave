@@ -4,7 +4,7 @@ import { MessageCircle } from 'lucide-react';
 
 const EmptyState: React.FC = (showTips = false) => {
   return (
-    <div className="flex-1 flex items-center justify-center bg-gray-50">
+    <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900">
       <div className="text-center max-w-md mx-auto px-4">
         <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <MessageCircle className="h-10 w-10 text-gray-400" />

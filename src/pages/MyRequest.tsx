@@ -163,7 +163,7 @@ const MyRequest: React.FC = () => {
   const handleRequestClick = (requestId: string) => {
     // Navigate to the request details page
     const userType = userProfile?.user_type?.toLowerCase() === 'teacher' ? 'teacher' : 'guardian';
-    navigate(`/${userType}/request-details/${requestId}`);
+    navigate(`/${userType}/requests/${requestId}`);
   };
 
   const handlePreviousPage = () => {

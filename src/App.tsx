@@ -209,7 +209,7 @@ const App = () => (
                       <MainLayout><MyRequest /></MainLayout>
                     </AuthGuard>
                   } />
-                  <Route path="/teacher/request-details/:id" element={
+                  <Route path="/teacher/requests/:id" element={
                     <AuthGuard allowedRoles={['TEACHER']}>
                       <MainLayout><TuitionRequestDetails /></MainLayout>
                     </AuthGuard>
@@ -226,7 +226,7 @@ const App = () => (
                       <MainLayout><MyRequest /></MainLayout>
                     </AuthGuard>
                   } />
-                  <Route path="/guardian/request-details/:id" element={
+                  <Route path="/guardian/requests/:id" element={
                     <AuthGuard allowedRoles={['GUARDIAN']}>
                       <MainLayout><TuitionRequestDetails /></MainLayout>
                     </AuthGuard>
@@ -235,7 +235,7 @@ const App = () => (
                   {/* Redirect legacy routes to role-specific routes */}
                   <Route path="/dashboard" element={<RoleRedirect />} />
                   <Route path="/all-requests" element={<RoleRedirect pathSuffix="/requests" />} />
-                  <Route path="/request-details/:id" element={<RoleRedirect pathSuffix="/request-details" preserveParams={true} />} />
+                  <Route path="/requests/:id" element={<RoleRedirect pathSuffix="/requests" preserveParams={true} />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </TokenValidationWrapper>

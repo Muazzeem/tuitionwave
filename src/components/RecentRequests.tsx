@@ -65,7 +65,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
   });
 
   const handleDetailsClick = () => {
-    navigate(`/${userProfile.user_type.toLocaleLowerCase()}/request-details/${request.uid}`);
+    navigate(`/${userProfile.user_type.toLocaleLowerCase()}/requests/${request.uid}`);
   };
 
   const handleDeleteClick = () => {

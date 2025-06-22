@@ -50,7 +50,7 @@ const Sidebar = () => {
             <nav className="flex-1 overflow-y-auto py-4">
                 <ul className="space-y-1">
                     {menuItems.map((item, index) => {
-                        const isActive = location.pathname === item.path;
+                        const isActive = location.pathname === item.path || location.pathname.startsWith(item.path);
                         const IconComponent = item.icon;
 
                         return (

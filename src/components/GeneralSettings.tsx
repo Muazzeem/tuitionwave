@@ -37,7 +37,7 @@ interface Upazila {
 
 const GeneralSettings = () => {
   const { profile, updateProfile, loading, refreshProfile } = useUserProfile();
-  const { userProfile, fetchProfile } = useAuth();
+  const { fetchProfile } = useAuth();
   const { toast } = useToast();
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -312,6 +312,15 @@ const GeneralSettings = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+        if (!formData.phone) {
+          toast({
+            title: 'Validation Error',
+            description: 'Phone number is required.',
+            variant: 'destructive',
+          });
+          return;
+        }
+
       setIsSaving(true);
 
       const submitData = new FormData();
@@ -321,6 +330,7 @@ const GeneralSettings = () => {
       submitData.append('phone', formData.phone || '');
       submitData.append('address', formData.address || '');
       submitData.append('user_type', formData.user_type || '');
+
 
       // Add location fields as arrays to match backend expectation
       if (formData.division_id) {
@@ -454,12 +464,13 @@ const GeneralSettings = () => {
             />
           </div>
           <div>
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="phone">Phone <span className="text-red-500">*</span></Label>
             <Input
               id="phone"
               name="phone"
               value={formData.phone || ''}
               onChange={handleChange}
+              placeholder='+880123456789'
               className="mt-1"
             />
           </div>

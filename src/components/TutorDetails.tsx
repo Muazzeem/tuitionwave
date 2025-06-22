@@ -195,7 +195,7 @@ const TutorDetails: React.FC = () => {
                 <img
                   src={tutor.profile_picture_url}
                   alt="Tutor Profile"
-                  className="w-full h-full object-cover"
+                  className="w-25 h-25 object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
               </div>
