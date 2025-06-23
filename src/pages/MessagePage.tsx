@@ -1,6 +1,6 @@
 
 import React from "react";
-import MessagingInterface from "@/components/Messaging/MessagingInterface";
+import MessagingInterface from "@/components/messaging/MessagingInterface";
 import DashboardHeader from "@/components/DashboardHeader";
 
 const MessagePage: React.FC = () => {

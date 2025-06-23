@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,8 +24,37 @@ interface NavigationState {
 }
 
 const JobPreparationPage: React.FC = () => {
+  const params = useParams();
+  const navigate = useNavigate();
   const [navigationState, setNavigationState] = useState<NavigationState>({ view: 'categories' });
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Initialize navigation state from URL params
+  useEffect(() => {
+    const { categoryId, subjectId, topicId } = params;
+    
+    if (topicId && subjectId && categoryId) {
+      setNavigationState({
+        view: 'questions',
+        categoryUid: categoryId,
+        subjectUid: subjectId,
+        topicUid: topicId,
+      });
+    } else if (subjectId && categoryId) {
+      setNavigationState({
+        view: 'topics',
+        categoryUid: categoryId,
+        subjectUid: subjectId,
+      });
+    } else if (categoryId) {
+      setNavigationState({
+        view: 'subjects',
+        categoryUid: categoryId,
+      });
+    } else {
+      setNavigationState({ view: 'categories' });
+    }
+  }, [params]);
 
   // Reset page when view changes
   useEffect(() => {
@@ -60,49 +89,86 @@ const JobPreparationPage: React.FC = () => {
     enabled: navigationState.view === 'questions' && !!navigationState.topicUid,
   });
 
+  // Fetch additional data for breadcrumb names
+  const { data: categoryData } = useQuery({
+    queryKey: ['category', navigationState.categoryUid],
+    queryFn: async () => {
+      const categories = await JobPreparationService.getCategories(1);
+      return categories.results.find(cat => cat.uid === navigationState.categoryUid);
+    },
+    enabled: !!navigationState.categoryUid && !navigationState.categoryName,
+  });
+
+  const { data: subjectData } = useQuery({
+    queryKey: ['subject', navigationState.subjectUid],
+    queryFn: async () => {
+      const subjects = await JobPreparationService.getSubjects(navigationState.categoryUid!, 1);
+      return subjects.results.find(sub => sub.uid === navigationState.subjectUid);
+    },
+    enabled: !!navigationState.subjectUid && !!navigationState.categoryUid && !navigationState.subjectName,
+  });
+
+  const { data: topicData } = useQuery({
+    queryKey: ['topic', navigationState.topicUid],
+    queryFn: async () => {
+      const topics = await JobPreparationService.getTopics(navigationState.subjectUid!, 1);
+      return topics.results.find(topic => topic.uid === navigationState.topicUid);
+    },
+    enabled: !!navigationState.topicUid && !!navigationState.subjectUid && !navigationState.topicName,
+  });
+
   const handleCategoryClick = (category: Category) => {
-    setNavigationState({
-      view: 'subjects',
+    const newState = {
+      view: 'subjects' as ViewType,
       categoryUid: category.uid,
       categoryName: category.category_name,
-    });
+    };
+    setNavigationState(newState);
+    navigate(`/job-preparation/category/${category.uid}`);
   };
 
   const handleSubjectClick = (subject: Subject) => {
-    setNavigationState({
+    const newState = {
       ...navigationState,
-      view: 'topics',
+      view: 'topics' as ViewType,
       subjectUid: subject.uid,
       subjectName: subject.subject_title,
-    });
+    };
+    setNavigationState(newState);
+    navigate(`/job-preparation/category/${navigationState.categoryUid}/subject/${subject.uid}`);
   };
 
   const handleTopicClick = (topic: Topic) => {
-    setNavigationState({
+    const newState = {
       ...navigationState,
-      view: 'questions',
+      view: 'questions' as ViewType,
       topicUid: topic.uid,
       topicName: topic.topic_name,
-    });
+    };
+    setNavigationState(newState);
+    navigate(`/job-preparation/category/${navigationState.categoryUid}/subject/${navigationState.subjectUid}/topic/${topic.uid}`);
   };
 
   const handleBack = () => {
     if (navigationState.view === 'subjects') {
       setNavigationState({ view: 'categories' });
+      navigate('/job-preparation');
     } else if (navigationState.view === 'topics') {
       setNavigationState({
         view: 'subjects',
         categoryUid: navigationState.categoryUid,
-        categoryName: navigationState.categoryName,
+        categoryName: navigationState.categoryName || categoryData?.category_name,
       });
+      navigate(`/job-preparation/category/${navigationState.categoryUid}`);
     } else if (navigationState.view === 'questions') {
       setNavigationState({
         view: 'topics',
         categoryUid: navigationState.categoryUid,
-        categoryName: navigationState.categoryName,
+        categoryName: navigationState.categoryName || categoryData?.category_name,
         subjectUid: navigationState.subjectUid,
-        subjectName: navigationState.subjectName,
+        subjectName: navigationState.subjectName || subjectData?.subject_title,
       });
+      navigate(`/job-preparation/category/${navigationState.categoryUid}/subject/${navigationState.subjectUid}`);
     }
   };
 
@@ -153,29 +219,35 @@ const JobPreparationPage: React.FC = () => {
     );
   };
 
-  const renderBreadcrumb = () => (
-    <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-      <span>Job Preparation</span>
-      {navigationState.categoryName && (
-        <>
-          <span>/</span>
-          <span>{navigationState.categoryName}</span>
-        </>
-      )}
-      {navigationState.subjectName && (
-        <>
-          <span>/</span>
-          <span>{navigationState.subjectName}</span>
-        </>
-      )}
-      {navigationState.topicName && (
-        <>
-          <span>/</span>
-          <span>{navigationState.topicName}</span>
-        </>
-      )}
-    </div>
-  );
+  const renderBreadcrumb = () => {
+    const categoryName = navigationState.categoryName || categoryData?.category_name;
+    const subjectName = navigationState.subjectName || subjectData?.subject_title;
+    const topicName = navigationState.topicName || topicData?.topic_name;
+
+    return (
+      <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+        <span>Job Preparation</span>
+        {categoryName && (
+          <>
+            <span>/</span>
+            <span>{categoryName}</span>
+          </>
+        )}
+        {subjectName && (
+          <>
+            <span>/</span>
+            <span>{subjectName}</span>
+          </>
+        )}
+        {topicName && (
+          <>
+            <span>/</span>
+            <span>{topicName}</span>
+          </>
+        )}
+      </div>
+    );
+  };
 
   const renderCategories = () => (
     <div>

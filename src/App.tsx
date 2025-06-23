@@ -152,6 +152,9 @@ const App = () => (
                   <Route path="/terms" element={<TermsPage />} />
                   <Route path="/how-it-works" element={<HowItWorksPage />} />
                   <Route path="/job-preparation" element={<JobPreparationPage />} />
+                  <Route path="/job-preparation/category/:categoryId" element={<JobPreparationPage />} />
+                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId" element={<JobPreparationPage />} />
+                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId" element={<JobPreparationPage />} />
                   <Route path="/find-tutors" element={
                       <MainLayout><FindTutorsList /></MainLayout>
                   } />
