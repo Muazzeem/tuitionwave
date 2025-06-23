@@ -86,22 +86,26 @@ const ProfilePage: React.FC = () => {
       <DashboardHeader userName="Tutor" />
 
        <ScrollArea type="always" style={{ height: 800 }}>
-        <div className="p-6">
-          <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
+        <div className="p-4 sm:p-6">
+          <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Edit Profile</h1>
 
-          <ProfileCompletionAlert />
+          <div className="mb-4 sm:mb-6">
+            <ProfileCompletionAlert />
+          </div>
 
           <div className="flex justify-center w-full">
-            <div className="col-6 w-full md:w-2/3 lg:w-1/2">
-              <div className="bg-white p-8 rounded-lg border dark:bg-gray-900 :dark:border-gray-400">
-                <ProfileStepper
-                  steps={steps}
-                  currentStep={currentStep}
-                  onNext={handleNext}
-                  onPrev={handleBack}
-                />
+            <div className="w-full max-w-4xl">
+              <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-lg border dark:bg-gray-900 dark:border-gray-400">
+                <div className="mb-6 sm:mb-8">
+                  <ProfileStepper
+                    steps={steps}
+                    currentStep={currentStep}
+                    onNext={handleNext}
+                    onPrev={handleBack}
+                  />
+                </div>
 
-                <div className="mt-8 mb-10">
+                <div className="mt-6 sm:mt-8 mb-6 sm:mb-10">
                   {currentStep === 1 && (
                     <PersonalInfoForm
                       formData={formData}

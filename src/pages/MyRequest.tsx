@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DashboardHeader from "@/components/DashboardHeader";
@@ -25,6 +24,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getAccessToken } from "@/utils/auth";
 import { ContractResponse } from "@/types/contract";
 import { useAuth } from "@/contexts/AuthContext";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const MyRequest: React.FC = () => {
   const { userProfile } = useAuth();
@@ -191,10 +191,10 @@ const MyRequest: React.FC = () => {
     <div className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900">
       <DashboardHeader userName="John" />
 
-      <div className="p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold dark:text-white">My Tuition Request</h1>
-          <p className="text-gray-600 dark:text-gray-300">
+      <div className="p-4 sm:p-6">
+        <div className="mb-4 sm:mb-6">
+          <h1 className="text-xl sm:text-2xl font-bold dark:text-white">My Tuition Request</h1>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
             Explore all the tuition request from guardian
           </p>
         </div>
@@ -205,19 +205,19 @@ const MyRequest: React.FC = () => {
           className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
           hidden={isLoading}
         >
-          <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-semibold dark:text-white">All Tuition Request</h2>
-              <div className="flex gap-4">
+          <div className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-4">
+              <h2 className="text-base sm:text-lg font-semibold dark:text-white">All Tuition Request</h2>
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
                     type="text"
-                    placeholder="Search By Institute Name"
+                    placeholder="Search By Institute"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={handleKeyPress}
-                    className={`pl-10 w-[300px] ${
+                    className={`pl-10 w-full sm:w-[250px] lg:w-[300px] ${
                       isTyping ? "border-blue-400 bg-blue-50 dark:bg-blue-900/20" : ""
                     }`}
                   />
@@ -229,160 +229,167 @@ const MyRequest: React.FC = () => {
                 </div>
                 <Button
                   variant="outline"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 w-full sm:w-auto"
                   onClick={handleAdvancedSearch}
                 >
                   <Filter className="h-4 w-4" />
-                  Filters
+                  <span className="sm:inline">Filters</span>
                 </Button>
               </div>
             </div>
 
+            {/* Active filters section - responsive */}
             {isSearching && (
-              <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md flex items-center justify-between">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-medium dark:text-white">Active filters:</span>
-                  {debouncedSearchQuery && (
-                    <span className="px-2 py-1 bg-blue-100 dark:bg-blue-800 dark:text-white rounded-md text-sm flex items-center">
-                      Search: {debouncedSearchQuery}
-                      <button
-                        className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
-                        onClick={() => {
-                          setSearchQuery("");
-                          setDebouncedSearchQuery("");
-                          setCurrentPage(1);
-                        }}
-                      >
-                        ×
-                      </button>
-                    </span>
-                  )}
-                  {advancedSearch.subject && (
-                    <span className="px-2 py-1 bg-blue-100 dark:bg-blue-800 dark:text-white rounded-md text-sm flex items-center">
-                      Subject: {advancedSearch.subject}
-                      <button
-                        className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
-                        onClick={() => {
-                          setAdvancedSearch({ ...advancedSearch, subject: "" });
-                          setCurrentPage(1);
-                        }}
-                      >
-                        ×
-                      </button>
-                    </span>
-                  )}
-                  {advancedSearch.institution && (
-                    <span className="px-2 py-1 bg-blue-100 dark:bg-blue-800 dark:text-white rounded-md text-sm flex items-center">
-                      Institution: {advancedSearch.institution}
-                      <button
-                        className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
-                        onClick={() => {
-                          setAdvancedSearch({
-                            ...advancedSearch,
-                            institution: "",
-                          });
-                          setCurrentPage(1);
-                        }}
-                      >
-                        ×
-                      </button>
-                    </span>
-                  )}
+              <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium dark:text-white text-sm">Filters:</span>
+                    {debouncedSearchQuery && (
+                      <span className="px-2 py-1 bg-blue-100 dark:bg-blue-800 dark:text-white rounded-md text-xs sm:text-sm flex items-center">
+                        Search: {debouncedSearchQuery}
+                        <button
+                          className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+                          onClick={() => {
+                            setSearchQuery("");
+                            setDebouncedSearchQuery("");
+                            setCurrentPage(1);
+                          }}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    )}
+                    {advancedSearch.subject && (
+                      <span className="px-2 py-1 bg-blue-100 dark:bg-blue-800 dark:text-white rounded-md text-xs sm:text-sm flex items-center">
+                        Subject: {advancedSearch.subject}
+                        <button
+                          className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+                          onClick={() => {
+                            setAdvancedSearch({ ...advancedSearch, subject: "" });
+                            setCurrentPage(1);
+                          }}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    )}
+                    {advancedSearch.institution && (
+                      <span className="px-2 py-1 bg-blue-100 dark:bg-blue-800 dark:text-white rounded-md text-xs sm:text-sm flex items-center">
+                        Institution: {advancedSearch.institution}
+                        <button
+                          className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+                          onClick={() => {
+                            setAdvancedSearch({
+                              ...advancedSearch,
+                              institution: "",
+                            });
+                            setCurrentPage(1);
+                          }}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-xs sm:text-sm font-medium"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setDebouncedSearchQuery("");
+                      setAdvancedSearch({ subject: "", institution: "" });
+                      setIsSearching(false);
+                      setCurrentPage(1);
+                    }}
+                  >
+                    Clear all
+                  </button>
                 </div>
-                <button
-                  className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
-                  onClick={() => {
-                    setSearchQuery("");
-                    setDebouncedSearchQuery("");
-                    setAdvancedSearch({ subject: "", institution: "" });
-                    setIsSearching(false);
-                    setCurrentPage(1);
-                  }}
-                >
-                  Clear all
-                </button>
               </div>
             )}
 
+            {/* Table with horizontal scroll on mobile */}
             <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="dark:border-gray-700">
-                    <TableHead className="dark:text-gray-300">Req. ID</TableHead>
-                    <TableHead className="dark:text-gray-300">Institution</TableHead>
-                    <TableHead className="dark:text-gray-300">Student Class</TableHead>
-                    <TableHead className="dark:text-gray-300">Subject</TableHead>
-                    <TableHead className="dark:text-gray-300">Area</TableHead>
-                    <TableHead className="dark:text-gray-300">Tuition Type</TableHead>
-                    <TableHead className="dark:text-gray-300">Status</TableHead>
-                    <TableHead className="text-right dark:text-gray-300">Others</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data?.results.map((request, index) => (
-                    <TableRow key={index} className="dark:border-gray-700">
-                      <TableCell
-                        className="font-medium cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 uppercase dark:text-white"
-                        onClick={() => handleRequestClick(request.uid)}
-                      >
-                        #{request.uid.slice(0, 8)}
-                      </TableCell>
-                      <TableCell className="dark:text-gray-300">{request.student_institution}</TableCell>
-                      <TableCell className="dark:text-gray-300">{request.student_class}</TableCell>
-                      <TableCell className="dark:text-gray-300">
-                        {request.subjects.map((s) => s.subject).join(", ")}
-                      </TableCell>
-                      <TableCell className="dark:text-gray-300">
-                        {request.student_area?.name || "N/A"}
-                      </TableCell>
-                      <TableCell className="dark:text-gray-300">{request.tuition_type}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center">
-                          <span
-                            className={`h-2 w-2 rounded-full ${getStatusDot(
-                              request.status_display
-                            )} mr-2`}
-                          ></span>
-                          <span
-                            className={`text-sm ${getStatusColor(
-                              request.status_display
-                            )}`}
-                          >
-                            {request.status_display}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 p-0"
-                        >
-                          <span className="sr-only">Open menu</span>
-                          <svg
-                            className="h-4 w-4 dark:text-gray-300"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="2"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-                            />
-                          </svg>
-                        </Button>
-                      </TableCell>
+              <div className="min-w-[800px]">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="dark:border-gray-700">
+                      <TableHead className="dark:text-gray-300 text-xs sm:text-sm">Req. ID</TableHead>
+                      <TableHead className="dark:text-gray-300 text-xs sm:text-sm">Institution</TableHead>
+                      <TableHead className="dark:text-gray-300 text-xs sm:text-sm">Class</TableHead>
+                      <TableHead className="dark:text-gray-300 text-xs sm:text-sm">Subject</TableHead>
+                      <TableHead className="dark:text-gray-300 text-xs sm:text-sm">Area</TableHead>
+                      <TableHead className="dark:text-gray-300 text-xs sm:text-sm">Type</TableHead>
+                      <TableHead className="dark:text-gray-300 text-xs sm:text-sm">Status</TableHead>
+                      <TableHead className="text-right dark:text-gray-300 text-xs sm:text-sm">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {data?.results.map((request, index) => (
+                      <TableRow key={index} className="dark:border-gray-700">
+                        <TableCell
+                          className="font-medium cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 uppercase dark:text-white text-xs sm:text-sm"
+                          onClick={() => handleRequestClick(request.uid)}
+                        >
+                          #{request.uid.slice(0, 8)}
+                        </TableCell>
+                        <TableCell className="dark:text-gray-300 text-xs sm:text-sm">{request.student_institution}</TableCell>
+                        <TableCell className="dark:text-gray-300 text-xs sm:text-sm">{request.student_class}</TableCell>
+                        <TableCell className="dark:text-gray-300 text-xs sm:text-sm">
+                          {request.subjects.map((s) => s.subject).join(", ")}
+                        </TableCell>
+                        <TableCell className="dark:text-gray-300 text-xs sm:text-sm">
+                          {request.student_area?.name || "N/A"}
+                        </TableCell>
+                        <TableCell className="dark:text-gray-300 text-xs sm:text-sm">{request.tuition_type}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center">
+                            <span
+                              className={`h-2 w-2 rounded-full ${getStatusDot(
+                                request.status_display
+                              )} mr-2`}
+                            ></span>
+                            <span
+                              className={`text-xs sm:text-sm ${getStatusColor(
+                                request.status_display
+                              )}`}
+                            >
+                              {request.status_display}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 sm:h-8 sm:w-8 p-0"
+                          >
+                            <span className="sr-only">Open menu</span>
+                            <svg
+                              className="h-3 w-3 sm:h-4 sm:w-4 dark:text-gray-300"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth="2"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+                              />
+                            </svg>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
 
+            {/* Responsive pagination */}
             <div className="mt-4">
               <Pagination>
-                <PaginationContent>
+                <PaginationContent className="flex-wrap gap-1">
                   <PaginationItem>
                     <PaginationPrevious
                       onClick={handlePreviousPage}
@@ -392,8 +399,8 @@ const MyRequest: React.FC = () => {
                     />
                   </PaginationItem>
 
-                  {Array.from({ length: data?.total_pages || 1 }, (_, i) => (
-                    <PaginationItem key={i}>
+                  {Array.from({ length: Math.min(data?.total_pages || 1, 5) }, (_, i) => (
+                    <PaginationItem key={i} className="hidden sm:block">
                       <PaginationLink
                         href="#"
                         isActive={currentPage === i + 1}
@@ -419,10 +426,10 @@ const MyRequest: React.FC = () => {
         </div>
       </div>
 
-      {/* Advanced Search Dialog */}
-      <dialog id="search-dialog" className="p-0 rounded-lg shadow-xl dark:bg-gray-800">
-        <div className="w-[400px] p-6">
-          <h3 className="text-lg font-semibold mb-4 dark:text-white">Advanced Search</h3>
+      {/* Responsive Advanced Search Dialog */}
+      <dialog id="search-dialog" className="p-0 rounded-lg shadow-xl dark:bg-gray-800 max-w-[95vw] w-full sm:max-w-md">
+        <div className="w-full p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold mb-4 dark:text-white">Advanced Search</h3>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1 dark:text-gray-200">Subject</label>
@@ -454,8 +461,8 @@ const MyRequest: React.FC = () => {
                 }
               />
             </div>
-            <div className="flex justify-end gap-3 mt-6">
-              <Button className="dark:text-gray-300 hover:dark:bg-gray-700"
+            <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
+              <Button className="dark:text-gray-300 hover:dark:bg-gray-700 w-full sm:w-auto"
                 variant="outline"
                 onClick={() => {
                   const searchDialog = document.getElementById(
@@ -468,7 +475,7 @@ const MyRequest: React.FC = () => {
               >
                 Cancel
               </Button>
-              <Button className="dark:text-gray-300"
+              <Button className="dark:text-gray-300 w-full sm:w-auto"
                 onClick={() => {
                   setCurrentPage(1);
                   setIsSearching(true);

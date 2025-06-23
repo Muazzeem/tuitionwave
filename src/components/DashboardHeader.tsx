@@ -1,5 +1,6 @@
+
 import React, { useState } from "react";
-import { ChevronDown, User, LogOut, Settings } from "lucide-react";
+import { ChevronDown, User, LogOut, Settings, Menu } from "lucide-react";
 import NotificationDropdown from "./NotificationDropdown";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "./ThemeToggle";
@@ -26,35 +27,41 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
   };
 
   return (
-    <div className="flex justify-between items-center py-1 px-6 border-b border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700">
-      <h1 className="text-xl font-bold">
-        Welcome Back, {userProfile?.first_name}!
-      </h1>
+    <div className="flex justify-between items-center py-2 px-4 sm:px-6 border-b border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700">
+      {/* Left side - Welcome message */}
+      <div className="flex-1 min-w-0">
+        <h1 className="text-lg sm:text-xl font-bold truncate">
+          <span className="hidden sm:inline">Welcome Back, </span>
+          <span className="sm:hidden">Hi, </span>
+          {userProfile?.first_name}!
+        </h1>
+      </div>
 
-      <div className="flex items-center gap-4">
+      {/* Right side - Actions */}
+      <div className="flex items-center gap-2 sm:gap-4">
         <ThemeToggle />
         <NotificationDropdown onMarkAllRead={handleMarkAllNotificationsRead} />
 
         <div className="relative">
           <div
-            className="flex items-center gap-2 cursor-pointer rounded-lg hover:bg-gray-100 p-2 dark:hover:bg-gray-700"
+            className="flex items-center gap-1 sm:gap-2 cursor-pointer rounded-lg hover:bg-gray-100 p-1 sm:p-2 dark:hover:bg-gray-700"
             onClick={toggleDropdown}
           >
             {userProfile.user_type === "TEACHER" ? (
-              <div className="relative w-10 h-10">
+              <div className="relative w-8 h-8 sm:w-10 sm:h-10">
                 <img
                   src={userProfile?.profile_picture}
                   alt="User avatar"
                   className="h-full w-full object-cover rounded-full border-2 border-yellow-500 crown-image"
                 />
                 {userProfile.is_verified && (
-                  <div className="crown-icon absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <div className="crown-icon absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2 text-xs sm:text-sm">
                     👑
                   </div>
                 )}
               </div>
             ) : (
-              <div className="h-8 w-8 rounded-full bg-gray-300 overflow-hidden">
+              <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-gray-300 overflow-hidden">
                 <img
                   src={userProfile?.profile_picture}
                   alt="User avatar"
@@ -63,10 +70,10 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
               </div>
             )}
 
-            <span className="text-sm font-medium">
+            <span className="text-xs sm:text-sm font-medium hidden sm:inline">
               {userProfile?.first_name}
             </span>
-            <ChevronDown className="h-4 w-4 text-gray-500" />
+            <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
           </div>
 
           {isDropdownOpen && (
