@@ -32,6 +32,7 @@ export interface PackageData {
 }
 
 export interface ProfileData {
+  has_nid: any;
   user_type: string;
   id?: number;
   first_name: string;

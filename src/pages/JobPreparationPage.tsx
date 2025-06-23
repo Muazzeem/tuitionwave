@@ -314,7 +314,7 @@ const JobPreparationPage: React.FC = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Badge variant="secondary">Category #{category.category_no}</Badge>
+                  <Badge variant="secondary">Category No #{category.category_no}</Badge>
                 </CardContent>
               </Card>
             ))}

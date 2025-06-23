@@ -26,15 +26,15 @@ const Dashboard: React.FC = () => {
         </div>
       )}
 
-      {userProfile?.user_type === "TEACHER" && !userProfile?.is_verified && (
+      {userProfile?.user_type === "TEACHER" && !userProfile?.is_verified && userProfile?.has_nid &&(
         <PricingCards />
       )}
 
-      {/* {!userProfile?.is_verified && (
+      {!userProfile?.has_nid && (
         <NIDUpload />
-      )} */}
+      )}
 
-      {completionData.completion_percentage >= 50 && userProfile?.is_verified && (
+      {completionData.completion_percentage >= 50 && userProfile?.is_verified && userProfile?.has_nid && (
         <div className="p-6">
           <h2 className="text-xl font-bold mb-6 dark:text-white">Dashboard</h2>
 

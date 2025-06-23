@@ -157,7 +157,7 @@ const NIDUpload = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-2">
+    <div className="bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-2">
       <div className="w-full max-w-2xl">
         {/* Header Section */}
         <div className="text-center mb-8">
