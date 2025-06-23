@@ -13,7 +13,7 @@ const Settings = () => {
     return (
         <div className="flex-1 bg-white dark:bg-gray-900">
             <DashboardHeader userName="Settings" />
-            <ScrollArea type="always" style={{ height: 800 }}>
+            <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
             <div className="p-4 sm:p-6 max-w-full lg:max-w-[1211px] mx-auto">
                 <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                     <Tabs defaultValue="general" className="w-full">

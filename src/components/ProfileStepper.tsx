@@ -37,7 +37,7 @@ export const ProfileStepper: React.FC<ProfileStepperProps> = ({ steps, currentSt
                   <span className="font-semibold">{String(step.id).padStart(2, '0')}</span>
                 )}
               </div>
-              <span className={`mt-2 text-sm font-medium ${isActive ? 'text-blue-600' : isCompleted ? 'text-blue-600' : 'text-gray-400'}`}>
+              <span className={`mt-2 text-sm font-medium hidden lg:block md:block ${isActive ? 'text-blue-600' : isCompleted ? 'text-blue-600' : 'text-gray-400'}`}>
                 {step.title}
               </span>
             </div>

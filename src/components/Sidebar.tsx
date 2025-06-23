@@ -38,7 +38,7 @@ const Sidebar = () => {
                     </h1>}
                 <button
                     onClick={toggleSidebar}
-                    className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                    className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 hidden md:block lg:block"
                 >
                     {isExpanded ? 
                         <ChevronLeft size={18} className="text-gray-700 dark:text-gray-300" /> : 

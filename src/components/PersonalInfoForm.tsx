@@ -124,7 +124,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
   return (
     <div className="space-y-6">
       {isLoading && <div className="text-center text-gray-500">Loading profile data...</div>}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="gender">Gender</Label>
           <Select

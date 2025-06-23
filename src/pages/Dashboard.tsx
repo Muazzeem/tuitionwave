@@ -18,7 +18,7 @@ const Dashboard: React.FC = () => {
     <div className="flex-1 overflow-auto dark:bg-gray-900">
       <DashboardHeader userName="John" />
 
-      <ScrollArea type="always" style={{ height: 800 }}>
+      <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
 
       {userProfile?.user_type === "TEACHER" && completionData.completion_percentage < 50 && (
         <div className="p-6">
