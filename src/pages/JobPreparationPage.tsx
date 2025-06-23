@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { ChevronLeft, BookOpen, FileText, HelpCircle, Clock } from 'lucide-react';
+import { ChevronLeft, BookOpen, FileText, HelpCircle, Clock, CheckCircle, XCircle } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
 import { Category, Subject, Topic, Question } from '@/types/jobPreparation';
 
@@ -26,12 +26,19 @@ interface NavigationState {
 const JobPreparationPage: React.FC = () => {
   const params = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [navigationState, setNavigationState] = useState<NavigationState>({ view: 'categories' });
   const [currentPage, setCurrentPage] = useState(1);
+  const [isReadingMode, setIsReadingMode] = useState(false);
 
   // Initialize navigation state from URL params
   useEffect(() => {
     const { categoryId, subjectId, topicId } = params;
+    const page = parseInt(searchParams.get('page') || '1');
+    const readingMode = searchParams.get('mode') === 'reading';
+    
+    setCurrentPage(page);
+    setIsReadingMode(readingMode);
     
     if (topicId && subjectId && categoryId) {
       setNavigationState({
@@ -54,12 +61,24 @@ const JobPreparationPage: React.FC = () => {
     } else {
       setNavigationState({ view: 'categories' });
     }
-  }, [params]);
+  }, [params, searchParams]);
 
   // Reset page when view changes
   useEffect(() => {
-    setCurrentPage(1);
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+      updateUrlParams(1);
+    }
   }, [navigationState.view, navigationState.categoryUid, navigationState.subjectUid, navigationState.topicUid]);
+
+  const updateUrlParams = (page: number, readingMode?: boolean) => {
+    const newSearchParams = new URLSearchParams();
+    if (page > 1) newSearchParams.set('page', page.toString());
+    if (readingMode !== undefined ? readingMode : isReadingMode) {
+      newSearchParams.set('mode', 'reading');
+    }
+    setSearchParams(newSearchParams);
+  };
 
   // Categories Query
   const { data: categoriesData, isLoading: categoriesLoading } = useQuery({
@@ -82,11 +101,18 @@ const JobPreparationPage: React.FC = () => {
     enabled: navigationState.view === 'topics' && !!navigationState.subjectUid,
   });
 
-  // Questions Query
+  // Questions Query (regular mode)
   const { data: questionsData, isLoading: questionsLoading } = useQuery({
     queryKey: ['questions', navigationState.topicUid, currentPage],
     queryFn: () => JobPreparationService.getQuestions(navigationState.topicUid!, currentPage),
-    enabled: navigationState.view === 'questions' && !!navigationState.topicUid,
+    enabled: navigationState.view === 'questions' && !!navigationState.topicUid && !isReadingMode,
+  });
+
+  // Questions Query (reading mode)
+  const { data: readingQuestionsData, isLoading: readingQuestionsLoading } = useQuery({
+    queryKey: ['questions-reading', navigationState.topicUid, currentPage],
+    queryFn: () => JobPreparationService.getQuestionsReadingMode(navigationState.topicUid!, currentPage),
+    enabled: navigationState.view === 'questions' && !!navigationState.topicUid && isReadingMode,
   });
 
   // Fetch additional data for breadcrumb names
@@ -172,8 +198,20 @@ const JobPreparationPage: React.FC = () => {
     }
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    updateUrlParams(page);
+  };
+
+  const handleModeToggle = () => {
+    const newReadingMode = !isReadingMode;
+    setIsReadingMode(newReadingMode);
+    updateUrlParams(1, newReadingMode);
+    setCurrentPage(1);
+  };
+
   const renderPagination = (count: number, hasNext: boolean, hasPrevious: boolean) => {
-    const totalPages = Math.ceil(count / 20); // Assuming 20 items per page
+    const totalPages = Math.ceil(count / 20);
     
     if (totalPages <= 1) return null;
 
@@ -184,7 +222,7 @@ const JobPreparationPage: React.FC = () => {
             {hasPrevious && (
               <PaginationItem>
                 <PaginationPrevious 
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                   className="cursor-pointer"
                 />
               </PaginationItem>
@@ -195,7 +233,7 @@ const JobPreparationPage: React.FC = () => {
               return (
                 <PaginationItem key={pageNum}>
                   <PaginationLink
-                    onClick={() => setCurrentPage(pageNum)}
+                    onClick={() => handlePageChange(pageNum)}
                     isActive={currentPage === pageNum}
                     className="cursor-pointer"
                   >
@@ -208,7 +246,7 @@ const JobPreparationPage: React.FC = () => {
             {hasNext && (
               <PaginationItem>
                 <PaginationNext 
-                  onClick={() => setCurrentPage(prev => prev + 1)}
+                  onClick={() => handlePageChange(currentPage + 1)}
                   className="cursor-pointer"
                 />
               </PaginationItem>
@@ -243,6 +281,12 @@ const JobPreparationPage: React.FC = () => {
           <>
             <span>/</span>
             <span>{topicName}</span>
+            {navigationState.view === 'questions' && (
+              <>
+                <span>/</span>
+                <span>{isReadingMode ? 'Reading Mode' : 'Practice Mode'}</span>
+              </>
+            )}
           </>
         )}
       </div>
@@ -372,64 +416,116 @@ const JobPreparationPage: React.FC = () => {
     </div>
   );
 
-  const renderQuestions = () => (
-    <div>
-      <div className="flex items-center space-x-4 mb-6">
-        <Button variant="ghost" onClick={handleBack}>
-          <ChevronLeft className="h-4 w-4 mr-2" />
-          Back
-        </Button>
-        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">Questions</h2>
-      </div>
-      {questionsLoading ? (
-        <div className="text-center py-8">Loading questions...</div>
-      ) : (
-        <>
-          <div className="space-y-6">
-            {questionsData?.results.map((question) => (
-              <Card key={question.uid}>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Question #{question.question_number}</span>
-                    <div className="flex items-center space-x-2 text-sm text-gray-600">
-                      <Clock className="h-4 w-4" />
-                      <span>{question.time_limit_seconds}s</span>
-                      <Badge variant="outline">
-                        {question.marks} {question.marks === 1 ? 'mark' : 'marks'}
-                      </Badge>
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="mb-4 text-lg">{question.question_text}</p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {question.options.map((option) => (
-                      <div 
-                        key={option.uid} 
-                        className="p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
-                      >
-                        <span className="font-medium">{option.option_label}</span> {option.option_text}
-                      </div>
-                    ))}
-                  </div>
-                  {question.negative_marks > 0 && (
-                    <p className="mt-3 text-sm text-red-600">
-                      Negative marks: {question.negative_marks}
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+  const renderQuestions = () => {
+    const currentQuestionsData = isReadingMode ? readingQuestionsData : questionsData;
+    const currentLoading = isReadingMode ? readingQuestionsLoading : questionsLoading;
+
+    return (
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-4">
+            <Button variant="ghost" onClick={handleBack}>
+              <ChevronLeft className="h-4 w-4 mr-2" />
+              Back
+            </Button>
+            <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">
+              Questions {isReadingMode ? '(Reading Mode)' : '(Practice Mode)'}
+            </h2>
           </div>
-          {questionsData && renderPagination(
-            questionsData.count, 
-            !!questionsData.next, 
-            !!questionsData.previous
-          )}
-        </>
-      )}
-    </div>
-  );
+          <Button 
+            onClick={handleModeToggle}
+            variant={isReadingMode ? "default" : "outline"}
+          >
+            {isReadingMode ? 'Switch to Practice' : 'Switch to Reading'}
+          </Button>
+        </div>
+        
+        {currentLoading ? (
+          <div className="text-center py-8">Loading questions...</div>
+        ) : (
+          <>
+            <div className="space-y-6">
+              {currentQuestionsData?.results.map((question) => (
+                <Card key={question.uid}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      <span>Question #{question.question_number}</span>
+                      <div className="flex items-center space-x-2 text-sm text-gray-600">
+                        <Clock className="h-4 w-4" />
+                        <span>{question.time_limit_seconds}s</span>
+                        <Badge variant="outline">
+                          {question.marks} {question.marks === 1 ? 'mark' : 'marks'}
+                        </Badge>
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="mb-4 text-lg">{question.question_text}</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {question.options.map((option) => (
+                        <div 
+                          key={option.uid} 
+                          className={`p-3 border rounded-lg ${
+                            isReadingMode 
+                              ? option.is_correct 
+                                ? 'bg-green-50 border-green-300 dark:bg-green-900/20' 
+                                : 'hover:bg-gray-50 dark:hover:bg-gray-800'
+                              : 'hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span>
+                              <span className="font-medium">{option.option_label}</span> {option.option_text}
+                            </span>
+                            {isReadingMode && option.is_correct && (
+                              <CheckCircle className="h-5 w-5 text-green-600" />
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {isReadingMode && question.correct_option && (
+                      <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                          <span className="font-semibold text-green-800 dark:text-green-200">Correct Answer:</span>
+                        </div>
+                        <p className="text-green-700 dark:text-green-300">
+                          {question.correct_option.option_label} {question.correct_option.option_text}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {isReadingMode && question.explanation && (
+                      <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <HelpCircle className="h-5 w-5 text-blue-600" />
+                          <span className="font-semibold text-blue-800 dark:text-blue-200">Explanation:</span>
+                        </div>
+                        <p className="text-blue-700 dark:text-blue-300">{question.explanation}</p>
+                      </div>
+                    )}
+                    
+                    {question.negative_marks > 0 && (
+                      <p className="mt-3 text-sm text-red-600">
+                        Negative marks: {question.negative_marks}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            {currentQuestionsData && renderPagination(
+              currentQuestionsData.count, 
+              !!currentQuestionsData.next, 
+              !!currentQuestionsData.previous
+            )}
+          </>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen flex flex-col">

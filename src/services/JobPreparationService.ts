@@ -41,6 +41,14 @@ class JobPreparationService {
     });
     return response.data;
   }
+
+  async getQuestionsReadingMode(topicUid: string, page: number = 1): Promise<QuestionsResponse> {
+    const response = await axios.get(`${API_BASE_URL}/api/topics/${topicUid}/questions/reading-mode/`, {
+      params: { page },
+      headers: this.getAuthHeaders(),
+    });
+    return response.data;
+  }
 }
 
 export default new JobPreparationService();

@@ -25,6 +25,7 @@ export interface QuestionOption {
   option_label: string;
   option_text: string;
   order: number;
+  is_correct?: boolean;
 }
 
 export interface Question {
@@ -34,7 +35,10 @@ export interface Question {
   marks: number;
   negative_marks: number;
   time_limit_seconds: number;
+  explanation?: string;
+  topic?: Topic;
   options: QuestionOption[];
+  correct_option?: QuestionOption;
 }
 
 export interface PaginatedResponse<T> {
