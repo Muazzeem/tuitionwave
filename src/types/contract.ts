@@ -32,6 +32,8 @@ export interface ContractTutor {
 }
 
 export interface Contract {
+  student_address: string | number;
+  version_bangla_english: string | number;
   active_days: any;
   family_members: string | number;
   student_gender: string | null;

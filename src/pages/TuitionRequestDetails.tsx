@@ -22,7 +22,7 @@ const DetailItem: FC<DetailItemProps> = ({ label, value }) => {
       <dt className="font-medium text-gray-600 dark:text-gray-300 w-32 md:w-40">
         {label}:
       </dt>
-      <dd className="text-gray-900 dark:text-gray-200">
+      <dd className="text-gray-900 dark:text-gray-200 capitalize">
         {value !== undefined && value !== null ? value : "N/A"}
       </dd>
     </div>
@@ -278,6 +278,10 @@ const TuitionRequestDetails: React.FC = () => {
                   label="Gender"
                   value={requestDetails?.student_gender}
                 />
+                <DetailItem
+                  label="Version"
+                  value={requestDetails?.version_bangla_english}
+                />
               </div>
               <div className="space-y-4">
                 <DetailItem
@@ -288,6 +292,12 @@ const TuitionRequestDetails: React.FC = () => {
                   label="Tuition Type"
                   value={requestDetails?.tuition_type}
                 />
+                {(requestDetails?.tuition_type === 'HOME' || requestDetails?.tuition_type === 'BOTH') && (
+                  <DetailItem
+                    label="Address"
+                    value={requestDetails?.student_address}
+                  />
+                )}
                 <DetailItem
                   label="Tuition Members"
                   value={requestDetails?.family_members}

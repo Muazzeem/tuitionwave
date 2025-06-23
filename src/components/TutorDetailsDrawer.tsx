@@ -6,6 +6,8 @@ import { Button } from "./ui/button";
 import { Tutor } from "@/types/tutor";
 import { Skeleton } from "@/components/ui/skeleton"; // Import the Skeleton component
 import ReviewSection from "./ReviewSection";
+import { useAuth } from "@/contexts/AuthContext";
+import { Link } from "react-router-dom";
 
 interface TutorDetailsDrawerProps {
   isOpen: boolean;
@@ -26,6 +28,7 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
   const [tutorDetails, setTutorDetails] = useState<Tutor | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { userProfile } = useAuth();
 
   const openContactDrawer = () => {
     onClose();
@@ -255,11 +258,20 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
             ) : null}
           </div>
 
-          {tutorDetails && !loading && !error && (
+          {tutorDetails && !loading && !error &&  (
             <div className="p-4 border-t">
-              <Button onClick={openContactDrawer} className="w-full min-h-[55px] dark:text-white">
-                Contact Tutor
-              </Button>
+              {userProfile?(
+                <Button onClick={openContactDrawer} className="w-full min-h-[55px] dark:text-white">
+                  Contact Tutor
+                </Button>
+              ): (
+                <Link to="/login">
+                  <Button  className="w-full min-h-[55px] dark:text-white">
+                    Login to Contact Tutor
+                  </Button>
+                </Link>
+              )}
+              
             </div>
           )}
         </div>
