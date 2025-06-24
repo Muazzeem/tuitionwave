@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { ThemeToggle } from "./ThemeToggle";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { userProfile } = useAuth();
   const navigate = useNavigate();
   
   // Mock user profile for demonstration
-  const userProfile = { user_type: 'teacher' }; // Set to null to show login state
   const userType = userProfile?.user_type?.toLowerCase() === 'teacher' ? 'teacher' : 'guardian';
 
   const goToDashboard = () => {
@@ -23,11 +24,6 @@ const Header = () => {
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
-  };
-
-  const handleNavClick = (path) => {
-    console.log(`Navigating to ${path}`);
-    closeMobileMenu();
   };
 
   return (
@@ -67,7 +63,7 @@ const Header = () => {
             {/* Theme Toggle Placeholder */}
             <ThemeToggle />
             
-            {userProfile.user_type === 'TEACHER' || userProfile.user_type === 'GUARDIAN' ? (
+            {userProfile?.user_type === 'TEACHER' || userProfile?.user_type === 'GUARDIAN' ? (
               <button
                 className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 onClick={goToDashboard}
@@ -128,7 +124,7 @@ const Header = () => {
               
               {/* Mobile Auth Button */}
               <div className="pt-4">
-                {userProfile.user_type === 'TEACHER' || userProfile.user_type === 'GUARDIAN' ? (
+                {userProfile?.user_type === 'TEACHER' || userProfile?.user_type === 'GUARDIAN' ? (
                   <button
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-3 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     onClick={goToDashboard}
