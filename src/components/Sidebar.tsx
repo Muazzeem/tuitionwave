@@ -29,7 +29,7 @@ const Sidebar = () => {
     };
 
     return (
-        <div className={`${isExpanded ? 'w-56' : 'w-16'} bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col h-screen transition-all duration-500 relative`}>
+        <div className={`${isExpanded ? 'w-56' : 'w-10'} lg:w-14 md:w-15 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col h-screen transition-all duration-500 relative z-10`}>
             <div className="p-3 flex justify-between items-center align-middle">
                 {isExpanded && <h1 className="text-xl font-bold mt-2 dark:text-white">
                     <Link to="/" className="flex items-center">
@@ -57,7 +57,7 @@ const Sidebar = () => {
                             <li key={index}>
                                 <Link
                                     to={item.path}
-                                    className={`flex items-center px-4 py-2 text-sm ${isActive
+                                    className={`flex items-center px-1 lg:px-4 md:px-4 py-2 text-sm ${isActive
                                         ? 'bg-blue-500 text-white'
                                         : 'text-gray-700 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-900/30'
                                         } ${!isExpanded && 'justify-center'}`}

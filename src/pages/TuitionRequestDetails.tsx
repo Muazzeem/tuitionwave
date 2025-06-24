@@ -222,7 +222,7 @@ const TuitionRequestDetails: React.FC = () => {
   return (
     <div className="flex-1 overflow-auto dark:bg-gray-900">
       <DashboardHeader userName={userProfile?.first_name || "User"} />
-      <div className="p-6">
+      <div className="p-3 lg:p-6 md:p-6 mb-6">
         <div className="mb-6">
           <h1 className="text-2xl font-bold uppercase dark:text-white">
             Request #{requestDetails?.uid?.slice(0, 8) || ""}
@@ -239,8 +239,8 @@ const TuitionRequestDetails: React.FC = () => {
           </Button>
         </div>
 
-        <div className="container">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-white-200 dark:border-gray-700">
+        <div className="container p-0">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 lg:p-6 md:p-6 border border-white-200 dark:border-gray-700">
             <div className="ml-auto flex mb-3 justify-between h-7">
               <span className={`${getBgColorClass(requestDetails?.status_display)} px-3 py-1 rounded-lg text-sm font-medium`}>
                 {requestDetails?.status_display}

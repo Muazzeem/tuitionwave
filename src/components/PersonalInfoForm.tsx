@@ -15,6 +15,21 @@ import { getAccessToken } from '@/utils/auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { Textarea } from './ui/textarea';
 
+interface User {
+  preferred_upazila: any;
+  preferred_districts: any;
+  division: any;
+  phone: string;
+  email: string;
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+  profile_picture: string | null;
+  address: string;
+}
+
+
 interface Division {
   id: number;
   name: string;
@@ -60,6 +75,8 @@ interface ProfileFormData {
 }
 
 interface TutorProfileResponse {
+  profile_picture_url: null;
+  user: User;
   uid: string;
   first_name?: string;
   last_name?: string;
@@ -71,18 +88,7 @@ interface TutorProfileResponse {
   birth_date: string | null;
   linkedin_profile: string | null;
   description: string | null;
-  division?: {
-    id: number;
-    name: string;
-  };
-  preferred_districts?: Array<{
-    id: number;
-    name: string;
-  }>;
-  preferred_upazila?: Array<{
-    id: number;
-    name: string;
-  }>;
+
 }
 
 interface PersonalInfoFormProps {
@@ -117,7 +123,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
   const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
   const [showUpazilaDropdown, setShowUpazilaDropdown] = useState(false);
 
-  const isTeacher = userProfile?.user_type === 'TUTOR';
+  const isTeacher = userProfile?.user_type === 'TEACHER';
 
   // Fetch divisions on component mount for teachers
   useEffect(() => {
@@ -218,40 +224,27 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
           }
         );
         const profileData: TutorProfileResponse = response.data;
-
+        console.log(profileData);
         // Update form data with fetched profile data
         updateFormData({
           uid: profileData.uid,
-          first_name: profileData.first_name || '',
-          last_name: profileData.last_name || '',
-          email: profileData.email || '',
-          phone: profileData.phone || '',
-          address: profileData.address || '',
-          profile_picture: profileData.profile_picture || null,
+          first_name: profileData.user.first_name || '',
+          last_name: profileData.user.last_name || '',
+          email: profileData.user.email || '',
+          phone: profileData.user.phone || '',
+          address: profileData.user.address || '',
+          profile_picture: profileData.profile_picture_url || null,
           gender: profileData.gender_display ? profileData.gender_display.toUpperCase() : '',
           birthDate: profileData.birth_date ? parseISO(profileData.birth_date) : null,
           linkedinProfile: profileData.linkedin_profile || '',
           description: profileData.description || '',
-          division_id: profileData.division?.id || null,
-          preferred_district_id: profileData.preferred_districts?.[0]?.id || null,
-          preferred_upazila_id: profileData.preferred_upazila?.[0]?.id || null
+          division_id: profileData.user.division?.id || null,
+          preferred_district_id: profileData.user.preferred_districts?.[0]?.id || null,
+          preferred_upazila_id: profileData.user.preferred_upazila?.[0]?.id || null
         });
 
-        if (profileData.profile_picture && typeof profileData.profile_picture === 'string') {
-          setPreviewUrl(profileData.profile_picture);
-        }
-
-        // Set search values to display selected names for teachers
-        if (isTeacher) {
-          if (profileData.division) {
-            setDivisionSearch(profileData.division.name);
-          }
-          if (profileData.preferred_districts?.[0]) {
-            setDistrictSearch(profileData.preferred_districts[0].name);
-          }
-          if (profileData.preferred_upazila?.[0]) {
-            setUpazilaSearch(profileData.preferred_upazila[0].name);
-          }
+        if (profileData.profile_picture_url && typeof profileData.profile_picture_url === 'string') {
+          setPreviewUrl(profileData.profile_picture_url);
         }
 
       } catch (error) {
@@ -432,7 +425,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
           }
         );
       } else {
-        // For non-teachers, only update tutor-specific data
         const payload = {
           gender: formData.gender,
           birth_date: formData.birthDate ? format(formData.birthDate, 'yyyy-MM-dd') : null,
