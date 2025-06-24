@@ -263,7 +263,7 @@ const JobPreparationPage: React.FC = () => {
     const topicName = navigationState.topicName || topicData?.topic_name;
 
     return (
-      <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+      <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 hidden md:block lg:block">
         <span>Job Preparation</span>
         {categoryName && (
           <>
@@ -295,7 +295,7 @@ const JobPreparationPage: React.FC = () => {
 
   const renderCategories = () => (
     <div>
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-white">Categories</h2>
+      <h2 className="text-xl md:text-2xl font-semibold mb-6 text-gray-800 dark:text-white">Categories</h2>
       {categoriesLoading ? (
         <div className="text-center py-8">Loading categories...</div>
       ) : (
@@ -310,7 +310,7 @@ const JobPreparationPage: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <BookOpen className="h-5 w-5 text-blue-600" />
-                    <span>{category.category_name}</span>
+                    <span className='text-lg md:text-2xl'>{category.category_name}</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -336,7 +336,7 @@ const JobPreparationPage: React.FC = () => {
           <ChevronLeft className="h-4 w-4 mr-2" />
           Back
         </Button>
-        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">Subjects</h2>
+        <h2 className="text-lg md:text-2xl font-semibold text-gray-800 dark:text-white">Subjects</h2>
       </div>
       {subjectsLoading ? (
         <div className="text-center py-8">Loading subjects...</div>
@@ -352,7 +352,7 @@ const JobPreparationPage: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <FileText className="h-5 w-5 text-green-600" />
-                    <span>{subject.subject_title}</span>
+                    <span className='text-lg md:text-2xl'>{subject.subject_title}</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -378,7 +378,7 @@ const JobPreparationPage: React.FC = () => {
           <ChevronLeft className="h-4 w-4 mr-2" />
           Back
         </Button>
-        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">Topics</h2>
+        <h2 className="text-lg md:text-2xl font-semibold text-gray-800 dark:text-white">Topics</h2>
       </div>
       {topicsLoading ? (
         <div className="text-center py-8">Loading topics...</div>
@@ -394,7 +394,7 @@ const JobPreparationPage: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <HelpCircle className="h-5 w-5 text-purple-600" />
-                    <span>{topic.topic_name}</span>
+                    <span className='text-lg md:text-2xl'>{topic.topic_name}</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
@@ -428,17 +428,24 @@ const JobPreparationPage: React.FC = () => {
               <ChevronLeft className="h-4 w-4 mr-2" />
               Back
             </Button>
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">
+            <h2 className="text-lg md:text-2xl font-semibold text-gray-800 dark:text-white">
               Questions {isReadingMode ? '(Reading Mode)' : '(Practice Mode)'}
             </h2>
           </div>
-          <Button 
+          <Button className='hidden md:block'
             onClick={handleModeToggle}
             variant={isReadingMode ? "default" : "outline"}
           >
             {isReadingMode ? 'Switch to Practice' : 'Switch to Reading'}
           </Button>
         </div>
+
+        <Button className='mb-4 md:hidden block lg:hidden'
+            onClick={handleModeToggle}
+            variant={isReadingMode ? "default" : "outline"}
+          >
+            {isReadingMode ? 'Switch to Practice' : 'Switch to Reading'}
+          </Button>
         
         {currentLoading ? (
           <div className="text-center py-8">Loading questions...</div>
@@ -449,7 +456,7 @@ const JobPreparationPage: React.FC = () => {
                 <Card key={question.uid}>
                   <CardHeader>
                     <CardTitle className="flex items-center justify-between">
-                      <span>Question #{question.question_number}</span>
+                      <span className='text-lg md:text-2xl'>Question #{question.question_number}</span>
                       <div className="flex items-center space-x-2 text-sm text-gray-600">
                         <Clock className="h-4 w-4" />
                         <span>{question.time_limit_seconds}s</span>
