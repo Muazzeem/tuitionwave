@@ -12,7 +12,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 const ProfilePage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
-  const { completionData } = useProfileCompletion();
   
   const [formData, setFormData] = useState<ProfileFormData & {
     daysPerWeek: string;

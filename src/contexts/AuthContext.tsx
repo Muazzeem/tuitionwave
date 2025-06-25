@@ -1,5 +1,4 @@
 
-// src/contexts/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { getAccessToken, isTokenExpired, refreshAccessToken } from '@/utils/auth';
 import { ProfileData } from '@/types/common';
@@ -47,6 +46,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       if (!response.ok) {
         throw new Error('Failed to fetch profile');
+        clearProfile();
       }
       
       const profileData = await response.json();

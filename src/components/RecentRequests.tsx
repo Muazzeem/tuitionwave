@@ -262,7 +262,7 @@ const RecentRequests: React.FC = () => {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="min-w-full">
           <thead>
             <tr className="text-left text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
               <th className="py-2 px-2">Req. ID</th>
@@ -290,6 +290,7 @@ const RecentRequests: React.FC = () => {
           </tbody>
         </table>
       </div>
+
       <ConfirmationComponent />
     </div>
   );

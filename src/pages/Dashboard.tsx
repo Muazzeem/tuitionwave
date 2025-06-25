@@ -40,12 +40,12 @@ const Dashboard: React.FC = () => {
 
           <StatsCards />
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-            <div className="lg:col-span-3">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+            <div className="lg:col-span-8">
               <RecentRequests />
             </div>
-            <div>
-              {/* <TopTutors /> */}
+            <div className="lg:col-span-4">
+              <TopTutors />
             </div>
           </div>
         </div>

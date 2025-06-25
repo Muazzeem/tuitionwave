@@ -135,28 +135,6 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
         }
     };
 
-    const removeNotification = async (id: number) => {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/${id}/delete/`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                },
-            });
-            if (response.ok) {
-                const deletedNotification = notifications.find(notif => notif.id === id);
-                setNotifications(notifications.filter(notif => notif.id !== id));
-                if (deletedNotification?.unread) {
-                    setUnreadCount(prevCount => prevCount - 1);
-                }
-            } else {
-                console.error(`Failed to delete notification ${id}`);
-            }
-        } catch (error) {
-            console.error("Error deleting notification:", error);
-        }
-    };
-
     const getNotificationIcon = (level: string) => {
         switch (level) {
             case 'success':
@@ -231,7 +209,8 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
                             notifications.map(notification => (
                                 <div
                                     key={notification.id}
-                                    className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${notification.unread ? 'bg-blue-50' : ''}`}
+                                    {...notification.unread && { onClick: () => markAsRead(notification.id) }}
+                                    className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${notification.unread ? 'bg-blue-50 cursor-pointer' : ''}`}
                                 >
                                     <div className="flex">
                                         <div className="flex-shrink-0 mr-3">
@@ -240,26 +219,6 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
                                         <div className="flex-grow">
                                             <div className="flex justify-between items-start">
                                                 <p className="text-sm font-medium">{notification.verb} {notification.action_object?.__str__ || notification.target?.__str__ || ''}</p>
-                                                <div className="flex items-center">
-                                                    {notification.unread && (
-                                                        <button
-                                                            onClick={() => markAsRead(notification.id)}
-                                                            className="text-blue-500 hover:text-blue-700 mr-1"
-                                                            title="Mark as read"
-                                                            disabled={loading}
-                                                        >
-                                                            <Check className="h-4 w-4" />
-                                                        </button>
-                                                    )}
-                                                    <button
-                                                        onClick={() => removeNotification(notification.id)}
-                                                        className="text-gray-400 hover:text-gray-600"
-                                                        title="Remove notification"
-                                                        disabled={loading}
-                                                    >
-                                                        <X className="h-4 w-4" />
-                                                    </button>
-                                                </div>
                                             </div>
                                             <p className="text-xs text-gray-500 mt-1">{notification.description}</p>
                                             <p className="text-xs text-gray-400 mt-1">{formatDate(notification.timestamp)}</p>

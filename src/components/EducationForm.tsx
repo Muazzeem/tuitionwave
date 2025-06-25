@@ -9,6 +9,7 @@ import { useToast } from './ui/use-toast';
 import { getAccessToken } from '@/utils/auth';
 import { X } from 'lucide-react';
 import SearchableSelect from './SearchableSelect';
+import { useProfileCompletion } from './ProfileCompletionContext';
 
 interface EducationFormData {
   degree: string;
@@ -35,6 +36,7 @@ interface EducationFormProps {
 }
 
 const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData, onNext, onPrev }) => {
+  const { refreshProfileCompletion } = useProfileCompletion();
   const { toast } = useToast();
   const [fileName, setFileName] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -136,6 +138,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
         title: "Success",
         description: "Education information updated successfully!",
       });
+      await refreshProfileCompletion();
       onNext();
     } catch (error) {
       console.error('Error updating education info:', error);

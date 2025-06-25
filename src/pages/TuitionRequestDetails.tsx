@@ -118,7 +118,7 @@ const TuitionRequestDetails: React.FC = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          setRequestDetails(data);
+          requestDetails.status_display = 'Accepted';
           toast({
             title: "Request Accepted",
             description: "The tuition request has been accepted successfully.",
@@ -220,7 +220,7 @@ const TuitionRequestDetails: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 overflow-auto dark:bg-gray-900">
+    <div className="flex-1 overflow-auto dark:bg-gray-900 mb-10">
       <DashboardHeader userName={userProfile?.first_name || "User"} />
       <div className="p-3 lg:p-6 md:p-6 mb-6">
         <div className="mb-6">

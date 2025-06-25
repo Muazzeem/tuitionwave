@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getAccessToken } from "@/utils/auth";
 
@@ -19,6 +18,7 @@ export const ProfileCompletionProvider = ({ children }) => {
     const accessToken = getAccessToken();
     try {
       setLoading(true);
+      setError(null); // Clear any previous errors
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/tutors/profile-completion`,
         {
@@ -35,10 +35,21 @@ export const ProfileCompletionProvider = ({ children }) => {
       }
       const data = await response.json();
       setCompletionData(data);
+      return data;
     } catch (err) {
       setError(err.message);
+      throw err;
     } finally {
       setLoading(false);
+    }
+  };
+
+  const refreshProfileCompletion = async () => {
+    try {
+      return await fetchCompletionData();
+    } catch (error) {
+      console.error("Error refreshing profile completion:", error);
+      throw error;
     }
   };
 
@@ -46,14 +57,26 @@ export const ProfileCompletionProvider = ({ children }) => {
     fetchCompletionData();
   }, []);
 
+  const contextValue = {
+    completionData,
+    loading,
+    error,
+    refresh: fetchCompletionData,
+    refreshProfileCompletion,
+    updateCompletionData: setCompletionData,
+  };
+
   return (
-    <ProfileCompletionContext.Provider
-      value={{ completionData, loading, error, refresh: fetchCompletionData }}
-    >
+    <ProfileCompletionContext.Provider value={contextValue}>
       {children}
     </ProfileCompletionContext.Provider>
   );
 };
 
-// Custom hook for easy access
-export const useProfileCompletion = () => useContext(ProfileCompletionContext);
+export const useProfileCompletion = () => {
+  const context = useContext(ProfileCompletionContext);
+  if (!context) {
+    throw new Error('useProfileCompletion must be used within a ProfileCompletionProvider');
+  }
+  return context;
+};

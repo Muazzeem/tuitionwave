@@ -47,7 +47,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
       />
       
       {/* Message Input */}
-      <div className="flex items-end gap-3 mt-3">
+      <div className="flex items-end gap-3 mt-0 lg:mt-3 mb-20 lg:mb-0 md:mb-0">
         <div className="flex-1 relative">
           <Textarea
             value={message}

@@ -47,7 +47,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
             className="flex items-center gap-1 sm:gap-2 cursor-pointer rounded-lg hover:bg-gray-100 p-1 sm:p-2 dark:hover:bg-gray-700"
             onClick={toggleDropdown}
           >
-            {userProfile.user_type === "TEACHER" ? (
+            {userProfile?.user_type === "TEACHER" ? (
               <div className="relative w-8 h-8 sm:w-10 sm:h-10">
                 <img
                   src={userProfile?.profile_picture}

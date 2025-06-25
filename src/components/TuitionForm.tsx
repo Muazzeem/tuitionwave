@@ -9,6 +9,7 @@ import { useToast } from './ui/use-toast';
 import { getAccessToken } from '@/utils/auth';
 import { Textarea } from './ui/textarea';
 import { Plus } from 'lucide-react';
+import { useProfileCompletion } from './ProfileCompletionContext';
 
 interface TuitionFormProps {
   formData: TuitionFormData;
@@ -74,6 +75,7 @@ interface SubjectsResponse {
 }
 
 const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onNext, onPrev }) => {
+  const { refreshProfileCompletion } = useProfileCompletion();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [activeDays, setActiveDays] = useState<ActiveDay[]>([]);
@@ -299,6 +301,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
         title: 'Success',
         description: 'Tuition information updated successfully!',
       });
+      await refreshProfileCompletion();
     } catch (error) {
       console.error('Error updating tuition info:', error);
       toast({

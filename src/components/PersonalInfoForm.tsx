@@ -14,6 +14,7 @@ import { useToast } from './ui/use-toast';
 import { getAccessToken } from '@/utils/auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { Textarea } from './ui/textarea';
+import { useProfileCompletion } from './ProfileCompletionContext';
 
 interface User {
   preferred_upazila: any;
@@ -98,6 +99,7 @@ interface PersonalInfoFormProps {
 }
 
 const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFormData, onNext }) => {
+  const { refreshProfileCompletion } = useProfileCompletion();
   const { toast } = useToast();
   const { userProfile } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -449,6 +451,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
         description: "Personal information updated successfully!",
       });
       onNext();
+      await refreshProfileCompletion();
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
