@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { ChevronLeft, BookOpen, FileText, HelpCircle, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { ChevronLeft, BookOpen, FileText, HelpCircle, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
 import { Category, Subject, Topic, Question } from '@/types/jobPreparation';
 
@@ -23,6 +23,26 @@ interface NavigationState {
   topicName?: string;
 }
 
+interface AnswerResult {
+  question_uid: string;
+  question_text: string;
+  selected_option_label: string;
+  selected_option_text: string;
+  correct_option_label: string;
+  correct_option_text: string;
+  is_correct: boolean;
+  explanation: string;
+}
+
+interface QuestionState {
+  [questionUid: string]: {
+    selectedOption?: string;
+    isAnswered: boolean;
+    result?: AnswerResult;
+    showResult: boolean;
+  };
+}
+
 const JobPreparationPage: React.FC = () => {
   const params = useParams();
   const navigate = useNavigate();
@@ -30,6 +50,7 @@ const JobPreparationPage: React.FC = () => {
   const [navigationState, setNavigationState] = useState<NavigationState>({ view: 'categories' });
   const [currentPage, setCurrentPage] = useState(1);
   const [isReadingMode, setIsReadingMode] = useState(false);
+  const [questionStates, setQuestionStates] = useState<QuestionState>({});
 
   // Initialize navigation state from URL params
   useEffect(() => {
@@ -63,13 +84,17 @@ const JobPreparationPage: React.FC = () => {
     }
   }, [params, searchParams]);
 
-  // Reset page when view changes
   useEffect(() => {
     if (currentPage !== 1) {
       setCurrentPage(1);
       updateUrlParams(1);
     }
   }, [navigationState.view, navigationState.categoryUid, navigationState.subjectUid, navigationState.topicUid]);
+
+  // Reset question states when changing topics or pages
+  useEffect(() => {
+    setQuestionStates({});
+  }, [navigationState.topicUid, currentPage, isReadingMode]);
 
   const updateUrlParams = (page: number, readingMode?: boolean) => {
     const newSearchParams = new URLSearchParams();
@@ -79,6 +104,39 @@ const JobPreparationPage: React.FC = () => {
     }
     setSearchParams(newSearchParams);
   };
+
+  // Practice answer check mutation
+  const checkAnswerMutation = useMutation({
+    mutationFn: async ({ questionId, selectedOptionLabel }: { questionId: string; selectedOptionLabel: string }) => {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/practice/check-answer/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question_id: questionId,
+          selected_option_label: selectedOptionLabel,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to check answer');
+      }
+      
+      return response.json() as Promise<AnswerResult>;
+    },
+    onSuccess: (result, variables) => {
+      setQuestionStates(prev => ({
+        ...prev,
+        [variables.questionId]: {
+          ...prev[variables.questionId],
+          result,
+          showResult: true,
+          isAnswered: true,
+        }
+      }));
+    },
+  });
 
   // Categories Query
   const { data: categoriesData, isLoading: categoriesLoading } = useQuery({
@@ -208,6 +266,54 @@ const JobPreparationPage: React.FC = () => {
     setIsReadingMode(newReadingMode);
     updateUrlParams(1, newReadingMode);
     setCurrentPage(1);
+  };
+  const handleOptionSelect = (questionUid: string, optionLabel: string) => {
+    if (isReadingMode) return;
+
+    setQuestionStates(prev => {
+      const currentState = prev[questionUid];
+
+      if (currentState?.isAnswered) return prev;
+
+      const updatedState = {
+        ...currentState,
+        selectedOption: optionLabel,
+        isAnswered: false,
+        showResult: false,
+      };
+
+      setTimeout(() => {
+        handleSubmitAnswer(questionUid, optionLabel);
+      }, 300);
+
+      return {
+        ...prev,
+        [questionUid]: updatedState,
+      };
+    });
+  };
+
+  const handleSubmitAnswer = (questionUid: string, optionLabel?: string) => {
+    const currentState = questionStates[questionUid];
+    const selectedOption = optionLabel || currentState?.selectedOption;
+
+    if (!selectedOption || currentState?.isAnswered) return;
+
+    checkAnswerMutation.mutate({
+      questionId: questionUid,
+      selectedOptionLabel: selectedOption,
+    });
+  };
+
+
+  const handleShowAnswer = (questionUid: string) => {
+    setQuestionStates(prev => ({
+      ...prev,
+      [questionUid]: {
+        ...prev[questionUid],
+        showResult: !prev[questionUid]?.showResult,
+      }
+    }));
   };
 
   const renderPagination = (count: number, hasNext: boolean, hasPrevious: boolean) => {
@@ -452,76 +558,151 @@ const JobPreparationPage: React.FC = () => {
         ) : (
           <>
             <div className="space-y-6">
-              {currentQuestionsData?.results.map((question) => (
-                <Card key={question.uid}>
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span className='text-lg md:text-2xl'>Question #{question.question_number}</span>
-                      <div className="flex items-center space-x-2 text-sm text-gray-600">
-                        <Clock className="h-4 w-4" />
-                        <span>{question.time_limit_seconds}s</span>
-                        <Badge variant="outline">
-                          {question.marks} {question.marks === 1 ? 'mark' : 'marks'}
-                        </Badge>
+              {currentQuestionsData?.results.map((question) => {
+                const questionState = questionStates[question.uid];
+                const isAnswered = questionState?.isAnswered;
+                const showResult = questionState?.showResult;
+                const selectedOption = questionState?.selectedOption;
+                const result = questionState?.result;
+
+                return (
+                  <Card key={question.uid}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center justify-between">
+                        <span className='text-lg md:text-2xl'>Question #{question.question_number}</span>
+                        <div className="flex items-center space-x-2 text-sm text-gray-600">
+                          <Clock className="h-4 w-4" />
+                          <span>{question.time_limit_seconds}s</span>
+                          <Badge variant="outline">
+                            {question.marks} {question.marks === 1 ? 'mark' : 'marks'}
+                          </Badge>
+                          {isAnswered && (
+                            <Badge variant={result?.is_correct ? "default" : "destructive"}>
+                              {result?.is_correct ? 'Correct' : 'Incorrect'}
+                            </Badge>
+                          )}
+                        </div>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="mb-4 text-lg">{question.question_text}</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {question.options.map((option) => {
+                          let optionClassName = 'p-3 border rounded-lg transition-colors ';
+                          
+                          if (isReadingMode) {
+                            if (option.is_correct) {
+                              optionClassName += 'bg-green-50 border-green-300 dark:bg-green-900/20';
+                            } else {
+                              optionClassName += 'hover:bg-gray-50 dark:hover:bg-gray-800';
+                            }
+                          } else {
+                            // Practice mode styling
+                            if (selectedOption === option.option_label) {
+                              if (isAnswered) {
+                                if (result?.is_correct && option.option_label === result.correct_option_label) {
+                                  optionClassName += 'bg-green-50 border-green-300 dark:bg-green-900/20';
+                                } else if (!result?.is_correct && option.option_label === selectedOption) {
+                                  optionClassName += 'bg-red-50 border-red-300 dark:bg-red-900/20';
+                                }
+                              } else {
+                                optionClassName += 'bg-blue-50 border-blue-300 dark:bg-blue-900/20';
+                              }
+                            } else if (isAnswered && showResult && option.option_label === result?.correct_option_label) {
+                              optionClassName += 'bg-green-50 border-green-300 dark:bg-green-900/20';
+                            } else {
+                              optionClassName += 'hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer';
+                            }
+                          }
+
+                          return (
+                            <div 
+                              key={option.uid} 
+                              className={optionClassName}
+                              onClick={() => {
+                                if (!isReadingMode && !isAnswered) {
+                                  handleOptionSelect(question.uid, option.option_label);
+                                }
+                            }}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span>
+                                  <span className="font-medium">{option.option_label}</span> {option.option_text}
+                                </span>
+                                {isReadingMode && option.is_correct && (
+                                  <CheckCircle className="h-5 w-5 text-green-600" />
+                                )}
+                                {!isReadingMode && isAnswered && showResult && (
+                                  <>
+                                    {option.option_label === result?.correct_option_label && (
+                                      <CheckCircle className="h-5 w-5 text-green-600" />
+                                    )}
+                                    {option.option_label === selectedOption && !result?.is_correct && (
+                                      <XCircle className="h-5 w-5 text-red-600" />
+                                    )}
+                                  </>
+                                )}
+                                {!isReadingMode && selectedOption === option.option_label && !isAnswered && (
+                                  <AlertCircle className="h-5 w-5 text-blue-600" />
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="mb-4 text-lg">{question.question_text}</p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {question.options.map((option) => (
-                        <div 
-                          key={option.uid} 
-                          className={`p-3 border rounded-lg ${
-                            isReadingMode 
-                              ? option.is_correct 
-                                ? 'bg-green-50 border-green-300 dark:bg-green-900/20' 
-                                : 'hover:bg-gray-50 dark:hover:bg-gray-800'
-                              : 'hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span>
-                              <span className="font-medium">{option.option_label}</span> {option.option_text}
-                            </span>
-                            {isReadingMode && option.is_correct && (
-                              <CheckCircle className="h-5 w-5 text-green-600" />
-                            )}
+
+                      {/* Practice mode controls */}
+                      {!isReadingMode && (
+                        <div className="mt-4 flex items-center space-x-2">
+                          {isAnswered && (
+                            <Button 
+                              variant="outline"
+                              onClick={() => handleShowAnswer(question.uid)}
+                            >
+                              {showResult ? 'Hide Result' : 'Show Result'}
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                      
+                      {/* Show results in both modes */}
+                      {((isReadingMode && question.correct_option) || (!isReadingMode && isAnswered && showResult && result)) && (
+                        <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <CheckCircle className="h-5 w-5 text-green-600" />
+                            <span className="font-semibold text-green-800 dark:text-green-200">Correct Answer:</span>
                           </div>
+                          <p className="text-green-700 dark:text-green-300">
+                            {isReadingMode 
+                              ? `${question.correct_option?.option_label} ${question.correct_option?.option_text}`
+                              : `${result?.correct_option_label} ${result?.correct_option_text}`
+                            }
+                          </p>
                         </div>
-                      ))}
-                    </div>
-                    
-                    {isReadingMode && question.correct_option && (
-                      <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <CheckCircle className="h-5 w-5 text-green-600" />
-                          <span className="font-semibold text-green-800 dark:text-green-200">Correct Answer:</span>
+                      )}
+                      
+                      {/* Show explanation */}
+                      {((isReadingMode && question.explanation) || (!isReadingMode && isAnswered && showResult && result?.explanation)) && (
+                        <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <HelpCircle className="h-5 w-5 text-blue-600" />
+                            <span className="font-semibold text-blue-800 dark:text-blue-200">Explanation:</span>
+                          </div>
+                          <p className="text-blue-700 dark:text-blue-300">
+                            {isReadingMode ? question.explanation : result?.explanation}
+                          </p>
                         </div>
-                        <p className="text-green-700 dark:text-green-300">
-                          {question.correct_option.option_label} {question.correct_option.option_text}
+                      )}
+                      
+                      {question.negative_marks > 0 && (
+                        <p className="mt-3 text-sm text-red-600">
+                          Negative marks: {question.negative_marks}
                         </p>
-                      </div>
-                    )}
-                    
-                    {isReadingMode && question.explanation && (
-                      <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <HelpCircle className="h-5 w-5 text-blue-600" />
-                          <span className="font-semibold text-blue-800 dark:text-blue-200">Explanation:</span>
-                        </div>
-                        <p className="text-blue-700 dark:text-blue-300">{question.explanation}</p>
-                      </div>
-                    )}
-                    
-                    {question.negative_marks > 0 && (
-                      <p className="mt-3 text-sm text-red-600">
-                        Negative marks: {question.negative_marks}
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
             {currentQuestionsData && renderPagination(
               currentQuestionsData.count, 
