@@ -1,5 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
+import Editor, { } from 'react-simple-wysiwyg';
+
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
@@ -7,14 +9,16 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format, parseISO } from 'date-fns';
-import { CalendarIcon, X, Linkedin, Camera, User, Search, ChevronDown } from 'lucide-react';
+import { X, Linkedin, Camera, User, Search, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import axios from 'axios';
 import { useToast } from './ui/use-toast';
 import { getAccessToken } from '@/utils/auth';
 import { useAuth } from '@/contexts/AuthContext';
-import { Textarea } from './ui/textarea';
 import { useProfileCompletion } from './ProfileCompletionContext';
+
+import { Tutor } from '@/types/tutor';
+import { ProfileFormData, Division, District, Upazila } from '@/types/common';
 
 interface User {
   preferred_upazila: any;
@@ -31,66 +35,7 @@ interface User {
 }
 
 
-interface Division {
-  id: number;
-  name: string;
-}
 
-interface District {
-  id: number;
-  name: string;
-  division: {
-    id: number;
-    name: string;
-  };
-}
-
-interface Upazila {
-  id: number;
-  name: string;
-  district: {
-    id: number;
-    name: string;
-    division: {
-      id: number;
-      name: string;
-    };
-  };
-}
-
-interface ProfileFormData {
-  uid?: string;
-  first_name?: string;
-  last_name?: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  profile_picture?: string | null;
-  gender: string;
-  birthDate: Date | null;
-  linkedinProfile: string;
-  description: string;
-  division_id?: number | null;
-  preferred_district_id?: number | null;
-  preferred_upazila_id?: number | null;
-}
-
-interface TutorProfileResponse {
-  profile_picture_url: null;
-  user: User;
-  uid: string;
-  first_name?: string;
-  last_name?: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  profile_picture?: string | null;
-  gender_display: string;
-  birth_date: string | null;
-  linkedin_profile: string | null;
-  description: string | null;
-
-}
 
 interface PersonalInfoFormProps {
   formData: ProfileFormData;
@@ -126,6 +71,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
   const [showUpazilaDropdown, setShowUpazilaDropdown] = useState(false);
 
   const isTeacher = userProfile?.user_type === 'TEACHER';
+
 
   // Fetch divisions on component mount for teachers
   useEffect(() => {
@@ -225,7 +171,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             },
           }
         );
-        const profileData: TutorProfileResponse = response.data;
+        const profileData: Tutor = response.data;
         console.log(profileData);
         // Update form data with fetched profile data
         updateFormData({
@@ -466,9 +412,10 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
 
   return (
     <div className="space-y-6">
-      {isLoading && <div className="text-center text-gray-500">Loading profile data...</div>}
+      {isLoading && 
+        <div className="text-center text-gray-500">Loading profile data...</div>
+      }
       
-      {/* Profile Picture Section - Only for teachers */}
       {isTeacher && (
         <div className="flex flex-col items-center space-y-4">
           <div className="relative">
@@ -521,7 +468,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
         </div>
       )}
 
-      {/* Basic Information - Only for teachers */}
       {isTeacher && (
         <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 gap-4">
           <div>
@@ -569,7 +515,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
         </div>
       )}
 
-      {/* Standard form fields for all users */}
       <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="gender">Gender</Label>
@@ -617,13 +562,12 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
 
       <div>
         <Label htmlFor="description">Description</Label>
-        <Textarea
-          id="description"
-          placeholder="Enter description"
+        <Editor containerProps={{ style: { resize: 'vertical' } }}
           value={formData.description}
           onChange={(e) => updateFormData({ description: e.target.value })}
           className="mt-1"
-        />
+        >
+          </Editor>
       </div>
 
       <div>

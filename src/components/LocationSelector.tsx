@@ -6,33 +6,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Search } from 'lucide-react';
 import axios from 'axios';
 import { getAccessToken } from '@/utils/auth';
+import { Division, District, Upazila } from '@/types/common';
 
-interface Division {
-  id: number;
-  name: string;
-}
-
-interface District {
-  id: number;
-  name: string;
-  division: {
-    id: number;
-    name: string;
-  };
-}
-
-interface Upazila {
-  id: number;
-  name: string;
-  district: {
-    id: number;
-    name: string;
-    division: {
-      id: number;
-      name: string;
-    };
-  };
-}
 
 interface Area {
   id: number;

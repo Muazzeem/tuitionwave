@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import parse from 'html-react-parser';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Star, MessageCircle, Users, TrendingUp } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
@@ -279,9 +280,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ id, condition }) => {
 
                 <TabsContent value="description" className="p-6 mt-0 bg-white dark:bg-gray-800 dark:border-gray-700 rounded-lg">
                   <div className="prose dark:prose-invert max-w-none">
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                      {tutorData?.description || "No description available."}
-                    </p>
+                    {parse(tutorData?.description || "No description available.")}
                   </div>
                 </TabsContent>
 

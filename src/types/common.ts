@@ -111,3 +111,47 @@ export interface QuestionState {
     showResult: boolean;
   };
 }
+
+export interface Division {
+  id: number;
+  name: string;
+}
+
+export interface District {
+  id: number;
+  name: string;
+  division: {
+    id: number;
+    name: string;
+  };
+}
+
+export interface Upazila {
+  id: number;
+  name: string;
+  district: {
+    id: number;
+    name: string;
+    division: {
+      id: number;
+      name: string;
+    };
+  };
+}
+
+export interface ProfileFormData {
+  uid?: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  profile_picture?: string | null;
+  gender: string;
+  birthDate: Date | null;
+  linkedinProfile: string;
+  description: string;
+  division_id?: number | null;
+  preferred_district_id?: number | null;
+  preferred_upazila_id?: number | null;
+}

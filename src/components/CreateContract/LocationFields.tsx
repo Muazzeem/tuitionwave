@@ -1,32 +1,6 @@
 import React from "react";
 import FormField from "./FormField";
-
-interface Division {
-  id: number;
-  name: string;
-}
-
-interface District {
-  id: number;
-  name: string;
-  division: {
-    id: number;
-    name: string;
-  }
-}
-
-interface Upazila {
-  id: number;
-  name: string;
-  district: {
-    id: number;
-    name: string;
-    division: {
-      id: number;
-      name: string;
-    }
-  }
-}
+import {Division, District, Upazila} from "@/types/common";
 
 interface Area {
   id: number;

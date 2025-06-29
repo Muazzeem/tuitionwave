@@ -10,30 +10,7 @@ import { getAccessToken } from '@/utils/auth';
 import { X } from 'lucide-react';
 import SearchableSelect from './SearchableSelect';
 import { useProfileCompletion } from './ProfileCompletionContext';
-
-interface EducationFormData {
-  degree: string;
-  institute: string;
-  department: string;
-  currentStatus: string;
-  cvDocument: File | null;
-  cv_document_url?: string | null;
-}
-
-interface EducationInfoResponse {
-    degree: { id: number; name: string } | null;
-    institute: { id: number; name: string } | null;
-    department: { id: number; name: string } | null;
-    current_status_display: string;
-    cv_document: string | null;
-}
-
-interface EducationFormProps {
-  formData: EducationFormData;
-  updateFormData: (data: Partial<EducationFormData>) => void;
-  onNext: () => void;
-  onPrev: () => void;
-}
+import { EducationFormProps, EducationInfoResponse } from '@/types/education';
 
 const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData, onNext, onPrev }) => {
   const { refreshProfileCompletion } = useProfileCompletion();

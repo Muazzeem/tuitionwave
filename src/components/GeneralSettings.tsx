@@ -7,33 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useLocation } from 'react-router-dom';
 import { Camera, User, X, Search, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-
-interface Division {
-  id: number;
-  name: string;
-}
-
-interface District {
-  id: number;
-  name: string;
-  division: {
-    id: number;
-    name: string;
-  };
-}
-
-interface Upazila {
-  id: number;
-  name: string;
-  district: {
-    id: number;
-    name: string;
-    division: {
-      id: number;
-      name: string;
-    };
-  };
-}
+import { Division, District, Upazila } from '@/types/common';
 
 const GeneralSettings = () => {
   const { profile, updateProfile, loading, refreshProfile } = useUserProfile();

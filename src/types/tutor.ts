@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-export interface User {
+export interface UserProfile {
   id: number;
   username: string;
   first_name: string;
@@ -63,6 +63,7 @@ export interface City {
 }
 
 export interface Tutor {
+  linkedin_profile: string;
   expected_salary: any;
   districts: any;
   upazilas: any;
@@ -189,3 +190,4 @@ export interface PaginatedResponse<T> {
   previous: string | null;
   results: T[];
 }
+

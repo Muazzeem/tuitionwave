@@ -299,10 +299,11 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
     { value: "Online", label: "Online" }
   ];
 
-  const memberOptions = [1, 2, 3, 4].map(member => ({
-    value: member,
-    label: member
-  }));
+  const memberOptions = [
+    { value: 1, label: '1' },
+    { value: 2, label: '2' },
+    { value: 3, label: '3' },
+  ]
 
   const genderOptions = [
     { value: "Male", label: "Male" },
