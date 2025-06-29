@@ -3,7 +3,7 @@ import DashboardHeader from "@/components/DashboardHeader";
 import StatsCards from "@/components/StatsCards";
 import TopTutors from "@/components/TopTutors";
 import RecentRequests from "@/components/RecentRequests";
-import NIDUpload from "@/components/Registration/NIDUpload";
+import TutorIDUpload from "@/components/Registration/TutorIDUpload";
 import { useAuth } from "@/contexts/AuthContext";
 import ProfileCompletionAlert from "@/components/ProfileCompletionAlert";
 import { useProfileCompletion } from "@/components/ProfileCompletionContext";
@@ -26,15 +26,15 @@ const Dashboard: React.FC = () => {
         </div>
       )}
 
-      {userProfile?.user_type === "TEACHER" && !userProfile?.is_verified && userProfile?.has_nid &&(
+      {userProfile?.user_type === "TEACHER" && !userProfile?.is_verified && userProfile?.has_document &&(
         <PricingCards />
       )}
 
-      {!userProfile?.has_nid && (
-        <NIDUpload />
+      {!userProfile?.has_document && (
+        <TutorIDUpload />
       )}
 
-      {completionData.completion_percentage >= 50 && userProfile?.is_verified && userProfile?.has_nid && (
+      {completionData.completion_percentage >= 50 && userProfile?.is_verified && userProfile?.has_document && (
         <div className="p-6">
           <h2 className="text-xl font-bold mb-6 dark:text-white">Dashboard</h2>
 

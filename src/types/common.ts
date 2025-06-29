@@ -32,6 +32,7 @@ export interface PackageData {
 }
 
 export interface ProfileData {
+  has_document: any;
   has_nid: any;
   user_type: string;
   id?: number;
@@ -79,4 +80,34 @@ export interface ReviewItemProps {
   comment: string;
   rating: number;
   date: string;
+}
+type ViewType = 'categories' | 'subjects' | 'topics' | 'questions';
+export interface NavigationState {
+  view: ViewType;
+  categoryUid?: string;
+  categoryName?: string;
+  subjectUid?: string;
+  subjectName?: string;
+  topicUid?: string;
+  topicName?: string;
+}
+
+export interface AnswerResult {
+  question_uid: string;
+  question_text: string;
+  selected_option_label: string;
+  selected_option_text: string;
+  correct_option_label: string;
+  correct_option_text: string;
+  is_correct: boolean;
+  explanation: string;
+}
+
+export interface QuestionState {
+  [questionUid: string]: {
+    selectedOption?: string;
+    isAnswered: boolean;
+    result?: AnswerResult;
+    showResult: boolean;
+  };
 }

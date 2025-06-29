@@ -30,6 +30,7 @@ import FAQPage from "./pages/FAQPage";
 import TermsPage from "./pages/TermsPage";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import JobPreparationPage from "./pages/JobPreparationPage";
+import Contract from "./pages/Contract";
 
 const queryClient = new QueryClient();
 
@@ -146,6 +147,10 @@ const App = () => (
                   <Route path="/auth/registration" element={<RegistrationPage />} />
                   <Route path="/private-profile/tutor/:id" element={
                     <AuthGuard><TutorProfile /></AuthGuard>
+                  } />
+                  <Route path="/find-tutors/contract/:uid" element={
+                    <AuthGuard>
+                      <MainLayout><Contract /></MainLayout></AuthGuard>
                   } />
                   <Route path="/unauthorized" element={<Unauthorized />} />
                   <Route path="/faq" element={<FAQPage />} />

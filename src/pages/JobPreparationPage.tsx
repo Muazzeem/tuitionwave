@@ -9,39 +9,12 @@ import { Badge } from '@/components/ui/badge';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { ChevronLeft, BookOpen, FileText, HelpCircle, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
-import { Category, Subject, Topic, Question } from '@/types/jobPreparation';
+import { Category, Subject, Topic } from '@/types/jobPreparation';
+import { AnswerResult, NavigationState, QuestionState } from '@/types/common';
+
+
 
 type ViewType = 'categories' | 'subjects' | 'topics' | 'questions';
-
-interface NavigationState {
-  view: ViewType;
-  categoryUid?: string;
-  categoryName?: string;
-  subjectUid?: string;
-  subjectName?: string;
-  topicUid?: string;
-  topicName?: string;
-}
-
-interface AnswerResult {
-  question_uid: string;
-  question_text: string;
-  selected_option_label: string;
-  selected_option_text: string;
-  correct_option_label: string;
-  correct_option_text: string;
-  is_correct: boolean;
-  explanation: string;
-}
-
-interface QuestionState {
-  [questionUid: string]: {
-    selectedOption?: string;
-    isAnswered: boolean;
-    result?: AnswerResult;
-    showResult: boolean;
-  };
-}
 
 const JobPreparationPage: React.FC = () => {
   const params = useParams();
@@ -316,52 +289,79 @@ const JobPreparationPage: React.FC = () => {
     }));
   };
 
-  const renderPagination = (count: number, hasNext: boolean, hasPrevious: boolean) => {
-    const totalPages = Math.ceil(count / 20);
-    
-    if (totalPages <= 1) return null;
+const renderPagination = (count: number, hasNext: boolean, hasPrevious: boolean) => {
+  const totalPages = Math.ceil(count / 20);
+  
+  if (totalPages <= 1) return null;
 
-    return (
-      <div className="mt-8 flex justify-center">
-        <Pagination>
-          <PaginationContent>
-            {hasPrevious && (
-              <PaginationItem>
-                <PaginationPrevious 
-                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                  className="cursor-pointer"
-                />
-              </PaginationItem>
-            )}
-            
-            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              const pageNum = Math.max(1, Math.min(totalPages, currentPage - 2 + i));
-              return (
-                <PaginationItem key={pageNum}>
-                  <PaginationLink
-                    onClick={() => handlePageChange(pageNum)}
-                    isActive={currentPage === pageNum}
-                    className="cursor-pointer"
-                  >
-                    {pageNum}
-                  </PaginationLink>
-                </PaginationItem>
-              );
-            })}
-            
-            {hasNext && (
-              <PaginationItem>
-                <PaginationNext 
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className="cursor-pointer"
-                />
-              </PaginationItem>
-            )}
-          </PaginationContent>
-        </Pagination>
-      </div>
-    );
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      // Show all pages if total is less than or equal to max visible
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Calculate start and end pages
+      let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+      let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+      
+      // Adjust start page if we're near the end
+      if (endPage - startPage + 1 < maxVisiblePages) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+    }
+    
+    return pages;
   };
+
+  const pageNumbers = getPageNumbers();
+
+  return (
+    <div className="mt-8 flex justify-center">
+      <Pagination>
+        <PaginationContent>
+          {hasPrevious && (
+            <PaginationItem>
+              <PaginationPrevious 
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="cursor-pointer"
+              />
+            </PaginationItem>
+          )}
+          
+          {pageNumbers.map((pageNum) => (
+            <PaginationItem key={pageNum}>
+              <PaginationLink
+                onClick={() => handlePageChange(pageNum)}
+                isActive={currentPage === pageNum}
+                className="cursor-pointer"
+              >
+                {pageNum}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          
+          {hasNext && (
+            <PaginationItem>
+              <PaginationNext 
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="cursor-pointer"
+              />
+            </PaginationItem>
+          )}
+        </PaginationContent>
+      </Pagination>
+    </div>
+  );
+};
 
   const renderBreadcrumb = () => {
     const categoryName = navigationState.categoryName || categoryData?.category_name;
@@ -505,9 +505,9 @@ const JobPreparationPage: React.FC = () => {
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <Badge variant="outline">{topic.total_questions} Questions</Badge>
-                  {topic.subtopics_count > 0 && (
+                  {/* {topic.subtopics_count > 0 && (
                     <Badge variant="secondary">{topic.subtopics_count} Subtopics</Badge>
-                  )}
+                  )} */}
                 </CardContent>
               </Card>
             ))}

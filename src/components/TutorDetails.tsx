@@ -186,7 +186,7 @@ const TutorDetails: React.FC = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-5 mb-4">
           {/* Left Column - Profile */}
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-gray-900 dark:border-gray-700 rounded-xl shadow-none border border-gray-100 overflow-hidden sticky top-4">
@@ -208,9 +208,9 @@ const TutorDetails: React.FC = () => {
                 <div className="flex items-center gap-2 mb-4">
                   <div className="flex items-center bg-yellow-50 px-3 py-1 rounded-full">
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="ml-1 font-semibold text-gray-900">4.7</span>
+                    <span className="ml-1 font-semibold text-gray-900">{tutor.avg_rating || 0}</span>
                   </div>
-                  <span className="text-gray-500 text-sm dark:text-gray-300">(54 reviews)</span>
+                  <span className="text-gray-500 text-sm dark:text-gray-300">({tutor.review_count || 0} reviews)</span>
                 </div>
 
                 {/* Quick Stats */}
@@ -332,13 +332,12 @@ const TutorDetails: React.FC = () => {
               <InfoItem label="Preferred Time" value={tutor.preferred_time} />
             </InfoCard>
 
-            {/* Documents */}
             {tutor.nid_document && (
               <InfoCard icon={FileText} title="Verification Documents">
                 <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <FileText className="w-5 h-5 text-gray-600" />
-                    <span className="text-sm font-medium text-gray-900">National ID Document</span>
+                    <span className="text-sm font-medium text-gray-900">Tutor ID Card</span>
                   </div>
                   <a
                     rel="noopener noreferrer"

@@ -592,7 +592,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
           <Label htmlFor="birthDate">Birth Date</Label>
           <Popover>
             <PopoverTrigger asChild>
-              <Button disabled
+              <Button
                 id="birthDate"
                 variant="outline"
                 className={cn(
@@ -640,7 +640,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
         </div>
       </div>
 
-      {/* Location Fields - Only for teachers */}
       {isTeacher && (
         <div className="space-y-6">
           <h3 className="text-sm font-semibold">Location Preferences</h3>

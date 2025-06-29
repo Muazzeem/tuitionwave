@@ -1,8 +1,11 @@
 import React, { useEffect, useState, FC } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, Users, DollarSign, BookOpen, Clock, MessageCircle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import DashboardHeader from "@/components/DashboardHeader";
 import { useToast } from "@/hooks/use-toast";
 import { Contract } from "@/types/contract";
@@ -14,17 +17,20 @@ import { getAccessToken } from "@/utils/auth";
 interface DetailItemProps {
   label: string;
   value: string | number | undefined | null;
+  icon?: React.ReactNode;
 }
 
-const DetailItem: FC<DetailItemProps> = ({ label, value }) => {
+const DetailItem: FC<DetailItemProps> = ({ label, value, icon }) => {
   return (
-    <div className="flex items-center gap-2">
-      <dt className="font-medium text-gray-600 dark:text-gray-300 w-32 md:w-40">
-        {label}:
-      </dt>
-      <dd className="text-gray-900 dark:text-gray-200 capitalize">
-        {value !== undefined && value !== null ? value : "N/A"}
-      </dd>
+    <div className="flex items-start gap-3 py-2">
+      <div className="flex-1 min-w-0">
+        <dt className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+          {label}
+        </dt>
+        <dd className="text-base text-gray-900 dark:text-gray-100 break-words">
+          {value !== undefined && value !== null ? value : "Not specified"}
+        </dd>
+      </div>
     </div>
   );
 };
@@ -118,7 +124,7 @@ const TuitionRequestDetails: React.FC = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          requestDetails.status_display = 'Accepted';
+          setRequestDetails(prev => prev ? {...prev, status_display: 'Accepted'} : null);
           toast({
             title: "Request Accepted",
             description: "The tuition request has been accepted successfully.",
@@ -164,6 +170,7 @@ const TuitionRequestDetails: React.FC = () => {
         .then((data) => {
           setRequestDetails(data);
           setShowRejection(false);
+          setRejectionReason("");
           toast({
             title: "Request Rejected",
             description: "The tuition request has been rejected successfully.",
@@ -192,44 +199,80 @@ const TuitionRequestDetails: React.FC = () => {
     setIsReviewModalOpen(true);
   };
 
-  const getBgColorClass = (status) => {
+  const getStatusConfig = (status) => {
     switch (status?.toLowerCase()) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return { 
+          variant: 'secondary' as const, 
+          className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300',
+        };
       case 'rejected':
-        return 'bg-red-100 text-red-800';
+        return { 
+          variant: 'destructive' as const, 
+          className: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300',
+          icon: null
+        };
       case 'accepted':
       case 'accept':
       case 'approved':
-        return 'bg-green-100 text-green-800';
+        return { 
+          variant: 'default' as const, 
+          className: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300',
+          icon: null
+        };
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return { 
+          variant: 'default' as const, 
+          className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300',
+        };
       case 'end':
-        return 'bg-yellow-100 text-yellow-800';
+        return { 
+          variant: 'secondary' as const, 
+          className: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300',
+          icon: null
+        };
       default:
-        return 'bg-blue-100 text-blue-800';
+        return { 
+          variant: 'outline' as const, 
+          className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300',
+          icon: null
+        };
     }
   };
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center">Loading request details...</div>
+      <div className="flex-1 flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading request details...</p>
+        </div>
       </div>
     );
   }
 
+  if (!requestDetails) {
+    return (
+      <div className="flex-1 flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="text-center space-y-4">
+          <p className="text-gray-600 dark:text-gray-400">Request not found</p>
+          <Button onClick={() => navigate(-1)} variant="outline">
+            Go Back
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const statusConfig = getStatusConfig(requestDetails?.status_display);
+
   return (
-    <div className="flex-1 overflow-auto dark:bg-gray-900 mb-10">
+    <div className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
       <DashboardHeader userName={userProfile?.first_name || "User"} />
-      <div className="p-3 lg:p-6 md:p-6 mb-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold uppercase dark:text-white">
-            Request #{requestDetails?.uid?.slice(0, 8) || ""}
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300">
-            Explore all the tuition request from guardian
-          </p>
+      
+      <div className="mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        {/* Header Section */}
+        <div className="space-y-4">
           <Button
             onClick={() => window.history.back()}
             className="flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white mb-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 mt-6"
@@ -237,42 +280,57 @@ const TuitionRequestDetails: React.FC = () => {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
-        </div>
-
-        <div className="container p-0">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 lg:p-6 md:p-6 border border-white-200 dark:border-gray-700">
-            <div className="ml-auto flex mb-3 justify-between h-7">
-              <span className={`${getBgColorClass(requestDetails?.status_display)} px-3 py-1 rounded-lg text-sm font-medium`}>
+          
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                Request #{requestDetails?.uid?.slice(0, 8) || ""}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">
+                Tuition request details and management
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <span className={`${statusConfig.className} px-3 py-1 rounded-lg text-sm font-medium`}>
+                {statusConfig.icon}
                 {requestDetails?.status_display}
               </span>
-              {(
-                userProfile?.user_type === 'GUARDIAN' &&
+              
+              {userProfile?.user_type === 'GUARDIAN' && requestDetails?.tutor && (
                 <Link to={`/private-profile/tutor/${requestDetails?.tutor?.uid}`}>
-                <Button size="sm" className="w-[150px] text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700">
-                  Tutor Profile
-                </Button>
-              </Link>
+                  <Button variant="outline" size="sm">
+                    View Tutor Profile
+                  </Button>
+                </Link>
               )}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Student Information */}
+          <Card className="xl:col-span-2 shadow-none border-0 dark:bg-gray-800">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-blue-600" />
+                Student Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                 <DetailItem
-                  label="Student Class"
-                  value={requestDetails?.student_class || "N/A"}
+                  label="Class"
+                  value={requestDetails?.student_class}
                 />
                 <DetailItem
                   label="Institution"
                   value={requestDetails?.student_institution}
                 />
                 <DetailItem
-                  label="Subject"
-                  value={requestDetails?.subjects
-                    ?.map((s) => s.subject)
-                    .join(", ")}
-                />
-                <DetailItem
                   label="Department"
-                  value={requestDetails?.student_department || "N/A"}
+                  value={requestDetails?.student_department}
                 />
                 <DetailItem
                   label="Gender"
@@ -282,156 +340,218 @@ const TuitionRequestDetails: React.FC = () => {
                   label="Version"
                   value={requestDetails?.version_bangla_english}
                 />
+                <DetailItem
+                  label="Subjects"
+                  value={requestDetails?.subjects?.map((s) => s.subject).join(", ")}
+                />
               </div>
-              <div className="space-y-4">
+            </CardContent>
+          </Card>
+
+          {/* Location & Schedule */}
+          <Card className="shadow-none border-0 dark:bg-gray-800">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-green-600" />
+                Location & Schedule
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <DetailItem
+                label="Location"
+                value={
+                  requestDetails?.student_upazila?.name
+                    ? `${requestDetails.student_upazila.name}, ${requestDetails.student_upazila.district.name}`
+                    : "Not specified"
+                }
+                icon={<MapPin className="h-4 w-4" />}
+              />
+              <DetailItem
+                label="Area"
+                value={requestDetails?.student_area?.name}
+              />
+              <DetailItem
+                label="Tuition Type"
+                value={requestDetails?.tuition_type}
+              />
+              {(requestDetails?.tuition_type === 'HOME' || requestDetails?.tuition_type === 'BOTH') && (
                 <DetailItem
-                  label="Area"
-                  value={requestDetails?.student_area?.name || "N/A"}
+                  label="Address"
+                  value={requestDetails?.student_address}
                 />
+              )}
+              <DetailItem
+                label="Active Days"
+                value={requestDetails?.active_days?.map((d) => d.day).join(", ")}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Tuition Details */}
+          <Card className="xl:col-span-3 shadow-none border-0 dark:bg-gray-800">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-purple-600" />
+                Tuition Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <DetailItem
-                  label="Tuition Type"
-                  value={requestDetails?.tuition_type}
-                />
-                {(requestDetails?.tuition_type === 'HOME' || requestDetails?.tuition_type === 'BOTH') && (
-                  <DetailItem
-                    label="Address"
-                    value={requestDetails?.student_address}
-                  />
-                )}
-                <DetailItem
-                  label="Tuition Members"
+                  label="Family Members"
                   value={requestDetails?.family_members}
                 />
                 <DetailItem
-                  label="Preferred Days"
-                  value={requestDetails?.active_days
-                    ?.map((d) => d.day)
-                    .join(", ")}
-                />
-                <DetailItem
-                  label="Tuition Fee"
-                  value={requestDetails?.proposed_salary}
+                  label="Proposed Salary"
+                  value={requestDetails?.proposed_salary ? `৳${requestDetails.proposed_salary}` : "Not specified"}
                 />
               </div>
-            </div>
+            </CardContent>
+          </Card>
+        </div>
 
-            {showRejection && (
-              <div className="mt-6 space-y-4">
-                <h3 className="text-lg font-medium dark:text-white">
-                  Details About Rejection
-                </h3>
-                <Textarea
-                  placeholder="Write about rejection of the request"
-                  value={rejectionReason}
-                  onChange={(e) => setRejectionReason(e.target.value)}
-                  className="min-h-[120px] dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                />
-                <div className="flex justify-end gap-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowRejection(false)}
-                    className="dark:border-gray-600 dark:text-gray-200"
-                  >
-                    Cancel
-                  </Button>
-                  <Button onClick={confirmReject}>Submit</Button>
-                </div>
+        {/* Rejection Form */}
+        {showRejection && (
+          <Card className="border-red-200 dark:border-red-800">
+            <CardHeader>
+              <CardTitle className="text-red-800 dark:text-red-300">
+                Rejection Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Textarea
+                placeholder="Please provide a detailed reason for rejecting this request..."
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                className="min-h-[120px] resize-none"
+                rows={5}
+              />
+              <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setShowRejection(false);
+                    setRejectionReason("");
+                  }}
+                  className="sm:w-auto"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={confirmReject}
+                  variant="destructive"
+                  className="sm:w-auto"
+                  disabled={!rejectionReason.trim()}
+                >
+                  Submit Rejection
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Action Buttons */}
+        {userProfile?.user_type === "GUARDIAN" ? (
+          <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
+            {requestDetails?.status_display === "Pending" ? (
+              <Button
+                variant="destructive"
+                className="sm:w-auto"
+                onClick={handleDelete}
+              >
+                Delete Request
+              </Button>
+            ) : requestDetails?.status_display === "Rejected" ? (
+              <Button
+                disabled
+                variant="destructive"
+                className="sm:w-auto opacity-75 cursor-not-allowed"
+              >
+                Request Rejected
+              </Button>
+            ) : requestDetails?.status_display === "Completed" ? (
+              <Button
+                disabled
+                className="sm:w-auto bg-blue-600 opacity-75 cursor-not-allowed"
+              >
+                Contract Ended
+              </Button>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  onClick={handleSendMessage}
+                  disabled={requestDetails?.status_display !== "Accepted"}
+                  className="sm:w-auto flex items-center gap-2 text-white"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  {requestDetails?.status_display === "Accepted"
+                    ? "Send Message"
+                    : "Waiting for Response"}
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={handleWriteReview}
+                  className="sm:w-auto"
+                >
+                  End Contract
+                </Button>
               </div>
             )}
+          </div>
+        ) : (
+          !showRejection && (
+            <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
+              {requestDetails?.status_display === "Pending" && (
+                <>
+                  <Button
+                    variant="outline"
+                    onClick={handleReject}
+                    className="sm:w-auto"
+                  >
+                    Reject Request
+                  </Button>
+                  <Button
+                    onClick={handleAccept}
+                    className="sm:w-auto"
+                  >
+                    Accept Request
+                  </Button>
+                </>
+              )}
 
-            <div>
-              {userProfile?.user_type === "GUARDIAN" ? (
-                <div className="mt-6 flex justify-end gap-4">
-                  {requestDetails?.status_display === "Pending" ? (
-                    <Button
-                      variant="outline"
-                      className="w-[200px] bg-red-600 hover:bg-red-700 text-white font-medium py-3 hover:text-white"
-                      onClick={handleDelete}
-                    >
-                      Delete Request
-                    </Button>
-                  ) : requestDetails?.status_display === "Rejected" ? (
-                    <Button
-                      disabled
-                      className="w-[200px] bg-red-700 text-white font-medium py-3 cursor-not-allowed"
-                    >
-                      Request Rejected
-                    </Button>
-                  ) : requestDetails?.status_display === "Completed" ? (
-                    <Button
-                      className="w-[200px] bg-blue-600 hover:bg-blue-700 text-white font-medium py-3"
-                      onClick={handleWriteReview}
-                    >
-                      Write a Review
-                    </Button>
-                  ) : (
-                    <Button
-                      className="w-[200px] bg-blue-600 hover:bg-blue-700 text-white font-medium py-3"
-                      onClick={handleSendMessage}
-                      disabled={requestDetails?.status_display !== "Accepted"}
-                    >
-                      {requestDetails?.status_display === "Accepted"
-                        ? "Send Message"
-                        : "Waiting for Response"}
-                    </Button>
-                  )}
-                </div>
-              ) : (
-                /* TEACHER actions */
-                !showRejection && (
-                  <div className="mt-6 flex justify-end gap-4">
-                    {requestDetails?.status_display === "Pending" && (
-                      <>
-                        <Button
-                          variant="outline"
-                          className="w-[200px] dark:border-gray-600 dark:text-gray-200"
-                          onClick={handleReject}
-                        >
-                          Reject
-                        </Button>
-                        <Button
-                          className="w-[200px] bg-blue-600 hover:bg-blue-700 text-white font-medium py-3"
-                          onClick={handleAccept}
-                        >
-                          Accept
-                        </Button>
-                      </>
-                    )}
+              {requestDetails?.status_display === "Accepted" && (
+                <Button
+                  onClick={handleSendMessage}
+                  className="sm:w-auto flex items-center gap-2"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  Send Message
+                </Button>
+              )}
 
-                    {requestDetails?.status_display === "Accepted" && (
-                      <Button
-                        className="w-[200px] bg-blue-600 hover:bg-blue-700 text-white font-medium py-3"
-                        onClick={handleSendMessage}
-                      >
-                        Send Message
-                      </Button>
-                    )}
+              {requestDetails?.status_display === "Completed" && (
+                <Button
+                  disabled
+                  className="sm:w-auto bg-green-600 opacity-75 cursor-not-allowed"
+                >
+                  Completed
+                </Button>
+              )}
 
-                    {requestDetails?.status_display === "Completed" && (
-                      <Button
-                        disabled
-                        className="w-[200px] bg-green-600 text-white font-medium py-3 opacity-75 cursor-not-allowed"
-                      >
-                        Completed
-                      </Button>
-                    )}
-
-                    {requestDetails?.status_display === "Rejected" && (
-                      <Button
-                        disabled
-                        variant="outline"
-                        className="w-[200px] bg-red-600 hover:bg-red-700 text-white font-medium py-3 opacity-75 cursor-not-allowed"
-                      >
-                        Already Rejected
-                      </Button>
-                    )}
-                  </div>
-                )
+              {requestDetails?.status_display === "Rejected" && (
+                <Button
+                  disabled
+                  variant="destructive"
+                  className="sm:w-auto opacity-75 cursor-not-allowed"
+                >
+                  Already Rejected
+                </Button>
               )}
             </div>
-          </div>
-        </div>
+          )
+        )}
       </div>
+
       <ConfirmationComponent />
       <ReviewModal 
         isOpen={isReviewModalOpen}

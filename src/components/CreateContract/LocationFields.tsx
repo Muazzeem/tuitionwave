@@ -1,8 +1,21 @@
-
 import React from "react";
 import FormField from "./FormField";
 
-interface City {
+interface Division {
+  id: number;
+  name: string;
+}
+
+interface District {
+  id: number;
+  name: string;
+  division: {
+    id: number;
+    name: string;
+  }
+}
+
+interface Upazila {
   id: number;
   name: string;
   district: {
@@ -21,69 +34,175 @@ interface Area {
 }
 
 interface LocationFieldsProps {
-  studentCity: string;
-  studentArea: string;
-  onCityChange: (value: string) => void;
+  // Selected values
+  selectedDivision: string;
+  selectedDistrict: string;
+  selectedUpazila: string;
+  selectedArea: string;
+  
+  // Change handlers
+  onDivisionChange: (value: string) => void;
+  onDistrictChange: (value: string) => void;
+  onUpazilaChange: (value: string) => void;
   onAreaChange: (value: string) => void;
-  cities: City[];
+  
+  // Data arrays
+  divisions: Division[];
+  districts: District[];
+  upazilas: Upazila[];
   areas: Area[];
-  loadingCities: boolean;
+  
+  // Loading states
+  loadingDivisions: boolean;
+  loadingDistricts: boolean;
+  loadingUpazilas: boolean;
   loadingAreas: boolean;
-  cityError?: string;
+  
+  // Error states (optional)
+  divisionError?: string;
+  districtError?: string;
+  upazilaError?: string;
   areaError?: string;
+  
+  // Required fields (optional)
+  divisionRequired?: boolean;
+  districtRequired?: boolean;
+  upazilaRequired?: boolean;
+  areaRequired?: boolean;
 }
 
 const LocationFields: React.FC<LocationFieldsProps> = ({
-  studentCity,
-  studentArea,
-  onCityChange,
+  selectedDivision,
+  selectedDistrict,
+  selectedUpazila,
+  selectedArea,
+  onDivisionChange,
+  onDistrictChange,
+  onUpazilaChange,
   onAreaChange,
-  cities,
+  divisions,
+  districts,
+  upazilas,
   areas,
-  loadingCities,
+  loadingDivisions,
+  loadingDistricts,
+  loadingUpazilas,
   loadingAreas,
-  cityError,
+  divisionError,
+  districtError,
+  upazilaError,
   areaError,
+  divisionRequired = false,
+  districtRequired = false,
+  upazilaRequired = false,
+  areaRequired = false,
 }) => {
-  const cityOptions = cities.map(city => ({
-    value: city.id.toString(),
-    label: city.name
+  // Transform data to options format
+  const divisionOptions = divisions?.map(division => ({
+    value: division.id.toString(),
+    label: division.name
   }));
 
-  const areaOptions = areas.map(area => ({
+  const districtOptions = districts?.map(district => ({
+    value: district.id.toString(),
+    label: district.name
+  }));
+
+  const upazilaOptions = upazilas?.map(upazila => ({
+    value: upazila.id.toString(),
+    label: upazila.name
+  }));
+
+  const areaOptions = areas?.map(area => ({
     value: area.id.toString(),
     label: area.name
   }));
 
   return (
     <>
-      <div className="col-span-6">
-        <FormField
-          id="studentCity"
-          label="Student Upazila"
-          type="select"
-          value={studentCity}
-          onChange={onCityChange}
-          placeholder={loadingCities ? "Loading cities..." : "Select City"}
-          error={cityError}
-          required
-          disabled={loadingCities}
-          options={cityOptions}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="mb-3">
+          <FormField
+            id="division"
+            label="Division"
+            type="select"
+            value={selectedDivision}
+            onChange={onDivisionChange}
+            placeholder={loadingDivisions ? "Loading divisions..." : "Select Division"}
+            error={divisionError}
+            required={divisionRequired}
+            disabled={loadingDivisions}
+            options={divisionOptions}
+          />
+        </div>
+
+        {/* District Field */}
+        <div className="mb-3">
+          <FormField
+            id="district"
+            label="District"
+            type="select"
+            value={selectedDistrict}
+            onChange={onDistrictChange}
+            placeholder={
+              loadingDistricts 
+                ? "Loading districts..." 
+                : !selectedDivision 
+                  ? "Select Division first" 
+                  : "Select District"
+            }
+            error={districtError}
+            required={districtRequired}
+            disabled={loadingDistricts || !selectedDivision}
+            options={districtOptions}
+          />
+        </div>
+
+        {/* Upazila Field */}
+        <div className="mb-3">
+          <FormField
+            id="upazila"
+            label="Upazila"
+            type="select"
+            value={selectedUpazila}
+            onChange={onUpazilaChange}
+            placeholder={
+              loadingUpazilas 
+                ? "Loading upazilas..." 
+                : !selectedDistrict 
+                  ? "Select District first" 
+                  : "Select Upazila"
+            }
+            error={upazilaError}
+            required={upazilaRequired}
+            disabled={loadingUpazilas || !selectedDistrict}
+            options={upazilaOptions}
+          />
+        </div>
       </div>
-      <div className="col-span-6">
+
+      {/* Area Field */}
+      <div className="col-span-6 mb-3">
         <FormField
-          id="studentArea"
+          id="area"
           label="Area"
           type="select"
-          value={studentArea}
+          value={selectedArea}
           onChange={onAreaChange}
-          placeholder={loadingAreas ? "Loading areas..." : "Select Area"}
+          placeholder={
+            loadingAreas 
+              ? "Loading areas..." 
+              : !selectedUpazila 
+                ? "Select Upazila first" 
+                : "Select Area"
+          }
           error={areaError}
-          disabled={loadingAreas}
+          required={areaRequired}
+          disabled={loadingAreas || !selectedUpazila}
           options={areaOptions}
         />
       </div>
+      
     </>
   );
 };

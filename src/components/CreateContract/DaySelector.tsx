@@ -3,7 +3,6 @@ import React from "react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
 
-// Define all days of the week
 const ALL_DAYS = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thr", "Fri"];
 
 interface DaySelectorProps {

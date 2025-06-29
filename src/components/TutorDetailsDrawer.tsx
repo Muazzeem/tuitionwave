@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import ContactTutorDrawer from "@/components/ContactTutorDrawer";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Tutor } from "@/types/tutor";
@@ -244,7 +243,6 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
 
                   <div>
                     <div className="text-gray-700 mt-1 dark:text-gray-300">
-                      <ReviewSection id={uid} condition='False' />
                       {(tutorDetails.active_days === null ||
                         tutorDetails.active_days.length === 0) &&
                         tutorDetails.days_per_week === null &&
@@ -261,13 +259,15 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
           {tutorDetails && !loading && !error &&  (
             <div className="p-4 border-t">
               {userProfile?(
-                <Button onClick={openContactDrawer} className="w-full min-h-[55px] dark:text-white">
-                  Contact Tutor
-                </Button>
+                <Link to={`/find-tutors/contract/${uid}`}>
+                  <Button className="w-full min-h-[55px] dark:text-white">
+                   Create Request
+                  </Button>
+                </Link>
               ): (
                 <Link to="/login">
                   <Button  className="w-full min-h-[55px] dark:text-white">
-                    Login to Contact Tutor
+                    Login to Request
                   </Button>
                 </Link>
               )}
@@ -276,15 +276,6 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
           )}
         </div>
       </div>
-
-      {/* Contact Tutor Drawer */}
-      <ContactTutorDrawer
-        isOpen={isContactDrawerOpen}
-        onClose={closeContactDrawer}
-        uid={uid}
-        tuition_type={teaching_type}
-        division='4'
-      />
     </>
   );
 };

@@ -17,7 +17,7 @@ const formatDate = (dateString: string) => {
 };
 
 const ReviewItem = ({ name, comment, rating, date }: ReviewItemProps) => (
-  <Card className="mb-6 border-0 shadow-none bg-white dark:bg-gray-900 dark:border-gray-700">
+  <Card className="mb-6 border-t shadow-sm bg-white dark:bg-gray-900 dark:border-gray-700">
     <CardContent className="p-1">
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center gap-3">
@@ -93,7 +93,7 @@ const RatingsSummary = ({ feedbacks }: { feedbacks: FeedbackItem[] }) => {
   const badgeInfo = getRatingBadge(parseFloat(avgRating));
 
   return (
-    <Card className="shadow-sm border-0 bg-white dark:from-gray-800 dark:to-gray-900">
+    <Card className="shadow-sm border-0 dark:bg-gray-800">
       <CardHeader className="pb-4">
         <div className="text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -123,12 +123,14 @@ const RatingsSummary = ({ feedbacks }: { feedbacks: FeedbackItem[] }) => {
 
           <div className="flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <Users size={16} />
-            <span>{feedbacks.length}+ Reviews</span>
+            <span>{feedbacks.length} 
+              {feedbacks.length === 1 ? ' Review' : ' Reviews'}
+            </span>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="pt-0">
+      <CardContent className="pt-0 dark:bg-gray-800">
         <div className="space-y-3">
           {ratingCounts.map(({ rating, count, percentage }) => (
             <div key={rating} className="flex items-center gap-3">
@@ -206,7 +208,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ id, condition }) => {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="animate-pulse space-y-4">
             <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
@@ -245,15 +247,16 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ id, condition }) => {
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-2 ">
         {/* Ratings Summary - Left Column */}
-        {/* <div className="lg:col-span-1">
-          <RatingsSummary feedbacks={feedbacks} />
-        </div> */}
+        {(condition === "True") && (
+          <div className="lg:col-span-1">
+            <RatingsSummary feedbacks={feedbacks} />
+          </div>
+        )}
 
-        {/* Reviews Content - Right Column */}
-        <div className="lg:col-span-3">
+        <div className={`lg:col-span-${condition === "True" ? 2 : 3}`}>
           <Card className="shadow-sm border-0">
             <CardContent className="p-0">
-              <Tabs defaultValue="reviews" className="w-full">
+              <Tabs defaultValue="description" className="w-full">
                 <div className="border-b bg-gray-50 dark:bg-gray-800/50 px-6 py-2">
                   <TabsList className="bg-transparent p-0 h-auto">
                     <TabsTrigger

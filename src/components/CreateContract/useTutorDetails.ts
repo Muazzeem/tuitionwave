@@ -1,27 +1,15 @@
 
+import { Tutor } from '@/types/tutor';
 import { useState, useEffect, useCallback } from 'react';
-
-interface Subject {
-  id: number;
-  subject: string;
-}
 
 interface ActiveDay {
   id: number;
   day: string;
 }
 
-interface TutorDetails {
-  full_name?: string;
-  subjects?: Subject[];
-  active_days?: ActiveDay[];
-  rating?: number;
-  review_count?: number;
-  tuition_type?: string;
-}
 
 export const useTutorDetails = (tutorId: string, isDrawerOpen: boolean) => {
-  const [tutor, setTutor] = useState<TutorDetails | null>(null);
+  const [tutor, setTutor] = useState<Tutor | null>(null);
   const [activeDays, setActiveDays] = useState<string[]>([]);
   const [activeDayMapping, setActiveDayMapping] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState<boolean>(true);

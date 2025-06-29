@@ -1,92 +1,103 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { X, Copy, Phone } from 'lucide-react';
+import { X, Copy, Phone, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+
+interface Description {
+  uid: string;
+  text: string;
+}
+
+interface Package {
+  uid: string;
+  name: string;
+  price: string;
+  period: string;
+  package_expiry_date: string;
+  descriptions: Description[];
+  created_at: string;
+}
 
 const PricingCards: React.FC = () => {
   const { userProfile } = useAuth();
-  const [selectedTier, setSelectedTier] = useState<any>(null);
+  const [packages, setPackages] = useState<Package[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedTier, setSelectedTier] = useState<Package | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
 
   const bkashNumber = "01712345678";
+  const baseUrl = import.meta.env.VITE_API_URL;
 
-  const pricingTiers = [
-    {
-      name: 'Basic',
-      price: '৳ 500',
-      period: '/month',
-      note: 'bKash Payment Method',
-      features: [
-        {
-          title: 'Speaking Sessions',
-          description: '1 Free Personalized Speaking Sessions (15 minutes)'
-        },
-        {
-          title: 'Premium Support',
-          description: 'Assistance via email or call'
-        }
-      ],
-      buttonText: 'Subscribe Now',
-      buttonVariant: 'default' as const,
-      cardStyle: 'bg-purple-50 border-purple-200',
-      isSubscribed: userProfile.package.name === 'Basic'
-    },
-    {
-      name: 'Standard',
-      price: '৳ 1500',
-      period: '/1 year',
-      note: 'bKash Payment Method',
-      features: [
-        {
-          title: 'Speaking Sessions',
-          description: '30 Personalized Speaking Sessions Monthly (15 minutes each)'
-        },
-        {
-          title: 'Premium Support',
-          description: 'Assistance via email or call'
-        }
-      ],
-      buttonText: 'Subscribe Now',
-      buttonVariant: 'default' as const,
-      cardStyle: 'bg-blue-50 border-blue-200',
-      isSubscribed: userProfile.package.name === 'Standard'
-    },
-    {
-      name: 'Premium',
-      price: '৳ 3,000',
-      period: '/3 years',
-      note: 'bKash Payment Method',
-      features: [
-        {
-          title: 'Speaking Sessions',
-          description: '60 Personalized Speaking Sessions Monthly (15 minutes each)'
-        },
-        {
-          title: 'Premium Support',
-          description: 'Assistance via email or call'
-        }
-      ],
-      buttonText: 'Subscribe Now',
-      buttonVariant: 'default' as const,
-      cardStyle: 'bg-orange-50 border-orange-200',
-      isSubscribed: userProfile.package.name === 'Premium'
+  useEffect(() => {
+    fetchPackages();
+  }, []);
+
+  const fetchPackages = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${baseUrl}/api/packages`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      setPackages(data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching packages:', err);
+      setError('Failed to load packages. Please try again later.');
+    } finally {
+      setLoading(false);
     }
-  ];
-
-  const getFeatureIcon = (title: string) => {
-    const iconMap: { [key: string]: string } = {
-      'Speaking Sessions': '🎤',
-      'Basic Feedback': '📝',
-      'Live Translation': '🌍',
-      'Premium Support': '💎',
-    };
-    return iconMap[title] || '✓';
   };
 
-  const handleSubscribeClick = (tier: any) => {
-    setSelectedTier(tier);
+  const getCardStyle = (index: number) => {
+    const styles = [
+      'bg-purple-50 border-purple-200',
+      'bg-blue-50 border-blue-200',
+      'bg-orange-50 border-orange-200',
+      'bg-green-50 border-green-200',
+      'bg-pink-50 border-pink-200'
+    ];
+    return styles[index % styles.length];
+  };
+
+  const getButtonStyle = (index: number) => {
+    const styles = [
+      'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700',
+      'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700',
+      'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700',
+      'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700',
+      'bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700'
+    ];
+    return styles[index % styles.length];
+  };
+
+  const formatPrice = (price: string) => {
+    const numPrice = parseFloat(price);
+    return `৳ ${numPrice.toLocaleString()}`;
+  };
+
+  const formatPeriod = (period: string) => {
+    // Convert "1 Months" to "/month", "12 Months" to "/year", etc.
+    const months = parseInt(period.split(' ')[0]);
+    if (months === 1) return '/month';
+    if (months === 12) return '/year';
+    if (months === 36) return '/3 years';
+    return `/${period.toLowerCase()}`;
+  };
+
+  const getFeatureIcon = (index: number) => {
+    const icons = ['✔'];
+    return icons[index % icons.length];
+  };
+
+  const handleSubscribeClick = (pkg: Package) => {
+    setSelectedTier(pkg);
     setIsModalOpen(true);
   };
 
@@ -103,34 +114,81 @@ const PricingCards: React.FC = () => {
     });
   };
 
+  const isCurrentPlan = (packageName: string) => {
+    return userProfile?.package?.name === packageName;
+  };
+
+  if (loading) {
+    return (
+      <div className="py-12 px-4 max-w-7xl mx-auto">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
+            <p className="text-gray-600">Loading packages...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="py-12 px-4 max-w-7xl mx-auto">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <X className="w-8 h-8 text-red-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Loading Packages</h3>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <Button onClick={fetchPackages} variant="outline">
+              Try Again
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (packages.length === 0) {
+    return (
+      <div className="py-12 px-4 max-w-7xl mx-auto">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <p className="text-gray-600">No packages available at the moment.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="py-12 px-4 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {pricingTiers.map((tier, index) => (
-            <Card key={tier.name} className={`relative ${tier.cardStyle} h-full flex flex-col`}>
+          {packages.map((pkg, index) => (
+            <Card key={pkg.uid} className={`relative ${getCardStyle(index)} h-full flex flex-col`}>
               <CardHeader className="text-center pb-4">
-                <h3 className="text-2xl font-bold text-gray-900">{tier.name}</h3>              
+                <h3 className="text-2xl font-bold text-gray-900">{pkg.name}</h3>              
                 <div className="mb-4">
-                  <span className="text-4xl font-bold text-gray-900">{tier.price}</span>
-                  <span className="text-gray-600">{tier.period}</span>
+                  <span className="text-4xl font-bold text-gray-900">{formatPrice(pkg.price)}</span>
+                  <span className="text-gray-600">{formatPeriod(pkg.period)}</span>
                 </div>
                 
-                <p className="text-sm text-gray-500">{tier.note}</p>
+                <p className="text-sm text-gray-500">bKash Payment Method</p>
               </CardHeader>
 
               <CardContent className="flex-1 flex flex-col">
                 <div className="mb-6">
                   <h4 className="font-semibold text-gray-900 mb-4">Package Includes:</h4>
-                  <div className="space-y-4">
-                    {tier.features.map((feature, featureIndex) => (
-                      <div key={featureIndex} className="flex items-start space-x-3">
-                        <span className="text-lg flex-shrink-0 mt-0.5">
-                          {getFeatureIcon(feature.title)}
+                  <div className="">
+                    {pkg.descriptions.map((description, descIndex) => (
+                      <div key={description.uid} className="flex items-start space-x-3">
+                        <span className="text-lg flex-shrink-0">
+                          {getFeatureIcon(descIndex)}
                         </span>
                         <div>
-                          <h5 className="font-medium text-gray-900 text-sm">{feature.title}</h5>
-                          <p className="text-xs text-gray-600 mt-1">{feature.description}</p>
+                          <p className="text-sm text-gray-900">{description.text}</p>
                         </div>
                       </div>
                     ))}
@@ -138,18 +196,13 @@ const PricingCards: React.FC = () => {
                 </div>
 
                 <div className="mt-auto">
-                  <Button  disabled={tier.isSubscribed}
-                    onClick={() => handleSubscribeClick(tier)}
-                    className={`w-full py-3 text-white font-medium rounded-lg transition-colors ${
-                      tier.name === 'Basic' 
-                        ? 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
-                        : tier.name === 'Standard'
-                        ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
-                        : 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700'
-                    }`}
-                    variant={tier.buttonVariant}
+                  <Button  
+                    disabled={isCurrentPlan(pkg.name)}
+                    onClick={() => handleSubscribeClick(pkg)}
+                    className={`w-full py-3 text-white font-medium rounded-lg transition-colors ${getButtonStyle(index)}`}
+                    variant="default"
                   >
-                    {tier.isSubscribed ? 'Current Plan' : 'Subscribe Now'}
+                    {isCurrentPlan(pkg.name) ? 'Current Plan' : 'Subscribe Now'}
                   </Button>
                 </div>
               </CardContent>
@@ -181,16 +234,15 @@ const PricingCards: React.FC = () => {
               <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                 <h3 className="font-semibold text-gray-900 mb-2">{selectedTier.name} Plan</h3>
                 <div className="flex items-baseline mb-2">
-                  <span className="text-2xl font-bold text-gray-900">{selectedTier.price}</span>
-                  <span className="text-gray-600 ml-1">{selectedTier.period}</span>
+                  <span className="text-2xl font-bold text-gray-900">{formatPrice(selectedTier.price)}</span>
+                  <span className="text-gray-600 ml-1">{formatPeriod(selectedTier.period)}</span>
                 </div>
                 <div className="space-y-2">
-                  {selectedTier.features.map((feature: any, index: number) => (
-                    <div key={index} className="flex items-start space-x-2">
+                  {selectedTier.descriptions.map((description, index) => (
+                    <div key={description.uid} className="flex items-start space-x-2">
                       <span className="text-green-500 mt-0.5">✓</span>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{feature.title}</p>
-                        <p className="text-xs text-gray-600">{feature.description}</p>
+                        <p className="text-sm text-gray-900">{description.text}</p>
                       </div>
                     </div>
                   ))}
@@ -229,7 +281,7 @@ const PricingCards: React.FC = () => {
                       <li>1. Open your bKash app</li>
                       <li>2. Select "Send Money"</li>
                       <li>3. Enter the number: {bkashNumber}</li>
-                      <li>4. Enter amount: {selectedTier.price.replace('৳ ', '')}</li>
+                      <li>4. Enter amount: {selectedTier.price}</li>
                       <li>5. Complete the transaction</li>
                       <li>6. Send us the transaction ID</li>
                     </ol>

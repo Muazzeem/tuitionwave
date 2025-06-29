@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import ConfirmationDialog from "@/components/ConfirmationDialog";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Import custom components
 import DaySelector from "./DaySelector";
 import SubjectSelector from "./SubjectSelector";
 import FormField from "./FormField";
-import TutorHeader from "./TutorHeader";
-import ValidationAlert from "./ValidationAlert";
 import LocationFields from "./LocationFields";
 
 // Import custom hooks
@@ -19,12 +19,14 @@ import { useTutorDetails } from "./useTutorDetails";
 import { useFormValidation } from "./useFormValidation";
 import { useLocationData } from "./useLocationData";
 import { getAccessToken } from "@/utils/auth";
+import ReviewSection from "../ReviewSection";
+import DashboardHeader from "../DashboardHeader";
 
 interface DrawerState {
   isOpen: boolean;
 }
 
-const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type: string, division: string }> = ({ uid, drawer, teaching_type, division }) => {
+const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type: string }> = ({ uid, drawer, teaching_type }) => {
   const { userProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -45,31 +47,42 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
   const [showApproveConfirm, setShowApproveConfirm] = useState(false);
 
   // Custom hooks
-  const { tutor, activeDays, activeDayMapping, loading } = useTutorDetails(uid, drawer.isOpen);
+  const { tutor, activeDays, activeDayMapping } = useTutorDetails(uid, drawer.isOpen);
   const { errors, showValidationError, setShowValidationError, validateForm, clearFieldError } = useFormValidation();
   const {
-    cities,
+    divisions,
+    districts,
+    upazilas,
     areas,
-    loadingCities,
+    selectedDivision,
+    selectedDistrict,
+    selectedUpazila,
+    selectedArea,
+    loadingDivisions,
+    loadingDistricts,
+    loadingUpazilas,
     loadingAreas,
-    studentCity,
-    studentArea,
-    fetchCities,
-    fetchAreas,
-    handleCityChange,
-    handleAreaChange
+    handleDivisionChange,
+    handleDistrictChange,
+    handleUpazilaChange,
+    handleAreaChange,
+    fetchDivisions
   } = useLocationData();
+
+  // Define studentCity and studentArea based on location selections
+  const studentCity = selectedUpazila;
+  const studentArea = selectedArea;
 
   // Helper function to check if class is greater than 8
   const shouldShowDepartment = () => {
     if (!studentClass) return false;
-    
+
     // Check if it's a numeric class
     const numericClass = parseInt(studentClass);
     if (!isNaN(numericClass)) {
       return numericClass > 8;
     }
-    
+
     // For non-numeric classes, show department for higher education levels
     const higherEducationLevels = ["A Level", "HSC", "Undergraduate", "Graduate"];
     return higherEducationLevels.includes(studentClass);
@@ -85,34 +98,27 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
     return teaching_type === 'HOME';
   };
 
-  // Fetch cities and areas when drawer opens
   useEffect(() => {
-    if (drawer.isOpen) {
-      fetchCities();
-      fetchAreas();
-    }
-  }, [drawer.isOpen, fetchCities, fetchAreas]);
+    fetchDivisions();
+  }, [fetchDivisions]);
 
-  // Clear department when class changes and department should not be shown
   useEffect(() => {
     if (!shouldShowDepartment() && studentDepartment) {
       setStudentDepartment("");
       clearFieldError('studentDepartment');
     }
-  }, [studentClass]);
+  }, [studentClass, studentDepartment, clearFieldError]);
 
-  // Clear address when tuition type changes and address should not be shown
   useEffect(() => {
     if (!shouldShowAddress() && studentAddress) {
       setStudentAddress("");
       clearFieldError('studentAddress');
     }
-  }, [tuitionType, teaching_type]);
+  }, [tuitionType, teaching_type, studentAddress, clearFieldError]);
 
-  // Handle field changes
   const handleFieldChange = (field: string, value: any) => {
     clearFieldError(field as any);
-    
+
     switch (field) {
       case 'selectedSubjects':
         setSelectedSubjects(value);
@@ -147,7 +153,6 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
     }
   };
 
-  // Handle days selection
   const handleDaysChange = (days: string[]) => {
     setSelectedDays(days);
     clearFieldError('selectedDays');
@@ -158,7 +163,7 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
     const isValid = validateForm({
       selectedDays,
       selectedSubjects,
-      studentCity,
+      selectedUpazila,
       studentArea,
       studentInstitution,
       studentClass,
@@ -185,13 +190,12 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
 
     const dayIds = selectedDays.map((day) => activeDayMapping[day]);
 
-    // Send the IDs directly without looking up names
     const payload = {
-      student_upazila: studentCity, // City ID
-      student_area: studentArea, // Area ID
+      student_upazila: selectedUpazila,
+      student_area: studentArea,
       student_institution: studentInstitution,
       student_class: studentClass,
-      student_department: shouldShowDepartment() ? studentDepartment : "", // Only send if applicable
+      student_department: shouldShowDepartment() ? studentDepartment : "",
       tuition_type: tuitionType.toUpperCase(),
       family_members: memberCount,
       student_gender: preferredGender,
@@ -200,7 +204,7 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
       subjects: subjectIds,
       active_days: dayIds,
       version_bangla_english: versionBanglaEnglish,
-      student_address: shouldShowAddress() ? studentAddress : "", // Only send if address is required
+      student_address: shouldShowAddress() ? studentAddress : "",
     };
 
     console.log("Sending contract request:", payload);
@@ -243,17 +247,17 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
     const isValid = validateForm({
       selectedDays,
       selectedSubjects,
-      studentCity,
+      selectedUpazila,
       studentArea,
       studentInstitution,
       studentClass,
-      studentDepartment: shouldShowDepartment() ? studentDepartment : "", // Only validate if shown
+      studentDepartment: shouldShowDepartment() ? studentDepartment : "",
       tuitionType,
       memberCount,
       preferredGender,
       selectedAmount,
       versionBanglaEnglish,
-      studentAddress: shouldShowAddress() ? studentAddress : "" // Only validate if address is required
+      studentAddress: shouldShowAddress() ? studentAddress : ""
     });
 
     if (isValid) {
@@ -265,7 +269,6 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
     }
   };
 
-  // Generate options for select fields
   const classOptions = [
     ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(cls => ({
       value: cls.toString(),
@@ -278,7 +281,7 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
   ];
 
   const departmentOptions = [
-    "Bangla", "English", "Mathematics", "Science", "Physics", 
+    "Bangla", "English", "Mathematics", "Science", "Physics",
     "Chemistry", "Biology", "Economics", "Accounting", "Business Studies"
   ].map(dept => ({
     value: dept,
@@ -308,215 +311,274 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
   ];
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Scrollable Content Area */}
-      <div className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full">
-          <div className="p-6">
-            <TutorHeader
-              name={tutor?.full_name}
-              rating={tutor?.rating}
-              reviewCount={tutor?.review_count}
-            />
-
-            <ValidationAlert show={showValidationError} />
-
-            <DaySelector
-              activeDays={activeDays}
-              selectedDays={selectedDays}
-              onChange={handleDaysChange}
-              error={errors.selectedDays}
-            />
-
-            <SubjectSelector
-              subjects={tutor?.subjects || []}
-              selectedSubjects={selectedSubjects}
-              onChange={(value) => handleFieldChange('selectedSubjects', value)}
-              error={errors.selectedSubjects}
-            />
-
-            <div className="grid grid-cols-12 gap-4 mb-6 mt-5">
-              <LocationFields
-                studentCity={studentCity}
-                studentArea={studentArea}
-                onCityChange={(value) => {
-                  handleCityChange(value);
-                  clearFieldError('studentCity');
-                }}
-                onAreaChange={(value) => {
-                  handleAreaChange(value);
-                }}
-                cities={cities}
-                areas={areas}
-                loadingCities={loadingCities}
-                loadingAreas={loadingAreas}
-                cityError={errors.studentCity}
-              />
-              
-              <div className="col-span-6">
-                <FormField
-                  id="studentInstitution"
-                  label="Student Institution"
-                  type="text"
-                  value={studentInstitution}
-                  onChange={(value) => handleFieldChange('studentInstitution', value)}
-                  placeholder="Enter Institution"
-                  error={errors.studentInstitution}
-                  required
-                />
-              </div>
-              
-              <div className="col-span-6">
-                <FormField
-                  id="studentClass"
-                  label="Class"
-                  type="select"
-                  value={studentClass}
-                  onChange={(value) => handleFieldChange('studentClass', value)}
-                  error={errors.studentClass}
-                  required
-                  options={classOptions}
-                />
-              </div>
-              
-              {/* Conditionally render Department field */}
-              {shouldShowDepartment() && (
-                <div className="col-span-6">
-                  <FormField
-                    id="studentDepartment"
-                    label="Department"
-                    type="select"
-                    value={studentDepartment}
-                    onChange={(value) => handleFieldChange('studentDepartment', value)}
-                    error={errors.studentDepartment}
-                    options={departmentOptions}
+    <div className="bg-gray-50 dark:bg-gray-900">
+      <DashboardHeader userName="Settings" />
+      <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
+        <div className="p-4 max-w-4xl mx-auto">
+          <Card className="bg-blue-600 text-white border-0">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center text-sm font-bold overflow-hidden">
+                  <img
+                    src={tutor?.profile_picture}
+                    alt="Tutor Profile"
+                    className="w-full h-full object-cover rounded-full"
                   />
                 </div>
-              )}
-              
-              <div className="col-span-6">
-                <FormField
-                  id="versionBanglaEnglish"
-                  label="Version (Bangla/English)"
-                  type="select"
-                  value={versionBanglaEnglish}
-                  onChange={(value) => handleFieldChange('versionBanglaEnglish', value)}
-                  error={errors.versionBanglaEnglish}
-                  required
-                  options={versionOptions}
+                <div>
+                  <h2 className="text-xl font-bold">{tutor?.full_name || 'Loading...'}</h2>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Validation Error Alert */}
+          {showValidationError && (
+            <Alert className="mb-4 border-red-200 bg-red-50">
+              <AlertDescription className="text-red-800">
+                Please fill in all required fields before submitting your request.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <Card className="border-0 shadow-md">
+            <CardContent className="p-4 space-y-6">
+
+              {/* Schedule Selection */}
+              <div>
+                <DaySelector
+                  activeDays={activeDays}
+                  selectedDays={selectedDays}
+                  onChange={handleDaysChange}
+                  error={errors.selectedDays}
                 />
               </div>
-              
-              <div className="col-span-6">
-                { teaching_type === 'BOTH' ?
-                  (
-                    <FormField 
-                  id="tuitionType"
-                  label="Tuition Type"
-                  type="select"
-                  value={tuitionType}
-                  onChange={(value) => handleFieldChange('tuitionType', value)}
-                  error={errors.tuitionType}
-                  required
-                  options={tuitionTypeOptions}
+
+              {/* Subject Selection */}
+              <div>
+                <SubjectSelector
+                  subjects={tutor?.subjects || []}
+                  selectedSubjects={selectedSubjects}
+                  onChange={(value) => handleFieldChange('selectedSubjects', value)}
+                  error={errors.selectedSubjects}
                 />
-                  ) :
-                  (
-                    <FormField disabled
-                      id="tuitionType"
-                      label="Tuition Type"
+              </div>
+
+              <div>
+                <div className="space-y-4">
+                  <div>
+                    <LocationFields
+                      selectedDivision={selectedDivision}
+                      selectedDistrict={selectedDistrict}
+                      selectedUpazila={selectedUpazila}
+                      selectedArea={selectedArea}
+                      onDivisionChange={(value) => {
+                        handleDivisionChange(value);
+                      }}
+                      onDistrictChange={(value) => {
+                        handleDistrictChange(value);
+                      }}
+                      onUpazilaChange={(value) => {
+                        handleUpazilaChange(value);
+                      }}
+                      onAreaChange={(value) => {
+                        handleAreaChange(value);
+                      }}
+                      divisions={divisions}
+                      districts={districts}
+                      upazilas={upazilas}
+                      areas={areas}
+                      loadingDivisions={loadingDivisions}
+                      loadingDistricts={loadingDistricts}
+                      loadingUpazilas={loadingUpazilas}
+                      loadingAreas={loadingAreas}
+                      divisionRequired={true}
+                      districtRequired={true}
+                      upazilaRequired={true}
+                    />
+                  </div>
+
+                  {/* Institution and Class */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      id="studentInstitution"
+                      label="Student Institution"
                       type="text"
-                      value={teaching_type}
-                      onChange={(value) => handleFieldChange('tuitionType', value)}
-                      placeholder="Enter Tuition Type"
-                      error={errors.tuitionType}
+                      value={studentInstitution}
+                      onChange={(value) => handleFieldChange('studentInstitution', value)}
+                      placeholder="Enter Institution"
+                      error={errors.studentInstitution}
                       required
                     />
-                  )
-                }
+
+                    <FormField
+                      id="studentClass"
+                      label="Class"
+                      type="select"
+                      value={studentClass}
+                      onChange={(value) => handleFieldChange('studentClass', value)}
+                      error={errors.studentClass}
+                      required
+                      options={classOptions}
+                    />
+                  </div>
+
+                  {/* Department and Version */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {shouldShowDepartment() && (
+                      <FormField
+                        id="studentDepartment"
+                        label="Department"
+                        type="select"
+                        value={studentDepartment}
+                        onChange={(value) => handleFieldChange('studentDepartment', value)}
+                        error={errors.studentDepartment}
+                        options={departmentOptions}
+                      />
+                    )}
+
+                    <FormField
+                      id="versionBanglaEnglish"
+                      label="Version"
+                      type="select"
+                      value={versionBanglaEnglish}
+                      onChange={(value) => handleFieldChange('versionBanglaEnglish', value)}
+                      error={errors.versionBanglaEnglish}
+                      required
+                      options={versionOptions}
+                    />
+                  </div>
+                </div>
               </div>
 
-              {/* Conditionally render Address field based on teaching type */}
-              {shouldShowAddress() && (
-                <div className="col-span-12">
+              {/* Tuition Preferences */}
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                  {/* Tuition Type */}
+                  <div>
+                    {teaching_type === 'BOTH' ? (
+                      <FormField
+                        id="tuitionType"
+                        label="Tuition Type"
+                        type="select"
+                        value={tuitionType}
+                        onChange={(value) => handleFieldChange('tuitionType', value)}
+                        error={errors.tuitionType}
+                        required
+                        options={tuitionTypeOptions}
+                      />
+                    ) : (
+                      <FormField
+                        disabled
+                        id="tuitionType"
+                        label="Tuition Type"
+                        type="text"
+                        value={teaching_type}
+                        onChange={(value) => handleFieldChange('tuitionType', value)}
+                        placeholder="Enter Tuition Type"
+                        error={errors.tuitionType}
+                        required
+                      />
+                    )}
+                  </div>
+
+                  {/* Members */}
                   <FormField
-                    id="studentAddress"
-                    label="Address"
-                    type="textarea"
-                    value={studentAddress}
-                    onChange={(value) => handleFieldChange('studentAddress', value)}
-                    placeholder="Enter full home address"
-                    error={errors.studentAddress}
+                    id="members"
+                    label="Members"
+                    type="select"
+                    value={memberCount}
+                    onChange={(value) => handleFieldChange('memberCount', value)}
+                    error={errors.memberCount}
                     required
-                    rows={3}
+                    options={memberOptions}
+                  />
+
+                  {/* Preferred Gender */}
+                  <FormField
+                    id="gender"
+                    label="Preferred Gender"
+                    type="select"
+                    value={preferredGender}
+                    onChange={(value) => handleFieldChange('preferredGender', value)}
+                    error={errors.preferredGender}
+                    required
+                    options={genderOptions}
                   />
                 </div>
-              )}
-              
-              <div className="col-span-6">
-                <FormField
-                  id="members"
-                  label="Members"
-                  type="select"
-                  value={memberCount}
-                  onChange={(value) => handleFieldChange('memberCount', value)}
-                  error={errors.memberCount}
-                  required
-                  options={memberOptions}
-                />
+
+                {/* Address if required */}
+                {shouldShowAddress() && (
+                  <div className="mt-4">
+                    <FormField
+                      id="studentAddress"
+                      label="Home Address"
+                      type="textarea"
+                      value={studentAddress}
+                      onChange={(value) => handleFieldChange('studentAddress', value)}
+                      placeholder="Enter full home address"
+                      error={errors.studentAddress}
+                      required
+                      rows={2}
+                    />
+                  </div>
+                )}
               </div>
-              
-              <div className="col-span-6">
-                <FormField
-                  id="gender"
-                  label="Gender"
-                  type="select"
-                  value={preferredGender}
-                  onChange={(value) => handleFieldChange('preferredGender', value)}
-                  error={errors.preferredGender}
-                  required
-                  options={genderOptions}
-                />
+
+              {/* Payment Information */}
+              <div>
+                <div className="max-w-md">
+                  <FormField
+                    id="iWantToPay"
+                    label="Proposed Monthly Salary (BDT)"
+                    type="number"
+                    value={selectedAmount}
+                    onChange={(value) => handleFieldChange('selectedAmount', value)}
+                    placeholder="Enter amount"
+                    error={errors.selectedAmount}
+                    required
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    This is your proposed salary. The final amount may be negotiated.
+                  </p>
+                </div>
               </div>
-              
-              <div className="col-span-12">
-                <FormField
-                  id="iWantToPay"
-                  label="I want to Pay"
-                  type="number"
-                  value={selectedAmount}
-                  onChange={(value) => handleFieldChange('selectedAmount', value)}
-                  placeholder="Enter amount"
-                  error={errors.selectedAmount}
-                  required
-                />
+
+            </CardContent>
+
+            {userProfile?.user_type === "GUARDIAN" && (
+              <div className="p-4 mb-14">
+                <div className="max-w-3xl mx-auto">
+                  <Button
+                    className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
+                    onClick={handleSendRequest}
+                    disabled={submitting}
+                  >
+                    {submitting ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        Submitting...
+                      </div>
+                    ) : (
+                      "Send Tuition Request"
+                    )}
+                  </Button>
+                </div>
               </div>
-            </div>
-          </div>
-        </ScrollArea>
-      </div>
-      
-      {/* Fixed Button at Bottom */}
-      {userProfile?.user_type === "GUARDIAN" && (
-        <div className="border-t bg-background p-4 mb-14">
-          <Button
-            className="w-full min-h-[55px] dark:text-white"
-            onClick={handleSendRequest}
-            disabled={submitting}
-          >
-            {submitting ? "Submitting..." : "Make Request"}
-          </Button>
+            )}
+          </Card>
         </div>
-      )}
-      
-      <ConfirmationDialog
-        isOpen={showApproveConfirm}
-        onClose={() => setShowApproveConfirm(false)}
-        onConfirm={handleMakeRequest}
-        title="Request Sent to Tutor?"
-        description="Are you sure you want to send this request?"
-        variant="confirmation"
-      />
+        <ConfirmationDialog
+          isOpen={showApproveConfirm}
+          onClose={() => setShowApproveConfirm(false)}
+          onConfirm={handleMakeRequest}
+          title="Send Request to Tutor?"
+          description="Are you sure you want to send this tuition request? The tutor will receive your details and contact information."
+          variant="confirmation"
+        />
+        <ReviewSection id={uid} condition={"True"} />
+      </ScrollArea>
     </div>
   );
 };

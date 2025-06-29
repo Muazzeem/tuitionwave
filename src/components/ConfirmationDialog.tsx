@@ -51,7 +51,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       case 'cancel':
         return 'bg-red-600 hover:bg-red-700';
       case 'confirmation':
-        return 'bg-blue-600 hover:bg-blue-700'; 
+        return 'bg-blue-600 hover:bg-blue-700 text-white'; 
     }
   };
 

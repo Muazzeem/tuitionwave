@@ -1,24 +1,11 @@
 import React, { useState, useEffect } from "react";
 
-interface Institute {
-  id: number;
-  name: string;
-}
+import { Tutor } from "@/types/tutor";
 
-interface TutorData {
-  uid: string;
-  first_name: string;
-  last_name: string;
-  institute: Institute;
-  profile_picture: string | null;
-  rating?: number; // Add rating if your API provides it
-  totalRatings?: number; // Add totalRatings if your API provides it
-}
 
-const TutorCard: React.FC<{ tutor: TutorData }> = ({ tutor }) => {
-  // Placeholder for rating and totalRatings if the API doesn't provide them
-  const rating = tutor.rating || 4.5;
-  const totalRatings = tutor.totalRatings || 320;
+const TutorCard: React.FC<{ tutor: Tutor }> = ({ tutor }) => {
+  const rating = tutor.avg_rating || 0;
+  const totalRatings = tutor.review_count || 0;
 
   const stars = Array(5)
     .fill(0)
@@ -65,17 +52,8 @@ const TutorCard: React.FC<{ tutor: TutorData }> = ({ tutor }) => {
   );
 };
 
-interface ApiResponse {
-  count: number;
-  total_pages: number;
-  current_page: number;
-  next: string | null;
-  previous: string | null;
-  results: TutorData[];
-}
-
 const TopTutors: React.FC = () => {
-  const [tutors, setTutors] = useState<TutorData[]>([]);
+  const [tutors, setTutors] = useState<Tutor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -86,7 +64,7 @@ const TopTutors: React.FC = () => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data: ApiResponse = await response.json();
+        const data = await response.json();
         setTutors(data.results);
         setLoading(false);
       } catch (e: any) {

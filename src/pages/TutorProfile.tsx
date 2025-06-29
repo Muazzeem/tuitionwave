@@ -12,7 +12,7 @@ const TutorProfile: React.FC = () => {
       <Header />
       {/* <SearchSection /> */}
       <main>
-         <ScrollArea type="always" style={{ height: 900 }}>
+         <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
             <TutorDetails />
             <Footer />
         </ScrollArea>

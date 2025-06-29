@@ -152,7 +152,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
       <td className="py-3 px-2 text-sm dark:text-gray-300">
         {request.subjects.map((s) => s.subject).join(", ")}
       </td>
-      <td className="py-3 px-2 text-sm dark:text-gray-300">{request.contract_duration} Month</td>
+      {/* <td className="py-3 px-2 text-sm dark:text-gray-300">{request.contract_duration} Month</td> */}
       <td className="py-3 px-2 text-sm dark:text-gray-300">৳{request.proposed_salary}</td>
       <td className="py-3 px-2">
         <div className="flex items-center">
@@ -273,7 +273,6 @@ const RecentRequests: React.FC = () => {
                 <th className="py-2 px-2">Guardian</th>
               )}
               <th className="py-2 px-2">Subject</th>
-              <th className="py-2 px-2">Tuition Period</th>
               <th className="py-2 px-2">Requested Amount</th>
               <th className="py-2 px-2">Status</th>
               <th className="py-2 px-2">Others</th>

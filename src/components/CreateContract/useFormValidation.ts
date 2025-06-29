@@ -4,7 +4,7 @@ import { useState } from 'react';
 interface ValidationErrors {
   selectedDays?: string;
   selectedSubjects?: string;
-  studentCity?: string;
+  selectedUpazila?: string;
   studentInstitution?: string;
   studentClass?: string;
   studentDepartment?: string;
@@ -19,7 +19,7 @@ interface ValidationErrors {
 interface FormValues {
   selectedDays: string[];
   selectedSubjects: string[];
-  studentCity: string;
+  selectedUpazila: string;
   studentArea: string;
   studentInstitution: string;
   studentClass: string;
@@ -55,8 +55,8 @@ export const useFormValidation = () => {
       isValid = false;
     }
 
-    if (!values.studentCity) {
-      newErrors.studentCity = "City is required";
+    if (!values.selectedUpazila) {
+      newErrors.selectedUpazila = "City is required";
       isValid = false;
     }
 

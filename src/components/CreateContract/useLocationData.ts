@@ -1,8 +1,21 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
-interface City {
+interface Division {
+  id: number;
+  name: string;
+}
+
+interface District {
+  id: number;
+  name: string;
+  division: {
+    id: number;
+    name: string;
+  }
+}
+
+interface Upazila {
   id: number;
   name: string;
   district: {
@@ -21,45 +34,109 @@ interface Area {
 }
 
 export const useLocationData = () => {
-  const [cities, setCities] = useState<City[]>([]);
+  const [divisions, setDivisions] = useState<Division[]>([]);
+  const [districts, setDistricts] = useState<District[]>([]);
+  const [upazilas, setUpazilas] = useState<Upazila[]>([]);
   const [areas, setAreas] = useState<Area[]>([]);
-  const [loadingCities, setLoadingCities] = useState<boolean>(false);
+  
+  const [loadingDivisions, setLoadingDivisions] = useState<boolean>(false);
+  const [loadingDistricts, setLoadingDistricts] = useState<boolean>(false);
+  const [loadingUpazilas, setLoadingUpazilas] = useState<boolean>(false);
   const [loadingAreas, setLoadingAreas] = useState<boolean>(false);
-  const [studentCity, setStudentCity] = useState<string>("");
-  const [studentArea, setStudentArea] = useState<string>("");
+  
+  const [selectedDivision, setSelectedDivision] = useState<string>("");
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("");
+  const [selectedUpazila, setSelectedUpazila] = useState<string>("");
+  const [selectedArea, setSelectedArea] = useState<string>("");
   
   const { toast } = useToast();
 
-  // Fetch cities from API
-  const fetchCities = useCallback(async () => {
-    setLoadingCities(true);
+  // Fetch divisions from API
+  const fetchDivisions = useCallback(async () => {
+    setLoadingDivisions(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upazilas/?district=4`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/divisions/`);
       if (!response.ok) {
-        throw new Error("Failed to fetch cities");
+        throw new Error("Failed to fetch divisions");
       }
       const data = await response.json();
-      setCities(data.results || []);
+      setDivisions(data.results || []);
     } catch (error) {
-      console.error("Error fetching cities:", error);
+      console.error("Error fetching divisions:", error);
       toast({
         title: "Error",
-        description: "Failed to load cities. Please try again.",
+        description: "Failed to load divisions. Please try again.",
         variant: "destructive",
       });
     } finally {
-      setLoadingCities(false);
+      setLoadingDivisions(false);
     }
   }, [toast]);
 
-  // Fetch areas from API based on selected city
-  const fetchAreas = useCallback(async (cityId?: string) => {
+  // Fetch districts from API based on selected division
+  const fetchDistricts = useCallback(async (divisionId?: string) => {
+    if (!divisionId) {
+      setDistricts([]);
+      return;
+    }
+    
+    setLoadingDistricts(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/districts/?division=${divisionId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch districts");
+      }
+      const data = await response.json();
+      setDistricts(data.results || []);
+    } catch (error) {
+      console.error("Error fetching districts:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load districts. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingDistricts(false);
+    }
+  }, [toast]);
+
+  // Fetch upazilas from API based on selected district
+  const fetchUpazilas = useCallback(async (districtId?: string) => {
+    if (!districtId) {
+      setUpazilas([]);
+      return;
+    }
+    
+    setLoadingUpazilas(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upazilas/?district=${districtId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch upazilas");
+      }
+      const data = await response.json();
+      setUpazilas(data.results || []);
+    } catch (error) {
+      console.error("Error fetching upazilas:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load upazilas. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingUpazilas(false);
+    }
+  }, [toast]);
+
+  // Fetch areas from API based on selected upazila
+  const fetchAreas = useCallback(async (upazilaId?: string) => {
+    if (!upazilaId) {
+      setAreas([]);
+      return;
+    }
+    
     setLoadingAreas(true);
     try {
-      // If cityId is provided, use it to filter areas
-      const cityParam = cityId ? `?upazila=${cityId}` : '';
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/areas/${cityParam}`);
-      
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/areas/?upazila=${upazilaId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch areas");
       }
@@ -77,28 +154,96 @@ export const useLocationData = () => {
     }
   }, [toast]);
 
-  // Update student city and trigger area fetch for that city
-  const handleCityChange = (value: string) => {
-    setStudentCity(value);
-    fetchAreas(value); // Pass the city ID directly to fetchAreas
-    // Reset area when city changes
-    setStudentArea("");
+  // Handle division change
+  const handleDivisionChange = (value: string) => {
+    setSelectedDivision(value);
+    setSelectedDistrict("");
+    setSelectedUpazila("");
+    setSelectedArea("");
+    
+    // Clear dependent data
+    setDistricts([]);
+    setUpazilas([]);
+    setAreas([]);
+    
+    // Fetch districts for selected division
+    fetchDistricts(value);
   };
 
+  // Handle district change
+  const handleDistrictChange = (value: string) => {
+    setSelectedDistrict(value);
+    setSelectedUpazila("");
+    setSelectedArea("");
+    
+    // Clear dependent data
+    setUpazilas([]);
+    setAreas([]);
+    
+    // Fetch upazilas for selected district
+    fetchUpazilas(value);
+  };
+
+  // Handle upazila change
+  const handleUpazilaChange = (value: string) => {
+    setSelectedUpazila(value);
+    setSelectedArea("");
+    
+    // Clear dependent data
+    setAreas([]);
+    
+    // Fetch areas for selected upazila
+    fetchAreas(value);
+  };
+
+  // Handle area change
   const handleAreaChange = (value: string) => {
-    setStudentArea(value);
+    setSelectedArea(value);
+  };
+
+  // Reset all selections
+  const resetSelections = () => {
+    setSelectedDivision("");
+    setSelectedDistrict("");
+    setSelectedUpazila("");
+    setSelectedArea("");
+    setDistricts([]);
+    setUpazilas([]);
+    setAreas([]);
   };
 
   return {
-    cities,
+    // Data
+    divisions,
+    districts,
+    upazilas,
     areas,
-    loadingCities,
+    
+    // Loading states
+    loadingDivisions,
+    loadingDistricts,
+    loadingUpazilas,
     loadingAreas,
-    studentCity,
-    studentArea,
-    fetchCities,
+    
+    // Selected values
+    selectedDivision,
+    selectedDistrict,
+    selectedUpazila,
+    selectedArea,
+    
+    // Fetch functions
+    fetchDivisions,
+    fetchDistricts,
+    fetchUpazilas,
     fetchAreas,
-    handleCityChange,
-    handleAreaChange
+    
+    // Handler functions
+    handleDivisionChange,
+    handleDistrictChange,
+    handleUpazilaChange,
+    handleAreaChange,
+    
+    // Utility functions
+    resetSelections
   };
 };

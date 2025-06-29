@@ -92,7 +92,7 @@ const ProfileCompletionAlert = () => {
       <p className="mb-2 text-sm sm:text-base leading-relaxed">
         {completion_percentage < 80
           ? "Showcase your expertise, attract more students, and stand out by finishing your profile setup!"
-          : "You're doing great! Just a few more details to make your profile perfect."}
+          : "You're doing great! Your profile is complete and ready to be shared with potential students."}
       </p>
 
       {missing_fields.length > 0 && (
