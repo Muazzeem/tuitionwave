@@ -25,17 +25,17 @@ const QuestionsPage: React.FC = () => {
   }, [topicId, currentPage]);
 
   // Calculate progress statistics
-  const progressStats = React.useMemo(() => {
-    const answered = Object.values(questionStates).filter(state => state?.isAnswered);
-    const correct = answered.filter(state => state?.result?.is_correct);
-    const incorrect = answered.filter(state => state?.result && !state.result.is_correct);
+  // const progressStats = React.useMemo(() => {
+  //   const answered = Object.values(questionStates).filter(state => state?.isAnswered);
+  //   const correct = answered.filter(state => state?.result?.is_correct);
+  //   const incorrect = answered.filter(state => state?.result && !state.result.is_correct);
     
-    return {
-      total: answered.length,
-      correct: correct.length,
-      incorrect: incorrect.length,
-    };
-  }, [questionStates]);
+  //   return {
+  //     total: answered.length,
+  //     correct: correct.length,
+  //     incorrect: incorrect.length,
+  //   };
+  // }, [questionStates]);
 
   const { data: questionsData, isLoading: questionsLoading } = useQuery({
     queryKey: ['questions', topicId, currentPage],
@@ -432,8 +432,7 @@ const QuestionsPage: React.FC = () => {
         </div>
       </main>
       
-      {/* Progress Tracker - Sticky Bottom Right */}
-      {progressStats.total > 0 && (
+      {/* {progressStats.total > 0 && (
         <div className="fixed bottom-4 right-4 z-50">
           <Card className="bg-white dark:bg-gray-800 shadow-lg border-2">
             <CardContent className="p-4">
@@ -458,7 +457,7 @@ const QuestionsPage: React.FC = () => {
             </CardContent>
           </Card>
         </div>
-      )}
+      )} */}
       
       <Footer />
     </div>

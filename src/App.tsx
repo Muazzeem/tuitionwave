@@ -254,7 +254,7 @@ const App = () => (
                   <Route path="/dashboard" element={<RoleRedirect />} />
                   <Route path="/all-requests" element={<RoleRedirect pathSuffix="/requests" />} />
                   <Route path="/requests/:id" element={<RoleRedirect pathSuffix="/requests" preserveParams={true} />} />
-                  <Route="*" element={<NotFound />} />
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </TokenValidationWrapper>
             </BrowserRouter>
