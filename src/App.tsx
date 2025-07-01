@@ -29,8 +29,13 @@ import GuardianProfile from "./pages/Guardian/Profile";
 import FAQPage from "./pages/FAQPage";
 import TermsPage from "./pages/TermsPage";
 import HowItWorksPage from "./pages/HowItWorksPage";
-import JobPreparationPage from "./pages/JobPreparationPage";
 import Contract from "./pages/Contract";
+import CategoriesPage from "./pages/JobPreparation/CategoriesPage";
+import SubjectsPage from "./pages/JobPreparation/SubjectsPage";
+import TopicsPage from "./pages/JobPreparation/TopicsPage";
+import QuestionsPage from "./pages/JobPreparation/QuestionsPage";
+import ReadingModePage from "./pages/JobPreparation/ReadingModePage";
+import ExamModePage from "./pages/JobPreparation/ExamModePage";
 
 const queryClient = new QueryClient();
 
@@ -156,10 +161,14 @@ const App = () => (
                   <Route path="/faq" element={<FAQPage />} />
                   <Route path="/terms" element={<TermsPage />} />
                   <Route path="/how-it-works" element={<HowItWorksPage />} />
-                  <Route path="/job-preparation" element={<JobPreparationPage />} />
-                  <Route path="/job-preparation/category/:categoryId" element={<JobPreparationPage />} />
-                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId" element={<JobPreparationPage />} />
-                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId" element={<JobPreparationPage />} />
+                  
+                  {/* Job Preparation routes */}
+                  <Route path="/job-preparation" element={<CategoriesPage />} />
+                  <Route path="/job-preparation/category/:categoryId" element={<SubjectsPage />} />
+                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId" element={<TopicsPage />} />
+                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId" element={<QuestionsPage />} />
+                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/reading" element={<ReadingModePage />} />
+                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/exam" element={<ExamModePage />} />
                   
                   <Route path="/find-tutors" element={
                       <MainLayout><FindTutorsList /></MainLayout>
@@ -245,7 +254,7 @@ const App = () => (
                   <Route path="/dashboard" element={<RoleRedirect />} />
                   <Route path="/all-requests" element={<RoleRedirect pathSuffix="/requests" />} />
                   <Route path="/requests/:id" element={<RoleRedirect pathSuffix="/requests" preserveParams={true} />} />
-                  <Route path="*" element={<NotFound />} />
+                  <Route="*" element={<NotFound />} />
                 </Routes>
               </TokenValidationWrapper>
             </BrowserRouter>
