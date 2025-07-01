@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
@@ -8,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { ChevronLeft, Clock, CheckCircle, XCircle, AlertCircle, HelpCircle } from 'lucide-react';
+import { ChevronLeft, Clock, CheckCircle, XCircle, AlertCircle, HelpCircle, Target } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
 import { AnswerResult, QuestionState } from '@/types/common';
 
@@ -19,6 +18,24 @@ const QuestionsPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1'));
   const [questionStates, setQuestionStates] = useState<QuestionState>({});
   const { categoryId, subjectId, topicId } = params;
+
+  // Reset question states when changing topics or pages
+  useEffect(() => {
+    setQuestionStates({});
+  }, [topicId, currentPage]);
+
+  // Calculate progress statistics
+  const progressStats = React.useMemo(() => {
+    const answered = Object.values(questionStates).filter(state => state?.isAnswered);
+    const correct = answered.filter(state => state?.result?.is_correct);
+    const incorrect = answered.filter(state => state?.result && !state.result.is_correct);
+    
+    return {
+      total: answered.length,
+      correct: correct.length,
+      incorrect: incorrect.length,
+    };
+  }, [questionStates]);
 
   const { data: questionsData, isLoading: questionsLoading } = useQuery({
     queryKey: ['questions', topicId, currentPage],
@@ -52,11 +69,6 @@ const QuestionsPage: React.FC = () => {
     },
     enabled: !!topicId && !!subjectId,
   });
-
-  // Reset question states when changing topics or pages
-  useEffect(() => {
-    setQuestionStates({});
-  }, [topicId, currentPage]);
 
   const checkAnswerMutation = useMutation({
     mutationFn: async ({ questionId, selectedOptionLabel }: { questionId: string; selectedOptionLabel: string }) => {
@@ -224,7 +236,7 @@ const QuestionsPage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 bg-gray-50 dark:bg-gray-900">
+      <main className="flex-1 bg-gray-50 dark:bg-gray-900 pb-20">
         <div className="container mx-auto px-4 py-12">
           <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 hidden md:block lg:block">
             <span>Job Preparation</span>
@@ -419,6 +431,35 @@ const QuestionsPage: React.FC = () => {
           </div>
         </div>
       </main>
+      
+      {/* Progress Tracker - Sticky Bottom Right */}
+      {progressStats.total > 0 && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <Card className="bg-white dark:bg-gray-800 shadow-lg border-2">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2 mb-2">
+                <Target className="h-5 w-5 text-blue-600" />
+                <span className="font-semibold text-sm">Progress</span>
+              </div>
+              <div className="space-y-1 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">Total:</span>
+                  <Badge variant="outline" className="text-xs">{progressStats.total}</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-green-600">Correct:</span>
+                  <Badge variant="default" className="bg-green-600 text-xs">{progressStats.correct}</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-red-600">Incorrect:</span>
+                  <Badge variant="destructive" className="text-xs">{progressStats.incorrect}</Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+      
       <Footer />
     </div>
   );
