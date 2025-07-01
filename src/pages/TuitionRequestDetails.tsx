@@ -449,107 +449,109 @@ const TuitionRequestDetails: React.FC = () => {
             </CardContent>
           </Card>
         )}
+        <div className="pb-20">  {/* Add spacing at the bottom */}
 
-        {/* Action Buttons */}
-        {userProfile?.user_type === "GUARDIAN" ? (
-          <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
-            {requestDetails?.status_display === "Pending" ? (
-              <Button
-                variant="destructive"
-                className="sm:w-auto"
-                onClick={handleDelete}
-              >
-                Delete Request
-              </Button>
-            ) : requestDetails?.status_display === "Rejected" ? (
-              <Button
-                disabled
-                variant="destructive"
-                className="sm:w-auto opacity-75 cursor-not-allowed"
-              >
-                Request Rejected
-              </Button>
-            ) : requestDetails?.status_display === "Completed" ? (
-              <Button
-                disabled
-                className="sm:w-auto bg-blue-600 opacity-75 cursor-not-allowed"
-              >
-                Contract Ended
-              </Button>
-            ) : (
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  onClick={handleSendMessage}
-                  disabled={requestDetails?.status_display !== "Accepted"}
-                  className="sm:w-auto flex items-center gap-2 text-white"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  {requestDetails?.status_display === "Accepted"
-                    ? "Send Message"
-                    : "Waiting for Response"}
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={handleWriteReview}
-                  className="sm:w-auto"
-                >
-                  End Contract
-                </Button>
-              </div>
-            )}
-          </div>
-        ) : (
-          !showRejection && (
-            <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
-              {requestDetails?.status_display === "Pending" && (
-                <>
-                  <Button
-                    variant="outline"
-                    onClick={handleReject}
-                    className="sm:w-auto"
-                  >
-                    Reject Request
-                  </Button>
-                  <Button
-                    onClick={handleAccept}
-                    className="sm:w-auto"
-                  >
-                    Accept Request
-                  </Button>
-                </>
-              )}
-
-              {requestDetails?.status_display === "Accepted" && (
-                <Button
-                  onClick={handleSendMessage}
-                  className="sm:w-auto flex items-center gap-2"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  Send Message
-                </Button>
-              )}
-
-              {requestDetails?.status_display === "Completed" && (
-                <Button
-                  disabled
-                  className="sm:w-auto bg-green-600 opacity-75 cursor-not-allowed"
-                >
-                  Completed
-                </Button>
-              )}
-
-              {requestDetails?.status_display === "Rejected" && (
-                <Button
-                  disabled
-                  variant="destructive"
-                  className="sm:w-auto opacity-75 cursor-not-allowed"
-                >
-                  Already Rejected
-                </Button>
-              )}
-            </div>
-          )
+  {userProfile?.user_type === "GUARDIAN" ? (
+    <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
+      {requestDetails?.status_display === "Pending" ? (
+        <Button
+          variant="destructive"
+          className="sm:w-auto m-10"
+          onClick={handleDelete}
+        >
+          Delete Request
+        </Button>
+      ) : requestDetails?.status_display === "Rejected" ? (
+        <Button
+          disabled
+          variant="destructive"
+          className="sm:w-auto opacity-75 cursor-not-allowed"
+        >
+          Request Rejected
+        </Button>
+      ) : requestDetails?.status_display === "Completed" ? (
+        <Button
+          disabled
+          className="sm:w-auto bg-blue-600 opacity-75 cursor-not-allowed"
+        >
+          Contract Ended
+        </Button>
+      ) : (
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            onClick={handleSendMessage}
+            disabled={requestDetails?.status_display !== "Accepted"}
+            className="sm:w-auto flex items-center gap-2 text-white"
+          >
+            <MessageCircle className="h-4 w-4" />
+            {requestDetails?.status_display === "Accepted"
+              ? "Send Message"
+              : "Waiting for Response"}
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={handleWriteReview}
+            className="sm:w-auto"
+          >
+            End Contract
+          </Button>
+        </div>
+      )}
+    </div>
+  ) : (
+    !showRejection && (
+      <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
+        {requestDetails?.status_display === "Pending" && (
+          <>
+            <Button
+              variant="outline"
+              onClick={handleReject}
+              className="sm:w-auto"
+            >
+              Reject Request
+            </Button>
+            <Button
+              onClick={handleAccept}
+              className="sm:w-auto"
+            >
+              Accept Request
+            </Button>
+          </>
         )}
+
+        {requestDetails?.status_display === "Accepted" && (
+          <Button
+            onClick={handleSendMessage}
+            className="sm:w-auto flex items-center gap-2"
+          >
+            <MessageCircle className="h-4 w-4" />
+            Send Message
+          </Button>
+        )}
+
+        {requestDetails?.status_display === "Completed" && (
+          <Button
+            disabled
+            className="sm:w-auto bg-green-600 opacity-75 cursor-not-allowed"
+          >
+            Completed
+          </Button>
+        )}
+
+        {requestDetails?.status_display === "Rejected" && (
+          <Button
+            disabled
+            variant="destructive"
+            className="sm:w-auto opacity-75 cursor-not-allowed"
+          >
+            Already Rejected
+          </Button>
+        )}
+      </div>
+    )
+  )}
+</div>
+
       </div>
 
       <ConfirmationComponent />
