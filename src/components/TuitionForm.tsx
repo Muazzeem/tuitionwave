@@ -8,8 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from './ui/use-toast';
 import { getAccessToken } from '@/utils/auth';
 import { Textarea } from './ui/textarea';
-import { Plus } from 'lucide-react';
+import { Plus, Router } from 'lucide-react';
 import { useProfileCompletion } from './ProfileCompletionContext';
+import { useNavigate } from 'react-router-dom';
 
 interface TuitionFormProps {
   formData: TuitionFormData;
@@ -77,6 +78,7 @@ interface SubjectsResponse {
 const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onNext, onPrev }) => {
   const { refreshProfileCompletion } = useProfileCompletion();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [activeDays, setActiveDays] = useState<ActiveDay[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -302,6 +304,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
         description: 'Tuition information updated successfully!',
       });
       await refreshProfileCompletion();
+      navigate(`/profile/tutor`);
     } catch (error) {
       console.error('Error updating tuition info:', error);
       toast({

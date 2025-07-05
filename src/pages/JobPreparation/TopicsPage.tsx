@@ -175,7 +175,12 @@ const TopicsPage: React.FC = () => {
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-2">
-                        <Badge variant="outline">{topic.total_questions} Questions</Badge>
+                        <div className="flex flex-wrap gap-2">
+                          <Badge variant="outline">{topic.total_questions} Questions</Badge>
+                          {topic.subtopics_count > 0 && (
+                            <Badge variant="default">{topic.subtopics_count} Sub-Topics</Badge>
+                          )}
+                        </div>
                       </CardContent>
                     </Card>
                   ))}

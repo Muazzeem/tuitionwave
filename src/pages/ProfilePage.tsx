@@ -7,7 +7,6 @@ import ProfileCompletionAlert from '@/components/ProfileCompletionAlert';
 import { ProfileFormData } from '@/types/tutor';
 import EducationForm from '@/components/EducationForm';
 import TuitionForm from '@/components/TuitionForm';
-import { useProfileCompletion } from '@/components/ProfileCompletionContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 const ProfilePage: React.FC = () => {
