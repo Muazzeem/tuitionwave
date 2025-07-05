@@ -7,9 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { ChevronLeft, Clock, CheckCircle, XCircle, AlertCircle, HelpCircle, Target } from 'lucide-react';
+import { ChevronLeft, Clock, CheckCircle, XCircle, AlertCircle, HelpCircle, Target, BookOpen } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
 import { AnswerResult, QuestionState } from '@/types/common';
+import { Subtopic } from '@/types/jobPreparation';
 
 const QuestionsPage: React.FC = () => {
   const params = useParams();
@@ -25,27 +26,30 @@ const QuestionsPage: React.FC = () => {
   }, [topicId, currentPage]);
 
   // Calculate progress statistics
-  // const progressStats = React.useMemo(() => {
-  //   const answered = Object.values(questionStates).filter(state => state?.isAnswered);
-  //   const correct = answered.filter(state => state?.result?.is_correct);
-  //   const incorrect = answered.filter(state => state?.result && !state.result.is_correct);
+  const progressStats = React.useMemo(() => {
+    const answered = Object.values(questionStates).filter(state => state?.isAnswered);
+    const correct = answered.filter(state => state?.result?.is_correct);
+    const incorrect = answered.filter(state => state?.result && !state.result.is_correct);
     
-  //   return {
-  //     total: answered.length,
-  //     correct: correct.length,
-  //     incorrect: incorrect.length,
-  //   };
-  // }, [questionStates]);
+    return {
+      total: answered.length,
+      correct: correct.length,
+      incorrect: incorrect.length,
+    };
+  }, [questionStates]);
 
+  // Get questions - always use topic UID for questions
   const { data: questionsData, isLoading: questionsLoading } = useQuery({
-    queryKey: ['questions', subtopicId === 'direct' ? topicId : subtopicId, currentPage],
-    queryFn: () => {
-      if (subtopicId === 'direct') {
-        return JobPreparationService.getQuestions(topicId!, currentPage);
-      }
-      return JobPreparationService.getQuestionsBySubtopic(subtopicId!, currentPage);
-    },
-    enabled: !!topicId && !!subtopicId,
+    queryKey: ['questions', topicId, currentPage],
+    queryFn: () => JobPreparationService.getQuestions(topicId!, currentPage),
+    enabled: !!topicId,
+  });
+
+  // Get subtopics for this topic to display them
+  const { data: subtopicsData } = useQuery({
+    queryKey: ['subtopics', topicId],
+    queryFn: () => JobPreparationService.getSubtopics(topicId!, 1),
+    enabled: !!topicId,
   });
 
   const { data: categoryData } = useQuery({
@@ -153,6 +157,10 @@ const QuestionsPage: React.FC = () => {
     }));
   };
 
+  const handleSubtopicClick = (subtopic: Subtopic) => {
+    navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topicId}/subtopic/${subtopic.uid}`);
+  };
+
   const handleBack = () => {
     if (subtopicId === 'direct') {
       navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}`);
@@ -162,7 +170,7 @@ const QuestionsPage: React.FC = () => {
   };
 
   const handleModeToggle = () => {
-    navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topicId}/subtopic/${subtopicId}/reading`);
+    navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topicId}/subtopic/${subtopicId || 'direct'}/reading`);
   };
 
   const handlePageChange = (page: number) => {
@@ -296,6 +304,37 @@ const QuestionsPage: React.FC = () => {
               >
                 Switch to Reading
               </Button>
+
+            {/* Show subtopics if available */}
+            {subtopicsData && subtopicsData.results.length > 0 && (
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
+                  <BookOpen className="h-5 w-5 mr-2" />
+                  Available Subtopics
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {subtopicsData.results.map((subtopic) => (
+                    <Card 
+                      key={subtopic.uid} 
+                      className="cursor-pointer hover:shadow-lg transition-shadow"
+                      onClick={() => handleSubtopicClick(subtopic)}
+                    >
+                      <CardHeader className="pb-2">
+                        <CardTitle className="flex items-center space-x-2 text-base">
+                          <HelpCircle className="h-4 w-4 text-purple-600" />
+                          <span>{subtopic.subtopic_name}</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <Badge variant="outline" className="text-xs">
+                          {subtopic.total_questions} Questions
+                        </Badge>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
             
             {questionsLoading ? (
               <div className="text-center py-8">Loading questions...</div>
@@ -441,7 +480,7 @@ const QuestionsPage: React.FC = () => {
         </div>
       </main>
       
-      {/* {progressStats.total > 0 && (
+      {progressStats.total > 0 && (
         <div className="fixed bottom-4 right-4 z-50">
           <Card className="bg-white dark:bg-gray-800 shadow-lg border-2">
             <CardContent className="p-4">
@@ -466,7 +505,7 @@ const QuestionsPage: React.FC = () => {
             </CardContent>
           </Card>
         </div>
-      )} */}
+      )}
       
       <Footer />
     </div>

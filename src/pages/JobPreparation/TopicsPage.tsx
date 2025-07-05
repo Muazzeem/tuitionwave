@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
@@ -44,11 +43,8 @@ const TopicsPage: React.FC = () => {
   });
 
   const handleTopicClick = (topic: Topic) => {
-    if (topic.subtopics_count > 0) {
-      navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topic.uid}`);
-    } else {
-      navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topic.uid}/subtopic/direct`);
-    }
+    // Always go to questions page directly since we get all questions by topic UID
+    navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topic.uid}/subtopic/direct`);
   };
 
   const handleBack = () => {
