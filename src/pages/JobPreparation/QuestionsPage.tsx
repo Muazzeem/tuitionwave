@@ -18,12 +18,13 @@ const QuestionsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1'));
   const [questionStates, setQuestionStates] = useState<QuestionState>({});
+  const [selectedSubtopicId, setSelectedSubtopicId] = useState<string | null>(null);
   const { categoryId, subjectId, topicId, subtopicId } = params;
 
-  // Reset question states when changing topics or pages
+  // Reset question states when changing topics, pages, or subtopics
   useEffect(() => {
     setQuestionStates({});
-  }, [topicId, currentPage]);
+  }, [topicId, currentPage, selectedSubtopicId]);
 
   // Calculate progress statistics
   const progressStats = React.useMemo(() => {
@@ -38,11 +39,16 @@ const QuestionsPage: React.FC = () => {
     };
   }, [questionStates]);
 
-  // Get questions - always use topic UID for questions
+  // Get questions - use subtopic UID if selected, otherwise use topic UID
   const { data: questionsData, isLoading: questionsLoading } = useQuery({
-    queryKey: ['questions', topicId, currentPage],
-    queryFn: () => JobPreparationService.getQuestions(topicId!, currentPage),
-    enabled: !!topicId,
+    queryKey: ['questions', selectedSubtopicId || topicId, currentPage, selectedSubtopicId ? 'subtopic' : 'topic'],
+    queryFn: () => {
+      if (selectedSubtopicId) {
+        return JobPreparationService.getQuestionsBySubtopic(selectedSubtopicId, currentPage);
+      }
+      return JobPreparationService.getQuestions(topicId!, currentPage);
+    },
+    enabled: !!(selectedSubtopicId || topicId),
   });
 
   // Get subtopics for this topic to display them
@@ -158,7 +164,17 @@ const QuestionsPage: React.FC = () => {
   };
 
   const handleSubtopicClick = (subtopic: Subtopic) => {
-    navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topicId}/subtopic/${subtopic.uid}`);
+    setSelectedSubtopicId(subtopic.uid);
+    setCurrentPage(1);
+    const newSearchParams = new URLSearchParams();
+    setSearchParams(newSearchParams);
+  };
+
+  const handleShowAllQuestions = () => {
+    setSelectedSubtopicId(null);
+    setCurrentPage(1);
+    const newSearchParams = new URLSearchParams();
+    setSearchParams(newSearchParams);
   };
 
   const handleBack = () => {
@@ -250,6 +266,11 @@ const QuestionsPage: React.FC = () => {
     );
   };
 
+  // Get currently selected subtopic data for display
+  const selectedSubtopic = selectedSubtopicId 
+    ? subtopicsData?.results.find(sub => sub.uid === selectedSubtopicId)
+    : null;
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -275,6 +296,12 @@ const QuestionsPage: React.FC = () => {
                 <span>{topicData.topic_name}</span>
                 <span>/</span>
                 <span>Practice Mode</span>
+                {selectedSubtopic && (
+                  <>
+                    <span>/</span>
+                    <span>{selectedSubtopic.subtopic_name}</span>
+                  </>
+                )}
               </>
             )}
           </div>
@@ -288,6 +315,9 @@ const QuestionsPage: React.FC = () => {
                 </Button>
                 <h2 className="text-lg md:text-2xl font-semibold text-gray-800 dark:text-white">
                   Questions (Practice Mode)
+                  {selectedSubtopic && (
+                    <span className="text-purple-600 ml-2">- {selectedSubtopic.subtopic_name}</span>
+                  )}
                 </h2>
               </div>
               <Button className='hidden md:block'
@@ -308,15 +338,30 @@ const QuestionsPage: React.FC = () => {
             {/* Show subtopics if available */}
             {subtopicsData && subtopicsData.results.length > 0 && (
               <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
-                  <BookOpen className="h-5 w-5 mr-2" />
-                  Available Subtopics
-                </h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white flex items-center">
+                    <BookOpen className="h-5 w-5 mr-2" />
+                    Filter by Subtopic
+                  </h3>
+                  {selectedSubtopicId && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleShowAllQuestions}
+                    >
+                      Show All Questions
+                    </Button>
+                  )}
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {subtopicsData.results.map((subtopic) => (
                     <Card 
                       key={subtopic.uid} 
-                      className="cursor-pointer hover:shadow-lg transition-shadow"
+                      className={`cursor-pointer hover:shadow-lg transition-shadow ${
+                        selectedSubtopicId === subtopic.uid 
+                          ? 'ring-2 ring-purple-500 bg-purple-50 dark:bg-purple-900/20' 
+                          : ''
+                      }`}
                       onClick={() => handleSubtopicClick(subtopic)}
                     >
                       <CardHeader className="pb-2">
