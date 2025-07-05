@@ -33,6 +33,7 @@ import Contract from "./pages/Contract";
 import CategoriesPage from "./pages/JobPreparation/CategoriesPage";
 import SubjectsPage from "./pages/JobPreparation/SubjectsPage";
 import TopicsPage from "./pages/JobPreparation/TopicsPage";
+import SubtopicsPage from "./pages/JobPreparation/SubtopicsPage";
 import QuestionsPage from "./pages/JobPreparation/QuestionsPage";
 import ReadingModePage from "./pages/JobPreparation/ReadingModePage";
 import ExamModePage from "./pages/JobPreparation/ExamModePage";
@@ -164,11 +165,12 @@ const App = () => (
                   
                   {/* Job Preparation routes */}
                   <Route path="/job-preparation" element={<CategoriesPage />} />
-                  <Route path="/job-preparation/category/:categoryId" element={<SubjectsPage />} />
-                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId" element={<TopicsPage />} />
-                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId" element={<QuestionsPage />} />
-                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/reading" element={<ReadingModePage />} />
-                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/exam" element={<ExamModePage />} />
+            <Route path="/job-preparation/category/:categoryId" element={<SubjectsPage />} />
+            <Route path="/job-preparation/category/:categoryId/subject/:subjectId" element={<TopicsPage />} />
+            <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId" element={<SubtopicsPage />} />
+            <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId" element={<QuestionsPage />} />
+            <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId/reading" element={<ReadingModePage />} />
+            <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId/exam" element={<ExamModePage />} />
                   
                   <Route path="/find-tutors" element={
                       <MainLayout><FindTutorsList /></MainLayout>

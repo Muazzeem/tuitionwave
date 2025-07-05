@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import { CategoriesResponse, SubjectsResponse, TopicsResponse, QuestionsResponse } from '@/types/jobPreparation';
+import { CategoriesResponse, SubjectsResponse, TopicsResponse, SubtopicsResponse, QuestionsResponse } from '@/types/jobPreparation';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -34,8 +34,24 @@ class JobPreparationService {
     return response.data;
   }
 
+  async getSubtopics(topicUid: string, page: number = 1): Promise<SubtopicsResponse> {
+    const response = await axios.get(`${API_BASE_URL}/api/topics/${topicUid}/subtopics/`, {
+      params: { page },
+      headers: this.getAuthHeaders(),
+    });
+    return response.data;
+  }
+
   async getQuestions(topicUid: string, page: number = 1): Promise<QuestionsResponse> {
     const response = await axios.get(`${API_BASE_URL}/api/topics/${topicUid}/questions/`, {
+      params: { page },
+      headers: this.getAuthHeaders(),
+    });
+    return response.data;
+  }
+
+  async getQuestionsBySubtopic(subtopicUid: string, page: number = 1): Promise<QuestionsResponse> {
+    const response = await axios.get(`${API_BASE_URL}/api/subtopics/${subtopicUid}/questions/`, {
       params: { page },
       headers: this.getAuthHeaders(),
     });

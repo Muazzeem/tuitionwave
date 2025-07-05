@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
@@ -10,19 +9,19 @@ import { Badge } from '@/components/ui/badge';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { ChevronLeft, HelpCircle } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
-import { Topic } from '@/types/jobPreparation';
+import { Subtopic } from '@/types/jobPreparation';
 
-const TopicsPage: React.FC = () => {
+const SubtopicsPage: React.FC = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1'));
-  const { categoryId, subjectId } = params;
+  const { categoryId, subjectId, topicId } = params;
 
-  const { data: topicsData, isLoading: topicsLoading } = useQuery({
-    queryKey: ['topics', subjectId, currentPage],
-    queryFn: () => JobPreparationService.getTopics(subjectId!, currentPage),
-    enabled: !!subjectId,
+  const { data: subtopicsData, isLoading: subtopicsLoading } = useQuery({
+    queryKey: ['subtopics', topicId, currentPage],
+    queryFn: () => JobPreparationService.getSubtopics(topicId!, currentPage),
+    enabled: !!topicId,
   });
 
   const { data: categoryData } = useQuery({
@@ -43,16 +42,21 @@ const TopicsPage: React.FC = () => {
     enabled: !!subjectId && !!categoryId,
   });
 
-  const handleTopicClick = (topic: Topic) => {
-    if (topic.subtopics_count > 0) {
-      navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topic.uid}`);
-    } else {
-      navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topic.uid}/subtopic/direct`);
-    }
+  const { data: topicData } = useQuery({
+    queryKey: ['topic', topicId],
+    queryFn: async () => {
+      const topics = await JobPreparationService.getTopics(subjectId!, 1);
+      return topics.results.find(topic => topic.uid === topicId);
+    },
+    enabled: !!topicId && !!subjectId,
+  });
+
+  const handleSubtopicClick = (subtopic: Subtopic) => {
+    navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topicId}/subtopic/${subtopic.uid}`);
   };
 
   const handleBack = () => {
-    navigate(`/job-preparation/category/${categoryId}`);
+    navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}`);
   };
 
   const handlePageChange = (page: number) => {
@@ -151,6 +155,12 @@ const TopicsPage: React.FC = () => {
                 <span>{subjectData.subject_title}</span>
               </>
             )}
+            {topicData && (
+              <>
+                <span>/</span>
+                <span>{topicData.topic_name}</span>
+              </>
+            )}
           </div>
           
           <div>
@@ -159,40 +169,37 @@ const TopicsPage: React.FC = () => {
                 <ChevronLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
-              <h2 className="text-lg md:text-2xl font-semibold text-gray-800 dark:text-white">Topics</h2>
+              <h2 className="text-lg md:text-2xl font-semibold text-gray-800 dark:text-white">Subtopics</h2>
             </div>
-            {topicsLoading ? (
-              <div className="text-center py-8">Loading topics...</div>
+            {subtopicsLoading ? (
+              <div className="text-center py-8">Loading subtopics...</div>
             ) : (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {topicsData?.results.map((topic) => (
+                  {subtopicsData?.results.map((subtopic) => (
                     <Card 
-                      key={topic.uid} 
+                      key={subtopic.uid} 
                       className="cursor-pointer hover:shadow-lg transition-shadow"
-                      onClick={() => handleTopicClick(topic)}
+                      onClick={() => handleSubtopicClick(subtopic)}
                     >
                       <CardHeader>
                         <CardTitle className="flex items-center space-x-2">
                           <HelpCircle className="h-5 w-5 text-purple-600" />
-                          <span className='text-lg md:text-2xl'>{topic.topic_name}</span>
+                          <span className='text-lg md:text-2xl'>{subtopic.subtopic_name}</span>
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-2">
                         <div className="flex flex-wrap gap-2">
-                          <Badge variant="outline">{topic.total_questions} Questions</Badge>
-                          {topic.subtopics_count > 0 && (
-                            <Badge variant="default">{topic.subtopics_count} Sub-Topics</Badge>
-                          )}
+                          <Badge variant="outline">{subtopic.total_questions} Questions</Badge>
                         </div>
                       </CardContent>
                     </Card>
                   ))}
                 </div>
-                {topicsData && renderPagination(
-                  topicsData.count, 
-                  !!topicsData.next, 
-                  !!topicsData.previous
+                {subtopicsData && renderPagination(
+                  subtopicsData.count, 
+                  !!subtopicsData.next, 
+                  !!subtopicsData.previous
                 )}
               </>
             )}
@@ -204,4 +211,4 @@ const TopicsPage: React.FC = () => {
   );
 };
 
-export default TopicsPage;
+export default SubtopicsPage;

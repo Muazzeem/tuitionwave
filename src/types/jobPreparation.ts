@@ -20,6 +20,13 @@ export interface Topic {
   total_questions: number;
 }
 
+export interface Subtopic {
+  uid: string;
+  subtopic_name: string;
+  topic: Topic;
+  total_questions: number;
+}
+
 export interface QuestionOption {
   uid: string;
   option_label: string;
@@ -51,4 +58,5 @@ export interface PaginatedResponse<T> {
 export interface CategoriesResponse extends PaginatedResponse<Category> {}
 export interface SubjectsResponse extends PaginatedResponse<Subject> {}
 export interface TopicsResponse extends PaginatedResponse<Topic> {}
+export interface SubtopicsResponse extends PaginatedResponse<Subtopic> {}
 export interface QuestionsResponse extends PaginatedResponse<Question> {}

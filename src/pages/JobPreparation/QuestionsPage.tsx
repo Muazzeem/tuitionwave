@@ -17,7 +17,7 @@ const QuestionsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1'));
   const [questionStates, setQuestionStates] = useState<QuestionState>({});
-  const { categoryId, subjectId, topicId } = params;
+  const { categoryId, subjectId, topicId, subtopicId } = params;
 
   // Reset question states when changing topics or pages
   useEffect(() => {
@@ -38,9 +38,14 @@ const QuestionsPage: React.FC = () => {
   // }, [questionStates]);
 
   const { data: questionsData, isLoading: questionsLoading } = useQuery({
-    queryKey: ['questions', topicId, currentPage],
-    queryFn: () => JobPreparationService.getQuestions(topicId!, currentPage),
-    enabled: !!topicId,
+    queryKey: ['questions', subtopicId === 'direct' ? topicId : subtopicId, currentPage],
+    queryFn: () => {
+      if (subtopicId === 'direct') {
+        return JobPreparationService.getQuestions(topicId!, currentPage);
+      }
+      return JobPreparationService.getQuestionsBySubtopic(subtopicId!, currentPage);
+    },
+    enabled: !!topicId && !!subtopicId,
   });
 
   const { data: categoryData } = useQuery({
@@ -149,11 +154,15 @@ const QuestionsPage: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}`);
+    if (subtopicId === 'direct') {
+      navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}`);
+    } else {
+      navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topicId}`);
+    }
   };
 
   const handleModeToggle = () => {
-    navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topicId}/reading`);
+    navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topicId}/subtopic/${subtopicId}/reading`);
   };
 
   const handlePageChange = (page: number) => {
