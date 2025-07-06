@@ -172,8 +172,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
           }
         );
         const profileData: Tutor = response.data;
-        console.log(profileData);
-        // Update form data with fetched profile data
         updateFormData({
           uid: profileData.uid,
           first_name: profileData.user.first_name || '',

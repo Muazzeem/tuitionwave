@@ -74,7 +74,7 @@ export const ProfileCompletionProvider = ({ children }) => {
     if (userProfile?.user_role === "TEACHER") {
       fetchCompletionData();
     } else {
-      setLoading(false); // Prevent loading spinner for non-Teacher roles
+      setLoading(false);
     }
   }, []);
 
