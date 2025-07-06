@@ -16,7 +16,7 @@ const ReadingModePage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1'));
-  const { categoryId, subjectId, topicId } = params;
+  const { categoryId, subjectId, topicId, subtopicId } = params;
 
   const { data: readingQuestionsData, isLoading: readingQuestionsLoading } = useQuery({
     queryKey: ['questions-reading', topicId, currentPage],
@@ -56,7 +56,7 @@ const ReadingModePage: React.FC = () => {
   };
 
   const handleModeToggle = () => {
-    navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topicId}`);
+    navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topicId}/subtopic/${subtopicId || 'direct'}`);
   };
 
   const handlePageChange = (page: number) => {
@@ -172,7 +172,7 @@ const ReadingModePage: React.FC = () => {
                   <ChevronLeft className="h-4 w-4 mr-2" />
                   Back
                 </Button>
-                <h2 className="text-lg md:text-2xl font-semibold text-gray-800 dark:text-white">
+                <h2 className="text-lg md:text-lg font-semibold text-gray-800 dark:text-white">
                   Questions (Reading Mode)
                 </h2>
               </div>
@@ -200,7 +200,7 @@ const ReadingModePage: React.FC = () => {
                     <Card key={question.uid}>
                       <CardHeader>
                         <CardTitle className="flex items-center justify-between">
-                          <span className='text-lg md:text-2xl'>Question #{question.question_number}</span>
+                          <span className='text-lg md:text-lg'>Question #{question.question_number}</span>
                           <div className="flex items-center space-x-2 text-sm text-gray-600">
                             <Clock className="h-4 w-4" />
                             <span>{question.time_limit_seconds}s</span>

@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { ChevronLeft, Clock, CheckCircle, XCircle, AlertCircle, HelpCircle, Target, BookOpen } from 'lucide-react';
+import { ChevronLeft, Clock, CheckCircle, XCircle, AlertCircle, HelpCircle, Target, BookOpen, Trophy } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
 import { AnswerResult, QuestionState } from '@/types/common';
 import { Subtopic } from '@/types/jobPreparation';
@@ -26,20 +26,20 @@ const QuestionsPage: React.FC = () => {
     setQuestionStates({});
   }, [topicId, currentPage, selectedSubtopicId]);
 
-  // Calculate progress statistics
   const progressStats = React.useMemo(() => {
     const answered = Object.values(questionStates).filter(state => state?.isAnswered);
     const correct = answered.filter(state => state?.result?.is_correct);
     const incorrect = answered.filter(state => state?.result && !state.result.is_correct);
-    
+    const accuracy = answered.length > 0 ? Math.round((correct.length / answered.length) * 100) : 0;
+
     return {
       total: answered.length,
       correct: correct.length,
       incorrect: incorrect.length,
+      accuracy,
     };
   }, [questionStates]);
 
-  // Get questions - use subtopic UID if selected, otherwise use topic UID
   const { data: questionsData, isLoading: questionsLoading } = useQuery({
     queryKey: ['questions', selectedSubtopicId || topicId, currentPage, selectedSubtopicId ? 'subtopic' : 'topic'],
     queryFn: () => {
@@ -58,33 +58,6 @@ const QuestionsPage: React.FC = () => {
     enabled: !!topicId,
   });
 
-  const { data: categoryData } = useQuery({
-    queryKey: ['category', categoryId],
-    queryFn: async () => {
-      const categories = await JobPreparationService.getCategories(1);
-      return categories.results.find(cat => cat.uid === categoryId);
-    },
-    enabled: !!categoryId,
-  });
-
-  const { data: subjectData } = useQuery({
-    queryKey: ['subject', subjectId],
-    queryFn: async () => {
-      const subjects = await JobPreparationService.getSubjects(categoryId!, 1);
-      return subjects.results.find(sub => sub.uid === subjectId);
-    },
-    enabled: !!subjectId && !!categoryId,
-  });
-
-  const { data: topicData } = useQuery({
-    queryKey: ['topic', topicId],
-    queryFn: async () => {
-      const topics = await JobPreparationService.getTopics(subjectId!, 1);
-      return topics.results.find(topic => topic.uid === topicId);
-    },
-    enabled: !!topicId && !!subjectId,
-  });
-
   const checkAnswerMutation = useMutation({
     mutationFn: async ({ questionId, selectedOptionLabel }: { questionId: string; selectedOptionLabel: string }) => {
       const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/practice/check-answer/`, {
@@ -97,11 +70,11 @@ const QuestionsPage: React.FC = () => {
           selected_option_label: selectedOptionLabel,
         }),
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to check answer');
       }
-      
+
       return response.json() as Promise<AnswerResult>;
     },
     onSuccess: (result, variables) => {
@@ -198,13 +171,13 @@ const QuestionsPage: React.FC = () => {
 
   const renderPagination = (count: number, hasNext: boolean, hasPrevious: boolean) => {
     const totalPages = Math.ceil(count / 20);
-    
+
     if (totalPages <= 1) return null;
 
     const getPageNumbers = () => {
       const pages: number[] = [];
       const maxVisiblePages = 5;
-      
+
       if (totalPages <= maxVisiblePages) {
         for (let i = 1; i <= totalPages; i++) {
           pages.push(i);
@@ -212,16 +185,16 @@ const QuestionsPage: React.FC = () => {
       } else {
         let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
         let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-        
+
         if (endPage - startPage + 1 < maxVisiblePages) {
           startPage = Math.max(1, endPage - maxVisiblePages + 1);
         }
-        
+
         for (let i = startPage; i <= endPage; i++) {
           pages.push(i);
         }
       }
-      
+
       return pages;
     };
 
@@ -233,13 +206,13 @@ const QuestionsPage: React.FC = () => {
           <PaginationContent>
             {hasPrevious && (
               <PaginationItem>
-                <PaginationPrevious 
+                <PaginationPrevious
                   onClick={() => handlePageChange(currentPage - 1)}
                   className="cursor-pointer"
                 />
               </PaginationItem>
             )}
-            
+
             {pageNumbers.map((pageNum) => (
               <PaginationItem key={pageNum}>
                 <PaginationLink
@@ -251,10 +224,10 @@ const QuestionsPage: React.FC = () => {
                 </PaginationLink>
               </PaginationItem>
             ))}
-            
+
             {hasNext && (
               <PaginationItem>
-                <PaginationNext 
+                <PaginationNext
                   onClick={() => handlePageChange(currentPage + 1)}
                   className="cursor-pointer"
                 />
@@ -267,7 +240,7 @@ const QuestionsPage: React.FC = () => {
   };
 
   // Get currently selected subtopic data for display
-  const selectedSubtopic = selectedSubtopicId 
+  const selectedSubtopic = selectedSubtopicId
     ? subtopicsData?.results.find(sub => sub.uid === selectedSubtopicId)
     : null;
 
@@ -278,34 +251,8 @@ const QuestionsPage: React.FC = () => {
         <div className="container mx-auto px-4 py-12">
           <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 hidden md:block lg:block">
             <span>Job Preparation</span>
-            {categoryData && (
-              <>
-                <span>/</span>
-                <span>{categoryData.category_name}</span>
-              </>
-            )}
-            {subjectData && (
-              <>
-                <span>/</span>
-                <span>{subjectData.subject_title}</span>
-              </>
-            )}
-            {topicData && (
-              <>
-                <span>/</span>
-                <span>{topicData.topic_name}</span>
-                <span>/</span>
-                <span>Practice Mode</span>
-                {selectedSubtopic && (
-                  <>
-                    <span>/</span>
-                    <span>{selectedSubtopic.subtopic_name}</span>
-                  </>
-                )}
-              </>
-            )}
           </div>
-          
+
           <div>
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-4">
@@ -313,10 +260,10 @@ const QuestionsPage: React.FC = () => {
                   <ChevronLeft className="h-4 w-4 mr-2" />
                   Back
                 </Button>
-                <h2 className="text-lg md:text-2xl font-semibold text-gray-800 dark:text-white">
+                <h2 className="text-lg md:text-lg font-semibold text-gray-800 dark:text-white">
                   Questions (Practice Mode)
                   {selectedSubtopic && (
-                    <span className="text-purple-600 ml-2">- {selectedSubtopic.subtopic_name}</span>
+                    <span className="text-blue-600 ml-2">- {selectedSubtopic.subtopic_name}</span>
                   )}
                 </h2>
               </div>
@@ -329,11 +276,11 @@ const QuestionsPage: React.FC = () => {
             </div>
 
             <Button className='mb-4 md:hidden block lg:hidden'
-                onClick={handleModeToggle}
-                variant="outline"
-              >
-                Switch to Reading
-              </Button>
+              onClick={handleModeToggle}
+              variant="outline"
+            >
+              Switch to Reading
+            </Button>
 
             {/* Show subtopics if available */}
             {subtopicsData && subtopicsData.results.length > 0 && (
@@ -343,44 +290,42 @@ const QuestionsPage: React.FC = () => {
                     <BookOpen className="h-5 w-5 mr-2" />
                     Filter by Subtopic
                   </h3>
+                </div>
+                <div className="flex flex-wrap gap-2">
                   {selectedSubtopicId && (
-                    <Button 
-                      variant="outline" 
-                      size="sm"
+                    <Badge
+                      variant="outline"
+                      className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors px-3 py-2 text-sm rounded-full"
                       onClick={handleShowAllQuestions}
                     >
                       Show All Questions
-                    </Button>
+                    </Badge>
                   )}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {subtopicsData.results.map((subtopic) => (
-                    <Card 
-                      key={subtopic.uid} 
-                      className={`cursor-pointer hover:shadow-lg transition-shadow ${
-                        selectedSubtopicId === subtopic.uid 
-                          ? 'ring-2 ring-purple-500 bg-purple-50 dark:bg-purple-900/20' 
-                          : ''
-                      }`}
-                      onClick={() => handleSubtopicClick(subtopic)}
-                    >
-                      <CardHeader className="pb-2">
-                        <CardTitle className="flex items-center space-x-2 text-base">
-                          <HelpCircle className="h-4 w-4 text-purple-600" />
-                          <span>{subtopic.subtopic_name}</span>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <Badge variant="outline" className="text-xs">
-                          {subtopic.total_questions} Questions
+                    subtopic.total_questions > 0 && (
+                      <div
+                        key={subtopic.uid}
+                        className={`inline-flex items-center px-3 py-2 rounded-full text-sm font-medium cursor-pointer transition-all hover:scale-105 ${selectedSubtopicId === subtopic.uid
+                            ? 'bg-blue-600 text-white shadow-lg'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                          }`}
+                        onClick={() => handleSubtopicClick(subtopic)}
+                      >
+                        <HelpCircle className="h-4 w-4 mr-2" />
+                        <span>{subtopic.subtopic_name}</span>
+                        <Badge
+                          variant="secondary"
+                          className="ml-2 text-xs bg-white/20 text-current border-none"
+                        >
+                          {subtopic.total_questions}
                         </Badge>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    )
                   ))}
                 </div>
               </div>
             )}
-            
+
             {questionsLoading ? (
               <div className="text-center py-8">Loading questions...</div>
             ) : (
@@ -397,7 +342,7 @@ const QuestionsPage: React.FC = () => {
                       <Card key={question.uid}>
                         <CardHeader>
                           <CardTitle className="flex items-center justify-between">
-                            <span className='text-lg md:text-2xl'>Question #{question.question_number}</span>
+                            <span className='text-lg md:text-lg'>Question #{question.question_number}</span>
                             <div className="flex items-center space-x-2 text-sm text-gray-600">
                               <Clock className="h-4 w-4" />
                               <span>{question.time_limit_seconds}s</span>
@@ -417,7 +362,7 @@ const QuestionsPage: React.FC = () => {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {question.options.map((option) => {
                               let optionClassName = 'p-3 border rounded-lg transition-colors ';
-                              
+
                               if (selectedOption === option.option_label) {
                                 if (isAnswered) {
                                   if (result?.is_correct && option.option_label === result.correct_option_label) {
@@ -435,8 +380,8 @@ const QuestionsPage: React.FC = () => {
                               }
 
                               return (
-                                <div 
-                                  key={option.uid} 
+                                <div
+                                  key={option.uid}
                                   className={optionClassName}
                                   onClick={() => {
                                     if (!isAnswered) {
@@ -469,7 +414,7 @@ const QuestionsPage: React.FC = () => {
 
                           {isAnswered && (
                             <div className="mt-4 flex items-center space-x-2">
-                              <Button 
+                              <Button
                                 variant="outline"
                                 onClick={() => handleShowAnswer(question.uid)}
                               >
@@ -477,7 +422,7 @@ const QuestionsPage: React.FC = () => {
                               </Button>
                             </div>
                           )}
-                          
+
                           {isAnswered && showResult && result && (
                             <>
                               <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
@@ -489,7 +434,7 @@ const QuestionsPage: React.FC = () => {
                                   {result.correct_option_label} {result.correct_option_text}
                                 </p>
                               </div>
-                              
+
                               {result.explanation && (
                                 <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                                   <div className="flex items-center space-x-2 mb-2">
@@ -503,7 +448,7 @@ const QuestionsPage: React.FC = () => {
                               )}
                             </>
                           )}
-                          
+
                           {question.negative_marks > 0 && (
                             <p className="mt-3 text-sm text-red-600">
                               Negative marks: {question.negative_marks}
@@ -515,8 +460,8 @@ const QuestionsPage: React.FC = () => {
                   })}
                 </div>
                 {questionsData && renderPagination(
-                  questionsData.count, 
-                  !!questionsData.next, 
+                  questionsData.count,
+                  !!questionsData.next,
                   !!questionsData.previous
                 )}
               </>
@@ -524,34 +469,62 @@ const QuestionsPage: React.FC = () => {
           </div>
         </div>
       </main>
-      
+
       {progressStats.total > 0 && (
-        <div className="fixed bottom-4 right-4 z-50">
-          <Card className="bg-white dark:bg-gray-800 shadow-lg border-2">
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2 mb-2">
-                <Target className="h-5 w-5 text-blue-600" />
-                <span className="font-semibold text-sm">Progress</span>
+        <div className="fixed bottom-3 right-3 z-50">
+          <Card className="bg-white/95 backdrop-blur-sm dark:bg-gray-900/95 shadow-xl border-2">
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <Trophy className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900 dark:text-white">Progress</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {progressStats.accuracy}% accuracy
+                  </p>
+                </div>
               </div>
-              <div className="space-y-1 text-xs">
+
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">Total:</span>
-                  <Badge variant="outline" className="text-xs">{progressStats.total}</Badge>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Total Answered:</span>
+                  <Badge variant="outline" className="bg-purple-50 dark:bg-purple-900/20">
+                    {progressStats.total}
+                  </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-green-600">Correct:</span>
-                  <Badge variant="default" className="bg-green-600 text-xs">{progressStats.correct}</Badge>
+                  <span className="text-sm text-green-600 dark:text-green-400">Correct:</span>
+                  <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                    {progressStats.correct}
+                  </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-red-600">Incorrect:</span>
-                  <Badge variant="destructive" className="text-xs">{progressStats.incorrect}</Badge>
+                  <span className="text-sm text-red-600 dark:text-red-400">Incorrect:</span>
+                  <Badge className="bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400">
+                    {progressStats.incorrect}
+                  </Badge>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="mt-4">
+                  <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
+                    <span>Accuracy</span>
+                    <span>{progressStats.accuracy}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div
+                      className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${progressStats.accuracy}%` }}
+                    ></div>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
       )}
-      
+
       <Footer />
     </div>
   );

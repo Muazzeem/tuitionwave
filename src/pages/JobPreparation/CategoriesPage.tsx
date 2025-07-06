@@ -102,6 +102,7 @@ const CategoriesPage: React.FC = () => {
     );
   };
 
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -114,7 +115,9 @@ const CategoriesPage: React.FC = () => {
           <div>
             <h2 className="text-xl md:text-2xl font-semibold mb-6 text-gray-800 dark:text-white">Categories</h2>
             {categoriesLoading ? (
-              <div className="text-center py-8">Loading categories...</div>
+              <div className="text-center py-8">
+                Loading categories...
+              </div>
             ) : (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -127,7 +130,7 @@ const CategoriesPage: React.FC = () => {
                       <CardHeader>
                         <CardTitle className="flex items-center space-x-2">
                           <BookOpen className="h-5 w-5 text-blue-600" />
-                          <span className='text-lg md:text-2xl'>{category.category_name}</span>
+                          <span className='text-lg md:text-lg'>{category.category_name}</span>
                         </CardTitle>
                       </CardHeader>
                       <CardContent>

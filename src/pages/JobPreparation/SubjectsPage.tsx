@@ -25,14 +25,6 @@ const SubjectsPage: React.FC = () => {
     enabled: !!categoryId,
   });
 
-  const { data: categoryData } = useQuery({
-    queryKey: ['category', categoryId],
-    queryFn: async () => {
-      const categories = await JobPreparationService.getCategories(1);
-      return categories.results.find(cat => cat.uid === categoryId);
-    },
-    enabled: !!categoryId,
-  });
 
   const handleSubjectClick = (subject: Subject) => {
     navigate(`/job-preparation/category/${categoryId}/subject/${subject.uid}`);
@@ -126,12 +118,6 @@ const SubjectsPage: React.FC = () => {
         <div className="container mx-auto px-4 py-12">
           <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 hidden md:block lg:block">
             <span>Job Preparation</span>
-            {categoryData && (
-              <>
-                <span>/</span>
-                <span>{categoryData.category_name}</span>
-              </>
-            )}
           </div>
           
           <div>
@@ -156,7 +142,7 @@ const SubjectsPage: React.FC = () => {
                       <CardHeader>
                         <CardTitle className="flex items-center space-x-2">
                           <FileText className="h-5 w-5 text-green-600" />
-                          <span className='text-lg md:text-2xl'>{subject.subject_title}</span>
+                          <span className='text-lg md:text-lg'>{subject.subject_title}</span>
                         </CardTitle>
                       </CardHeader>
                       <CardContent>

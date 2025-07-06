@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { ChevronDown, User, LogOut, Settings, Menu } from "lucide-react";
+import { ChevronDown, User, LogOut, Settings, Menu, Package } from "lucide-react";
 import NotificationDropdown from "./NotificationDropdown";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "./ThemeToggle";
@@ -90,16 +90,25 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                     : "Teacher"}
                 </span>
               </a>
-              {
-                userProfile?.user_type?.toLowerCase() === "teacher" &&
-                <a
-                  href="/settings"
-                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900"
-                >
-                  <Settings className="h-4 w-4 mr-2" />
-                  <span className="dark:text-white ">Settings</span>
-                </a>
-              }
+              {userProfile?.user_type?.toLowerCase() === "teacher" && (
+                  <>
+                    <a
+                      href="/settings"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900"
+                    >
+                      <Settings className="h-4 w-4 mr-2" />
+                      <span className="dark:text-white">Settings</span>
+                    </a>
+                    <a
+                      href="/teacher/package"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900"
+                    >
+                      <Package className="h-4 w-4 mr-2" />
+                      <span className="dark:text-white">Package</span>
+                    </a>
+                  </>
+                )}
+
               <hr className="my-1 border-gray-200" />
               <a
                 href="#"

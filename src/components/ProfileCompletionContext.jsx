@@ -11,14 +11,27 @@ export const ProfileCompletionProvider = ({ children }) => {
     completed_fields: [],
     missing_fields: [],
   });
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Read userProfile directly from sessionStorage
+  const getStoredUserProfile = () => {
+    try {
+      const stored = sessionStorage.getItem("userProfile");
+      return stored ? JSON.parse(stored) : null;
+    } catch (err) {
+      console.warn("Invalid userProfile in sessionStorage:", err);
+      return null;
+    }
+  };
 
   const fetchCompletionData = async () => {
     const accessToken = getAccessToken();
     try {
       setLoading(true);
-      setError(null); // Clear any previous errors
+      setError(null);
+
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/tutors/profile-completion`,
         {
@@ -30,9 +43,11 @@ export const ProfileCompletionProvider = ({ children }) => {
           },
         }
       );
+
       if (!response.ok) {
         throw new Error("Failed to fetch profile completion data");
       }
+
       const data = await response.json();
       setCompletionData(data);
       return data;
@@ -54,7 +69,13 @@ export const ProfileCompletionProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchCompletionData();
+    const userProfile = getStoredUserProfile();
+
+    if (userProfile?.user_role === "TEACHER") {
+      fetchCompletionData();
+    } else {
+      setLoading(false); // Prevent loading spinner for non-Teacher roles
+    }
   }, []);
 
   const contextValue = {
@@ -76,7 +97,7 @@ export const ProfileCompletionProvider = ({ children }) => {
 export const useProfileCompletion = () => {
   const context = useContext(ProfileCompletionContext);
   if (!context) {
-    throw new Error('useProfileCompletion must be used within a ProfileCompletionProvider');
+    throw new Error("useProfileCompletion must be used within a ProfileCompletionProvider");
   }
   return context;
 };

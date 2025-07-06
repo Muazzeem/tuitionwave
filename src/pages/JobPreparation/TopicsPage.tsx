@@ -23,25 +23,6 @@ const TopicsPage: React.FC = () => {
     queryFn: () => JobPreparationService.getTopics(subjectId!, currentPage),
     enabled: !!subjectId,
   });
-
-  const { data: categoryData } = useQuery({
-    queryKey: ['category', categoryId],
-    queryFn: async () => {
-      const categories = await JobPreparationService.getCategories(1);
-      return categories.results.find(cat => cat.uid === categoryId);
-    },
-    enabled: !!categoryId,
-  });
-
-  const { data: subjectData } = useQuery({
-    queryKey: ['subject', subjectId],
-    queryFn: async () => {
-      const subjects = await JobPreparationService.getSubjects(categoryId!, 1);
-      return subjects.results.find(sub => sub.uid === subjectId);
-    },
-    enabled: !!subjectId && !!categoryId,
-  });
-
   const handleTopicClick = (topic: Topic) => {
     // Always go to questions page directly since we get all questions by topic UID
     navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}/topic/${topic.uid}/subtopic/direct`);
@@ -135,18 +116,6 @@ const TopicsPage: React.FC = () => {
         <div className="container mx-auto px-4 py-12">
           <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 hidden md:block lg:block">
             <span>Job Preparation</span>
-            {categoryData && (
-              <>
-                <span>/</span>
-                <span>{categoryData.category_name}</span>
-              </>
-            )}
-            {subjectData && (
-              <>
-                <span>/</span>
-                <span>{subjectData.subject_title}</span>
-              </>
-            )}
           </div>
           
           <div>
@@ -171,7 +140,7 @@ const TopicsPage: React.FC = () => {
                       <CardHeader>
                         <CardTitle className="flex items-center space-x-2">
                           <HelpCircle className="h-5 w-5 text-purple-600" />
-                          <span className='text-lg md:text-2xl'>{topic.topic_name}</span>
+                          <span className='text-lg md:text-lg'>{topic.topic_name}</span>
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-2">

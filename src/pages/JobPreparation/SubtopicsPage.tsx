@@ -185,7 +185,7 @@ const SubtopicsPage: React.FC = () => {
                       <CardHeader>
                         <CardTitle className="flex items-center space-x-2">
                           <HelpCircle className="h-5 w-5 text-purple-600" />
-                          <span className='text-lg md:text-2xl'>{subtopic.subtopic_name}</span>
+                          <span className='text-lg md:text-lg'>{subtopic.subtopic_name}</span>
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-2">

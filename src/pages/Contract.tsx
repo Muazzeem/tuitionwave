@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const Contract = () => {
     const { uid } = useParams(); 
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen] = useState(true);
 
     if (!uid) {
         return <div>Invalid UID</div>;

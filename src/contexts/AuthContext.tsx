@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { getAccessToken, isTokenExpired, refreshAccessToken } from '@/utils/auth';
 import { ProfileData } from '@/types/common';
@@ -8,6 +7,7 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   fetchProfile: () => Promise<void>;
+  reloadProfile: () => Promise<void>;
   clearProfile: () => void;
 }
 
@@ -15,80 +15,98 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [userProfile, setUserProfile] = useState<ProfileData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true); // Start with loading true
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Function to fetch user profile
   const fetchProfile = async () => {
+    const storedProfile = sessionStorage.getItem('userProfile');
+    if (storedProfile) {
+      try {
+        setUserProfile(JSON.parse(storedProfile));
+        setLoading(false);
+        return;
+      } catch (e) {
+        sessionStorage.removeItem('userProfile');
+      }
+    }
+
     setLoading(true);
     setError(null);
-    
+
     try {
-      // Check if token is expired and refresh if needed
       if (isTokenExpired()) {
         const refreshed = await refreshAccessToken();
         if (!refreshed) {
           throw new Error('Failed to refresh token');
         }
       }
-      
+
       const accessToken = getAccessToken();
-      
-      if (!accessToken) {
-        throw new Error('No access token found');
-      }
-      
+      if (!accessToken) throw new Error('No access token found');
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch profile');
-        clearProfile();
-      }
-      
+
+      if (!response.ok) throw new Error('Failed to fetch profile');
+
       const profileData = await response.json();
       setUserProfile(profileData);
-      
-      // Store profile in sessionStorage for persistence across page refreshes
       sessionStorage.setItem('userProfile', JSON.stringify(profileData));
-      
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error occurred');
-      // Clear stored data on error
+      console.error('Profile fetch failed:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error');
       sessionStorage.removeItem('userProfile');
     } finally {
       setLoading(false);
     }
   };
 
-  // Function to clear profile (used during logout)
+  const reloadProfile = async () => {
+    try {
+      const accessToken = getAccessToken();
+      if (!accessToken) throw new Error('No access token found');
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) throw new Error('Failed to reload profile');
+
+      const profileData = await response.json();
+      setUserProfile(profileData);
+      sessionStorage.setItem('userProfile', JSON.stringify(profileData));
+    } catch (err) {
+      console.error('Failed to reload profile:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error');
+    }
+  };
+
   const clearProfile = () => {
     setUserProfile(null);
     localStorage.clear();
     sessionStorage.removeItem('userProfile');
   };
 
-  // Try to load profile from sessionStorage on mount
   useEffect(() => {
     const storedProfile = sessionStorage.getItem('userProfile');
     const accessToken = getAccessToken();
-    
+
     if (storedProfile) {
       try {
         setUserProfile(JSON.parse(storedProfile));
         setLoading(false);
-      } catch (e) {
+      } catch {
         sessionStorage.removeItem('userProfile');
         setLoading(false);
       }
     } else if (accessToken) {
-      // If we have a token but no stored profile, try to fetch the profile
       fetchProfile();
     } else {
-      // No token and no profile, we're not authenticated
       setLoading(false);
     }
   }, []);
@@ -100,6 +118,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         loading,
         error,
         fetchProfile,
+        reloadProfile,
         clearProfile,
       }}
     >
@@ -108,13 +127,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
-// Custom hook to use the auth context
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
-  
   return context;
 };

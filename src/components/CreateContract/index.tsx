@@ -26,7 +26,7 @@ interface DrawerState {
   isOpen: boolean;
 }
 
-const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type: string }> = ({ uid, drawer, teaching_type }) => {
+const CreateContract: React.FC<{ uid: string; drawer: DrawerState}> = ({ uid, drawer}) => {
   const { userProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [showApproveConfirm, setShowApproveConfirm] = useState(false);
 
-  // Custom hooks
+
   const { tutor, activeDays, activeDayMapping } = useTutorDetails(uid, drawer.isOpen);
   const { errors, showValidationError, setShowValidationError, validateForm, clearFieldError } = useFormValidation();
   const {
@@ -91,11 +91,11 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
   // Helper function to check if address is required
   const shouldShowAddress = () => {
     // If teaching_type prop is 'BOTH', check the selected tuitionType
-    if (teaching_type === 'BOTH') {
+    if (tutor?.teaching_type === 'BOTH') {
       return tuitionType === 'Home';
     }
     // If teaching_type prop is 'HOME', always show address
-    return teaching_type === 'HOME';
+    return tutor?.teaching_type === 'HOME';
   };
 
   useEffect(() => {
@@ -110,11 +110,17 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
   }, [studentClass, studentDepartment, clearFieldError]);
 
   useEffect(() => {
+    if (tutor?.teaching_type !== 'BOTH') {
+      setTuitionType(tutor?.teaching_type === 'OFFLINE' ? 'Offline' : 'Online');
+    }
+  }, [tutor?.teaching_type]);
+
+  useEffect(() => {
     if (!shouldShowAddress() && studentAddress) {
       setStudentAddress("");
       clearFieldError('studentAddress');
     }
-  }, [tuitionType, teaching_type, studentAddress, clearFieldError]);
+  }, [tuitionType, tutor?.teaching_type, studentAddress, clearFieldError]);
 
   const handleFieldChange = (field: string, value: any) => {
     clearFieldError(field as any);
@@ -206,8 +212,6 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
       version_bangla_english: versionBanglaEnglish,
       student_address: shouldShowAddress() ? studentAddress : "",
     };
-
-    console.log("Sending contract request:", payload);
 
     const accessToken = getAccessToken();
 
@@ -328,6 +332,9 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
                 </div>
                 <div>
                   <h2 className="text-xl font-bold">{tutor?.full_name || 'Loading...'}</h2>
+                  <p className="text-sm text-white">
+                    {tutor?.institute?.name || 'Loading...'}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -455,33 +462,18 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState, teaching_type
               {/* Tuition Preferences */}
               <div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-                  {/* Tuition Type */}
                   <div>
-                    {teaching_type === 'BOTH' ? (
-                      <FormField
-                        id="tuitionType"
-                        label="Tuition Type"
-                        type="select"
-                        value={tuitionType}
-                        onChange={(value) => handleFieldChange('tuitionType', value)}
-                        error={errors.tuitionType}
-                        required
-                        options={tuitionTypeOptions}
-                      />
-                    ) : (
-                      <FormField
-                        disabled
-                        id="tuitionType"
-                        label="Tuition Type"
-                        type="text"
-                        value={teaching_type}
-                        onChange={(value) => handleFieldChange('tuitionType', value)}
-                        placeholder="Enter Tuition Type"
-                        error={errors.tuitionType}
-                        required
-                      />
-                    )}
+                    <FormField
+                    id="tuitionType"
+                    label="Tuition Type"
+                    type={tutor?.teaching_type === 'BOTH' ? "select" : "text"}
+                    value={tuitionType}
+                    onChange={(value) => handleFieldChange('tuitionType', value)}
+                    error={errors.tuitionType}
+                    required
+                    disabled={tutor?.teaching_type !== 'BOTH'}
+                    options={tutor?.teaching_type === 'BOTH' ? tuitionTypeOptions : undefined}
+                  />
                   </div>
 
                   {/* Members */}

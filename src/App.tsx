@@ -37,6 +37,7 @@ import SubtopicsPage from "./pages/JobPreparation/SubtopicsPage";
 import QuestionsPage from "./pages/JobPreparation/QuestionsPage";
 import ReadingModePage from "./pages/JobPreparation/ReadingModePage";
 import ExamModePage from "./pages/JobPreparation/ExamModePage";
+import PackageSettings from "./components/PackageSettings";
 
 const queryClient = new QueryClient();
 
@@ -165,13 +166,13 @@ const App = () => (
                   
                   {/* Job Preparation routes */}
                   <Route path="/job-preparation" element={<CategoriesPage />} />
-            <Route path="/job-preparation/category/:categoryId" element={<SubjectsPage />} />
-            <Route path="/job-preparation/category/:categoryId/subject/:subjectId" element={<TopicsPage />} />
-            <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId" element={<SubtopicsPage />} />
-            <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId" element={<QuestionsPage />} />
-            <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId/reading" element={<ReadingModePage />} />
-            <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId/exam" element={<ExamModePage />} />
-                  
+                  <Route path="/job-preparation/category/:categoryId" element={<SubjectsPage />} />
+                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId" element={<TopicsPage />} />
+                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId" element={<SubtopicsPage />} />
+                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId" element={<QuestionsPage />} />
+                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId/reading" element={<ReadingModePage />} />
+                  <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId/exam" element={<ExamModePage />} />
+                        
                   <Route path="/find-tutors" element={
                       <MainLayout><FindTutorsList /></MainLayout>
                   } />
@@ -232,6 +233,12 @@ const App = () => (
                   <Route path="/teacher/requests/:id" element={
                     <AuthGuard allowedRoles={['TEACHER']}>
                       <MainLayout><TuitionRequestDetails /></MainLayout>
+                    </AuthGuard>
+                  } />
+
+                  <Route path="/teacher/package" element={
+                    <AuthGuard>
+                      <MainLayout><PackageSettings /></MainLayout>
                     </AuthGuard>
                   } />
                   

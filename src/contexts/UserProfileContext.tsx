@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
 import { getAccessToken } from '@/utils/auth';
@@ -73,6 +72,14 @@ export const UserProfileProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       setError(null);
 
+      const storedProfile = sessionStorage.getItem('userProfile');
+      if (storedProfile) {
+        setProfile(JSON.parse(storedProfile));
+        setLoading(false);
+        return;
+      }
+
+      // If not, fetch from API
       const token = getAccessToken();
       if (!token) {
         setProfile(null);
@@ -92,9 +99,11 @@ export const UserProfileProvider = ({ children }: { children: ReactNode }) => {
       };
 
       setProfile(profileData);
+      sessionStorage.setItem('userProfile', JSON.stringify(profileData));
     } catch (err) {
       console.error('Failed to fetch user profile:', err);
       setError('Failed to load user profile');
+      sessionStorage.removeItem('userProfile');
     } finally {
       setLoading(false);
     }
@@ -119,7 +128,12 @@ export const UserProfileProvider = ({ children }: { children: ReactNode }) => {
         },
       });
 
-      setProfile((prev) => (prev ? { ...prev, ...response.data } : response.data));
+      // Merge and store updated profile
+      setProfile((prev) => {
+        const updated = prev ? { ...prev, ...response.data } : response.data;
+        sessionStorage.setItem('userProfile', JSON.stringify(updated));
+        return updated;
+      });
     } catch (err) {
       console.error('Failed to update user profile:', err);
       setError('Failed to update user profile');
