@@ -71,7 +71,7 @@ export const ProfileCompletionProvider = ({ children }) => {
   useEffect(() => {
     const userProfile = getStoredUserProfile();
 
-    if (userProfile?.user_role === "TEACHER") {
+    if (userProfile?.user_type === "TEACHER") {
       fetchCompletionData();
     } else {
       setLoading(false);

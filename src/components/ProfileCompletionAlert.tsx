@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useProfileCompletion } from "@/components/ProfileCompletionContext";
 
 const ProfileCompletionAlert = () => {
-  const { completionData, loading, error } = useProfileCompletion();
+  const { completionData, loading, error, refresh: refreshProfileCompletion } = useProfileCompletion();
   const [showMissingFields, setShowMissingFields] = useState(false);
 
   const formatFieldName = (name) => {
