@@ -86,6 +86,8 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [isCreatingSubject, setIsCreatingSubject] = useState<boolean>(false);
   const accessToken = getAccessToken();
+  const [showAll, setShowAll] = useState(false);
+  const visibleSubjects = showAll ? subjects : subjects.slice(0, 10);
 
   const [uid, setUid] = useState<string | null>(null);
 
@@ -408,26 +410,38 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
         </div>
 
         {/* Available Subjects */}
-        <div className="flex flex-wrap gap-2 mt-3">
-          {subjects.map((subject) => {
-            const isSelected = formData.subjects?.includes(subject.id) || false;
-            return (
-              <button
-                key={subject.id}
-                type="button"
-                onClick={() => handleSubjectSelection(subject.id)}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isSelected
-                    ? 'bg-blue-500 text-white dark:bg-blue-600'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-                }`}
-                disabled={isLoading}
-              >
-                {subject.subject}
-              </button>
-            );
-          })}
-        </div>        
+        <div className="mt-3">
+      <div className="flex flex-wrap gap-2">
+        {visibleSubjects.map((subject) => {
+          const isSelected = formData.subjects?.includes(subject.id) || false;
+          return (
+            <button
+              key={subject.id}
+              type="button"
+              onClick={() => handleSubjectSelection(subject.id)}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isSelected
+                  ? 'bg-blue-500 text-white dark:bg-blue-600'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              }`}
+              disabled={isLoading}
+            >
+              {subject.subject}
+            </button>
+          );
+        })}
+      </div>
+
+      {subjects.length > 10 && (
+        <button
+          type="button"
+          onClick={() => setShowAll((prev) => !prev)}
+          className="mt-2 text-sm text-blue-600 hover:underline focus:outline-none dark:text-blue-400"
+        >
+          {showAll ? 'See Less' : 'See All'}
+        </button>
+      )}
+    </div>     
       </div>
 
       {/* Preferred Time */}
