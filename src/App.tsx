@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
 import NotFound from "./pages/NotFound";
 import TutorProfile from "./pages/TutorProfile";
+import TutorShareProfile from "./pages/TutorShareProfile";
 import LoginPage from "./pages/LoginPage";
 import TeacherDashboard from "./pages/Dashboard";
 import Sidebar from "./components/Sidebar";
@@ -152,17 +153,11 @@ const App = () => (
                   <Route path="/" element={<HomePage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/auth/registration" element={<RegistrationPage />} />
+                  <Route path="/tutor/:uid" element={<TutorShareProfile />} />
                   <Route path="/private-profile/tutor/:id" element={
                     <AuthGuard><TutorProfile /></AuthGuard>
                   } />
-                  <Route path="/find-tutors/contract/:uid" element={
-                    <AuthGuard>
-                      <MainLayout><Contract /></MainLayout></AuthGuard>
-                  } />
-                  <Route path="/unauthorized" element={<Unauthorized />} />
-                  <Route path="/faq" element={<FAQPage />} />
-                  <Route path="/terms" element={<TermsPage />} />
-                  <Route path="/how-it-works" element={<HowItWorksPage />} />
+                  
                   
                   {/* Job Preparation routes */}
                   <Route path="/job-preparation" element={<CategoriesPage />} />
