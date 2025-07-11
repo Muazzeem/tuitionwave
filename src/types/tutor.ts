@@ -63,6 +63,7 @@ export interface City {
 }
 
 export interface Tutor {
+  upazila: any;
   linkedin_profile: string;
   expected_salary: any;
   districts: any;

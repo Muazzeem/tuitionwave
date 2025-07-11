@@ -8,7 +8,6 @@ import { useToast } from '@/hooks/use-toast';
 import ChatHeader from './ChatHeader';
 import MessagesContainer from './MessagesContainer';
 import MessageInput from './MessageInput';
-import EmptyState from './EmptyState';
 import FriendsList from './FriendsList';
 
 

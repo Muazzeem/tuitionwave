@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Star, MapPin, GraduationCap, DollarSign, Users, Calendar, BookOpen } from 'lucide-react';
 import { Tutor } from '@/types/tutor';
 import Header from '@/components/Header';
@@ -104,8 +104,7 @@ const TutorShareProfile: React.FC = () => {
               <div className="md:w-1/3">
                 <div className="aspect-square md:aspect-auto md:h-full relative">
                   <img
-                    src={tutor.profile_picture_url || '/placeholder.svg'}
-                    alt={tutor.full_name}
+                    src={tutor.profile_picture || '/placeholder.svg'}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-4 right-4">
@@ -146,12 +145,23 @@ const TutorShareProfile: React.FC = () => {
                 </div>
 
                 {/* Location */}
-                <div className="flex items-center gap-2 mb-4">
-                  <MapPin className="w-5 h-5 text-gray-500" />
-                  <span className="text-gray-700">
-                    {tutor.user?.address}, {tutor.city?.district?.division?.name}
-                  </span>
-                </div>
+                {(
+                  tutor.upazila && tutor.upazila.length > 0
+                ) ? (
+                  <div className="flex items-center gap-2 mb-4">
+                    <MapPin className="w-5 h-5 text-gray-500" />
+                    <span className="text-gray-700">
+                      {tutor.upazila[0].name}, {tutor.upazila[0].district.name}, {tutor.upazila[0].district.division.name}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 mb-4">
+                    <MapPin className="w-5 h-5 text-gray-500" />
+                    <span className="text-gray-700">
+                      Not specified
+                    </span>
+                  </div>
+                )}
 
                 {/* Pricing */}
                 <div className="bg-green-50 rounded-lg p-4 mb-6">
@@ -260,9 +270,11 @@ const TutorShareProfile: React.FC = () => {
           <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl shadow-sm p-8 mt-8 text-center text-white">
             <h3 className="text-2xl font-bold mb-2">Interested in learning?</h3>
             <p className="mb-4 opacity-90">Contact {tutor.full_name} to start your learning journey</p>
-            <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
-              Get in Touch
-            </button>
+            <Link to={`/find-tutors/contract/${uid}`}>
+              <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
+                Create Contract Request
+              </button>
+            </Link>
           </div>
         </div>
       </main>

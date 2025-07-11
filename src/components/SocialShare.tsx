@@ -44,6 +44,7 @@ const SocialShare: React.FC<SocialShareProps> = ({
   };
 
   const handleCopyLink = async () => {
+    console.log("handleCopyLink ", profileUrl);
     try {
       await navigator.clipboard.writeText(profileUrl);
       setCopied(true);
@@ -64,7 +65,7 @@ const SocialShare: React.FC<SocialShareProps> = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" size="sm" className="gap-2 bg-blue-600 text-white hover:bg-blue-700 transition-colors hover:text-white">
           <Share2 className="w-4 h-4" />
           Share Profile
         </Button>
