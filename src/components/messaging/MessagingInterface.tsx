@@ -12,6 +12,7 @@ import MessageInput from './MessageInput';
 import FriendsList from './FriendsList';
 import EmptyState from './EmptyState';
 import { Card } from '@/components/ui/card';
+import FilesSidebar from './FilesSidebar';
 
 interface MessagingInterfaceProps {
   onClose?: () => void;
@@ -69,6 +70,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [showFilesSidebar, setShowFilesSidebar] = useState(false);
   const { userProfile } = useAuth();
   const { toast } = useToast();
 
@@ -190,6 +192,10 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
           : friend
       )
     );
+  };
+
+  const toggleFilesSidebar = () => {
+    setShowFilesSidebar(!showFilesSidebar);
   };
 
   useEffect(() => {
@@ -458,7 +464,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="h-full bg-background flex w-100">
+    <div className="h-full bg-background flex w-100 relative">
       {/* Friends List - Responsive visibility */}
       <div className={`transition-all duration-300 ${
         isMobile 
@@ -478,7 +484,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
       {/* Chat Area */}
       <div className={`flex-1 flex flex-col transition-all duration-300 ${
         isMobile && !selectedFriend ? 'hidden' : 'flex'
-      }`}>
+      } ${showFilesSidebar && !isMobile ? 'mr-80' : ''}`}>
         {selectedFriend ? (
           <Card className="h-full flex flex-col border-0 rounded-none md:border md:rounded-lg shadow-sm">
             <ChatHeader
@@ -509,6 +515,13 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
           </div>
         )}
       </div>
+
+      {/* Files Sidebar */}
+      <FilesSidebar
+        friends={friends}
+        isVisible={showFilesSidebar}
+        onToggle={toggleFilesSidebar}
+      />
     </div>
   );
 };
