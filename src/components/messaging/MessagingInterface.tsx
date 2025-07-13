@@ -5,11 +5,13 @@ import FriendsService from '@/services/FriendsService';
 import { getAccessToken } from '@/utils/auth';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 import ChatHeader from './ChatHeader';
 import MessagesContainer from './MessagesContainer';
 import MessageInput from './MessageInput';
 import FriendsList from './FriendsList';
-
+import EmptyState from './EmptyState';
+import { Card } from '@/components/ui/card';
 
 interface MessagingInterfaceProps {
   onClose?: () => void;
@@ -57,7 +59,8 @@ interface MessageResponse {
 const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   const accessToken = getAccessToken();
   const navigate = useNavigate();
-  const { userId } = useParams(); // Get userId from URL params
+  const { userId } = useParams();
+  const isMobile = useIsMobile();
   const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -455,8 +458,13 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="h-screen bg-white flex dark:bg-gray-800">
-      <div className={`${selectedFriend ? 'hidden md:flex' : 'flex'}`}>
+    <div className="h-full bg-background flex">
+      {/* Friends List - Responsive visibility */}
+      <div className={`transition-all duration-300 ${
+        isMobile 
+          ? (selectedFriend ? 'hidden' : 'w-full') 
+          : 'w-80 lg:w-96 flex-shrink-0'
+      }`}>
         <FriendsList
           friends={friends}
           selectedFriend={selectedFriend}
@@ -468,13 +476,15 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col">
-        {selectedFriend && (
-          <>
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${
+        isMobile && !selectedFriend ? 'hidden' : 'flex'
+      }`}>
+        {selectedFriend ? (
+          <Card className="h-full flex flex-col border-0 rounded-none md:border md:rounded-lg shadow-sm">
             <ChatHeader
               friend={selectedFriend}
               onBack={handleBackToList}
-              showBackButton={true}
+              showBackButton={isMobile}
             />
             
             <MessagesContainer
@@ -492,7 +502,11 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
               onSendMessage={sendMessage}
               disabled={false}
             />
-          </>
+          </Card>
+        ) : (
+          <div className="flex-1 flex items-center justify-center">
+            <EmptyState />
+          </div>
         )}
       </div>
     </div>
