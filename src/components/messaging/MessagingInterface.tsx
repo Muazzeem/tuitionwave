@@ -458,7 +458,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="h-full bg-background flex">
+    <div className="h-full bg-background flex w-100">
       {/* Friends List - Responsive visibility */}
       <div className={`transition-all duration-300 ${
         isMobile 

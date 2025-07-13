@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 
 const EmptyState: React.FC = () => {
   return (
-    <Card className="flex-1 flex items-center justify-center bg-gradient-to-br from-background to-muted/20 border-0 rounded-none md:border md:rounded-lg">
+    <div className="flex-1 flex items-center justify-center">
       <div className="text-center max-w-md mx-auto px-6 py-8">
         <div className="relative mb-6">
           <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 relative">
@@ -54,7 +54,7 @@ const EmptyState: React.FC = () => {
           </Button>
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 
