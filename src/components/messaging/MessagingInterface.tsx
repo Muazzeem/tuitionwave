@@ -456,7 +456,6 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
 
   return (
     <div className="h-screen bg-white flex dark:bg-gray-800">
-      {/* Friends List Sidebar */}
       <div className={`${selectedFriend ? 'hidden md:flex' : 'flex'}`}>
         <FriendsList
           friends={friends}

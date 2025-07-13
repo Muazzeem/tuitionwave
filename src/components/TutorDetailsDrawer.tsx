@@ -255,25 +255,19 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
               </div>
             ) : null}
           </div>
-
-          {tutorDetails && !loading && !error &&  (
-            <div className="p-4 border-t">
-              {userProfile?(
-                <Link to={`/find-tutors/contract/${uid}`}>
-                  <Button className="w-full min-h-[55px] dark:text-white">
-                   Create Request
-                  </Button>
-                </Link>
-              ): (
-                <Link to="/login">
-                  <Button  className="w-full min-h-[55px] dark:text-white">
-                    Login to Request
-                  </Button>
-                </Link>
-              )}
-              
+            { userProfile.user_type === 'GUARDIAN' ?(
+              <div className="p-4 border-t">
+              <Link to={`/find-tutors/contract/${uid}`}>
+                <Button className="w-full min-h-[55px] dark:text-white">
+                  Create Request
+                </Button>
+              </Link>
             </div>
-          )}
+            ): (
+              <div className="p-4 border-t text-red-500 text-center">
+                  Only Guardian can create request
+              </div>
+            )}
         </div>
       </div>
     </>

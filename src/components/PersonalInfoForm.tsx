@@ -46,7 +46,7 @@ interface PersonalInfoFormProps {
 const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFormData, onNext }) => {
   const { refreshProfileCompletion } = useProfileCompletion();
   const { toast } = useToast();
-  const { userProfile } = useAuth();
+  const { userProfile, reloadProfile } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState(false);
   const accessToken = getAccessToken();
@@ -394,7 +394,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
         title: "Success",
         description: "Personal information updated successfully!",
       });
-      onNext();
+      reloadProfile().then(() => onNext());
       await refreshProfileCompletion();
     } catch (error) {
       console.error('Error updating profile:', error);

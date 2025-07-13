@@ -52,8 +52,8 @@ const PackageSettings = () => {
       <DashboardHeader userName="Settings" />
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
         <div className="p-4 sm:p-6 max-w-full lg:max-w-[1211px] mx-auto">
-          <Card className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-            <CardContent className="p-4">
+          <Card className="bg-white dark:bg-gray-800  border border-gray-200 dark:border-gray-700">
+            <CardContent className="p-0">
               <div className="p-6 space-y-6 dark:bg-gray-900">
                 <div>
                   <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Package Information</h2>

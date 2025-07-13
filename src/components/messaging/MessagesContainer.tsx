@@ -3,7 +3,6 @@ import React, { useEffect, useRef } from 'react';
 import MessageBubble from './MessageBubble';
 import { format } from 'date-fns';
 import EmptyState from './EmptyState';
-import { ScrollArea } from '../ui/scroll-area';
 
 interface Message {
   id: number;
@@ -67,7 +66,6 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
       ref={containerRef}
       className="flex-1 overflow-y-auto bg-gray-50 px-4 py-6 dark:bg-gray-900"
     >
-      <ScrollArea type="always" style={{ height: 'calc(90vh - 100px)' }}>
       {isLoading && (
         <div className="text-center mb-4">
           <div className="bg-white px-3 py-1 rounded-full text-xs text-gray-500 shadow-sm inline-block">
@@ -98,7 +96,6 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
       {(messages.length === 0 &&
         <EmptyState />
       )}
-      </ScrollArea>
     </div>
   );
 };

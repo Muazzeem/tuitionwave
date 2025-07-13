@@ -306,7 +306,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
         description: 'Tuition information updated successfully!',
       });
       await refreshProfileCompletion();
-      navigate(`/profile/tutor`);
+      navigate(`/profile/teacher`);
     } catch (error) {
       console.error('Error updating tuition info:', error);
       toast({
