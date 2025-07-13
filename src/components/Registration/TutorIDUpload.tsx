@@ -157,29 +157,29 @@ const TutorIDUpload = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-2">
+    <div className="flex items-center justify-center p-2 dark:bg-gray-900">
       <div className="w-full max-w-2xl">
         {/* Header Section */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
             <Shield className="w-8 h-8 text-blue-600" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2 dark:text-white">
             Verify Your Identity
           </h1>
-          <p className="text-gray-600 max-w-md mx-auto">
+          <p className="text-gray-600 max-w-md mx-auto dark:text-gray-400">
             Upload a clear photo of your Student ID card for secure verification. 
             Your information is encrypted and protected.
           </p>
         </div>
 
         {/* Main Upload Card */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
           <div className="p-8">
             {!previewUrl ? (
               /* Upload Zone */
               <div
-                className={`relative border-2 border-dashed rounded-xl p-12 text-center transition-all duration-200 cursor-pointer group ${
+                className={`relative border-2 border-dashed rounded-xl p-12 text-center transition-all duration-200 cursor-pointer group dark:border-gray-700 ${
                   dragActive 
                     ? 'border-blue-500 bg-blue-50' 
                     : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
@@ -192,7 +192,7 @@ const TutorIDUpload = () => {
               >
                 <div className="space-y-4">
                   <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full transition-colors ${
-                    dragActive ? 'bg-blue-100' : 'bg-gray-100 group-hover:bg-blue-100'
+                    dragActive ? 'bg-blue-100' : 'bg-gray-100 group-hover:bg-blue-100 '
                   }`}>
                     <Upload className={`w-8 h-8 transition-colors ${
                       dragActive ? 'text-blue-600' : 'text-gray-400 group-hover:text-blue-600'
@@ -200,7 +200,7 @@ const TutorIDUpload = () => {
                   </div>
                   
                   <div>
-                    <p className="text-lg font-semibold text-gray-900 mb-1">
+                    <p className="text-lg font-semibold text-gray-900 mb-1 dark:text-white">
                       {dragActive ? 'Drop your file here' : 'Choose file or drag & drop'}
                     </p>
                     <p className="text-sm text-gray-500">

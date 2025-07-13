@@ -469,7 +469,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
       {isTeacher && (
         <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="first_name">First Name</Label>
+            <Label htmlFor="first_name dark:text-gray-400 tex-white">First Name</Label>
             <Input
               id="first_name"
               name="first_name"
