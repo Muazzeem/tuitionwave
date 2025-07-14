@@ -71,7 +71,7 @@ const ProfileCompletionAlert = () => {
           )}
           <h3 className="font-bold text-base sm:text-lg md:text-xl leading-tight">
             {completion_percentage < 80
-              ? "Complete Your Tutor Profile & Unlock Your Potential!"
+              ? "Complete your tutor profile & unlock your potential!"
               : "Your profile is almost complete!"}
           </h3>
         </div>

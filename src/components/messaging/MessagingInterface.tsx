@@ -256,7 +256,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
       socket.close();
     }
 
-    const wsUrl = `ws://api.tuitionwave.com/ws/chat/?token=${accessToken}`;
+    const wsUrl = `ws://127.0.0.1:9000/ws/chat/?token=${accessToken}`;
     const newSocket = new WebSocket(wsUrl);
 
     newSocket.onopen = () => {
@@ -517,11 +517,11 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
       </div>
 
       {/* Files Sidebar */}
-      <FilesSidebar
+      {/* <FilesSidebar
         friends={friends}
         isVisible={showFilesSidebar}
         onToggle={toggleFilesSidebar}
-      />
+      /> */}
     </div>
   );
 };

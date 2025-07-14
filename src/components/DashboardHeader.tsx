@@ -82,7 +82,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                 href={`/profile/${userProfile?.user_type?.toLowerCase()}`}
                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900"
               >
-                <User className="h-4 w-4 mr-2" />
+                <User className="h-4 w-4 mr-2 dark:text-white" />
                 <span className="text-gray-700 dark:text-white">Profile</span>
                 <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
                   {userProfile?.user_type?.toLowerCase() === "guardian"
@@ -96,14 +96,14 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                       href="/settings"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900"
                     >
-                      <Settings className="h-4 w-4 mr-2" />
+                      <Settings className="h-4 w-4 mr-2 dark:text-white" />
                       <span className="dark:text-white">Settings</span>
                     </a>
                     <a
                       href="/teacher/package"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900"
                     >
-                      <Package className="h-4 w-4 mr-2" />
+                      <Package className="h-4 w-4 mr-2 dark:text-white" />
                       <span className="dark:text-white">Package</span>
                     </a>
                   </>
