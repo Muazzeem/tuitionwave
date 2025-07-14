@@ -255,7 +255,7 @@ const TutorDetailsDrawer: React.FC<TutorDetailsDrawerProps> = ({
               </div>
             ) : null}
           </div>
-            { userProfile.user_type === 'GUARDIAN' ?(
+            { userProfile?.user_type === 'GUARDIAN' ?(
               <div className="p-4 border-t">
               <Link to={`/find-tutors/contract/${uid}`}>
                 <Button className="w-full min-h-[55px] dark:text-white">

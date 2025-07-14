@@ -256,7 +256,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
       socket.close();
     }
 
-    const wsUrl = `ws://127.0.0.1:9000/ws/chat/?token=${accessToken}`;
+    const wsUrl = `ws://159.89.194.157:9000/ws/chat/?token=${accessToken}`;
     const newSocket = new WebSocket(wsUrl);
 
     newSocket.onopen = () => {
