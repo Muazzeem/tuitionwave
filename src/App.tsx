@@ -13,6 +13,7 @@ import LoginPage from "./pages/LoginPage";
 import TeacherDashboard from "./pages/Dashboard";
 import Sidebar from "./components/Sidebar";
 import MyRequest from "./pages/MyRequest";
+import Contract from "./pages/Contract";
 import Settings from "./pages/Settings";
 import ProfilePage from "./pages/ProfilePage";
 import MessagePage from "./pages/MessagePage";
@@ -35,6 +36,7 @@ import QuestionsPage from "./pages/JobPreparation/QuestionsPage";
 import ReadingModePage from "./pages/JobPreparation/ReadingModePage";
 import ExamModePage from "./pages/JobPreparation/ExamModePage";
 import PackageSettings from "./components/PackageSettings";
+
 
 const queryClient = new QueryClient();
 
@@ -153,6 +155,10 @@ const App = () => (
                   <Route path="/private-profile/tutor/:id" element={
                     <AuthGuard><TutorProfile /></AuthGuard>
                   } />
+
+                  <Route path="/unauthorized" element={
+                    <Unauthorized />
+                  }/>
                   
                   
                   {/* Job Preparation routes */}
@@ -237,6 +243,11 @@ const App = () => (
                   <Route path="/guardian/dashboard" element={
                     <AuthGuard allowedRoles={['GUARDIAN']}>
                       <MainLayout><GuardianDashboard /></MainLayout>
+                    </AuthGuard>
+                  } />
+                  <Route path="/find-tutors/contract/:uid" element={
+                    <AuthGuard allowedRoles={['GUARDIAN']}>
+                      <MainLayout><Contract /></MainLayout>
                     </AuthGuard>
                   } />
                   <Route path="/guardian/requests" element={

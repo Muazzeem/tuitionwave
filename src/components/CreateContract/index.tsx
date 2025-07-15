@@ -111,7 +111,7 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState}> = ({ uid, dr
 
   useEffect(() => {
     if (tutor?.teaching_type !== 'BOTH') {
-      setTuitionType(tutor?.teaching_type === 'OFFLINE' ? 'Offline' : 'Online');
+      setTuitionType(tutor?.teaching_type === 'OFFLINE' ? 'Home' : 'Online');
     }
   }, [tutor?.teaching_type]);
 
@@ -299,8 +299,8 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState}> = ({ uid, dr
   ];
 
   const tuitionTypeOptions = [
-    { value: "Home", label: "Home" },
-    { value: "Online", label: "Online" }
+    { value: "HOME", label: "Home" },
+    { value: "ONLINE", label: "Online" }
   ];
 
   const memberOptions = [

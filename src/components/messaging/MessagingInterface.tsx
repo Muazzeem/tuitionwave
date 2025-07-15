@@ -12,7 +12,6 @@ import MessageInput from './MessageInput';
 import FriendsList from './FriendsList';
 import EmptyState from './EmptyState';
 import { Card } from '@/components/ui/card';
-import FilesSidebar from './FilesSidebar';
 
 interface MessagingInterfaceProps {
   onClose?: () => void;
@@ -74,18 +73,6 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   const { userProfile } = useAuth();
   const { toast } = useToast();
 
-  const logUnreadMessageIds = (messagesList: Message[], context: string = '') => {
-    const unreadMessages = messagesList.filter(message => !message.is_read);
-    const unreadIds = unreadMessages.map(message => message.id);
-
-    if (unreadIds.length > 0) {
-      console.log(`${context} - Unread message IDs:`, unreadIds);
-      console.log(`${context} - Unread messages details:`, unreadMessages);
-    } else {
-      console.log(`${context} - No unread messages found`);
-    }
-  };
-
   const updateFriendUnreadCount = (friendId: number, countReduction: number) => {
     setFriends(prev => 
       prev.map(friend => 
@@ -120,15 +107,13 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
             ? { ...message, is_read: true }
             : message
         ));
-        logUnreadMessageIds(messages.filter(m => !messageIds.includes(m.id) || m.is_read), 'After marking as read');
+        
         if (selectedFriend) {
           updateFriendUnreadCount(selectedFriend.friend.id, messageIds.length);
         }
-      } else {
-        console.error('Failed to mark messages as read:', response.status);
       }
     } catch (error) {
-      console.error('Error marking messages as read:', error);
+      // Handle error silently or show toast if needed
     }
   };
 
@@ -202,15 +187,12 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
     fetchFriends();
   }, []);
 
-  // Handle URL parameter changes
   useEffect(() => {
     if (userId && friends.length > 0) {
       const friend = friends.find(f => f.friend.id.toString() === userId);
       if (friend && friend !== selectedFriend) {
         setSelectedFriend(friend);
       } else if (!friend && userId) {
-        // If friend not found in the list, clear selection and show error
-        console.error('Friend not found with ID:', userId);
         setSelectedFriend(null);
         toast({
           title: "User not found",
@@ -245,27 +227,20 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
     }
   }, [messages.length, selectedFriend]);
 
-  useEffect(() => {
-    if (messages.length > 0) {
-      logUnreadMessageIds(messages, 'Messages state updated');
-    }
-  }, [messages]);
-
   const connectWebSocket = () => {
     if (socket) {
       socket.close();
     }
 
-    const wsUrl = `ws://159.89.194.157:9000/ws/chat/?token=${accessToken}`;
+    const wsUrl = `wss://api.tuitionwave.com/ws/chat/?token=${accessToken}`;
     const newSocket = new WebSocket(wsUrl);
 
     newSocket.onopen = () => {
-      console.log('WebSocket connected');
+      // WebSocket connected
     };
 
     newSocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log('WebSocket message received:', data);
 
       if (data.type === 'chat_message') {
         const newMsg: Message = {
@@ -281,15 +256,8 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
         };
 
         if (data.sender_email !== userProfile?.email) {
-          console.log('New incoming message (unread):', newMsg.id);
-          logUnreadMessageIds([newMsg], 'New WebSocket message');
-          setMessages(prev => {
-            const updatedMessages = [...prev, newMsg];
-            setTimeout(() => logUnreadMessageIds(updatedMessages, 'After WebSocket message added'), 0);
-            return updatedMessages;
-          });
+          setMessages(prev => [...prev, newMsg]);
           
-          // Update friend's last message for received message
           const senderId = data.sender_id || data.sender_email;
           if (senderId) {
             setTimeout(() => {
@@ -301,11 +269,11 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
     };
 
     newSocket.onclose = () => {
-      console.log('WebSocket disconnected');
+      // WebSocket disconnected
     };
 
     newSocket.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      // Handle WebSocket error
     };
 
     setSocket(newSocket);
@@ -317,7 +285,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
       const response = await FriendsService.getFriends();
       setFriends(response.accepted_friends);
     } catch (error) {
-      console.error('Error fetching friends:', error);
+      // Handle error
     } finally {
       setIsLoading(false);
     }
@@ -334,12 +302,10 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
 
       if (response.ok) {
         const data: MessageResponse = await response.json();
-        console.log('Fetched messages from API:', data.results.messages.length);
-        logUnreadMessageIds(data.results.messages, 'Fetched from API');
         setMessages(data.results.messages);
       }
     } catch (error) {
-      console.error('Error fetching messages:', error);
+      // Handle error
     }
   };
 
@@ -370,7 +336,6 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
         setMessages(prev => [...prev, tempMessage]);
         socket.send(JSON.stringify(messageData));
         
-        // Update friend's last message for sent message
         setTimeout(() => {
           updateFriendLastMessage(selectedFriend.friend.id, newMessage, timestamp);
         }, 1000);
@@ -407,7 +372,6 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
             setMessages(prev => [...prev, tempFileMessage]);
             socket.send(JSON.stringify(fileMessageData));
             
-            // Update friend's last message for sent file
             setTimeout(() => {
               updateFriendLastMessage(selectedFriend.friend.id, fileMessage, timestamp);
             }, 1000);
@@ -416,7 +380,6 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
               URL.revokeObjectURL(fileWithPreview.preview);
             }
           } catch (error) {
-            console.error('Error sending file:', error);
             toast({
               title: "Error",
               description: `Failed to send ${fileWithPreview.file.name}`,
@@ -430,7 +393,6 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
       setSelectedFiles([]);
 
     } catch (error) {
-      console.error('Error sending message:', error);
       toast({
         title: "Error",
         description: "Failed to send message",
@@ -515,13 +477,6 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
           </div>
         )}
       </div>
-
-      {/* Files Sidebar */}
-      {/* <FilesSidebar
-        friends={friends}
-        isVisible={showFilesSidebar}
-        onToggle={toggleFilesSidebar}
-      /> */}
     </div>
   );
 };

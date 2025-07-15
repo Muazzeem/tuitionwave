@@ -191,13 +191,12 @@ const TutorDetails: React.FC = () => {
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-gray-900 dark:border-gray-700 rounded-xl shadow-none border border-gray-100 overflow-hidden sticky top-4">
               {/* Profile Image */}
-              <div className="aspect-square relative">
+              <div className="">
                 <img
                   src={tutor.profile_picture_url}
                   alt="Tutor Profile"
-                  className="w-25 h-25 object-cover"
+                  className="w-25 object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
               </div>
 
               {/* Profile Info */}

@@ -14,7 +14,6 @@ const Contract = () => {
         <div className="w-full dark:bg-gray-900">
             <CreateContract 
                 uid={uid}
-                teaching_type="BOTH"
                 drawer={{ isOpen }}
             />
         </div>
