@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { X, Copy, Phone, Loader2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { X, Copy, Phone, Loader2, Tag } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface Description {
   uid: string;
@@ -19,14 +23,41 @@ interface Package {
   created_at: string;
 }
 
+interface PromoCodeResponse {
+  success: boolean;
+  message: string;
+  pricing_details: {
+    original_price: number;
+    discounted_price: number;
+    discount_amount: number;
+    promo_code: string;
+  };
+  package: {
+    uid: string;
+    name: string;
+    price: string;
+    period: string;
+    package_expiry_date: string;
+    descriptions: Array<{
+      uid: string;
+      text: string;
+    }>;
+    created_at: string;
+  };
+}
+
 const PricingCards: React.FC = () => {
   const { userProfile } = useAuth();
+  const { toast } = useToast();
   const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTier, setSelectedTier] = useState<Package | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [isApplyingPromo, setIsApplyingPromo] = useState(false);
+  const [appliedPromo, setAppliedPromo] = useState<PromoCodeResponse | null>(null);
 
   const bkashNumber = "01712345678";
   const baseUrl = import.meta.env.VITE_API_URL;
@@ -96,15 +127,76 @@ const PricingCards: React.FC = () => {
     return icons[index % icons.length];
   };
 
+  const handleApplyPromoCode = async () => {
+    if (!promoCode.trim() || !selectedTier) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter a promo code and select a package.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsApplyingPromo(true);
+    
+    try {
+      const response = await fetch(`${baseUrl}/api/packages/apply-promo/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          package_id: selectedTier.uid,
+          promo_code: promoCode.trim(),
+        }),
+      });
+
+      const data: PromoCodeResponse = await response.json();
+
+      if (response.ok && data.success) {
+        setAppliedPromo(data);
+        toast({
+          title: "Promo Code Applied!",
+          description: data.message,
+        });
+      } else {
+        toast({
+          title: "Failed to Apply Promo Code",
+          description: data.message || "Please check your promo code and try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error applying promo code:', error);
+      toast({
+        title: "Error",
+        description: "Failed to apply promo code. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsApplyingPromo(false);
+    }
+  };
+
+  const clearPromoCode = () => {
+    setPromoCode('');
+    setAppliedPromo(null);
+  };
+
   const handleSubscribeClick = (pkg: Package) => {
     setSelectedTier(pkg);
     setIsModalOpen(true);
+    // Clear previous promo code data when selecting a new package
+    setPromoCode('');
+    setAppliedPromo(null);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedTier(null);
     setCopySuccess(false);
+    setPromoCode('');
+    setAppliedPromo(null);
   };
 
   const copyToClipboard = (text: string) => {
@@ -230,11 +322,103 @@ const PricingCards: React.FC = () => {
 
             {/* Modal Content */}
             <div className="p-6">
+              {/* Promo Code Section */}
+              <Card className="border-blue-200 mb-6">
+                <CardHeader className="pb-3">
+                  <h4 className="flex items-center gap-2 font-semibold text-gray-900">
+                    <Tag className="h-4 w-4" />
+                    Have a Promo Code?
+                  </h4>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="promo-code" className="text-sm font-medium">
+                      Promo Code
+                    </Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="promo-code"
+                        type="text"
+                        placeholder="Enter promo code"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value)}
+                        className="flex-1"
+                      />
+                      <Button 
+                        onClick={handleApplyPromoCode}
+                        disabled={isApplyingPromo || !promoCode.trim()}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                        size="sm"
+                      >
+                        {isApplyingPromo ? (
+                          <>
+                            <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                            Applying...
+                          </>
+                        ) : (
+                          'Apply'
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {appliedPromo && (
+                    <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <h5 className="font-semibold text-green-800 text-sm">
+                          Promo Code Applied!
+                        </h5>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={clearPromoCode}
+                          className="text-green-700 h-auto p-1"
+                        >
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </div>
+                      
+                      <div className="space-y-1 text-xs">
+                        <div className="flex justify-between">
+                          <span className="text-green-700">Original Price:</span>
+                          <span className="text-green-800">৳{appliedPromo.pricing_details.original_price}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-green-700">Discount:</span>
+                          <span className="text-green-800">-৳{appliedPromo.pricing_details.discount_amount}</span>
+                        </div>
+                        <div className="flex justify-between font-semibold">
+                          <span className="text-green-700">Final Price:</span>
+                          <span className="text-green-800">৳{appliedPromo.pricing_details.discounted_price}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-green-700">Code:</span>
+                          <Badge variant="outline" className="bg-green-100 text-green-800 text-xs">
+                            {appliedPromo.pricing_details.promo_code}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
               {/* Plan Summary */}
               <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                 <h3 className="font-semibold text-gray-900 mb-2">{selectedTier.name} Plan</h3>
                 <div className="flex items-baseline mb-2">
-                  <span className="text-2xl font-bold text-gray-900">{formatPrice(selectedTier.price)}</span>
+                  {appliedPromo ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg line-through text-gray-500">
+                        {formatPrice(selectedTier.price)}
+                      </span>
+                      <span className="text-2xl font-bold text-green-600">
+                        ৳{appliedPromo.pricing_details.discounted_price}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-2xl font-bold text-gray-900">{formatPrice(selectedTier.price)}</span>
+                  )}
                   <span className="text-gray-600 ml-1">{formatPeriod(selectedTier.period)}</span>
                 </div>
                 <div className="space-y-2">
@@ -281,7 +465,7 @@ const PricingCards: React.FC = () => {
                       <li>1. Open your bKash app</li>
                       <li>2. Select "Send Money"</li>
                       <li>3. Enter the number: {bkashNumber}</li>
-                      <li>4. Enter amount: {selectedTier.price}</li>
+                      <li>4. Enter amount: {appliedPromo ? `৳${appliedPromo.pricing_details.discounted_price}` : selectedTier.price}</li>
                       <li>5. Complete the transaction</li>
                       <li>6. Send us the transaction ID</li>
                     </ol>
