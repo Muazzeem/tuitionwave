@@ -5,26 +5,17 @@ import TopTutors from "@/components/TopTutors";
 import RecentRequests from "@/components/RecentRequests";
 import TutorIDUpload from "@/components/Registration/TutorIDUpload";
 import { useAuth } from "@/contexts/AuthContext";
-import ProfileCompletionAlert from "@/components/ProfileCompletionAlert";
-import { useProfileCompletion } from "@/components/ProfileCompletionContext";
 import PricingCards from "@/components/PricingCards";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Dashboard: React.FC = () => {
   const { userProfile } = useAuth();
-  const { completionData } = useProfileCompletion();
 
   return (
     <div className="flex-1 overflow-auto dark:bg-gray-900">
       <DashboardHeader userName="John" />
 
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
-
-      {userProfile?.user_type === "TEACHER" && completionData.completion_percentage < 50 && (
-        <div className="p-6">
-          <ProfileCompletionAlert />
-        </div>
-      )}
 
       {userProfile?.user_type === "TEACHER" && !userProfile?.is_verified && userProfile?.has_document &&(
         <PricingCards />
@@ -34,7 +25,7 @@ const Dashboard: React.FC = () => {
         <TutorIDUpload />
       )}
 
-      {completionData.completion_percentage >= 50 && userProfile?.is_verified && userProfile?.has_document && (
+      {userProfile?.is_verified && userProfile?.has_document && (
         <div className="p-6">
           <h2 className="text-xl font-bold mb-6 dark:text-white">Dashboard</h2>
 
