@@ -1,22 +1,55 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, Package, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Calendar, Clock, Package, AlertCircle, Tag, Loader2 } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import PricingCards from './PricingCards';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardHeader from './DashboardHeader';
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from '@/hooks/use-toast';
 
+interface PromoCodeResponse {
+  success: boolean;
+  message: string;
+  pricing_details: {
+    original_price: number;
+    discounted_price: number;
+    discount_amount: number;
+    promo_code: string;
+  };
+  package: {
+    uid: string;
+    name: string;
+    price: string;
+    period: string;
+    package_expiry_date: string;
+    descriptions: Array<{
+      uid: string;
+      text: string;
+    }>;
+    created_at: string;
+  };
+}
 
 const PackageSettings = () => {
   const { userProfile, reloadProfile } = useAuth();
+  const { toast } = useToast();
   const [packageData] = useState(userProfile.package);
+  const [promoCode, setPromoCode] = useState('');
+  const [selectedPackageId, setSelectedPackageId] = useState<string>('');
+  const [isApplyingPromo, setIsApplyingPromo] = useState(false);
+  const [appliedPromo, setAppliedPromo] = useState<PromoCodeResponse | null>(null);
 
   const [timeRemaining, setTimeRemaining] = useState({
     days: 0,
     hours: 0,
   });
+
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     if (!packageData?.package_expiry_date) return;
@@ -40,6 +73,63 @@ const PackageSettings = () => {
     updateCountdown();
   }, [packageData?.package_expiry_date]);
 
+  const handleApplyPromoCode = async () => {
+    if (!promoCode.trim() || !selectedPackageId) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter a promo code and select a package.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsApplyingPromo(true);
+    
+    try {
+      const response = await fetch(`${baseUrl}/api/packages/apply-promo/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          package_id: selectedPackageId,
+          promo_code: promoCode.trim(),
+        }),
+      });
+
+      const data: PromoCodeResponse = await response.json();
+
+      if (response.ok && data.success) {
+        setAppliedPromo(data);
+        toast({
+          title: "Promo Code Applied!",
+          description: data.message,
+        });
+      } else {
+        toast({
+          title: "Failed to Apply Promo Code",
+          description: data.message || "Please check your promo code and try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error applying promo code:', error);
+      toast({
+        title: "Error",
+        description: "Failed to apply promo code. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsApplyingPromo(false);
+    }
+  };
+
+  const clearPromoCode = () => {
+    setPromoCode('');
+    setSelectedPackageId('');
+    setAppliedPromo(null);
+  };
+
   // Check if user has an active package
   const hasActivePackage = packageData && packageData.name;
   const isExpired = hasActivePackage && new Date(packageData.package_expiry_date) <= new Date();
@@ -52,13 +142,122 @@ const PackageSettings = () => {
       <DashboardHeader userName="Settings" />
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
         <div className="p-4 sm:p-6 max-w-full lg:max-w-[1211px] mx-auto">
-          <Card className="bg-white dark:bg-gray-800  border border-gray-200 dark:border-gray-700">
+          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
             <CardContent className="p-0">
               <div className="p-6 space-y-6 dark:bg-gray-900">
                 <div>
                   <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Package Information</h2>
                   <p className="text-gray-500 mt-1 dark:text-gray-300">View your current package details and subscription status</p>
                 </div>
+
+                {/* Promo Code Section */}
+                <Card className="dark:bg-gray-800 dark:border-gray-700 border-blue-200 dark:border-blue-800">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 dark:text-white">
+                      <Tag className="h-5 w-5" />
+                      Apply Promo Code
+                    </CardTitle>
+                    <CardDescription className="dark:text-gray-300">
+                      Enter a promo code to get discounts on packages
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="package-select" className="dark:text-gray-300">
+                        Package ID
+                      </Label>
+                      <Input
+                        id="package-select"
+                        type="text"
+                        placeholder="Enter package ID (e.g., f7d2c6f4-156f-4b35-8e18-562aa936376a)"
+                        value={selectedPackageId}
+                        onChange={(e) => setSelectedPackageId(e.target.value)}
+                        className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="promo-code" className="dark:text-gray-300">
+                        Promo Code
+                      </Label>
+                      <div className="flex gap-2">
+                        <Input
+                          id="promo-code"
+                          type="text"
+                          placeholder="Enter promo code"
+                          value={promoCode}
+                          onChange={(e) => setPromoCode(e.target.value)}
+                          className="flex-1 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        />
+                        <Button 
+                          onClick={handleApplyPromoCode}
+                          disabled={isApplyingPromo || !promoCode.trim() || !selectedPackageId}
+                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                        >
+                          {isApplyingPromo ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Applying...
+                            </>
+                          ) : (
+                            'Apply'
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+
+                    {appliedPromo && (
+                      <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-semibold text-green-800 dark:text-green-200">
+                            Promo Code Applied Successfully!
+                          </h4>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={clearPromoCode}
+                            className="text-green-700 dark:text-green-300"
+                          >
+                            Clear
+                          </Button>
+                        </div>
+                        
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-green-700 dark:text-green-300">Package:</span>
+                            <span className="font-medium text-green-800 dark:text-green-200">
+                              {appliedPromo.package.name}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-green-700 dark:text-green-300">Original Price:</span>
+                            <span className="text-green-800 dark:text-green-200">
+                              ৳{appliedPromo.pricing_details.original_price}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-green-700 dark:text-green-300">Discount:</span>
+                            <span className="text-green-800 dark:text-green-200">
+                              -৳{appliedPromo.pricing_details.discount_amount}
+                            </span>
+                          </div>
+                          <div className="flex justify-between font-semibold">
+                            <span className="text-green-700 dark:text-green-300">Final Price:</span>
+                            <span className="text-green-800 dark:text-green-200">
+                              ৳{appliedPromo.pricing_details.discounted_price}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-green-700 dark:text-green-300">Promo Code:</span>
+                            <Badge variant="outline" className="bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200">
+                              {appliedPromo.pricing_details.promo_code}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
                 
                 {!hasActivePackage ? (
                   <Card className="dark:bg-gray-800 dark:border-gray-700 border-orange-200 dark:border-orange-800">
