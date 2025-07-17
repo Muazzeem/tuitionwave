@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { X, Copy, Phone, Loader2, Tag } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { getAccessToken } from '@/utils/auth';
 
 interface Description {
   uid: string;
@@ -24,6 +25,7 @@ interface Package {
 }
 
 interface PromoCodeResponse {
+  error: any;
   success: boolean;
   message: string;
   pricing_details: {
@@ -140,10 +142,12 @@ const PricingCards: React.FC = () => {
     setIsApplyingPromo(true);
     
     try {
+      const accessToken = getAccessToken();
       const response = await fetch(`${baseUrl}/api/packages/apply-promo/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           package_id: selectedTier.uid,
@@ -162,12 +166,11 @@ const PricingCards: React.FC = () => {
       } else {
         toast({
           title: "Failed to Apply Promo Code",
-          description: data.message || "Please check your promo code and try again.",
+          description: data.error[0] || "Please check your promo code and try again.",
           variant: "destructive",
         });
       }
     } catch (error) {
-      console.error('Error applying promo code:', error);
       toast({
         title: "Error",
         description: "Failed to apply promo code. Please try again.",
@@ -197,13 +200,6 @@ const PricingCards: React.FC = () => {
     setCopySuccess(false);
     setPromoCode('');
     setAppliedPromo(null);
-  };
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
-    });
   };
 
   const isCurrentPlan = (packageName: string) => {
@@ -306,10 +302,10 @@ const PricingCards: React.FC = () => {
       {/* Modal */}
       {isModalOpen && selectedTier && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-900 rounded-lg max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                 Subscribe to {selectedTier.name} Plan
               </h2>
               <button
@@ -323,9 +319,9 @@ const PricingCards: React.FC = () => {
             {/* Modal Content */}
             <div className="p-6">
               {/* Promo Code Section */}
-              <Card className="border-blue-200 mb-6">
+              <Card className="border-blue-200 dark:border-gray-700 mb-6">
                 <CardHeader className="pb-3">
-                  <h4 className="flex items-center gap-2 font-semibold text-gray-900">
+                  <h4 className="flex items-center gap-2 font-semibold text-gray-900 dark:text-white">
                     <Tag className="h-4 w-4" />
                     Have a Promo Code?
                   </h4>
@@ -404,7 +400,7 @@ const PricingCards: React.FC = () => {
               </Card>
 
               {/* Plan Summary */}
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg dark:bg-gray-200">
                 <h3 className="font-semibold text-gray-900 mb-2">{selectedTier.name} Plan</h3>
                 <div className="flex items-baseline mb-2">
                   {appliedPromo ? (
@@ -433,46 +429,6 @@ const PricingCards: React.FC = () => {
                 </div>
               </div>
 
-              {/* Payment Instructions */}
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Payment Instructions</h4>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2 p-3 bg-pink-50 rounded-lg border border-pink-200">
-                    <div className="w-8 h-8 bg-pink-500 rounded flex items-center justify-center">
-                      <Phone size={16} className="text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">bKash Number</p>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-lg font-mono text-gray-900">{bkashNumber}</span>
-                        <button
-                          onClick={() => copyToClipboard(bkashNumber)}
-                          className="text-pink-600 hover:text-pink-700 transition-colors"
-                          title="Copy number"
-                        >
-                          <Copy size={16} />
-                        </button>
-                      </div>
-                      {copySuccess && (
-                        <p className="text-xs text-green-600 mt-1">Number copied!</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <h5 className="font-medium text-blue-900 mb-2">How to pay:</h5>
-                    <ol className="text-sm text-blue-800 space-y-1">
-                      <li>1. Open your bKash app</li>
-                      <li>2. Select "Send Money"</li>
-                      <li>3. Enter the number: {bkashNumber}</li>
-                      <li>4. Enter amount: {appliedPromo ? `৳${appliedPromo.pricing_details.discounted_price}` : selectedTier.price}</li>
-                      <li>5. Complete the transaction</li>
-                      <li>6. Send us the transaction ID</li>
-                    </ol>
-                  </div>
-                </div>
-              </div>
-
               {/* Contact Information */}
               <div className="mb-6 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                 <h5 className="font-medium text-yellow-900 mb-2">After Payment</h5>
@@ -485,17 +441,17 @@ const PricingCards: React.FC = () => {
               {/* Action Buttons */}
               <div className="flex space-x-3">
                 <Button
-                  onClick={() => copyToClipboard(bkashNumber)}
+                  onClick={() => closeModal}
                   variant="outline"
-                  className="flex-1"
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white"
                 >
-                  Copy bKash Number
+                  Close
                 </Button>
                 <Button
                   onClick={closeModal}
                   className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                 >
-                  Got it!
+                  Pay Now
                 </Button>
               </div>
             </div>

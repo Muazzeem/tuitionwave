@@ -36,6 +36,9 @@ import QuestionsPage from "./pages/JobPreparation/QuestionsPage";
 import ReadingModePage from "./pages/JobPreparation/ReadingModePage";
 import ExamModePage from "./pages/JobPreparation/ExamModePage";
 import PackageSettings from "./components/PackageSettings";
+import HowItWorksPage from "./pages/HowItWorksPage";
+import FAQPage from "./pages/FAQPage";
+import TermsPage from "./pages/TermsPage";
 
 
 const queryClient = new QueryClient();
@@ -155,6 +158,10 @@ const App = () => (
                   <Route path="/private-profile/tutor/:id" element={
                     <AuthGuard><TutorProfile /></AuthGuard>
                   } />
+
+                  <Route path="/how-it-works" element={<HowItWorksPage />} />
+                  <Route path="/faq" element={<FAQPage />} />
+                  <Route path="/terms" element={<TermsPage />} />
 
                   <Route path="/unauthorized" element={
                     <Unauthorized />
