@@ -1,33 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import DashboardHeader from "@/components/DashboardHeader";
 import StatsCards from "@/components/StatsCards";
 import TopTutors from "@/components/TopTutors";
 import RecentRequests from "@/components/RecentRequests";
-import TutorIDUpload from "@/components/Registration/TutorIDUpload";
-import { useAuth } from "@/contexts/AuthContext";
-import PricingCards from "@/components/PricingCards";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useAuth } from "@/contexts/AuthContext";
+
 
 const Dashboard: React.FC = () => {
   const { userProfile } = useAuth();
 
+  useEffect(() => {
+    console.log(userProfile);
+  }, [userProfile]);
+  
   return (
     <div className="flex-1 overflow-auto dark:bg-gray-900">
       <DashboardHeader userName="John" />
 
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
-
-      {userProfile?.user_type === "TEACHER" && !userProfile?.is_verified && userProfile?.has_document &&(
-        <PricingCards />
-      )}
-
-      {!userProfile?.has_document && (
-        <TutorIDUpload />
-      )}
-
-      {userProfile?.is_verified && userProfile?.has_document && (
         <div className="p-6">
-          <h2 className="text-xl font-bold mb-6 dark:text-white">Dashboard</h2>
+          <h2 className="text-xl font-bold mb-6 dark:text-white">Tutor Dashboard</h2>
 
           <StatsCards />
 
@@ -40,7 +33,6 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-      )}
       </ScrollArea>
     </div>
   );

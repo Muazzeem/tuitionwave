@@ -1,6 +1,5 @@
-
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "./ui/button";
 import { getAccessToken } from "@/utils/auth";
@@ -22,6 +21,19 @@ import { Eye, Pen, Trash2 } from "lucide-react";
 import { RequestRowProps } from "@/types/common";
 import { useAuth } from "@/contexts/AuthContext";
 
+
+const getUserTypeFromUrl = (pathname: string): string => {
+  const segments = pathname.split('/');
+  const dashboardIndex = segments.findIndex(segment => segment === 'dashboard');
+  
+  if (dashboardIndex !== -1 && segments[dashboardIndex + 1]) {
+    const userType = segments[dashboardIndex + 1];
+    return userType.toUpperCase();
+  }
+  
+  return 'GUARDIAN';
+};
+
 const RequestRow: React.FC<RequestRowProps> = ({
   request,
   showConfirmationDialog,
@@ -29,7 +41,11 @@ const RequestRow: React.FC<RequestRowProps> = ({
   const { userProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
+
+  // Extract user type from URL
+  const userTypeFromUrl = getUserTypeFromUrl(location.pathname);
 
   const deleteContractMutation = useMutation({
     mutationFn: async (contractUid: string) => {
@@ -65,7 +81,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
   });
 
   const handleDetailsClick = () => {
-    navigate(`/${userProfile.user_type.toLocaleLowerCase()}/requests/${request.uid}`);
+    navigate(`/${userTypeFromUrl.toLowerCase()}/requests/${request.uid}`);
   };
 
   const handleDeleteClick = () => {
@@ -113,7 +129,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
         #{request.uid.slice(0, 8)}
       </td>
       <td className="py-3 px-2">
-        {userProfile.user_type === 'GUARDIAN' && (
+        {userTypeFromUrl === 'GUARDIAN' && (
         <div className="flex items-center">
           <div className="h-8 w-8 rounded-full overflow-hidden mr-2">
             <img
@@ -131,7 +147,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
           </div>
         </div>
         )}
-        {userProfile.user_type === 'TEACHER' && (
+        {userTypeFromUrl === 'TEACHER' && (
           <div className="flex items-center">
             <div className="h-8 w-8 rounded-full overflow-hidden mr-2">
               <img
@@ -223,8 +239,12 @@ const RequestRow: React.FC<RequestRowProps> = ({
 
 const RecentRequests: React.FC = () => {
   const { userProfile } = useAuth();
+  const location = useLocation();
   const { Confirmation: ConfirmationComponent, showConfirmationDialog } =
     useConfirmationDialog();
+
+  // Extract user type from URL
+  const userTypeFromUrl = getUserTypeFromUrl(location.pathname);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["contracts"],
@@ -254,7 +274,7 @@ const RecentRequests: React.FC = () => {
     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-bold dark:text-white">Recent Request</h2>
-        <Link to={`/${userProfile.user_type.toLowerCase()}/requests`}>
+        <Link to={`/requests`}>
           <Button className="text-sm text-tuitionwave-blue hover:underline text-white">
             View All
           </Button>
@@ -266,10 +286,10 @@ const RecentRequests: React.FC = () => {
           <thead>
             <tr className="text-left text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
               <th className="py-2 px-2">Req. ID</th>
-              {userProfile.user_type === 'GUARDIAN' && (
+              {userTypeFromUrl === 'GUARDIAN' && (
                 <th className="py-2 px-2">Tutor</th>
               )}
-              {userProfile.user_type === 'TEACHER' && (
+              {userTypeFromUrl === 'TEACHER' && (
                 <th className="py-2 px-2">Guardian</th>
               )}
               <th className="py-2 px-2">Subject</th>

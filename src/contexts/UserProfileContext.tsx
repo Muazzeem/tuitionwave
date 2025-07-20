@@ -8,7 +8,6 @@ export interface ProfileData {
   email: string;
   first_name: string;
   last_name: string;
-  user_type: string;
   phone: string;
   address: string;
   profile_picture: string | null;

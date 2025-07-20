@@ -15,10 +15,10 @@ import axios from 'axios';
 import { useToast } from './ui/use-toast';
 import { getAccessToken } from '@/utils/auth';
 import { useAuth } from '@/contexts/AuthContext';
-import { useProfileCompletion } from './ProfileCompletionContext';
 
 import { Tutor } from '@/types/tutor';
 import { ProfileFormData, Division, District, Upazila } from '@/types/common';
+import { on } from 'events';
 
 interface User {
   preferred_upazila: any;
@@ -44,9 +44,8 @@ interface PersonalInfoFormProps {
 }
 
 const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFormData, onNext }) => {
-  const { refreshProfileCompletion } = useProfileCompletion();
   const { toast } = useToast();
-  const { userProfile, reloadProfile } = useAuth();
+  const { userProfile } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState(false);
   const accessToken = getAccessToken();
@@ -70,36 +69,32 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
   const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
   const [showUpazilaDropdown, setShowUpazilaDropdown] = useState(false);
 
-  const isTeacher = userProfile?.user_type === 'TEACHER';
-
 
   // Fetch divisions on component mount for teachers
   useEffect(() => {
-    if (isTeacher) {
-      fetchDivisions();
-    }
-  }, [isTeacher]);
+    fetchDivisions();
+  }, []);
 
   // Fetch districts when division changes
   useEffect(() => {
-    if (isTeacher && formData.division_id) {
+    if (formData.division_id) {
       fetchDistricts(formData.division_id);
     } else {
       setDistricts([]);
       setUpazilas([]);
       updateFormData({ preferred_district_id: null, preferred_upazila_id: null });
     }
-  }, [formData.division_id, isTeacher]);
+  }, [formData.division_id]);
 
   // Fetch upazilas when preferred district changes
   useEffect(() => {
-    if (isTeacher && formData.preferred_district_id) {
+    if (formData.preferred_district_id) {
       fetchUpazilas(formData.preferred_district_id);
     } else {
       setUpazilas([]);
       updateFormData({ preferred_upazila_id: null });
     }
-  }, [formData.preferred_district_id, isTeacher]);
+  }, [formData.preferred_district_id]);
 
   const fetchDivisions = async () => {
     try {
@@ -135,26 +130,22 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
 
   // Handle search with debouncing
   useEffect(() => {
-    if (isTeacher) {
-      const timer = setTimeout(() => {
+    const timer = setTimeout(() => {
         if (formData.division_id && districtSearch !== '') {
           fetchDistricts(formData.division_id, districtSearch);
         }
       }, 300);
       return () => clearTimeout(timer);
-    }
-  }, [districtSearch, formData.division_id, isTeacher]);
+  }, [districtSearch, formData.division_id]);
 
   useEffect(() => {
-    if (isTeacher) {
-      const timer = setTimeout(() => {
+    const timer = setTimeout(() => {
         if (formData.preferred_district_id && upazilaSearch !== '') {
           fetchUpazilas(formData.preferred_district_id, upazilaSearch);
         }
       }, 300);
       return () => clearTimeout(timer);
-    }
-  }, [upazilaSearch, formData.preferred_district_id, isTeacher]);
+  }, [upazilaSearch, formData.preferred_district_id]);
 
   // Fetch profile data on component mount
   useEffect(() => {
@@ -206,7 +197,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
     };
 
     fetchProfileData();
-  }, [isTeacher]);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -306,7 +297,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
 
   const handleSubmit = async () => {
     try {
-      if (isTeacher && !formData.phone) {
+      if (!formData.phone) {
         toast({
           title: 'Validation Error',
           description: 'Phone number is required.',
@@ -317,7 +308,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
 
       setIsSaving(true);
 
-      if (isTeacher) {
         // For teachers, update both profile and tutor-specific data
         const submitData = new FormData();
 
@@ -370,7 +360,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             },
           }
         );
-      } else {
         const payload = {
           gender: formData.gender,
           birth_date: formData.birthDate ? format(formData.birthDate, 'yyyy-MM-dd') : null,
@@ -388,14 +377,12 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             },
           }
         );
-      }
 
       toast({
         title: "Success",
         description: "Personal information updated successfully!",
       });
-      reloadProfile().then(() => onNext());
-      await refreshProfileCompletion();
+      onNext();
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
@@ -414,104 +401,101 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
         <div className="text-center text-gray-500">Loading profile data...</div>
       }
       
-      {isTeacher && (
-        <div className="flex flex-col items-center space-y-4">
-          <div className="relative">
-            <div className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center overflow-hidden border-4 border-gray-300 dark:border-gray-600">
-              {previewUrl ? (
-                <img
-                  src={previewUrl}
-                  alt="Profile preview"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <User className="w-16 h-16 text-gray-400" />
-              )}
-            </div>
-            {previewUrl && (
-              <button
-                type="button"
-                onClick={handleRemoveImage}
-                className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+
+      <div className="flex flex-col items-center space-y-4">
+        <div className="relative">
+          <div className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center overflow-hidden border-4 border-gray-300 dark:border-gray-600">
+            {previewUrl ? (
+              <img
+                src={previewUrl}
+                alt="Profile preview"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User className="w-16 h-16 text-gray-400" />
             )}
           </div>
-
-          <div className="flex space-x-2">
-            <Button
+          {previewUrl && (
+            <button
               type="button"
-              variant="outline"
-              onClick={triggerFileInput}
-              className="flex items-center space-x-2"
+              onClick={handleRemoveImage}
+              className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors"
             >
-              <Camera className="w-4 h-4" />
-              <span>{previewUrl ? 'Change Picture' : 'Upload Picture'}</span>
-            </Button>
-          </div>
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="hidden"
+        <div className="flex space-x-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={triggerFileInput}
+            className="flex items-center space-x-2"
+          >
+            <Camera className="w-4 h-4" />
+            <span>{previewUrl ? 'Change Picture' : 'Upload Picture'}</span>
+          </Button>
+        </div>
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+
+        <p className="text-sm text-gray-500 text-center">
+          Supported formats: JPG, PNG, GIF<br />
+          Maximum size: 5MB
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="first_name dark:text-gray-400 tex-white">First Name</Label>
+          <Input
+            id="first_name"
+            name="first_name"
+            value={formData.first_name || ''}
+            onChange={handleChange}
+            className="mt-1"
           />
-
-          <p className="text-sm text-gray-500 text-center">
-            Supported formats: JPG, PNG, GIF<br />
-            Maximum size: 5MB
-          </p>
         </div>
-      )}
-
-      {isTeacher && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="first_name dark:text-gray-400 tex-white">First Name</Label>
-            <Input
-              id="first_name"
-              name="first_name"
-              value={formData.first_name || ''}
-              onChange={handleChange}
-              className="mt-1"
-            />
-          </div>
-          <div>
-            <Label htmlFor="last_name">Last Name</Label>
-            <Input
-              id="last_name"
-              name="last_name"
-              value={formData.last_name || ''}
-              onChange={handleChange}
-              className="mt-1"
-            />
-          </div>
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              value={formData.email || ''}
-              onChange={handleChange}
-              className="mt-1"
-              disabled
-            />
-          </div>
-          <div>
-            <Label htmlFor="phone">Phone <span className="text-red-500">*</span></Label>
-            <Input
-              id="phone"
-              name="phone"
-              value={formData.phone || ''}
-              onChange={handleChange}
-              placeholder='+880123456789'
-              className="mt-1"
-            />
-          </div>
+        <div>
+          <Label htmlFor="last_name">Last Name</Label>
+          <Input
+            id="last_name"
+            name="last_name"
+            value={formData.last_name || ''}
+            onChange={handleChange}
+            className="mt-1"
+          />
         </div>
-      )}
+        <div>
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            name="email"
+            value={formData.email || ''}
+            onChange={handleChange}
+            className="mt-1"
+            disabled
+          />
+        </div>
+        <div>
+          <Label htmlFor="phone">Phone <span className="text-red-500">*</span></Label>
+          <Input
+            id="phone"
+            name="phone"
+            value={formData.phone || ''}
+            onChange={handleChange}
+            placeholder='+880123456789'
+            className="mt-1"
+          />
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 gap-4">
         <div>
@@ -581,10 +565,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
           <Linkedin className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
         </div>
       </div>
-
-      {isTeacher && (
         <div className="space-y-6">
-          <h3 className="text-sm font-semibold">Location Preferences</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Division Selection */}
             <div className="relative">
@@ -728,7 +709,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             />
           </div>
         </div>
-      )}
 
       <div className="flex justify-between pt-4">
         <Button variant="outline" className="px-6" disabled={isSaving}>

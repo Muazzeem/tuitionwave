@@ -4,18 +4,16 @@ import { Home, Search, MessageSquare, User, LogOut, ChevronLeft, ChevronRight, S
 import { useAuth } from '@/contexts/AuthContext';
 
 const Sidebar = () => {
-    const { userProfile, clearProfile } = useAuth();
+    const { clearProfile } = useAuth();
     const location = useLocation();
     const [isExpanded, setIsExpanded] = useState(true);
-
-    const userType = userProfile?.user_type?.toLowerCase() === 'teacher' ? 'teacher' : 'guardian';
     
     const menuItems = [
-        { icon: Home, text: 'Dashboard', path: `/${userType}/dashboard` },
-        ...(userType !== 'teacher' ? [{ icon: Search, text: 'Find Tutor', path: '/find-tutors' }] : []), // Hide for teachers
-        { icon: ScrollText, text: 'Contracts', path: `/${userType}/requests` },
+        { icon: Home, text: 'Dashboard', path: `/dashboard` },
+        { icon: Search, text: 'Find Tutor', path: '/find-tutors' },
+        { icon: ScrollText, text: 'Contracts', path: `/requests` },
         { icon: MessageSquare, text: 'Message', path: '/message' },
-        { icon: User, text: 'Profile', path: `/profile/${userType}` },
+        { icon: User, text: 'Profile', path: `/profile/` },
     ];
 
     const toggleSidebar = () => {

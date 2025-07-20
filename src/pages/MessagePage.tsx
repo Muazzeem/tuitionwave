@@ -4,11 +4,12 @@ import React from "react";
 
 const MessagePage: React.FC = () => {
   return (
-    <div className="flex flex-col h-screen bg-background w-full">
-      <div className="flex-1 overflow-hidden">
-        <MessagingInterface />
+      <div className="flex flex-col h-screen bg-background w-full">
+        <DashboardHeader userName="John" />
+        <div className="flex-1 overflow-hidden">
+          <MessagingInterface />
+        </div>
       </div>
-    </div>
   );
 };
 

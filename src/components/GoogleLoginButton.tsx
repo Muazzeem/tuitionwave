@@ -4,13 +4,11 @@ import { useToast } from '@/components/ui/use-toast';
 import { GoogleIdentityManager, GoogleCredentialResponse } from '@/utils/googleAuth';
 
 interface CustomGoogleButtonProps {
-  userType: 'teacher' | 'guardian';
   onSuccess: (userData: any) => void;
   disabled?: boolean;
 }
 
 const GoogleLoginButton: React.FC<CustomGoogleButtonProps> = ({ 
-  userType, 
   onSuccess, 
   disabled = false 
 }) => {
@@ -72,7 +70,6 @@ const GoogleLoginButton: React.FC<CustomGoogleButtonProps> = ({
 
       const apiPayload = {
         id_token: response.credential,
-        user_type: userType.toUpperCase(), // 'TUTOR' or 'GUARDIAN'
         user_info: {
           iss: userInfo.iss,
           aud: userInfo.aud,
@@ -88,7 +85,6 @@ const GoogleLoginButton: React.FC<CustomGoogleButtonProps> = ({
           exp: userInfo.exp,
           nbf: userInfo.nbf,
           jti: userInfo.jti,
-          user_type: userType.toUpperCase(), // explicitly include in payload
         },
       };
 

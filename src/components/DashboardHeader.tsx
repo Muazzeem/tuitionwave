@@ -1,34 +1,43 @@
-
 import React, { useState } from "react";
-import { ChevronDown, User, LogOut, Settings, Menu, Package } from "lucide-react";
+import { ChevronDown, User, LogOut, Settings, Package } from "lucide-react";
 import NotificationDropdown from "./NotificationDropdown";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "./ThemeToggle";
+import { Link } from "react-router-dom";
 
 interface HeaderProps {
   userName: string;
 }
+
+const getUserTypeFromUrl = (pathname: string): string => {
+  const segments = pathname.toLowerCase().split('/');
+
+  if (segments.includes('teacher')) {
+    return 'TEACHER';
+  }
+
+  return 'GUARDIAN';
+};
 
 const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
   const { userProfile, clearProfile } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+  const userTypeFromUrl = getUserTypeFromUrl(location.pathname);
 
   const handleMarkAllNotificationsRead = () => {
     console.log("All notifications marked as read");
-    // You can add additional logic here if needed
   };
 
   const handleLogout = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault(); // Prevent default navigation
-    clearProfile(); // Clear user profile data
+    e.preventDefault();
+    clearProfile();
     window.location.href = "/";
   };
 
   return (
-    <div className="flex justify-between items-center py-2 px-4 sm:px-6 border-b border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700">
-      {/* Left side - Welcome message */}
+    <div className="flex justify-space-between items-center py-2 px-4 sm:px-6 border-b border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700">
       <div className="flex-1 min-w-0">
         <h1 className="text-lg sm:text-xl font-bold truncate">
           <span className="hidden sm:inline">Welcome Back, </span>
@@ -37,17 +46,46 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
         </h1>
       </div>
 
-      {/* Right side - Actions */}
+      <div className="absolute left-1/2 transform -translate-x-1/2 hidden md:flex items-center gap-6">
+        <Link
+          to="/dashboard/guardian"
+          className={`text-sm transition-colors duration-200 ${
+            userTypeFromUrl === 'GUARDIAN'
+              ? 'text-blue-600 dark:text-blue-400 font-bold'
+              : 'text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
+          }`}
+        >
+          Guardian Panel
+        </Link>
+
+        <Link
+          to="/dashboard/teacher"
+          className={`text-sm transition-colors duration-200 ${
+            userTypeFromUrl === 'TEACHER'
+              ? 'text-blue-600 dark:text-blue-400 font-bold'
+              : 'text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
+          }`}
+        >
+          Tutor Panel
+        </Link>
+
+        <Link
+          to="/job-preparation"
+          className="text-sm text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors duration-200"
+        >
+          Job Preparation
+        </Link>
+      </div>
+
       <div className="flex items-center gap-2 sm:gap-4">
         <ThemeToggle />
-        <NotificationDropdown onMarkAllRead={handleMarkAllNotificationsRead} />
+        {/* <NotificationDropdown onMarkAllRead={handleMarkAllNotificationsRead} /> */}
 
         <div className="relative">
           <div
             className="flex items-center gap-1 sm:gap-2 cursor-pointer rounded-lg hover:bg-gray-100 p-1 sm:p-2 dark:hover:bg-gray-700"
             onClick={toggleDropdown}
           >
-            {userProfile?.user_type === "TEACHER" ? (
               <div className="relative w-8 h-8 sm:w-10 sm:h-10">
                 <img
                   src={userProfile?.profile_picture}
@@ -60,15 +98,6 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                   </div>
                 )}
               </div>
-            ) : (
-              <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-gray-300 overflow-hidden">
-                <img
-                  src={userProfile?.profile_picture}
-                  alt="User avatar"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            )}
 
             <span className="text-xs sm:text-sm font-medium hidden sm:inline">
               {userProfile?.first_name}
@@ -78,46 +107,40 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
 
           {isDropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-              <a
-                href={`/profile/${userProfile?.user_type?.toLowerCase()}`}
-                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900"
-              >
-                <User className="h-4 w-4 mr-2 dark:text-white" />
-                <span className="text-gray-700 dark:text-white">Profile</span>
-                <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                  {userProfile?.user_type?.toLowerCase() === "guardian"
-                    ? "Guardian"
-                    : "Teacher"}
-                </span>
-              </a>
-              {userProfile?.user_type?.toLowerCase() === "teacher" && (
+
+              { userTypeFromUrl === 'TEACHER' && (
                   <>
-                    <a
-                      href="/settings"
+                    <Link
+                      to={`/teacher/profile/`}
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900"
+                    >
+                      <User className="h-4 w-4 mr-2 dark:text-white" />
+                      <span className="text-gray-700 dark:text-white">Profile</span>
+                    </Link>
+                    <Link to="/teacher/settings/"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900"
                     >
                       <Settings className="h-4 w-4 mr-2 dark:text-white" />
                       <span className="dark:text-white">Settings</span>
-                    </a>
-                    <a
-                      href="/teacher/package"
+                    </Link>
+                    <Link
+                      to="/package/teacher"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900"
                     >
                       <Package className="h-4 w-4 mr-2 dark:text-white" />
                       <span className="dark:text-white">Package</span>
-                    </a>
+                    </Link>
                   </>
-                )}
+              )}
 
               <hr className="my-1 border-gray-200" />
-              <a
-                href="#"
+              <Link to="#"
                 onClick={handleLogout}
                 className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
-              </a>
+              </Link>
             </div>
           )}
         </div>

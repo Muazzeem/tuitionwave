@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import DashboardHeader from '@/components/DashboardHeader';
 import { Step, ProfileStepper } from '@/components/ProfileStepper';
 import PersonalInfoForm from '@/components/PersonalInfoForm';
-import ProfileCompletionAlert from '@/components/ProfileCompletionAlert';
 import SocialShare from '@/components/SocialShare';
 import { ProfileFormData } from '@/types/tutor';
 import EducationForm from '@/components/EducationForm';
@@ -126,9 +125,9 @@ const ProfilePage: React.FC = () => {
             )}
           </div>
 
-          <div className="mb-4 sm:mb-6">
+          {/* <div className="mb-4 sm:mb-6">
             <ProfileCompletionAlert />
-          </div>
+          </div> */}
 
           <div className="flex justify-center w-full">
             <div className="w-full max-w-4xl">

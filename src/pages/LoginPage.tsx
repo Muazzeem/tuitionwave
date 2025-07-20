@@ -11,34 +11,14 @@ import GoogleLoginButton from '@/components/GoogleLoginButton';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { fetchProfile, userProfile } = useAuth();
+  const { fetchProfile } = useAuth();
   const [step, setStep] = useState<1 | 2>(1);
-  const [userType, setUserType] = useState<'teacher' | 'guardian' | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  // Check if we're already logged in and redirect if needed
-  useEffect(() => {
-    if (userProfile) {
-      if (userProfile.user_type === 'TEACHER') {
-        navigate('/teacher/dashboard');
-      } else {
-        navigate('/guardian/dashboard');
-      }
-    }
-  }, [userProfile, navigate]);
-
-  // Handle user type selection and automatically advance to step 2
-  const handleUserTypeChange = (value: 'teacher' | 'guardian') => {
-    setUserType(value);
-    localStorage.setItem('userType', value);
-    setTimeout(() => {
-      setStep(2);
-    }, 300);
-  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,20 +41,13 @@ const LoginPage: React.FC = () => {
       // Save tokens with expiration timestamp
       setAuthTokens(data);
       
-      // Fetch user profile after successful login
       await fetchProfile();
       
       toast({
         title: "Login Success",
         description: "Successfully logged in!",
       });
-      
-      // Navigate based on user type
-      if (userType === 'teacher') {
-        navigate('/teacher/dashboard');
-      } else {
-        navigate('/guardian/dashboard');
-      }
+      navigate('/dashboard');
     } catch (error) {
       toast({
         title: "Login Failed",
@@ -98,13 +71,7 @@ const LoginPage: React.FC = () => {
         title: "Google Login Success",
         description: "Successfully logged in with Google!",
       });
-      
-      // Navigate based on user type
-      if (userType === 'teacher') {
-        navigate('/teacher/dashboard');
-      } else {
-        navigate('/guardian/dashboard');
-      }
+      navigate('/dashboard');
     } catch (error) {
       toast({
         title: "Login Failed",
@@ -142,46 +109,7 @@ const LoginPage: React.FC = () => {
       {/* Right section with form */}
       <div className="w-full md:w-1/2 flex items-center justify-center">
         <div className="w-full max-w-2xl">
-          {step === 1 ? (
-            <div className="bg-white rounded-lg p-6 shadow-sm border dark:bg-gray-900">
-              <h2 className="text-2xl font-bold text-center mb-6">Choose Your Login Type</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                {/* Teacher Card */}
-                <div 
-                  className="border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200 dark:border-gray-700 dark:hover:border-blue-400 dark:hover:bg-blue-900/20"
-                  onClick={() => handleUserTypeChange('teacher')}
-                >
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 dark:bg-blue-900">
-                      <svg className="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                      </svg>
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Teacher</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Access your teaching dashboard and manage your classes</p>
-                  </div>
-                </div>
-
-                {/* Guardian Card */}
-                <div 
-                  className="border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200 dark:border-gray-700 dark:hover:border-blue-400 dark:hover:bg-blue-900/20"
-                  onClick={() => handleUserTypeChange('guardian')}
-                >
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 dark:bg-green-900">
-                      <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Guardian</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Monitor your child's progress and manage tuition</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-white rounded-lg p-6 shadow-sm border dark:bg-gray-900">
+          <div className="bg-white rounded-lg p-6 shadow-sm border dark:bg-gray-900">
               <div className="flex items-center mb-4">
                 <Button
                   variant="ghost"
@@ -193,13 +121,12 @@ const LoginPage: React.FC = () => {
                 </Button>
               </div>
               
-              <h2 className="text-2xl font-bold mb-2">Log in to {userType === 'teacher' ? 'Teacher' : 'Guardian'} Panel</h2>
+              <h2 className="text-2xl font-bold mb-2">Log in to Dashboard</h2>
               <p className="text-gray-500 mb-6 dark:text-gray-400">Welcome! Please enter your credentials or continue with Google.</p>
               
               {/* Google Login Button */}
               <div className="mb-6">
                 <GoogleLoginButton
-                  userType={userType}
                   onSuccess={handleGoogleLoginSuccess}
                   disabled={loading}
                 />
@@ -276,7 +203,6 @@ const LoginPage: React.FC = () => {
                 </div>
               </form>
             </div>
-          )}
         </div>
       </div>
     </div>

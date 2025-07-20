@@ -39,6 +39,7 @@ import PackageSettings from "./components/PackageSettings";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import FAQPage from "./pages/FAQPage";
 import TermsPage from "./pages/TermsPage";
+import PublicDashboard from "./pages/PublicDashboard";
 
 
 const queryClient = new QueryClient();
@@ -46,7 +47,6 @@ const queryClient = new QueryClient();
 
 console.log('API URL:', import.meta.env.VITE_API_URL);
 
-// Component to handle token validation and auto-redirect
 const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -59,19 +59,9 @@ const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => 
       const isValid = await AuthService.ensureValidToken();
       
       if (isValid) {
-        // If token is valid but we don't have user profile, fetch it
         if (!userProfile) {
           await fetchProfile();
         }
-        
-        // If we're on login or home page and already logged in, redirect to appropriate dashboard
-        // if (["/", "/login"].includes(location.pathname)) {
-        //   if (userProfile?.user_type === 'TEACHER') {
-        //     navigate('/teacher/dashboard');
-        //   } else if (userProfile?.user_type === 'GUARDIAN') {
-        //     navigate('/guardian/dashboard');
-        //   }
-        // }
       } else if (
         !location.pathname.startsWith("/auth") && 
         location.pathname !== "/" && 
@@ -82,7 +72,6 @@ const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => 
         location.pathname !== "/job-preparation" &&
         !location.pathname.startsWith("/tutor/")
       ) {
-        // If token is invalid and not on a public page, redirect to login
         navigate('/login');
       }
       
@@ -106,39 +95,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => (
     {children}
   </div>
 );
-
-// Component to redirect users to role-specific routes
-const RoleRedirect = ({ 
-  pathSuffix = "", 
-  preserveParams = false 
-}: { 
-  pathSuffix?: string,
-  preserveParams?: boolean 
-}) => {
-  const { userProfile } = useAuth();
-  const location = window.location;
-  
-  if (!userProfile) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  // Extract URL parameters if needed
-  let params = "";
-  if (preserveParams) {
-    params = location.pathname.split('/').pop() || "";
-    if (params) params = `/${params}`;
-  }
-  
-  // Redirect based on user role
-  // if (userProfile?.user_type === 'TEACHER') {
-  //   return <Navigate to={`/teacher${pathSuffix}${params}`} replace />;
-  // } else if (userProfile?.user_type === 'GUARDIAN') {
-  //   return <Navigate to={`/guardian${pathSuffix}${params}`} replace />;
-  // }
-  
-  // Fallback for unknown user types
-  return <Navigate to="/unauthorized" replace />;
-};
 
 const App = () => (
     <QueryClientProvider client={queryClient}>
@@ -188,14 +144,19 @@ const App = () => (
                     </AuthGuard>
                   } />
 
-                  <Route path="profile/teacher" element={
-                    <AuthGuard allowedRoles={['TEACHER']}>
+                  <Route path="teacher/profile" element={
+                    <AuthGuard>
                       <MainLayout><ProfilePage /></MainLayout>
                     </AuthGuard>
                   } />
-                  <Route path="profile/guardian" element={
-                    <AuthGuard allowedRoles={['GUARDIAN']}>
+                  <Route path="/profile" element={
+                    <AuthGuard>
                       <MainLayout><GuardianProfile /></MainLayout>
+                    </AuthGuard>
+                  } />
+                  <Route path="/teacher/settings" element={
+                    <AuthGuard>
+                      <MainLayout><Settings /></MainLayout>
                     </AuthGuard>
                   } />
                   <Route path="/settings" element={
@@ -223,55 +184,44 @@ const App = () => (
                     </AuthGuard>
                   } />
                   
-                  {/* Teacher-only routes */}
-                  <Route path="/teacher/dashboard" element={
-                    <AuthGuard allowedRoles={['TEACHER']}>
+                  <Route path="/dashboard/teacher" element={
+                    <AuthGuard>
                       <MainLayout><TeacherDashboard /></MainLayout>
                     </AuthGuard>
                   } />
-                  <Route path="/teacher/requests" element={
-                    <AuthGuard allowedRoles={['TEACHER']}>
+                  <Route path="/requests" element={
+                    <AuthGuard>
                       <MainLayout><MyRequest /></MainLayout>
                     </AuthGuard>
                   } />
-                  <Route path="/teacher/requests/:id" element={
-                    <AuthGuard allowedRoles={['TEACHER']}>
+                  <Route path="/requests/:id" element={
+                    <AuthGuard>
                       <MainLayout><TuitionRequestDetails /></MainLayout>
                     </AuthGuard>
                   } />
 
-                  <Route path="/teacher/package" element={
+                  <Route path="/package/teacher" element={
                     <AuthGuard>
                       <MainLayout><PackageSettings /></MainLayout>
                     </AuthGuard>
                   } />
                   
-                  {/* Guardian-only routes */}
-                  <Route path="/guardian/dashboard" element={
-                    <AuthGuard allowedRoles={['GUARDIAN']}>
+                  <Route path="/dashboard/guardian" element={
+                    <AuthGuard>
                       <MainLayout><GuardianDashboard /></MainLayout>
                     </AuthGuard>
                   } />
                   <Route path="/find-tutors/contract/:uid" element={
-                    <AuthGuard allowedRoles={['GUARDIAN']}>
+                    <AuthGuard>
                       <MainLayout><Contract /></MainLayout>
                     </AuthGuard>
                   } />
-                  <Route path="/guardian/requests" element={
-                    <AuthGuard allowedRoles={['GUARDIAN']}>
-                      <MainLayout><MyRequest /></MainLayout>
+                  <Route path="/dashboard" element={
+                    <AuthGuard>
+                      <Sidebar />
+                      <PublicDashboard />
                     </AuthGuard>
                   } />
-                  <Route path="/guardian/requests/:id" element={
-                    <AuthGuard allowedRoles={['GUARDIAN']}>
-                      <MainLayout><TuitionRequestDetails /></MainLayout>
-                    </AuthGuard>
-                  } />
-                  
-                  {/* Redirect legacy routes to role-specific routes */}
-                  <Route path="/dashboard" element={<RoleRedirect />} />
-                  <Route path="/all-requests" element={<RoleRedirect pathSuffix="/requests" />} />
-                  <Route path="/requests/:id" element={<RoleRedirect pathSuffix="/requests" preserveParams={true} />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </TokenValidationWrapper>

@@ -2,14 +2,21 @@ import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import GeneralSettings from "@/components/GeneralSettings";
 import PasswordSettings from "@/components/PasswordSettings";
-import PackageSettings from "@/components/PackageSettings";
 import DashboardHeader from "@/components/DashboardHeader";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useAuth } from "@/contexts/AuthContext";
+
+const getUserTypeFromUrl = (pathname: string): string => {
+  const segments = pathname.toLowerCase().split('/');
+
+  if (segments.includes('teacher')) {
+    return 'TEACHER';
+  }
+
+  return 'GUARDIAN';
+};
 
 const Settings = () => {
-  const { userProfile } = useAuth();
-  const [activeTab, setActiveTab] = useState("password");
+  const [activeTab, setActiveTab] = useState(() => getUserTypeFromUrl(window.location.pathname) === 'GUARDIAN' ? 'general' : 'password');
 
   return (
     <div className="flex-1 bg-white dark:bg-gray-900">
@@ -18,9 +25,9 @@ const Settings = () => {
         <div className="p-4 sm:p-6 max-w-full lg:max-w-[1211px] mx-auto">
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <div className="px-2 sm:px-4 pt-4">
+              {getUserTypeFromUrl(window.location.pathname) === 'GUARDIAN' && (
+                <div className="px-2 sm:px-4 pt-4">
                 <TabsList className="w-full sm:w-fit flex sm:space-x-1 bg-gray-100 dark:bg-gray-700 p-1 rounded-lg h-auto">
-                  {userProfile.user_type === "GUARDIAN" && (
                     <>
                     <TabsTrigger 
                       value="general"
@@ -28,22 +35,20 @@ const Settings = () => {
                     >
                       General
                     </TabsTrigger>
-                                      <TabsTrigger 
-                    value="password"
-                    className="flex-1 sm:flex-none rounded-md px-3 sm:px-6 py-2 text-xs sm:text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-sm"
-                  >
-                    Password
-                  </TabsTrigger>
+                    <TabsTrigger 
+                      value="password"
+                      className="flex-1 sm:flex-none rounded-md px-3 sm:px-6 py-2 text-xs sm:text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-sm"
+                    >
+                      Password
+                    </TabsTrigger>
                     </>
-                  )}
                 </TabsList>
               </div>
+              )}
 
-              {userProfile.user_type === "GUARDIAN" && (
                 <TabsContent value="general" className="mt-0">
                   <GeneralSettings />
                 </TabsContent>
-              )}
               <TabsContent value="password" className="mt-0">
                 <PasswordSettings />
               </TabsContent>

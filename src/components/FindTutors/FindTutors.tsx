@@ -6,13 +6,17 @@ import TutorFilters from './TutorFilters';
 import TutorGrid from './TutorGrid';
 import { ScrollArea } from '../ui/scroll-area';
 import DashboardHeader from '../DashboardHeader';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 const FindTutorsList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showFilters, setShowFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    document.title = "Tution Wave | Find Tutors";
+  }, []);
 
   const handleSearch = (e) => {
     if (e.key === 'Enter') {

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { getAccessToken, isTokenExpired, refreshAccessToken } from '@/utils/auth';
 import { ProfileData } from '@/types/common';
 
@@ -7,7 +7,6 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   fetchProfile: () => Promise<void>;
-  reloadProfile: () => Promise<void>;
   clearProfile: () => void;
 }
 
@@ -64,28 +63,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const reloadProfile = async () => {
-    try {
-      const accessToken = getAccessToken();
-      if (!accessToken) throw new Error('No access token found');
-
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      if (!response.ok) throw new Error('Failed to reload profile');
-
-      const profileData = await response.json();
-      setUserProfile(profileData);
-      sessionStorage.setItem('userProfile', JSON.stringify(profileData));
-    } catch (err) {
-      console.error('Failed to reload profile:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    }
-  };
-
   const clearProfile = () => {
     setUserProfile(null);
     localStorage.clear();
@@ -118,7 +95,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         loading,
         error,
         fetchProfile,
-        reloadProfile,
         clearProfile,
       }}
     >
