@@ -40,6 +40,8 @@ import HowItWorksPage from "./pages/HowItWorksPage";
 import FAQPage from "./pages/FAQPage";
 import TermsPage from "./pages/TermsPage";
 import PublicDashboard from "./pages/PublicDashboard";
+import JobCandidateDashboard from "./pages/JobCandidate/Dashboard";
+import CreateModelTest from "./pages/JobCandidate/CreateModelTest";
 
 
 const queryClient = new QueryClient();
@@ -125,7 +127,25 @@ const App = () => (
                   
                   
                   {/* Job Preparation routes */}
-                  <Route path="/job-preparation" element={<CategoriesPage />} />
+                  <Route path="/job-preparation/dashboard" element={
+                    <AuthGuard>
+                      <MainLayout>
+                        <JobCandidateDashboard />
+                      </MainLayout>
+                    </AuthGuard>
+                    } 
+                  />
+                  <Route path="/job-preparation/create-model-test" element={
+                    <AuthGuard>
+                      <MainLayout>
+                        <CreateModelTest />
+                      </MainLayout>
+                    </AuthGuard>
+                  } />
+                  <Route path="/job-preparation" element={
+                    <MainLayout><CategoriesPage /></MainLayout>
+                    } 
+                  />
                   <Route path="/job-preparation/category/:categoryId" element={<SubjectsPage />} />
                   <Route path="/job-preparation/category/:categoryId/subject/:subjectId" element={<TopicsPage />} />
                   <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId" element={<SubtopicsPage />} />

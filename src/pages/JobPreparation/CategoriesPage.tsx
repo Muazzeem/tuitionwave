@@ -2,8 +2,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
@@ -105,13 +103,8 @@ const CategoriesPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       <main className="flex-1 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4 py-12">
-          <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 hidden md:block lg:block">
-            <span>Job Preparation</span>
-          </div>
-          
           <div>
             <h2 className="text-xl md:text-2xl font-semibold mb-6 text-gray-800 dark:text-white">Categories</h2>
             {categoriesLoading ? (
@@ -149,7 +142,6 @@ const CategoriesPage: React.FC = () => {
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 };
