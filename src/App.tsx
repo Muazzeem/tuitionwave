@@ -42,6 +42,7 @@ import TermsPage from "./pages/TermsPage";
 import PublicDashboard from "./pages/PublicDashboard";
 import JobCandidateDashboard from "./pages/JobCandidate/Dashboard";
 import CreateModelTest from "./pages/JobCandidate/CreateModelTest";
+import ExamPractice from "./pages/JobCandidate/ExamPractice";
 
 
 const queryClient = new QueryClient();
@@ -146,6 +147,11 @@ const App = () => (
                     <MainLayout><CategoriesPage /></MainLayout>
                     } 
                   />
+                  <Route path="/job-preparation/practice" element={
+                    <MainLayout><ExamPractice /></MainLayout>
+                    } 
+                  />
+                  
                   <Route path="/job-preparation/category/:categoryId" element={<SubjectsPage />} />
                   <Route path="/job-preparation/category/:categoryId/subject/:subjectId" element={<TopicsPage />} />
                   <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId" element={<SubtopicsPage />} />
