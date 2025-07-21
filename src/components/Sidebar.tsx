@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, MessageSquare, User, LogOut, ChevronLeft, ChevronRight, ScrollText } from 'lucide-react';
+import { Home, Search, MessageSquare, User, LogOut, ChevronLeft, ChevronRight, ScrollText, Landmark, BookOpenCheck, NotebookPen } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const getUserTypeFromUrl = (pathname: string): string | undefined => {
@@ -26,7 +26,9 @@ const Sidebar = () => {
 
   const studentMenuItems = [
     { icon: Home, text: 'Dashboard', path: `/job-preparation/dashboard` },
-    { icon: Search, text: 'Model Test', path: '/job-preparation/create-model-test' },
+    { icon: BookOpenCheck, text: 'Model Test', path: '/job-preparation/create-model-test' },
+    { icon: Landmark, text: 'Question Bank', path: '/job-preparation/questions' },
+    { icon: NotebookPen, text: 'Practice', path: '/job-preparation/practice' }
   ];
 
   const currentMenuItems = userTypeFromUrl === 'STUDENT' ? studentMenuItems : menuItems;

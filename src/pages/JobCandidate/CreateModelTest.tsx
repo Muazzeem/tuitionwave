@@ -66,27 +66,27 @@ export default function CreateModelTest() {
         <div className="p-4 md:p-6">
           {/* Header */}
           <div className="mb-6">
-            <h1 className="text-2xl font-bold text-white mb-2">Model Tests</h1>
+            <h1 className="text-xl font-bold mb-6 dark:text-white">Model Tests</h1>
             <p className="text-gray-400">Create and practise preliminary model exams</p>
           </div>
 
           {/* Create Model Test Section */}
-          <Card className="mb-8 bg-gray-800 border-gray-700">
+          <Card className="mb-8 dark:bg-gray-800 dark:border-gray-700">
             <CardHeader className="pb-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <CardTitle className="text-white text-lg">Create Model Test</CardTitle>
+                <CardTitle className="dark:text-white text-lg">Create Model Test</CardTitle>
                 <p className="text-gray-400 text-sm">Customize your exam parameters</p>
               </div>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-300">Bank Exam</label>
+                  <label className="text-sm font-medium dark:text-gray-300">Categories</label>
                   <Select value={bankExam} onValueChange={setBankExam}>
-                    <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                    <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                       <SelectValue placeholder="BCS" />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-700 border-gray-600">
+                    <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
                       <SelectItem value="bcs">BCS</SelectItem>
                       <SelectItem value="bank">Bank</SelectItem>
                       <SelectItem value="ntrca">NTRCA</SelectItem>
@@ -95,12 +95,12 @@ export default function CreateModelTest() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-300">Subject(s)</label>
+                  <label className="text-sm font-medium dark:text-gray-300">Subject(s)</label>
                   <Select value={subject} onValueChange={setSubject}>
-                    <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                    <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                       <SelectValue placeholder="English" />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-700 border-gray-600">
+                    <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
                       <SelectItem value="english">English</SelectItem>
                       <SelectItem value="math">Mathematics</SelectItem>
                       <SelectItem value="general">General Knowledge</SelectItem>
@@ -109,12 +109,12 @@ export default function CreateModelTest() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-300">Language</label>
+                  <label className="text-sm font-medium dark:text-gray-300">Topic(s)</label>
                   <Select value={language} onValueChange={setLanguage}>
-                    <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                    <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                       <SelectValue placeholder="English" />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-700 border-gray-600">
+                    <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
                       <SelectItem value="english">English</SelectItem>
                       <SelectItem value="bangla">Bangla</SelectItem>
                     </SelectContent>
@@ -132,7 +132,7 @@ export default function CreateModelTest() {
 
           {/* Tabs */}
           <div className="mb-6">
-            <div className="flex space-x-0 bg-gray-800 rounded-lg p-1 w-fit">
+            <div className="flex space-x-0 dark:bg-gray-800 rounded-lg p-1 w-fit">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
@@ -140,7 +140,7 @@ export default function CreateModelTest() {
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     selectedTab === tab.id
                       ? "bg-blue-600 text-white"
-                      : "text-gray-400 hover:text-white hover:bg-gray-700"
+                      : "text-gray-400 hover:text-white dark:hover:bg-gray-700 hover:bg-blue-500"
                   }`}
                 >
                   {tab.label}
@@ -150,53 +150,66 @@ export default function CreateModelTest() {
           </div>
 
           {/* Exam Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredExams.map((exam, index) => (
-              <Card key={index} className="bg-gray-800 border-gray-700 hover:border-gray-600 transition-colors">
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="text-lg font-semibold text-white mb-2">{exam.title}</h3>
-                      <p className="text-gray-400 text-sm line-clamp-2">{exam.description}</p>
-                    </div>
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4 sm:p-6">
+      {filteredExams.map((exam, index) => (
+        <Card 
+          key={index} 
+          // Background and border colors adapt to dark mode
+          className="bg-gray-100 border-gray-200 hover:border-gray-300 transition-colors
+                     dark:bg-gray-800 dark:border-gray-700 dark:hover:border-gray-600"
+        >
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              {/* Exam Title and Description */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{exam.title}</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">{exam.description}</p>
+              </div>
 
-                    <div className="space-y-2">
-                      <div className="flex items-center text-gray-400 text-sm">
-                        <Calendar className="w-4 h-4 mr-2" />
-                        <span>{exam.date}</span>
-                      </div>
-                      <div className="flex items-center text-gray-400 text-sm">
-                        <Clock className="w-4 h-4 mr-2" />
-                        <span>{exam.time}</span>
-                      </div>
-                    </div>
+              {/* Date and Time */}
+              <div className="space-y-2">
+                <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
+                  <Calendar className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" />
+                  <span>{exam.date}</span>
+                </div>
+                <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
+                  <Clock className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" />
+                  <span>{exam.time}</span>
+                </div>
+              </div>
 
-                    <div className="flex items-center justify-between">
-                      <Badge 
-                        variant={exam.category === "BCS" ? "default" : "secondary"}
-                        className={exam.category === "BCS" ? "bg-blue-600" : "bg-orange-600"}
-                      >
-                        {exam.category}
-                      </Badge>
-                      <span className="text-gray-400 text-sm">{exam.duration}</span>
-                    </div>
+              {/* Category Badge and Duration */}
+              <div className="flex items-center justify-between">
+                <Badge 
+                  variant={exam.category === "BCS" ? "default" : "secondary"}
+                  // Badge background colors adapt to dark mode
+                  className={exam.category === "BCS" 
+                    ? "bg-blue-600 text-white dark:bg-blue-700 dark:text-white" 
+                    : "bg-orange-600 text-white dark:bg-orange-700 dark:text-white"
+                  }
+                >
+                  {exam.category}
+                </Badge>
+                <span className="text-gray-600 dark:text-gray-400 text-sm">{exam.duration}</span>
+              </div>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-gray-700">
-                      <div className="flex items-center text-gray-400 text-sm">
-                        <Users className="w-4 h-4 mr-1" />
-                        <span>{exam.participants}</span>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-orange-400 font-mono text-sm font-semibold">
-                          {exam.timeLeft}
-                        </div>
-                      </div>
-                    </div>
+              {/* Participants and Time Left */}
+              <div className="flex items-center justify-between pt-2 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
+                  <Users className="w-4 h-4 mr-1 text-gray-500 dark:text-gray-400" />
+                  <span>{exam.participants}</span>
+                </div>
+                <div className="text-right">
+                  <div className="text-orange-500 font-mono text-sm font-semibold dark:text-orange-400">
+                    {exam.timeLeft}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
 
           {/* Empty State */}
           {filteredExams.length === 0 && (

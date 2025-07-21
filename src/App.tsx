@@ -142,7 +142,7 @@ const App = () => (
                       </MainLayout>
                     </AuthGuard>
                   } />
-                  <Route path="/job-preparation" element={
+                  <Route path="/job-preparation/questions" element={
                     <MainLayout><CategoriesPage /></MainLayout>
                     } 
                   />
