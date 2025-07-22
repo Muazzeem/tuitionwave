@@ -1,4 +1,3 @@
-
 import * as React from "react";
 
 type Theme = "dark" | "light" | "system";
@@ -15,7 +14,7 @@ type ThemeProviderState = {
 };
 
 const initialState: ThemeProviderState = {
-  theme: "system",
+  theme: "dark", // Always default to dark
   setTheme: () => null,
 };
 
@@ -23,41 +22,30 @@ export const ThemeProviderContext = React.createContext<ThemeProviderState>(init
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
+  defaultTheme = "dark",
   storageKey = "tuition-wave-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = React.useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  );
+  const [theme, setTheme] = React.useState<Theme>("dark");
 
   React.useEffect(() => {
     const root = window.document.documentElement;
 
-    root.classList.remove("light", "dark");
-
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
-
-      root.classList.add(systemTheme);
-      return;
-    }
-
-    root.classList.add(theme);
-  }, [theme]);
+    // Always remove light and system classes, only add dark
+    root.classList.remove("light", "dark", "system");
+    root.classList.add("dark");
+  }, []); // Empty dependency array since theme never changes
 
   const value = React.useMemo(
     () => ({
-      theme,
-      setTheme: (theme: Theme) => {
-        localStorage.setItem(storageKey, theme);
-        setTheme(theme);
+      theme: "dark" as Theme, // Always return dark
+      setTheme: (requestedTheme: Theme) => {
+        // Ignore the requested theme, always stay dark
+        console.log(`Theme change to "${requestedTheme}" requested, but staying dark`);
+        // Don't update localStorage or state since we're always dark
       },
     }),
-    [theme, storageKey]
+    [] // No dependencies since values never change
   );
 
   return (

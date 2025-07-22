@@ -102,9 +102,9 @@ const CategoriesPage: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col w-full">
       <main className="flex-1 bg-gray-50 dark:bg-gray-900">
-        <div className="container mx-auto px-4 py-12">
+        <div className="p-6">
           <div>
             <h2 className="text-xl md:text-2xl font-semibold mb-6 text-gray-800 dark:text-white">Categories</h2>
             {categoriesLoading ? (
@@ -113,7 +113,7 @@ const CategoriesPage: React.FC = () => {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {categoriesData?.results.map((category) => (
                     <Card 
                       key={category.uid} 

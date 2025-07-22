@@ -84,7 +84,7 @@ const Header = () => {
           {/* Mobile Right Side */}
           <div className="md:hidden flex items-center gap-2">
             {/* Mobile Theme Toggle */}
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
             
             {/* Mobile Menu Button */}
             <button

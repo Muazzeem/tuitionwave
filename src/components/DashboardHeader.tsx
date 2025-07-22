@@ -1,15 +1,14 @@
 import React, { useState } from "react";
-import { ChevronDown, User, LogOut, Settings, Package, Menu, X } from "lucide-react"; // Added Menu and X icons
-import NotificationDropdown from "./NotificationDropdown"; // Assuming this component exists
-import { useAuth } from "@/contexts/AuthContext"; // Assuming this context exists
-import { ThemeToggle } from "./ThemeToggle"; // Assuming this component exists
-import { Link } from "react-router-dom"; // Assuming react-router-dom is used
+import { ChevronDown, User, LogOut, Settings, Package, Menu, X } from "lucide-react";
+import NotificationDropdown from "./NotificationDropdown";
+import { useAuth } from "@/contexts/AuthContext";
+import { ThemeToggle } from "./ThemeToggle";
+import { Link } from "react-router-dom";
 
 interface HeaderProps {
   userName: string;
 }
 
-// Helper function to determine user type from URL pathname
 const getUserTypeFromUrl = (pathname: string): string => {
   const segments = pathname.toLowerCase().split('/');
 
@@ -24,46 +23,36 @@ const getUserTypeFromUrl = (pathname: string): string => {
 };
 
 const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
-  // Destructure userProfile and clearProfile from useAuth hook
   const { userProfile, clearProfile } = useAuth();
-  // State to control the visibility of the user dropdown menu
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  // State to control the visibility of the mobile navigation menu
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Toggle function for the user dropdown menu
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
-  // Toggle function for the mobile navigation menu
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
-  // Determine the active user type based on the current URL
   const userTypeFromUrl = getUserTypeFromUrl(location.pathname);
 
-  // Placeholder function for marking all notifications as read
   const handleMarkAllNotificationsRead = () => {
     console.log("All notifications marked as read");
   };
 
-  // Handles user logout, clears profile, and redirects to the home page
   const handleLogout = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault(); // Prevent default link behavior
-    clearProfile(); // Clear user profile data
-    window.location.href = "/"; // Redirect to the home page
+    e.preventDefault();
+    clearProfile();
+    window.location.href = "/";
   };
 
   return (
     <div className="flex justify-between items-center py-2 px-4 sm:px-6 border-b border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700 relative z-20">
-      {/* Left section: Welcome message */}
       <div className="flex-1 min-w-0">
-        <h1 className="text-md sm:text-md font-bold truncate text-gray-900 dark:text-white">
+        {/* <h1 className="text-md sm:text-md font-bold truncate text-gray-900 dark:text-white">
           <span className="hidden sm:inline">Welcome Back, </span>
           <span className="sm:hidden">Hi, </span>
           {userProfile?.first_name}!
-        </h1>
+        </h1> */}
       </div>
 
-      {/* Chip-style Navigation for larger screens (hidden on md and below) */}
-      <div className="absolute left-1/2 transform -translate-x-1/2 hidden xl:flex items-center gap-3">
+      <div className="absolute left-1/2 transform -translate-x-1/2 hidden xl:flex items-center gap-3 border p-2 rounded-xl border-gray-200 dark:bg-gray-900 dark:border-gray-700">
         <Link
           to="/dashboard/guardian"
           className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border ${
@@ -98,13 +87,10 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
         </Link>
       </div>
 
-      {/* Right section: Theme Toggle, Notification, User Dropdown, Mobile Menu Button */}
       <div className="flex items-center gap-2 sm:gap-4">
-        <ThemeToggle />
-        {/* NotificationDropdown is commented out as per original code */}
+        {/* <ThemeToggle /> */}
         {/* <NotificationDropdown onMarkAllRead={handleMarkAllNotificationsRead} /> */}
 
-        {/* Mobile Menu Button (visible on md and below) */}
         <button
           onClick={toggleMobileMenu}
           className="xl:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
@@ -113,7 +99,6 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
           {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
 
-        {/* User Dropdown */}
         <div className="relative">
           <div
             className="flex items-center gap-1 sm:gap-2 cursor-pointer rounded-lg hover:bg-gray-100 p-1 sm:p-2 dark:hover:bg-gray-700"
@@ -127,7 +112,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                   alt="User avatar"
                   className="h-full w-full object-cover rounded-full border-2 border-yellow-500 crown-image"
                 />
-                {userProfile?.is_verified && ( // Added optional chaining for userProfile
+                {userProfile?.is_verified && (
                   <div className="crown-icon absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2 text-xs sm:text-sm">
                     👑
                   </div>
@@ -147,7 +132,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                     <Link
                       to={`/teacher/profile/`}
                       className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-white"
-                      onClick={() => setIsDropdownOpen(false)} // Close dropdown on click
+                      onClick={() => setIsDropdownOpen(false)}
                     >
                       <User className="h-4 w-4 mr-2 dark:text-white" />
                       <span>Profile</span>
@@ -155,7 +140,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                     <Link
                       to="/teacher/settings/"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-white"
-                      onClick={() => setIsDropdownOpen(false)} // Close dropdown on click
+                      onClick={() => setIsDropdownOpen(false)}
                     >
                       <Settings className="h-4 w-4 mr-2 dark:text-white" />
                       <span>Settings</span>
@@ -163,7 +148,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                     <Link
                       to="/package/teacher"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-white"
-                      onClick={() => setIsDropdownOpen(false)} // Close dropdown on click
+                      onClick={() => setIsDropdownOpen(false)}
                     >
                       <Package className="h-4 w-4 mr-2 dark:text-white" />
                       <span>Package</span>
@@ -184,8 +169,6 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
           )}
         </div>
       </div>
-
-      {/* Mobile Navigation Overlay (visible only on md and below when menu is open) */}
       {isMobileMenuOpen && (
         <div className="xl:hidden fixed inset-0 bg-white dark:bg-gray-900 bg-opacity-95 dark:bg-opacity-95 z-10 flex flex-col items-center justify-center py-8">
           <div className="flex flex-col gap-6">
@@ -196,7 +179,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                   ? 'bg-blue-600 text-white border-blue-600 shadow-md dark:bg-blue-500 dark:border-blue-500'
                   : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-blue-400'
               }`}
-              onClick={toggleMobileMenu} // Close menu on click
+              onClick={toggleMobileMenu}
             >
               Guardian Panel
             </Link>
@@ -208,7 +191,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                   ? 'bg-blue-600 text-white border-blue-600 shadow-md dark:bg-blue-500 dark:border-blue-500'
                   : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-blue-400'
               }`}
-              onClick={toggleMobileMenu} // Close menu on click
+              onClick={toggleMobileMenu}
             >
               Tutor Panel
             </Link>
@@ -220,7 +203,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                   ? 'bg-blue-600 text-white border-blue-600 shadow-md dark:bg-blue-500 dark:border-blue-500'
                   : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-blue-400'
               }`}
-              onClick={toggleMobileMenu} // Close menu on click
+              onClick={toggleMobileMenu}
             >
               Candidate Dashboard
             </Link>

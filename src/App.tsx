@@ -48,8 +48,6 @@ import ExamPractice from "./pages/JobCandidate/ExamPractice";
 const queryClient = new QueryClient();
 
 
-console.log('API URL:', import.meta.env.VITE_API_URL);
-
 const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -159,7 +157,7 @@ const App = () => (
                   <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId/reading" element={<ReadingModePage />} />
                   <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId/exam" element={<ExamModePage />} />
                         
-                  <Route path="/find-tutors" element={
+                  <Route path="/guardian/find-tutors" element={
                       <MainLayout><FindTutorsList /></MainLayout>
                   } />
                   
@@ -215,12 +213,23 @@ const App = () => (
                       <MainLayout><TeacherDashboard /></MainLayout>
                     </AuthGuard>
                   } />
-                  <Route path="/requests" element={
+                  <Route path="/guardian/requests" element={
                     <AuthGuard>
                       <MainLayout><MyRequest /></MainLayout>
                     </AuthGuard>
                   } />
                   <Route path="/requests/:id" element={
+                    <AuthGuard>
+                      <MainLayout><TuitionRequestDetails /></MainLayout>
+                    </AuthGuard>
+                  } />
+
+                  <Route path="/teacher/requests" element={
+                    <AuthGuard>
+                      <MainLayout><MyRequest /></MainLayout>
+                    </AuthGuard>
+                  } />
+                  <Route path="teacher/requests/:id" element={
                     <AuthGuard>
                       <MainLayout><TuitionRequestDetails /></MainLayout>
                     </AuthGuard>
@@ -258,5 +267,4 @@ const App = () => (
     </QueryClientProvider>
 );
 
-console.log('API_URL:', import.meta.env.VITE_API_URL);
 export default App;

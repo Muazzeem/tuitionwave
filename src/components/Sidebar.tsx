@@ -8,6 +8,10 @@ const getUserTypeFromUrl = (pathname: string): string | undefined => {
   if (segments.includes('job-preparation')) {
     return 'STUDENT';
   }
+  if (segments.includes('teacher')) {
+    return 'TEACHER';
+  }
+  return 'GUARDIAN';
 };
 
 const Sidebar = () => {
@@ -16,10 +20,10 @@ const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
   const userTypeFromUrl = getUserTypeFromUrl(location.pathname);
 
-  const menuItems = [
-    { icon: Home, text: 'Dashboard', path: `/dashboard` },
-    { icon: Search, text: 'Find Tutor', path: '/find-tutors' },
-    { icon: ScrollText, text: 'Contracts', path: `/requests` },
+  const guardianItems = [
+    { icon: Home, text: 'Dashboard', path: `/dashboard/guardian` },
+    { icon: Search, text: 'Find Tutor', path: '/guardian/find-tutors' },
+    { icon: ScrollText, text: 'Contracts', path: `/guardian/requests` },
     { icon: MessageSquare, text: 'Message', path: '/message' },
     { icon: User, text: 'Profile', path: `/profile/` },
   ];
@@ -31,7 +35,21 @@ const Sidebar = () => {
     { icon: NotebookPen, text: 'Practice', path: '/job-preparation/practice' }
   ];
 
-  const currentMenuItems = userTypeFromUrl === 'STUDENT' ? studentMenuItems : menuItems;
+  const tutorMenuItems = [
+    { icon: Home, text: 'Dashboard', path: `/dashboard/teacher` },
+    { icon: ScrollText, text: 'Contracts', path: `/teacher/requests` },
+    { icon: MessageSquare, text: 'Message', path: '/message' },
+    { icon: User, text: 'Profile', path: `/teacher/profile/` },
+  ];
+
+  let currentMenuItems;
+  if (userTypeFromUrl === 'STUDENT') {
+    currentMenuItems = studentMenuItems;
+  } else if (userTypeFromUrl === 'TEACHER') {
+    currentMenuItems = tutorMenuItems;
+  } else {
+    currentMenuItems = guardianItems;
+  }
 
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
