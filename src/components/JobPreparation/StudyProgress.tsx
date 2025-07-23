@@ -14,7 +14,7 @@ export default function StudyProgress() {
   ];
 
   return (
-    <Card>
+    <Card className='dark:bg-gray-800 dark:border-gray-700'>
       <CardHeader className="pb-2">
         <CardTitle className="text-lg flex items-center gap-2">
           <BookOpen className="h-5 w-5" />

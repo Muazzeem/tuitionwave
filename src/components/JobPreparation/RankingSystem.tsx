@@ -47,7 +47,7 @@ export default function RankingSystem() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <Card className="lg:col-span-2">
+      <Card className="lg:col-span-2 dark:bg-gray-800 dark:border-gray-700">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Trophy className="h-5 w-5" />
@@ -57,10 +57,10 @@ export default function RankingSystem() {
         <CardContent>
           <div className="space-y-4">
             {topRankers.map((user) => (
-              <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+              <div key={user.id} className="flex items-center justify-between p-4 border dark:border-gray-700 rounded-lg">
                 <div className="flex items-center gap-3">
                   {getRankIcon(user.rank)}
-                  <Avatar className="h-8 w-8">
+                  <Avatar className="h-8 w-8 bg-white">
                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div>
@@ -85,7 +85,7 @@ export default function RankingSystem() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="dark:bg-gray-800 dark:border-gray-700">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Award className="h-5 w-5" />
@@ -93,7 +93,7 @@ export default function RankingSystem() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="text-center p-4 bg-muted rounded-lg">
+          <div className="text-center p-4 dark:bg-gray-900 rounded-lg">
             <div className="text-3xl font-bold text-primary">#{currentUser.rank}</div>
             <p className="text-sm text-muted-foreground">Current Rank</p>
           </div>
@@ -116,12 +116,6 @@ export default function RankingSystem() {
               <span className="text-sm">Total Exams</span>
               <span className="font-medium">{currentUser.totalExams}</span>
             </div>
-          </div>
-
-          <div className="pt-4 border-t">
-            <Badge variant="secondary" className="w-full justify-center">
-              Top 10% of all students
-            </Badge>
           </div>
         </CardContent>
       </Card>

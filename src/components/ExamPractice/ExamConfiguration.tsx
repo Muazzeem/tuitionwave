@@ -102,7 +102,7 @@ export default function ExamConfiguration({
 
   return (
     <div className="relative">
-      <Card>
+      <Card className='dark:bg-gray-800 dark:border-gray-700'>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5" />

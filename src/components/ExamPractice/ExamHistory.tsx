@@ -101,7 +101,7 @@ export default function ExamHistory({
       {/* Exam Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {paginatedExams.map((exam) => (
-          <Card key={exam.id} className="hover:shadow-md transition-shadow">
+          <Card key={exam.id} className="hover:shadow-md transition-shadow dark:bg-gray-800 dark:border-gray-700">
             <CardContent className="p-4">
               <div className="space-y-3">
                 <div className="flex items-start justify-between">

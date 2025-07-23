@@ -88,7 +88,7 @@ export default function JobPreparationDashboard() {
                 </div>
                 <div className="space-y-6">
                   <StudyProgress />
-                  <Card>
+                  <Card className='dark:bg-gray-800 dark:border-gray-700'>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg flex items-center gap-2">
                         <Target className="h-5 w-5" />

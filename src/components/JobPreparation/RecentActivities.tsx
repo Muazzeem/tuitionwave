@@ -86,7 +86,7 @@ export default function RecentActivities() {
   };
 
   return (
-    <Card>
+    <Card className='dark:bg-gray-800 dark:border-gray-700'>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5" />

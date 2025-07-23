@@ -84,7 +84,7 @@ export default function ExamStatusCards() {
   };
 
   return (
-    <Card>
+    <Card className='dark:bg-gray-800 dark:border-gray-700'>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <FileText className="h-5 w-5" />
@@ -94,7 +94,7 @@ export default function ExamStatusCards() {
       <CardContent>
         <div className="space-y-4">
           {examRecords.map((exam) => (
-            <div key={exam.id} className="flex items-center justify-between p-4 border rounded-lg">
+            <div key={exam.id} className="flex items-center justify-between p-4 border dark:border-gray-700 rounded-lg">
               <div className="flex items-center gap-3">
                 {getStatusIcon(exam.status)}
                 <div>
