@@ -44,11 +44,11 @@ export default function JobPreparationDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background w-full dark:bg-gray-900">
       <DashboardHeader userName="BCS Candidate" />
       
-      <ScrollArea className="h-[calc(100vh-80px)]">
-        <div className="container mx-auto p-6 space-y-6">
+      <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
+        <div className="p-6">
           {/* Header Section */}
           <div className="flex items-center justify-between">
             <div>
@@ -68,10 +68,12 @@ export default function JobPreparationDashboard() {
           </div>
 
           {/* Quick Stats */}
-          <QuickStats data={dashboardData} />
+          <div className='mt-5'>
+            <QuickStats data={dashboardData} />
+          </div>
 
           {/* Main Content Tabs */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-5">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="performance">Performance</TabsTrigger>
@@ -79,7 +81,7 @@ export default function JobPreparationDashboard() {
               <TabsTrigger value="activities">Activities</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="space-y-6">
+            <TabsContent value="overview" className="space-y-6 mt-5">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2">
                   <ExamStatusCards />
@@ -107,15 +109,15 @@ export default function JobPreparationDashboard() {
               </div>
             </TabsContent>
 
-            <TabsContent value="performance" className="space-y-6">
+            <TabsContent value="performance" className="space-y-6 mt-5">
               <PerformanceChart />
             </TabsContent>
 
-            <TabsContent value="ranking" className="space-y-6">
+            <TabsContent value="ranking" className="space-y-6 mt-5">
               <RankingSystem />
             </TabsContent>
 
-            <TabsContent value="activities" className="space-y-6">
+            <TabsContent value="activities" className="space-y-6 mt-5">
               <RecentActivities />
             </TabsContent>
           </Tabs>

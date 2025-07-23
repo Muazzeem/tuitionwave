@@ -40,7 +40,7 @@ import HowItWorksPage from "./pages/HowItWorksPage";
 import FAQPage from "./pages/FAQPage";
 import TermsPage from "./pages/TermsPage";
 import PublicDashboard from "./pages/PublicDashboard";
-import JobCandidateDashboard from "./pages/JobCandidate/Dashboard";
+import JobPreparationDashboard from "./pages/JobPreparation/Dashboard";
 import CreateModelTest from "./pages/JobCandidate/CreateModelTest";
 import ExamPractice from "./pages/JobCandidate/ExamPractice";
 
@@ -129,7 +129,7 @@ const App = () => (
                   <Route path="/job-preparation/dashboard" element={
                     <AuthGuard>
                       <MainLayout>
-                        <JobCandidateDashboard />
+                      <JobPreparationDashboard />
                       </MainLayout>
                     </AuthGuard>
                     } 

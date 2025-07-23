@@ -190,7 +190,7 @@ export default function ExamPractice() {
   const totalPages = Math.ceil(filteredExams.length / itemsPerPage);
 
   return (
-    <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto dark:bg-gray-900">
       <DashboardHeader userName="John" />
 
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>

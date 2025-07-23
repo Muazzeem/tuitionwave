@@ -105,7 +105,7 @@ export default function RecentActivities() {
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-sm">{activity.title}</h4>
+                  <h4 className="font-medium text-sm text-black">{activity.title}</h4>
                   <span className="text-xs text-muted-foreground">{activity.timestamp}</span>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">{activity.description}</p>

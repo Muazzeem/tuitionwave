@@ -271,7 +271,7 @@ export default function ExamConfiguration({
           onClick={onCreateExam}
           disabled={selectedSubjects.length === 0}
           size="lg"
-          className="shadow-lg hover:shadow-xl transition-shadow"
+          className="shadow-lg hover:shadow-xl transition-shadow text-white"
         >
           Create Exam
         </Button>
