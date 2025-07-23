@@ -26,6 +26,8 @@ export default function ExamPractice() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubjects, setSelectedSubjects] = useState<Subject[]>([]);
   const [selectedTopics, setSelectedTopics] = useState<Topic[]>([]);
+  const [subjectTopics, setSubjectTopics] = useState<Record<string, Topic[]>>({});
+  const [topicsLoading, setTopicsLoading] = useState<Record<string, boolean>>({});
   const [questionLimit, setQuestionLimit] = useState(20);
   const [durationMinutes, setDurationMinutes] = useState(30);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
@@ -91,42 +93,46 @@ export default function ExamPractice() {
     enabled: !!selectedCategory,
   });
 
-  // Fetch topics for selected subjects
-  const { data: topicsData, isLoading: topicsLoading } = useQuery({
-    queryKey: ['topics', selectedSubjects.map(s => s.uid)],
-    queryFn: async () => {
-      if (selectedSubjects.length === 0) return { results: [] };
-
-      const topicsPromises = selectedSubjects.map(subject =>
-        JobPreparationService.getTopics(subject.uid)
-      );
-      const topicsResults = await Promise.all(topicsPromises);
-
-      // Combine all topics from different subjects
-      const allTopics = topicsResults.flatMap(result => result.results);
-      return { results: allTopics };
-    },
-    enabled: selectedSubjects.length > 0,
-  });
+  // Function to fetch topics for a specific subject
+  const fetchTopicsForSubject = async (subjectUid: string) => {
+    setTopicsLoading(prev => ({ ...prev, [subjectUid]: true }));
+    try {
+      const topicsData = await JobPreparationService.getTopics(subjectUid);
+      setSubjectTopics(prev => ({ ...prev, [subjectUid]: topicsData.results }));
+    } catch (error) {
+      console.error('Error fetching topics:', error);
+      setSubjectTopics(prev => ({ ...prev, [subjectUid]: [] }));
+    } finally {
+      setTopicsLoading(prev => ({ ...prev, [subjectUid]: false }));
+    }
+  };
 
   // Reset selections when category changes
   useEffect(() => {
     setSelectedSubjects([]);
     setSelectedTopics([]);
+    setSubjectTopics({});
+    setTopicsLoading({});
   }, [selectedCategory]);
-
-  // Reset topics when subjects change
-  useEffect(() => {
-    setSelectedTopics([]);
-  }, [selectedSubjects]);
 
   // Handle subject selection
   const handleSubjectToggle = (subject: Subject) => {
     setSelectedSubjects(prev => {
       const isSelected = prev.some(s => s.uid === subject.uid);
       if (isSelected) {
+        // Remove subject and its topics
+        setSelectedTopics(prevTopics => 
+          prevTopics.filter(topic => topic.subject.uid !== subject.uid)
+        );
+        setSubjectTopics(prevSubjectTopics => {
+          const newSubjectTopics = { ...prevSubjectTopics };
+          delete newSubjectTopics[subject.uid];
+          return newSubjectTopics;
+        });
         return prev.filter(s => s.uid !== subject.uid);
       } else {
+        // Add subject and fetch its topics
+        fetchTopicsForSubject(subject.uid);
         return [...prev, subject];
       }
     });
@@ -147,6 +153,12 @@ export default function ExamPractice() {
   // Remove selected subject
   const handleSubjectRemove = (subjectUid: string) => {
     setSelectedSubjects(prev => prev.filter(s => s.uid !== subjectUid));
+    setSelectedTopics(prev => prev.filter(t => t.subject.uid !== subjectUid));
+    setSubjectTopics(prev => {
+      const newSubjectTopics = { ...prev };
+      delete newSubjectTopics[subjectUid];
+      return newSubjectTopics;
+    });
   };
 
   // Remove selected topic
@@ -205,7 +217,7 @@ export default function ExamPractice() {
                 setDurationMinutes={setDurationMinutes}
                 categories={categoriesData?.results || []}
                 subjects={subjectsData?.results || []}
-                topics={topicsData?.results || []}
+                subjectTopics={subjectTopics}
                 categoriesLoading={categoriesLoading}
                 subjectsLoading={subjectsLoading}
                 topicsLoading={topicsLoading}
