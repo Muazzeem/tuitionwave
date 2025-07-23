@@ -76,6 +76,20 @@ export default function ExamConfiguration({
     count: topic.total_questions
   }));
 
+  const handleSubjectToggle = (item: { uid: string; label: string; count?: number }) => {
+    const subject = subjects.find(s => s.uid === item.uid);
+    if (subject) {
+      onSubjectToggle(subject);
+    }
+  };
+
+  const handleTopicToggle = (item: { uid: string; label: string; count?: number }) => {
+    const topic = topics.find(t => t.uid === item.uid);
+    if (topic) {
+      onTopicToggle(topic);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -145,7 +159,7 @@ export default function ExamConfiguration({
               placeholder="Select subjects"
               options={subjectOptions}
               selectedItems={selectedSubjectOptions}
-              onToggle={onSubjectToggle}
+              onToggle={handleSubjectToggle}
               onRemove={onSubjectRemove}
               isLoading={subjectsLoading}
               disabled={!selectedCategory}
@@ -162,7 +176,7 @@ export default function ExamConfiguration({
               placeholder="Select topics"
               options={topicOptions}
               selectedItems={selectedTopicOptions}
-              onToggle={onTopicToggle}
+              onToggle={handleTopicToggle}
               onRemove={onTopicRemove}
               isLoading={topicsLoading}
               disabled={selectedSubjects.length === 0}
