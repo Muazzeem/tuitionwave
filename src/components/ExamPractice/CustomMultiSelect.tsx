@@ -51,7 +51,7 @@ export default function CustomMultiSelect({
   return (
     <div className="multi-select-container relative">
       <div
-        className="flex min-h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors cursor-pointer hover:bg-accent/5 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex min-h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm  cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
         onClick={() => !disabled && setIsOpen(!isOpen)}
       >
         <div className="flex items-center justify-between w-full">
@@ -63,13 +63,13 @@ export default function CustomMultiSelect({
       </div>
 
       {/* Selected Items */}
-      {selectedItems.length > 0 && (
+      {/* {selectedItems.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-2">
           {selectedItems.map(item => (
             <Badge
               key={item.uid}
               variant="secondary"
-              className="flex items-center gap-1"
+              className="flex items-center gap-1 dark:bg-gray-900 dark:border-gray-700"
             >
               {item.label}
               <X
@@ -82,7 +82,7 @@ export default function CustomMultiSelect({
             </Badge>
           ))}
         </div>
-      )}
+      )} */}
 
       {isOpen && !disabled && (
         <div className="absolute z-50 min-w-full mt-1 overflow-hidden rounded-md border bg-popover shadow-lg animate-in fade-in-0 zoom-in-95">

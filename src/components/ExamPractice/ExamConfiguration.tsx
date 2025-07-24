@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Target, FileText, X, Search } from "lucide-react";
 import { Category, Subject, Topic } from "@/types/jobPreparation";
 import CustomMultiSelect from './CustomMultiSelect';
@@ -92,9 +92,9 @@ export default function ExamConfiguration({
   const getFilteredTopics = (subjectUid: string) => {
     const topics = subjectTopics[subjectUid] || [];
     const searchQuery = topicSearchQueries[subjectUid] || '';
-    
+
     if (!searchQuery) return topics;
-    
+
     return topics.filter(topic =>
       topic.topic_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -110,7 +110,7 @@ export default function ExamConfiguration({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6 pb-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Category */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">Category</Label>
@@ -157,107 +157,105 @@ export default function ExamConfiguration({
                 placeholder="30"
               />
             </div>
+            {/* Subjects Selection */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Subjects</Label>
+              <CustomMultiSelect
+                placeholder="Select subjects"
+                options={subjectOptions}
+                selectedItems={selectedSubjectOptions}
+                onToggle={handleSubjectToggle}
+                onRemove={onSubjectRemove}
+                isLoading={subjectsLoading}
+                disabled={!selectedCategory}
+              />
+            </div>
           </div>
-
-          {/* Subjects Selection */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Subjects
-            </Label>
-            <CustomMultiSelect
-              placeholder="Select subjects"
-              options={subjectOptions}
-              selectedItems={selectedSubjectOptions}
-              onToggle={handleSubjectToggle}
-              onRemove={onSubjectRemove}
-              isLoading={subjectsLoading}
-              disabled={!selectedCategory}
-            />
-          </div>
-
-          {/* Selected Subjects with Topics */}
           {selectedSubjects.length > 0 && (
             <div className="space-y-4">
               <Label className="text-sm font-medium">Selected Subjects & Topics</Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {selectedSubjects.map(subject => (
-                  <Card key={subject.uid} className="border-2">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg flex items-center gap-2">
-                          <FileText className="h-4 w-4" />
-                          {subject.subject_title}
-                        </CardTitle>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onSubjectRemove(subject.uid)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      <Badge variant="secondary" className="w-fit">
-                        {subject.total_questions} Questions
-                      </Badge>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <Label className="text-sm font-medium">Topics (Optional)</Label>
-                        
-                        {/* Search Box for Topics */}
-                        <div className="relative">
-                          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            placeholder="Search topics..."
-                            className="pl-8 h-9"
-                            value={topicSearchQueries[subject.uid] || ''}
-                            onChange={(e) => handleTopicSearch(subject.uid, e.target.value)}
-                          />
-                        </div>
-
-                        {topicsLoading[subject.uid] ? (
-                          <div className="text-sm text-muted-foreground">Loading topics...</div>
-                        ) : (
-                          <div className="space-y-2">
-                            {getFilteredTopics(subject.uid).length > 0 ? (
-                              <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
-                                {getFilteredTopics(subject.uid).map(topic => (
-                                  <div
-                                    key={topic.uid}
-                                    className={`flex items-center justify-between p-2 rounded-md border cursor-pointer transition-colors ${
-                                      isTopicSelected(topic.uid)
-                                        ? 'bg-primary/10 border-primary'
-                                        : 'bg-background hover:bg-accent'
-                                    }`}
-                                    onClick={() => handleTopicToggle(topic)}
-                                  >
-                                    <div className="flex items-center space-x-2">
-                                      <input
-                                        type="checkbox"
-                                        checked={isTopicSelected(topic.uid)}
-                                        onChange={() => handleTopicToggle(topic)}
-                                        className="rounded"
-                                      />
-                                      <span className="text-sm">{topic.topic_name}</span>
-                                    </div>
-                                    <Badge variant="outline" className="text-xs">
-                                      {topic.total_questions} Q
-                                    </Badge>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <div className="text-sm text-muted-foreground">
-                                {topicSearchQueries[subject.uid] ? 'No topics found' : 'No topics available'}
-                              </div>
-                            )}
+                  <Accordion type="multiple" className="w-full" key={subject.uid}>
+                    <AccordionItem
+                      value={subject.uid}
+                      className="border border-gray-200 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:border-gray-700"
+                    >
+                      <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                        <div className="flex items-center justify-between w-full mr-4">
+                          <div className="flex items-center gap-2">
+                            <FileText className="h-4 w-4" />
+                            <span className="font-medium">{subject.subject_title}</span>
+                            <Badge variant="secondary" className="ml-2">
+                              {subject.total_questions} Questions
+                            </Badge>
                           </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSubjectRemove(subject.uid);
+                            }}
+                            className="h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </AccordionTrigger>
+
+                      {/* Scrollable Accordion Content */}
+                      <AccordionContent className="px-4 pb-4 max-h-[300px] overflow-y-auto">
+                        <div className="space-y-3">
+                          <Label className="text-sm font-medium">Topics (Optional)</Label>
+
+                          {/* Search Box for Topics */}
+                          <div className="relative">
+                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              placeholder="Search topics..."
+                              className="pl-8 h-9"
+                              value={topicSearchQueries[subject.uid] || ''}
+                              onChange={(e) => handleTopicSearch(subject.uid, e.target.value)}
+                            />
+                          </div>
+
+                          {topicsLoading[subject.uid] ? (
+                            <div className="text-sm text-muted-foreground">Loading topics...</div>
+                          ) : (
+                            <div className="space-y-2">
+                              {getFilteredTopics(subject.uid).length > 0 ? (
+                                  <div className="flex flex-wrap gap-2">
+                                    {getFilteredTopics(subject.uid).map(topic => (
+                                      <Badge
+                                        key={topic.uid}
+                                        variant={isTopicSelected(topic.uid) ? "default" : "outline"}
+                                        className={`cursor-pointer transition-colors hover:scale-105 ${isTopicSelected(topic.uid)
+                                          ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                                          : 'hover:bg-accent hover:text-accent-foreground'
+                                          }`}
+                                        onClick={() => handleTopicToggle(topic)}
+                                      >
+                                        {topic.topic_name}
+                                        <span className="ml-1 text-xs opacity-70">
+                                          ({topic.total_questions})
+                                        </span>
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <div className="text-sm text-muted-foreground">
+                                  {topicSearchQueries[subject.uid]
+                                    ? 'No topics found'
+                                    : 'No topics available'}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
                 ))}
               </div>
             </div>
