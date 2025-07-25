@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,11 +22,11 @@ export default function ExamPage() {
   const accessToken = getAccessToken();
 
   const [examData, setExamData] = useState<ExamData | null>(null);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [selectedOptions, setSelectedOptions] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showEndExamDialog, setShowEndExamDialog] = useState(false);
+  const [submittedAnswers, setSubmittedAnswers] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchExam = async () => {
@@ -49,43 +50,37 @@ export default function ExamPage() {
     fetchExam();
   }, [examId, navigate, toast]);
 
-  const handleOptionSelect = (optionUid: string) => {
-    setSelectedOption(optionUid);
+  const handleOptionSelect = (questionUid: string, optionUid: string) => {
+    setSelectedOptions(prev => ({
+      ...prev,
+      [questionUid]: optionUid
+    }));
   };
 
-  const handleSubmitAnswer = async () => {
-    if (!examId) return;
+  const handleSubmitAnswer = async (questionUid: string) => {
+    if (!examId || !selectedOptions[questionUid]) {
+      toast({
+        title: "No Option Selected",
+        description: "Please select an option before submitting.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsSubmitting(true);
     try {
-      if (selectedOption) {
-        await JobPreparationService.submitExamAnswer(
-          examId,
-          examData?.exam_questions[currentQuestionIndex].question_uid!,
-          selectedOption
-        );
-        toast({
-          title: "Answer Submitted",
-          description: "Your answer has been submitted successfully.",
-        });
-      } else {
-        toast({
-          title: "No Option Selected",
-          description: "Please select an option before submitting.",
-          variant: "warning",
-        });
-        return;
-      }
-
-      if (currentQuestionIndex < examData!.exam_questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-        setSelectedOption(null);
-      } else {
-        toast({
-          title: "Last Question",
-          description: "You have reached the last question. Please submit the exam.",
-        });
-      }
+      await JobPreparationService.submitExamAnswer(
+        examId,
+        questionUid,
+        selectedOptions[questionUid]
+      );
+      
+      setSubmittedAnswers(prev => new Set(prev).add(questionUid));
+      
+      toast({
+        title: "Answer Submitted",
+        description: "Your answer has been submitted successfully.",
+      });
     } catch (error) {
       toast({
         title: "Error",
@@ -115,8 +110,6 @@ export default function ExamPage() {
       setShowEndExamDialog(false);
     }
   };
-
-  const currentQuestion = examData?.exam_questions[currentQuestionIndex];
 
   const calculateTimeRemaining = () => {
     if (!examData?.expires_at) return 0;
@@ -153,6 +146,15 @@ export default function ExamPage() {
     return timeString;
   };
 
+  const getAnsweredCount = () => {
+    return submittedAnswers.size;
+  };
+
+  const getProgressPercentage = () => {
+    if (!examData) return 0;
+    return (getAnsweredCount() / examData.exam_questions.length) * 100;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -164,7 +166,7 @@ export default function ExamPage() {
     );
   }
 
-  if (!examData || !currentQuestion) {
+  if (!examData) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
@@ -180,14 +182,25 @@ export default function ExamPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b">
+      <div className="bg-white dark:bg-gray-800 shadow-sm border-b sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-gray-800 dark:text-white">
-              {examData.exam_type} - Question {currentQuestionIndex + 1} of {examData.question_limit}
-            </h1>
-            <div className="text-gray-600 dark:text-gray-400">
-              Time Remaining: {formatTime(timeRemaining)}
+            <div>
+              <h1 className="text-xl font-bold text-gray-800 dark:text-white">
+                {examData.exam_type} - {examData.question_limit} Questions
+              </h1>
+              <div className="flex items-center gap-4 mt-2">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  Progress: {getAnsweredCount()}/{examData.question_limit}
+                </div>
+                <Progress value={getProgressPercentage()} className="w-32" />
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-gray-600 dark:text-gray-400 flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                Time Remaining: {formatTime(timeRemaining)}
+              </div>
             </div>
           </div>
         </div>
@@ -195,58 +208,87 @@ export default function ExamPage() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-3xl mx-auto space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">
-                {currentQuestion.question_text}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {currentQuestion.options.map((option) => (
-                  <Button
-                    key={option.uid}
-                    variant="outline"
-                    className={`w-full justify-start ${selectedOption === option.uid ? 'bg-secondary text-secondary-foreground' : ''}`}
-                    onClick={() => handleOptionSelect(option.uid)}
-                    disabled={isSubmitting}
-                  >
-                    {option.option_label} {option.option_text}
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* All Questions */}
+          {examData.exam_questions.map((question, index) => (
+            <Card key={question.uid} className="relative">
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <CardTitle className="text-lg font-semibold">
+                    Question {index + 1}
+                  </CardTitle>
+                  <div className="flex items-center gap-2">
+                    {submittedAnswers.has(question.question_uid) ? (
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                    ) : (
+                      <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
+                    )}
+                    <span className="text-sm text-gray-500">
+                      {question.marks} mark{question.marks > 1 ? 's' : ''}
+                    </span>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {question.topic_name} - {question.subject_title}
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-gray-800 dark:text-gray-200 mb-4">
+                    {question.question_text}
+                  </p>
+                  
+                  <div className="space-y-2">
+                    {question.options.map((option) => (
+                      <Button
+                        key={option.uid}
+                        variant="outline"
+                        className={`w-full justify-start text-left ${
+                          selectedOptions[question.question_uid] === option.uid 
+                            ? 'bg-blue-50 border-blue-500 text-blue-700' 
+                            : ''
+                        } ${
+                          submittedAnswers.has(question.question_uid) 
+                            ? 'opacity-75 cursor-not-allowed' 
+                            : ''
+                        }`}
+                        onClick={() => handleOptionSelect(question.question_uid, option.uid)}
+                        disabled={submittedAnswers.has(question.question_uid)}
+                      >
+                        <span className="font-medium mr-2">{option.option_label}</span>
+                        {option.option_text}
+                      </Button>
+                    ))}
+                  </div>
 
-          <div className="flex justify-between">
+                  <div className="flex justify-end pt-4">
+                    <Button
+                      onClick={() => handleSubmitAnswer(question.question_uid)}
+                      disabled={
+                        isSubmitting || 
+                        !selectedOptions[question.question_uid] ||
+                        submittedAnswers.has(question.question_uid)
+                      }
+                      className="min-w-32"
+                    >
+                      {submittedAnswers.has(question.question_uid) ? 'Submitted' : 'Submit Answer'}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+
+          {/* End Exam Button */}
+          <div className="flex justify-center pt-6">
             <Button
-              variant="secondary"
-              onClick={() => {
-                if (currentQuestionIndex > 0) {
-                  setCurrentQuestionIndex(currentQuestionIndex - 1);
-                  setSelectedOption(null);
-                }
-              }}
-              disabled={currentQuestionIndex === 0 || isSubmitting}
+              variant="destructive"
+              onClick={() => setShowEndExamDialog(true)}
+              disabled={isSubmitting}
+              className="min-w-48"
             >
-              Previous
+              End Exam
             </Button>
-            <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                onClick={() => setShowEndExamDialog(true)}
-                disabled={isSubmitting}
-              >
-                End Exam
-              </Button>
-              <Button
-                onClick={handleSubmitAnswer}
-                disabled={isSubmitting}
-              >
-                {currentQuestionIndex === examData.exam_questions.length - 1 ? 'Submit Exam' : 'Next'}
-              </Button>
-            </div>
           </div>
         </div>
       </div>
