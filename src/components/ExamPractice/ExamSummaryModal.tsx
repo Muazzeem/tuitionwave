@@ -90,7 +90,7 @@ export default function ExamSummaryModal({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={onConfirm}>
+          <Button onClick={onConfirm} className='text-white bg-blue-500'>
             Start Exam
           </Button>
         </DialogFooter>

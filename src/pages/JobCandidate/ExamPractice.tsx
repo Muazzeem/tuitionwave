@@ -9,6 +9,8 @@ import ExamSummaryModal from "@/components/ExamPractice/ExamSummaryModal";
 import ExamHistory from "@/components/ExamPractice/ExamHistory";
 import JobPreparationService from "@/services/JobPreparationService";
 import { Category, Subject, Topic } from "@/types/jobPreparation";
+import { getAccessToken } from "@/utils/auth";
+import { useToast } from "@/hooks/use-toast";
 
 interface ExamRecord {
   id: string;
@@ -28,56 +30,15 @@ export default function ExamPractice() {
   const [selectedTopics, setSelectedTopics] = useState<Topic[]>([]);
   const [subjectTopics, setSubjectTopics] = useState<Record<string, Topic[]>>({});
   const [topicsLoading, setTopicsLoading] = useState<Record<string, boolean>>({});
-  const [questionLimit, setQuestionLimit] = useState(20);
-  const [durationMinutes, setDurationMinutes] = useState(30);
+  const [questionLimit, setQuestionLimit] = useState(0);
+  const [durationMinutes, setDurationMinutes] = useState(0);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [activeTab, setActiveTab] = useState("create");
+  const { toast } = useToast();
   
   // Exam list states
   const [examFilter, setExamFilter] = useState<'all' | 'active' | 'running' | 'completed' | 'failed'>('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const [examRecords] = useState<ExamRecord[]>([
-    {
-      id: '1',
-      title: 'বাংলা সাহিত্য পরীক্ষা',
-      category: 'অনুশীলন (বিসিএস ও অন্যান্য)',
-      status: 'completed',
-      questionsCount: 20,
-      duration: 30,
-      score: 85,
-      completedAt: '2024-01-15',
-      createdAt: '2024-01-15'
-    },
-    {
-      id: '2',
-      title: 'গণিত প্র্যাকটিস',
-      category: 'BANK & MBA',
-      status: 'running',
-      questionsCount: 25,
-      duration: 45,
-      createdAt: '2024-01-16'
-    },
-    {
-      id: '3',
-      title: 'সাধারণ জ্ঞান',
-      category: 'অনুশীলন (বিসিএস ও অন্যান্য)',
-      status: 'active',
-      questionsCount: 30,
-      duration: 60,
-      createdAt: '2024-01-16'
-    },
-    {
-      id: '4',
-      title: 'ইংরেজি ব্যাকরণ',
-      category: 'BANK & MBA',
-      status: 'failed',
-      questionsCount: 15,
-      duration: 20,
-      score: 45,
-      completedAt: '2024-01-14',
-      createdAt: '2024-01-14'
-    }
-  ]);
   const itemsPerPage = 6;
 
   // Fetch categories
@@ -176,18 +137,41 @@ export default function ExamPractice() {
       topics: selectedTopics.map(t => t.uid)
     };
 
-    console.log('Creating exam with data:', examData);
-    // Here you would call your create exam API
+    const accessToken = getAccessToken();
+    const baseUrl = import.meta.env.VITE_API_URL;
+    const url = `${baseUrl}/api/exams/create/`;
 
-    setShowSummaryModal(false);
-    alert('Exam created successfully!');
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(examData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to create exam. Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Exam created successfully:', data);
+      toast({
+        title: "Success",
+        description: "Exam created successfully!",
+      });
+
+      setShowSummaryModal(false);
+
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Something went wrong while creating the exam.",
+        variant: "destructive",
+      });
+    }
   };
-
-  const filteredExams = examFilter === 'all' 
-    ? examRecords 
-    : examRecords.filter(exam => exam.status === examFilter);
-
-  const totalPages = Math.ceil(filteredExams.length / itemsPerPage);
 
   return (
       <div className="flex-1 overflow-auto dark:bg-gray-900">
@@ -231,13 +215,7 @@ export default function ExamPractice() {
 
             <TabsContent value="history" className="space-y-6">
               <ExamHistory
-                examRecords={examRecords}
-                examFilter={examFilter}
-                setExamFilter={setExamFilter}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                totalPages={totalPages}
-                itemsPerPage={itemsPerPage}
+                useInternalApi={true}
               />
             </TabsContent>
           </Tabs>

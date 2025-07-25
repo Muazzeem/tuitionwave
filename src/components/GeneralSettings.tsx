@@ -45,7 +45,6 @@ const GeneralSettings = () => {
     email: '',
     phone: '',
     address: '',
-    user_type: '',
     profile_picture: null,
     is_nid_verified: false,
     division_id: null,
@@ -157,7 +156,6 @@ const GeneralSettings = () => {
         email: profile.email || '',
         phone: profile.phone || '',
         address: profile.address || '',
-        user_type: profile.user_type || '',
         profile_picture: profile.profile_picture || null,
         is_nid_verified: profile.is_nid_verified || false,
         division_id: profile.division?.id || null,
@@ -303,8 +301,6 @@ const GeneralSettings = () => {
       submitData.append('last_name', formData.last_name || '');
       submitData.append('phone', formData.phone || '');
       submitData.append('address', formData.address || '');
-      submitData.append('user_type', formData.user_type || '');
-
 
       // Add location fields as arrays to match backend expectation
       if (formData.division_id) {

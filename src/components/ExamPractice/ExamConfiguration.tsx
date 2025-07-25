@@ -101,7 +101,7 @@ export default function ExamConfiguration({
   };
 
   return (
-    <div className="relative">
+    <div className="relative mt-6">
       <Card className='dark:bg-gray-800 dark:border-gray-700'>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -138,10 +138,10 @@ export default function ExamConfiguration({
               <Input
                 type="number"
                 value={questionLimit}
-                onChange={(e) => setQuestionLimit(parseInt(e.target.value) || 20)}
-                min="1"
-                max="100"
-                placeholder="20"
+                onChange={(e) => setQuestionLimit(parseInt(e.target.value))}
+                min="0"
+                max="200"
+                placeholder="00"
               />
             </div>
 
@@ -151,10 +151,10 @@ export default function ExamConfiguration({
               <Input
                 type="number"
                 value={durationMinutes}
-                onChange={(e) => setDurationMinutes(parseInt(e.target.value) || 30)}
-                min="1"
+                onChange={(e) => setDurationMinutes(parseInt(e.target.value))}
+                min="0"
                 max="300"
-                placeholder="30"
+                placeholder="00"
               />
             </div>
             {/* Subjects Selection */}
