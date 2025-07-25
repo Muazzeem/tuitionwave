@@ -48,6 +48,42 @@ export interface Question {
   correct_option?: QuestionOption;
 }
 
+export interface ExamQuestion {
+  uid: string;
+  order: number;
+  topic_name: string;
+  subject_title: string;
+  question_uid: string;
+  question_number: number;
+  question_text: string;
+  marks: number;
+  negative_marks: number;
+  time_limit_seconds: number;
+  options: QuestionOption[];
+}
+
+export interface ExamData {
+  uid: string;
+  exam_type: string;
+  status: string;
+  question_limit: number;
+  total_questions: number;
+  total_marks: number;
+  duration_minutes: number;
+  started_at: string | null;
+  completed_at: string | null;
+  expires_at: string | null;
+  obtained_marks: number;
+  percentage: number;
+  correct_answers: number;
+  incorrect_answers: number;
+  unanswered: number;
+  cut_marks: number;
+  subjects_info: { uid: string; title: string; }[];
+  topics_info: { uid: string; name: string; }[];
+  exam_questions: ExamQuestion[];
+}
+
 export interface PaginatedResponse<T> {
   count: number;
   next: string | null;

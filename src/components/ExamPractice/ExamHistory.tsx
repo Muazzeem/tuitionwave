@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,7 +39,6 @@ interface ApiResponse {
 }
 
 interface ExamHistoryProps {
-  // Props for external state management (your usage)
   examRecords?: ApiExamRecord[];
   examFilter?: 'all' | 'not_started' | 'in_progress' | 'completed';
   setExamFilter?: (filter: 'all' | 'not_started' | 'in_progress' | 'completed') => void;
@@ -46,18 +46,13 @@ interface ExamHistoryProps {
   setCurrentPage?: (page: number) => void;
   totalPages?: number;
   itemsPerPage?: number;
-
-  // Props for internal API management
   baseUrl?: string;
   authToken?: string;
   useInternalApi?: boolean;
-
-  // Callback for external state updates
   onExamUpdate?: (updatedExam: ApiExamRecord) => void;
 }
 
 export default function ExamHistory({
-  // External props
   examRecords: externalExamRecords,
   examFilter: externalExamFilter,
   setExamFilter: externalSetExamFilter,
@@ -65,11 +60,11 @@ export default function ExamHistory({
   setCurrentPage: externalSetCurrentPage,
   totalPages: externalTotalPages,
   itemsPerPage = 10,
-
   useInternalApi = false,
   onExamUpdate
 }: ExamHistoryProps) {
-  // Internal state (used when useInternalApi is true)
+  const navigate = useNavigate();
+  
   const [internalExamRecords, setInternalExamRecords] = useState<ApiExamRecord[]>([]);
   const [internalExamFilter, setInternalExamFilter] = useState<'all' | 'not_started' | 'in_progress' | 'completed'>('all');
   const [internalCurrentPage, setInternalCurrentPage] = useState(1);
@@ -80,7 +75,6 @@ export default function ExamHistory({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedExam, setSelectedExam] = useState<ApiExamRecord | null>(null);
 
-  // Determine which state to use
   const examRecords = useInternalApi ? internalExamRecords : (externalExamRecords || []);
   const examFilter = useInternalApi ? internalExamFilter : (externalExamFilter || 'all');
   const setExamFilter = useInternalApi ? setInternalExamFilter : (externalSetExamFilter || (() => { }));
@@ -171,25 +165,8 @@ export default function ExamHistory({
 
       const data = await response.json();
 
-      // Create updated exam object
-      const updatedExam: ApiExamRecord = {
-        ...selectedExam,
-        status: 'in_progress',
-        status_display: 'In Progress',
-        started_at: new Date().toISOString(),
-      };
-
-      // Update state based on which mode we're in
-      if (useInternalApi) {
-        // Update internal state
-        setInternalExamRecords(prevExams =>
-          prevExams.map(exam =>
-            exam.uid === selectedExam.uid ? updatedExam : exam
-          )
-        );
-      } else if (onExamUpdate) {
-        onExamUpdate(updatedExam);
-      }
+      // Navigate to the exam page
+      navigate(`/exam/${selectedExam.uid}`);
 
       toast({
         title: "Success",
@@ -207,6 +184,14 @@ export default function ExamHistory({
       setSelectedExam(null);
     }
   }
+
+  const handleContinueExam = (exam: ApiExamRecord) => {
+    navigate(`/exam/${exam.uid}`);
+  };
+
+  const handleViewResults = (exam: ApiExamRecord) => {
+    navigate(`/exam/${exam.uid}/results`);
+  };
 
   const displayedExams = useInternalApi
     ? examRecords
@@ -262,9 +247,7 @@ export default function ExamHistory({
       case 'in_progress':
         return (
           <Button size="sm" variant="outline" className="flex-1 text-white"
-            onClick={() => {
-              setSelectedExam(exam);
-            }}
+            onClick={() => handleContinueExam(exam)}
           >
             Continue
           </Button>
@@ -273,9 +256,7 @@ export default function ExamHistory({
       case 'failed':
         return (
           <Button size="sm" variant="outline" className="flex-1 text-white"
-            onClick={() => {
-              setSelectedExam(exam);
-            }}
+            onClick={() => handleViewResults(exam)}
           >
             View Results
           </Button>
@@ -303,7 +284,6 @@ export default function ExamHistory({
 
   return (
     <div className="space-y-6 mt-6">
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4" />
@@ -332,14 +312,12 @@ export default function ExamHistory({
         </div>
       </div>
 
-      {/* Loading State */}
       {loading && useInternalApi && examRecords.length === 0 && (
         <div className="flex justify-center items-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
       )}
 
-      {/* Exam Cards Grid */}
       {(!loading || !useInternalApi) && examRecords.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {displayedExams.map((exam) => (
@@ -410,7 +388,6 @@ export default function ExamHistory({
         </div>
       )}
 
-      {/* Empty State */}
       {(!loading || !useInternalApi) && examRecords.length === 0 && (
         <div className="text-center py-12">
           <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
@@ -420,7 +397,6 @@ export default function ExamHistory({
         </div>
       )}
 
-      {/* Pagination */}
       {(!loading || !useInternalApi) && totalPages > 1 && (
         <div className="flex justify-center">
           <Pagination>
@@ -482,6 +458,7 @@ export default function ExamHistory({
           </Pagination>
         </div>
       )}
+      
       <ConfirmationDialog
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}

@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import { CategoriesResponse, SubjectsResponse, TopicsResponse, SubtopicsResponse, QuestionsResponse } from '@/types/jobPreparation';
+import { CategoriesResponse, SubjectsResponse, TopicsResponse, SubtopicsResponse, QuestionsResponse, ExamData } from '@/types/jobPreparation';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -63,6 +63,38 @@ class JobPreparationService {
       params: { page },
       headers: this.getAuthHeaders(),
     });
+    return response.data;
+  }
+
+  async getExamData(examUid: string): Promise<ExamData> {
+    const response = await axios.get(`${API_BASE_URL}/api/exams/${examUid}/`, {
+      headers: this.getAuthHeaders(),
+    });
+    return response.data;
+  }
+
+  async submitExamAnswer(examUid: string, questionUid: string, selectedOptionUid: string): Promise<any> {
+    const response = await axios.post(
+      `${API_BASE_URL}/api/exams/${examUid}/submit-answer/`,
+      {
+        question: questionUid,
+        selected_option: selectedOptionUid,
+      },
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
+    return response.data;
+  }
+
+  async submitExam(examUid: string): Promise<any> {
+    const response = await axios.post(
+      `${API_BASE_URL}/api/exams/${examUid}/submit/`,
+      {},
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
     return response.data;
   }
 }
