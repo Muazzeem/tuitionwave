@@ -1,58 +1,17 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Clock, CheckCircle, ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, HelpCircle } from 'lucide-react';
 import { getAccessToken } from '@/utils/auth';
 import { useToast } from '@/hooks/use-toast';
+import JobPreparationService from '@/services/JobPreparationService';
+import { ExamData, ExamQuestion, QuestionOption } from '@/types/jobPreparation';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 
-interface ExamQuestion {
-  uid: string;
-  order: number;
-  topic_name: string;
-  subject_title: string;
-  question_uid: string;
-  question_number: number;
-  question_text: string;
-  marks: number;
-  negative_marks: number;
-  time_limit_seconds: number;
-  options: {
-    uid: string;
-    option_text: string;
-    option_label: string;
-    order: number;
-  }[];
-}
-
-interface ExamData {
-  uid: string;
-  exam_type: string;
-  status: string;
-  question_limit: number;
-  total_questions: number;
-  total_marks: number;
-  duration_minutes: number;
-  started_at: string | null;
-  completed_at: string | null;
-  expires_at: string | null;
-  obtained_marks: number;
-  percentage: number;
-  correct_answers: number;
-  incorrect_answers: number;
-  unanswered: number;
-  cut_marks: number;
-  subjects_info: { uid: string; title: string; }[];
-  topics_info: { uid: string; name: string; }[];
-  exam_questions: ExamQuestion[];
-}
-
-interface UserAnswer {
-  [questionUid: string]: string | null;
+interface ExamPageProps {
+  // Define any props if needed
 }
 
 export default function ExamPage() {
@@ -62,40 +21,23 @@ export default function ExamPage() {
   const accessToken = getAccessToken();
 
   const [examData, setExamData] = useState<ExamData | null>(null);
-  const [loading, setLoading] = useState(true);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<UserAnswer>({});
-  const [timeLeft, setTimeLeft] = useState(0);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showEndExamDialog, setShowEndExamDialog] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
 
-  // Fetch exam data
   useEffect(() => {
-    const fetchExamData = async () => {
+    const fetchExam = async () => {
       if (!examId) return;
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/exams/${examId}/`, {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch exam data');
-        }
-
-        const data: ExamData = await response.json();
+        const data = await JobPreparationService.getExamData(examId);
         setExamData(data);
-        
-        // Set timer based on duration
-        const durationInSeconds = data.duration_minutes * 60;
-        setTimeLeft(durationInSeconds);
       } catch (error) {
         toast({
           title: "Error",
-          description: "Failed to load exam data.",
+          description: "Failed to load exam. Please try again.",
           variant: "destructive",
         });
         navigate('/exam-practice');
@@ -104,113 +46,111 @@ export default function ExamPage() {
       }
     };
 
-    fetchExamData();
-  }, [examId, accessToken, toast, navigate]);
+    fetchExam();
+  }, [examId, navigate, toast]);
 
-  // Timer countdown
-  useEffect(() => {
-    if (timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            handleSubmitExam();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(timer);
-    }
-  }, [timeLeft]);
-
-  const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  const handleOptionSelect = (optionUid: string) => {
+    setSelectedOption(optionUid);
   };
 
-  const handleAnswerSelect = async (questionUid: string, optionUid: string) => {
+  const handleSubmitAnswer = async () => {
     if (!examId) return;
 
+    setIsSubmitting(true);
     try {
-      // Submit answer to API
-      await fetch(`${import.meta.env.VITE_API_URL}/api/exams/${examId}/submit-answer/`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          question: questionUid,
-          selected_option: optionUid,
-        }),
-      });
+      if (selectedOption) {
+        await JobPreparationService.submitExamAnswer(
+          examId,
+          examData?.exam_questions[currentQuestionIndex].question_uid!,
+          selectedOption
+        );
+        toast({
+          title: "Answer Submitted",
+          description: "Your answer has been submitted successfully.",
+        });
+      } else {
+        toast({
+          title: "No Option Selected",
+          description: "Please select an option before submitting.",
+          variant: "warning",
+        });
+        return;
+      }
 
-      // Update local state
-      setUserAnswers(prev => ({
-        ...prev,
-        [questionUid]: optionUid,
-      }));
+      if (currentQuestionIndex < examData!.exam_questions.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setSelectedOption(null);
+      } else {
+        toast({
+          title: "Last Question",
+          description: "You have reached the last question. Please submit the exam.",
+        });
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to save answer.",
+        description: "Failed to submit answer. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleSubmitExam = async () => {
-    if (!examId || submitting) return;
-
-    setSubmitting(true);
+  const handleEndExam = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/exams/${examId}/submit/`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to submit exam');
-      }
-
+      const response = await JobPreparationService.submitExam(examId!);
       toast({
         title: "Success",
         description: "Exam submitted successfully!",
       });
-
       navigate(`/exam/${examId}/results`);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to submit exam.",
+        description: "Failed to submit exam. Please try again.",
         variant: "destructive",
       });
     } finally {
-      setSubmitting(false);
       setShowEndExamDialog(false);
     }
   };
 
-  const nextQuestion = () => {
-    if (examData && currentQuestionIndex < examData.exam_questions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
-    }
+  const currentQuestion = examData?.exam_questions[currentQuestionIndex];
+
+  const calculateTimeRemaining = () => {
+    if (!examData?.expires_at) return 0;
+    const expiryTime = new Date(examData.expires_at).getTime();
+    const now = new Date().getTime();
+    return Math.max(0, expiryTime - now);
   };
 
-  const previousQuestion = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
-    }
-  };
+  const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining());
 
-  const getAnsweredCount = () => {
-    return Object.values(userAnswers).filter(answer => answer !== null).length;
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTimeRemaining(calculateTimeRemaining());
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [examData?.expires_at]);
+
+  const formatTime = (milliseconds: number) => {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    let timeString = '';
+    if (hours > 0) {
+      timeString += `${hours}h `;
+    }
+    if (minutes > 0 || hours > 0) {
+      timeString += `${minutes}m `;
+    }
+    timeString += `${seconds}s`;
+
+    return timeString;
   };
 
   if (loading) {
@@ -224,7 +164,7 @@ export default function ExamPage() {
     );
   }
 
-  if (!examData) {
+  if (!examData || !currentQuestion) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
@@ -237,144 +177,87 @@ export default function ExamPage() {
     );
   }
 
-  const currentQuestion = examData.exam_questions[currentQuestionIndex];
-  const progress = ((currentQuestionIndex + 1) / examData.exam_questions.length) * 100;
-  const answeredCount = getAnsweredCount();
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-sm border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-xl font-bold text-gray-800 dark:text-white">
-                {examData.exam_type.charAt(0).toUpperCase() + examData.exam_type.slice(1)} Exam
-              </h1>
-              <Badge variant="outline">
-                {examData.question_limit} Questions
-              </Badge>
+            <h1 className="text-xl font-bold text-gray-800 dark:text-white">
+              {examData.exam_type} - Question {currentQuestionIndex + 1} of {examData.question_limit}
+            </h1>
+            <div className="text-gray-600 dark:text-gray-400">
+              Time Remaining: {formatTime(timeRemaining)}
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <Clock className={`h-5 w-5 ${timeLeft < 300 ? 'text-red-500' : 'text-blue-500'}`} />
-                <span className={`text-lg font-bold ${timeLeft < 300 ? 'text-red-500' : 'text-blue-500'}`}>
-                  {formatTime(timeLeft)}
-                </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-3xl mx-auto space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">
+                {currentQuestion.question_text}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {currentQuestion.options.map((option) => (
+                  <Button
+                    key={option.uid}
+                    variant="outline"
+                    className={`w-full justify-start ${selectedOption === option.uid ? 'bg-secondary text-secondary-foreground' : ''}`}
+                    onClick={() => handleOptionSelect(option.uid)}
+                    disabled={isSubmitting}
+                  >
+                    {option.option_label} {option.option_text}
+                  </Button>
+                ))}
               </div>
+            </CardContent>
+          </Card>
+
+          <div className="flex justify-between">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                if (currentQuestionIndex > 0) {
+                  setCurrentQuestionIndex(currentQuestionIndex - 1);
+                  setSelectedOption(null);
+                }
+              }}
+              disabled={currentQuestionIndex === 0 || isSubmitting}
+            >
+              Previous
+            </Button>
+            <div className="flex space-x-2">
               <Button
-                variant="destructive"
+                variant="outline"
                 onClick={() => setShowEndExamDialog(true)}
-                disabled={submitting}
+                disabled={isSubmitting}
               >
                 End Exam
+              </Button>
+              <Button
+                onClick={handleSubmitAnswer}
+                disabled={isSubmitting}
+              >
+                {currentQuestionIndex === examData.exam_questions.length - 1 ? 'Submit Exam' : 'Next'}
               </Button>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Progress Bar */}
-      <div className="bg-white dark:bg-gray-800 border-b">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Question {currentQuestionIndex + 1} of {examData.exam_questions.length}
-            </span>
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              Answered: {answeredCount}/{examData.exam_questions.length}
-            </span>
-          </div>
-          <Progress value={progress} className="h-2" />
-        </div>
-      </div>
-
-      {/* Question Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>Question {currentQuestion.question_number}</span>
-                <div className="flex items-center space-x-2">
-                  <Badge variant="secondary">{currentQuestion.subject_title}</Badge>
-                  <Badge variant="outline">{currentQuestion.topic_name}</Badge>
-                  <Badge variant="outline">{currentQuestion.marks} marks</Badge>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-lg mb-6 leading-relaxed">{currentQuestion.question_text}</p>
-              
-              <div className="space-y-3">
-                {currentQuestion.options.map((option) => {
-                  const isSelected = userAnswers[currentQuestion.question_uid] === option.uid;
-                  
-                  return (
-                    <div
-                      key={option.uid}
-                      className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                        isSelected 
-                          ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/20' 
-                          : 'hover:bg-gray-50 dark:hover:bg-gray-800'
-                      }`}
-                      onClick={() => handleAnswerSelect(currentQuestion.question_uid, option.uid)}
-                    >
-                      <div className="flex items-center">
-                        <div className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${
-                          isSelected ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
-                        }`}>
-                          {isSelected && <CheckCircle className="h-3 w-3 text-white" />}
-                        </div>
-                        <span className="font-medium mr-2">{option.option_label}</span>
-                        <span>{option.option_text}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Navigation */}
-          <div className="flex items-center justify-between">
-            <Button
-              variant="outline"
-              onClick={previousQuestion}
-              disabled={currentQuestionIndex === 0}
-            >
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              Previous
-            </Button>
-
-            <div className="flex items-center space-x-2">
-              {userAnswers[currentQuestion.question_uid] && (
-                <CheckCircle className="h-5 w-5 text-green-500" />
-              )}
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {userAnswers[currentQuestion.question_uid] ? 'Answered' : 'Not answered'}
-              </span>
-            </div>
-
-            <Button
-              onClick={nextQuestion}
-              disabled={currentQuestionIndex === examData.exam_questions.length - 1}
-            >
-              Next
-              <ChevronRight className="h-4 w-4 ml-2" />
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* End Exam Confirmation Dialog */}
+      
       <ConfirmationDialog
         isOpen={showEndExamDialog}
         onClose={() => setShowEndExamDialog(false)}
-        onConfirm={handleSubmitExam}
+        onConfirm={handleEndExam}
         title="End Exam"
-        description={`Are you sure you want to end the exam? You have answered ${answeredCount} out of ${examData.exam_questions.length} questions.`}
-        variant="destructive"
+        description="Are you sure you want to end the exam? This action cannot be undone."
+        variant="cancel"
       />
     </div>
   );
