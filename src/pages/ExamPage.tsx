@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import JobPreparationService from '@/services/JobPreparationService';
 import { ExamData, ExamQuestion, QuestionOption } from '@/types/jobPreparation';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ExamPageProps {
   // Define any props if needed
@@ -34,6 +35,7 @@ export default function ExamPage() {
 
       try {
         const data = await JobPreparationService.getExamData(examId);
+        console.log('Exam data:', data);
         setExamData(data);
       } catch (error) {
         toast({
@@ -41,7 +43,6 @@ export default function ExamPage() {
           description: "Failed to load exam. Please try again.",
           variant: "destructive",
         });
-        navigate('/exam-practice');
       } finally {
         setLoading(false);
       }
@@ -157,7 +158,7 @@ export default function ExamPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center w-full">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-gray-400">Loading exam...</p>
@@ -168,10 +169,23 @@ export default function ExamPage() {
 
   if (!examData) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center w-full">
         <div className="text-center">
           <p className="text-gray-600 dark:text-gray-400">Exam not found</p>
-          <Button onClick={() => navigate('/exam-practice')} className="mt-4">
+          <Button onClick={() => navigate('/job-preparation/practice')} className="mt-4 text-white">
+            Back to Exam Practice
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (examData.status === 'completed') {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center w-full">
+        <div className="text-center">
+          <p className="text-gray-600 dark:text-gray-400">Exam is completed</p>
+          <Button onClick={() => navigate('/job-preparation/practice')} className="mt-4 text-white">
             Back to Exam Practice
           </Button>
         </div>
@@ -180,8 +194,7 @@ export default function ExamPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 w-full">
       <div className="bg-white dark:bg-gray-800 shadow-sm border-b sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -206,92 +219,91 @@ export default function ExamPage() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-6">
-          {/* All Questions */}
-          {examData.exam_questions.map((question, index) => (
-            <Card key={question.uid} className="relative">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <CardTitle className="text-lg font-semibold">
-                    Question {index + 1}
-                  </CardTitle>
-                  <div className="flex items-center gap-2">
-                    {submittedAnswers.has(question.question_uid) ? (
-                      <CheckCircle className="h-5 w-5 text-green-500" />
-                    ) : (
-                      <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
-                    )}
-                    <span className="text-sm text-gray-500">
-                      {question.marks} mark{question.marks > 1 ? 's' : ''}
-                    </span>
+      <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto space-y-6">
+            {/* All Questions */}
+            {examData.exam_questions.map((question, index) => (
+              <Card key={question.uid} className="relative">
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg font-semibold">
+                      Question {index + 1}
+                    </CardTitle>
+                    <div className="flex items-center gap-2">
+                      {submittedAnswers.has(question.question_uid) ? (
+                        <CheckCircle className="h-5 w-5 text-green-500" />
+                      ) : (
+                        <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
+                      )}
+                      <span className="text-sm text-gray-500">
+                        {question.marks} mark{question.marks > 1 ? 's' : ''}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {question.topic_name} - {question.subject_title}
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <p className="text-gray-800 dark:text-gray-200 mb-4">
-                    {question.question_text}
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {question.topic_name} - {question.subject_title}
                   </p>
-                  
-                  <div className="space-y-2">
-                    {question.options.map((option) => (
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <p className="text-gray-800 dark:text-gray-200 mb-4">
+                      {question.question_text}
+                    </p>
+
+                    <div className="space-y-2">
+                      {question.options.map((option) => (
+                        <Button
+                          key={option.uid}
+                          variant="outline"
+                          className={`w-full justify-start text-left ${selectedOptions[question.question_uid] === option.uid
+                            ? 'bg-blue-50 border-blue-500 text-blue-700'
+                            : ''
+                            } ${submittedAnswers.has(question.question_uid)
+                              ? 'opacity-75 cursor-not-allowed'
+                              : ''
+                            }`}
+                          onClick={() => handleOptionSelect(question.question_uid, option.uid)}
+                          disabled={submittedAnswers.has(question.question_uid)}
+                        >
+                          <span className="font-medium mr-2">{option.option_label}</span>
+                          {option.option_text}
+                        </Button>
+                      ))}
+                    </div>
+
+                    <div className="flex justify-end pt-4">
                       <Button
-                        key={option.uid}
-                        variant="outline"
-                        className={`w-full justify-start text-left ${
-                          selectedOptions[question.question_uid] === option.uid 
-                            ? 'bg-blue-50 border-blue-500 text-blue-700' 
-                            : ''
-                        } ${
-                          submittedAnswers.has(question.question_uid) 
-                            ? 'opacity-75 cursor-not-allowed' 
-                            : ''
-                        }`}
-                        onClick={() => handleOptionSelect(question.question_uid, option.uid)}
-                        disabled={submittedAnswers.has(question.question_uid)}
+                        onClick={() => handleSubmitAnswer(question.question_uid)}
+                        disabled={
+                          isSubmitting ||
+                          !selectedOptions[question.question_uid] ||
+                          submittedAnswers.has(question.question_uid)
+                        }
+                        className="min-w-32 text-white"
                       >
-                        <span className="font-medium mr-2">{option.option_label}</span>
-                        {option.option_text}
+                        {submittedAnswers.has(question.question_uid) ? 'Submitted' : 'Submit Answer'}
                       </Button>
-                    ))}
+                    </div>
                   </div>
+                </CardContent>
+              </Card>
+            ))}
 
-                  <div className="flex justify-end pt-4">
-                    <Button
-                      onClick={() => handleSubmitAnswer(question.question_uid)}
-                      disabled={
-                        isSubmitting || 
-                        !selectedOptions[question.question_uid] ||
-                        submittedAnswers.has(question.question_uid)
-                      }
-                      className="min-w-32"
-                    >
-                      {submittedAnswers.has(question.question_uid) ? 'Submitted' : 'Submit Answer'}
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-
-          {/* End Exam Button */}
-          <div className="flex justify-center pt-6">
-            <Button
-              variant="destructive"
-              onClick={() => setShowEndExamDialog(true)}
-              disabled={isSubmitting}
-              className="min-w-48"
-            >
-              End Exam
-            </Button>
+            {/* End Exam Button */}
+            <div className="flex justify-center pt-6">
+              <Button
+                variant="destructive"
+                onClick={() => setShowEndExamDialog(true)}
+                disabled={isSubmitting}
+                className="min-w-48 text-white"
+              >
+                End Exam
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      </ScrollArea>
       
       <ConfirmationDialog
         isOpen={showEndExamDialog}
@@ -299,7 +311,7 @@ export default function ExamPage() {
         onConfirm={handleEndExam}
         title="End Exam"
         description="Are you sure you want to end the exam? This action cannot be undone."
-        variant="cancel"
+        variant="confirmation"
       />
     </div>
   );

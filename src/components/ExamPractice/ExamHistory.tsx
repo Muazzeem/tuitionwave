@@ -166,7 +166,7 @@ export default function ExamHistory({
       const data = await response.json();
 
       // Navigate to the exam page
-      navigate(`/exam/${selectedExam.uid}`);
+      navigate(`/job-preparation/exam/${selectedExam.uid}`);
 
       toast({
         title: "Success",
@@ -186,11 +186,11 @@ export default function ExamHistory({
   }
 
   const handleContinueExam = (exam: ApiExamRecord) => {
-    navigate(`/exam/${exam.uid}`);
+    navigate(`/job-preparation/exam/${exam.uid}`);
   };
 
   const handleViewResults = (exam: ApiExamRecord) => {
-    navigate(`/exam/${exam.uid}/results`);
+    navigate(`/job-preparation/exam/${exam.uid}/results`);
   };
 
   const displayedExams = useInternalApi
@@ -237,7 +237,7 @@ export default function ExamHistory({
     switch (exam.status) {
       case 'not_started':
         return (
-          <Button size="sm" className="flex-1 text-white" onClick={() => {
+          <Button size="sm" className="flex-1 text-white flex-1 text-white hover:bg-gray-100 dark:hover:bg-gray-900" onClick={() => {
             handleStartExam();
             setSelectedExam(exam);
           }}>
@@ -246,7 +246,7 @@ export default function ExamHistory({
         );
       case 'in_progress':
         return (
-          <Button size="sm" variant="outline" className="flex-1 text-white"
+          <Button size="sm" variant="outline" className="flex-1 text-white flex-1 text-white hover:bg-gray-100 dark:hover:bg-gray-900"
             onClick={() => handleContinueExam(exam)}
           >
             Continue
@@ -255,7 +255,7 @@ export default function ExamHistory({
       case 'completed':
       case 'failed':
         return (
-          <Button size="sm" variant="outline" className="flex-1 text-white"
+          <Button size="sm" variant="outline" className="flex-1 text-white flex-1 text-white hover:bg-gray-100 dark:hover:bg-gray-900"
             onClick={() => handleViewResults(exam)}
           >
             View Results
@@ -339,11 +339,7 @@ export default function ExamHistory({
                       {exam.status_display}
                     </Badge>
 
-                    <div className="text-sm text-muted-foreground">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Users className="h-3 w-3" />
-                        {exam.category_name}
-                      </div>
+                    <div className="text-sm text-muted-foreground mt-5">
                       <div className="flex items-center gap-2 mb-1">
                         <FileText className="h-3 w-3" />
                         {exam.question_limit} Questions
@@ -356,7 +352,7 @@ export default function ExamHistory({
                   </div>
 
                   {exam.status === 'completed' && exam.percentage > 0 && (
-                    <div className="pt-2 border-t">
+                    <div className="border-t">
                       <div className="text-sm">
                         <span className="text-muted-foreground">Score: </span>
                         <span className={`font-medium ${exam.percentage >= 50 ? 'text-green-600' : 'text-red-600'}`}>

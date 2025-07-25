@@ -1,12 +1,13 @@
 
 import axios from 'axios';
 import { CategoriesResponse, SubjectsResponse, TopicsResponse, SubtopicsResponse, QuestionsResponse, ExamData } from '@/types/jobPreparation';
+import { getAccessToken } from '@/utils/auth';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 class JobPreparationService {
   private getAuthHeaders() {
-    const token = localStorage.getItem('authToken');
+    const token = getAccessToken();
     return token ? { Authorization: `Bearer ${token}` } : {};
   }
 

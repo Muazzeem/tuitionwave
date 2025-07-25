@@ -43,6 +43,8 @@ import PublicDashboard from "./pages/PublicDashboard";
 import JobPreparationDashboard from "./pages/JobPreparation/Dashboard";
 import CreateModelTest from "./pages/JobCandidate/CreateModelTest";
 import ExamPractice from "./pages/JobCandidate/ExamPractice";
+import ExamPage from "./pages/ExamPage";
+import ExamResultsPage from "./pages/ExamResultsPage";
 
 
 const queryClient = new QueryClient();
@@ -156,6 +158,19 @@ const App = () => (
                   <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId" element={<QuestionsPage />} />
                   <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId/reading" element={<ReadingModePage />} />
                   <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId/exam" element={<ExamModePage />} />
+
+
+                <Route path="/exam/:examId" element={
+                  <AuthGuard>
+                    <MainLayout><ExamPage /></MainLayout>
+                  </AuthGuard>
+                } />
+
+                <Route path="/job-preparation/exam/:examId/results" element={
+                  <AuthGuard>
+                    <MainLayout><ExamResultsPage /></MainLayout>
+                  </AuthGuard>
+                } />
                         
                   <Route path="/guardian/find-tutors" element={
                       <MainLayout><FindTutorsList /></MainLayout>
