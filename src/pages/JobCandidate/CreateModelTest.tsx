@@ -66,12 +66,12 @@ export default function CreateModelTest() {
         <div className="p-4 md:p-6">
           {/* Header */}
           <div className="mb-6">
-            <h1 className="text-xl font-bold mb-6 dark:text-white">Model Tests</h1>
+            <h1 className="text-3xl font-bold text-foreground">Model Tests</h1>
             <p className="text-gray-400">Create and practise preliminary model exams</p>
           </div>
 
           {/* Create Model Test Section */}
-          <Card className="mb-8 dark:bg-gray-800 dark:border-gray-700">
+          {/* <Card className="mb-8 dark:bg-gray-800 dark:border-gray-700">
             <CardHeader className="pb-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <CardTitle className="dark:text-white text-lg">Create Model Test</CardTitle>
@@ -128,7 +128,7 @@ export default function CreateModelTest() {
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Tabs */}
           <div className="mb-6">

@@ -29,7 +29,7 @@ export const ProfileStepper: React.FC<ProfileStepperProps> = ({ steps, currentSt
               <div 
                 className={`w-12 h-12 rounded-full flex items-center justify-center text-white 
                   ${isActive ? 'bg-blue-600' : 
-                    isCompleted ? 'bg-blue-500' : 'bg-gray-200'}`}
+                    isCompleted ? 'bg-blue-500' : 'bg-gray-900'}`}
               >
                 {isCompleted ? (
                   <Check className="w-5 h-5" />

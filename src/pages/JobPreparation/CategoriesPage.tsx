@@ -102,7 +102,7 @@ const CategoriesPage: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen flex flex-col w-full">
+    <div className="flex-1 overflow-auto dark:bg-gray-900">
       <main className="flex-1 bg-gray-50 dark:bg-gray-900">
         <div className="p-6">
           <div>

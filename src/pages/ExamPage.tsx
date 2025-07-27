@@ -100,7 +100,7 @@ export default function ExamPage() {
         title: "Success",
         description: "Exam submitted successfully!",
       });
-      navigate(`/exam/${examId}/results`);
+      navigate(`/job-preparation/exam/${examId}/results`);
     } catch (error) {
       toast({
         title: "Error",
@@ -199,8 +199,8 @@ export default function ExamPage() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-gray-800 dark:text-white">
-                {examData.exam_type} - {examData.question_limit} Questions
+              <h1 className="text-xl font-bold text-gray-800 dark:text-white text-capitalize">
+                {examData.question_limit} Questions
               </h1>
               <div className="flex items-center gap-4 mt-2">
                 <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -293,12 +293,12 @@ export default function ExamPage() {
             {/* End Exam Button */}
             <div className="flex justify-center pt-6">
               <Button
-                variant="destructive"
+                variant="default"
                 onClick={() => setShowEndExamDialog(true)}
                 disabled={isSubmitting}
                 className="min-w-48 text-white"
               >
-                End Exam
+                Submit Answers
               </Button>
             </div>
           </div>

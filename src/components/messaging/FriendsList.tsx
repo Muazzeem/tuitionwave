@@ -69,7 +69,7 @@ const FriendsList: React.FC<FriendsListProps> = ({
           </Button>
         </div>
         
-        <div className="relative">
+        {/* <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search conversations..."
@@ -77,11 +77,11 @@ const FriendsList: React.FC<FriendsListProps> = ({
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-10 bg-background border-input focus:border-ring focus:ring-1 focus:ring-ring/20 transition-all duration-200"
           />
-        </div>
+        </div> */}
       </div>
 
       {/* Friends List */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto dark:bg-gray-800">
         {isLoading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>

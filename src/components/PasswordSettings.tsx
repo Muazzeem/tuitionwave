@@ -92,7 +92,7 @@ const PasswordSettings = () => {
     }
 
     return (
-        <div className="p-6 space-y-8 dark:bg-gray-900">
+        <div className="p-6 space-y-8 dark:bg-gray-800 dark:border-gray-700">
             <div>
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Password</h2>
                 <p className="text-gray-500 mt-1 dark:text-gray-300">Manage and change your password</p>

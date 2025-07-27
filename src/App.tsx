@@ -160,7 +160,7 @@ const App = () => (
                   <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId/exam" element={<ExamModePage />} />
 
 
-                <Route path="/exam/:examId" element={
+                <Route path="/job-preparation/exam/:examId" element={
                   <AuthGuard>
                     <MainLayout><ExamPage /></MainLayout>
                   </AuthGuard>
@@ -268,8 +268,9 @@ const App = () => (
                   } />
                   <Route path="/dashboard" element={
                     <AuthGuard>
-                      <Sidebar />
+                    <MainLayout>
                       <PublicDashboard />
+                    </MainLayout>
                     </AuthGuard>
                   } />
                   <Route path="*" element={<NotFound />} />

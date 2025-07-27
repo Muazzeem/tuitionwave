@@ -44,12 +44,11 @@ export default function JobPreparationDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background w-full dark:bg-gray-900">
+    <div className="flex-1 overflow-auto dark:bg-gray-900">
       <DashboardHeader userName="BCS Candidate" />
       
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
         <div className="p-6">
-          {/* Header Section */}
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-foreground">BCS Preparation Dashboard</h1>
@@ -67,13 +66,11 @@ export default function JobPreparationDashboard() {
             </div>
           </div>
 
-          {/* Quick Stats */}
           <div className='mt-5'>
             <QuickStats data={dashboardData} />
           </div>
 
-          {/* Main Content Tabs */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-5">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-5">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="performance">Performance</TabsTrigger>

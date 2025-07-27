@@ -346,7 +346,7 @@ const GeneralSettings = () => {
   };
 
   return (
-    <div className="p-6 dark:bg-gray-900">
+    <div className="p-6 dark:bg-gray-800">
       <h2 className="text-2xl font-bold mb-6">General Settings</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Profile Picture Section */}

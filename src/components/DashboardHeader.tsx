@@ -18,8 +18,9 @@ const getUserTypeFromUrl = (pathname: string): string => {
   if (segments.includes('job-preparation')) {
     return 'STUDENT';
   }
-
-  return 'GUARDIAN';
+  if (segments.includes('guardian')) {
+    return 'GUARDIAN';
+  }
 };
 
 const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
@@ -129,15 +130,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-30 border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
               { userTypeFromUrl === 'TEACHER' && (
                   <>
-                    <Link
-                      to={`/teacher/profile/`}
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-white"
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      <User className="h-4 w-4 mr-2 dark:text-white" />
-                      <span>Profile</span>
-                    </Link>
-                    <Link
+                  <Link
                       to="/teacher/settings/"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-white"
                       onClick={() => setIsDropdownOpen(false)}
@@ -156,7 +149,6 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                   </>
               )}
 
-              <hr className="my-1 border-gray-200 dark:border-gray-600" />
               <Link
                 to="#"
                 onClick={handleLogout}

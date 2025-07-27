@@ -179,8 +179,9 @@ export default function ExamPractice() {
 
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
         <div className="p-6 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Exam Practice</h2>
+          <div className="">
+            <h2 className="text-3xl font-bold text-foreground">Exam Practice</h2>
+            <p className="text-muted-foreground mt-1">Customize your exam parameters</p>
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
