@@ -6,7 +6,7 @@ import { Smartphone, Download, QrCode } from 'lucide-react';
 
 const MobileAppDownload: React.FC = () => {
   return (
-    <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-16">
+    <div className="dark:bg-gray-900 py-16 relative overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="text-center text-white mb-12">
           <h2 className="text-4xl font-bold mb-4">
@@ -35,8 +35,8 @@ const MobileAppDownload: React.FC = () => {
                   <Download className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold">Offline Access</h3>
-                  <p className="opacity-90">Download content for offline studying</p>
+                  <h3 className="text-xl font-semibold">Full Access</h3>
+                  <p className="opacity-90">Download our mobile app to get full access</p>
                 </div>
               </div>
 

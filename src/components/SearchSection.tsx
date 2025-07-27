@@ -255,20 +255,12 @@ const SearchSection: React.FC = () => {
   }
 
   return (
-    <div className="search-section text-white py-16 md:py-24 relative">
-      <div className="absolute inset-0 bg-blue-900 z-0">
-        <img
-          src="/lovable-uploads/cover-image.jpg"
-          alt="Tutor helping student"
-          className="w-full h-full object-cover opacity-40 mix-blend-overlay"
-        />
-      </div>
+    <div className="text-white relative py-10 dark:bg-gray-800">
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            QUICK SEARCH FOR TUTORS
+          <h1 className="text-3xl font-bold mb-4">
+            Find a right tutor in your area
           </h1>
-          <p className="text-xl">FIND A RIGHT TUTOR IN YOUR AREA.</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-xl p-6 dark:bg-gray-900 backdrop-blur-sm bg-opacity-95">

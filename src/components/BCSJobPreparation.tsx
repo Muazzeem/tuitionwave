@@ -30,6 +30,13 @@ const BCSJobPreparation: React.FC = () => {
 
   return (
     <div className="bg-gradient-to-br from-gray-900 via-green-900 to-gray-800 py-16 relative overflow-hidden">
+      <div className="absolute inset-0 bg-blue-900 z-0">
+        <img
+          src="/lovable-uploads/cover-image.jpg"
+          alt="Tutor helping student"
+          className="w-full h-full object-cover opacity-40 mix-blend-overlay"
+        />
+      </div>
       {/* Background overlay */}
       <div className="absolute inset-0 bg-black/40"></div>
       
@@ -45,7 +52,7 @@ const BCSJobPreparation: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* Become a Tutor Card */}
-          <Card className="bg-black/50 border-gray-700 text-white backdrop-blur-sm">
+          <Card className="bg-black/50 border-gray-700 text-white backdrop-blur-md shadow-xl">
             <CardHeader>
               <CardTitle className="text-2xl">Become a Tutor</CardTitle>
               <p className="text-gray-300">
@@ -55,7 +62,7 @@ const BCSJobPreparation: React.FC = () => {
             <CardContent>
               <div className="text-3xl font-bold text-green-400 mb-4">৳12,500</div>
               <Button 
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-green-600 hover:bg-green-700 text-white"
                 onClick={() => navigate('/auth/registration')}
               >
                 Start Teaching
@@ -72,7 +79,7 @@ const BCSJobPreparation: React.FC = () => {
                   <Badge 
                     key={type.label}
                     variant={type.active ? "default" : "secondary"}
-                    className={type.active ? "bg-green-600" : "bg-gray-600"}
+                    className={type.active ? "bg-green-600 text-white" : "bg-gray-600 text-gray-300"}
                   >
                     {type.label}
                   </Badge>
@@ -92,7 +99,8 @@ const BCSJobPreparation: React.FC = () => {
                 ))}
               </div>
               <Button 
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                size='lg'
                 onClick={() => navigate('/job-preparation/dashboard')}
               >
                 Start Preparation

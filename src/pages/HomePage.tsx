@@ -16,6 +16,7 @@ const HomePage: React.FC = () => {
       <SearchSection />
       <TutorSearchResults />
       <RecommendedTutors />
+      <hr className="border-gray-200 dark:border-gray-700" />
       <MobileAppDownload />
       <Footer />
     </div>
