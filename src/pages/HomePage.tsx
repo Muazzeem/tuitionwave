@@ -1,8 +1,8 @@
 
 import React from 'react';
 import Header from '@/components/Header';
-import SearchSection from '@/components/SearchSection';
 import BCSJobPreparation from '@/components/BCSJobPreparation';
+import SearchSection from '@/components/SearchSection';
 import TutorSearchResults from '@/components/TutorSearchResults';
 import RecommendedTutors from '@/components/RecommendedTutors';
 import MobileAppDownload from '@/components/MobileAppDownload';
@@ -12,8 +12,8 @@ const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col dark:bg-gray-900">
       <Header />
-      <SearchSection />
       <BCSJobPreparation />
+      <SearchSection />
       <TutorSearchResults />
       <RecommendedTutors />
       <MobileAppDownload />
