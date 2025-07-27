@@ -17,7 +17,6 @@ const BCSJobPreparation: React.FC = () => {
   const examTypes = [
     { label: 'BCS', active: true },
     { label: 'Bank', active: false },
-    { label: 'IELTS', active: false },
     { label: 'Gov Job', active: false },
   ];
 
@@ -43,10 +42,10 @@ const BCSJobPreparation: React.FC = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Hire • Teach • Succeed
+            Exam • Preparation • Succeed
           </h2>
           <p className="text-xl text-gray-200">
-            Bangladesh's hub for learning & earning.
+            Bangladesh's hub for learning & earning
           </p>
         </div>
 
@@ -60,9 +59,9 @@ const BCSJobPreparation: React.FC = () => {
               </p>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-green-400 mb-4">৳12,500</div>
+              <div className="text-3xl font-bold text-blue-400 mb-4">৳12,500</div>
               <Button 
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-blue-600 hover:bg-blue-700 text-white"
                 onClick={() => navigate('/auth/registration')}
               >
                 Start Teaching
@@ -79,7 +78,7 @@ const BCSJobPreparation: React.FC = () => {
                   <Badge 
                     key={type.label}
                     variant={type.active ? "default" : "secondary"}
-                    className={type.active ? "bg-green-600 text-white" : "bg-gray-600 text-gray-300"}
+                    className={type.active ? "bg-blue-600 text-white" : "bg-gray-600 text-gray-300"}
                   >
                     {type.label}
                   </Badge>
@@ -114,21 +113,13 @@ const BCSJobPreparation: React.FC = () => {
           {features.map((feature, index) => (
             <Card key={index} className="bg-black/30 border-gray-700 text-white backdrop-blur-sm">
               <CardContent className="p-4 text-center">
-                <feature.icon className="h-8 w-8 mx-auto mb-3 text-green-400" />
+                <feature.icon className="h-8 w-8 mx-auto mb-3 text-blue-400" />
                 <h3 className="font-semibold mb-2">{feature.title}</h3>
                 <p className="text-sm text-gray-300">{feature.description}</p>
               </CardContent>
             </Card>
           ))}
-        </div>
-
-        {/* Bottom tagline */}
-        <div className="text-center">
-          <p className="text-lg text-gray-200 flex items-center justify-center gap-2">
-            <CheckCircle className="h-5 w-5 text-green-400" />
-            Top-rated, verified teachers. 24h match guarantee. Track progress 100%.
-          </p>
-        </div>
+        </div>        
       </div>
     </div>
   );
