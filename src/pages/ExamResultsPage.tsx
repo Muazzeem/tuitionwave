@@ -134,7 +134,7 @@ export default function ExamResultsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center w-full">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-gray-400">Loading results...</p>
@@ -145,7 +145,7 @@ export default function ExamResultsPage() {
 
   if (!examResults) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center w-full">
         <div className="text-center">
           <p className="text-gray-600 dark:text-gray-400">Results not found</p>
           <Button onClick={() => navigate('/exam-practice')} className="mt-4">
@@ -229,12 +229,15 @@ export default function ExamResultsPage() {
                     <Trophy className="h-5 w-5 text-yellow-500" />
                     <span>Overall Performance</span>
                   </div>
-                  <Badge
-                    variant={passFailStatus === 'PASS' ? 'default' : 'destructive'}
-                    className={`text-lg px-4 py-2 ${getPassFailColor(examResults.obtained_marks, examResults.cut_marks)}`}
-                  >
-                    <span className='text-white'>{passFailStatus}</span>
-                  </Badge>
+
+                  {examResults.exam_type === 'model_test' && (
+                    <Badge
+                      variant={passFailStatus === 'PASS' ? 'default' : 'destructive'}
+                      className={`text-lg px-4 py-2 ${getPassFailColor(examResults.obtained_marks, examResults.cut_marks)}`}
+                    >
+                      <span className='text-white'>{passFailStatus}</span>
+                    </Badge>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent>

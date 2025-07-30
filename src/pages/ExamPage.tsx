@@ -22,7 +22,8 @@ export default function ExamPage() {
   const { toast } = useToast();
   const accessToken = getAccessToken();
 
-  const [examData, setExamData] = useState<ExamData | null>(null);
+  const [examData, setExamData] = useState({} as ExamData);
+  const [status, setStatus] = useState(examData.status);
   const [selectedOptions, setSelectedOptions] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,7 +36,7 @@ export default function ExamPage() {
 
       try {
         const data = await JobPreparationService.getExamData(examId);
-        console.log('Exam data:', data);
+        console.log('Exam data:', data.status);
         setExamData(data);
       } catch (error) {
         toast({
@@ -51,15 +52,18 @@ export default function ExamPage() {
     fetchExam();
   }, [examId, navigate, toast]);
 
-  const handleOptionSelect = (questionUid: string, optionUid: string) => {
+  const handleSelectAndSubmit = async (questionUid: string, optionUid: string) => {
+  // Step 1: Set the selected option
     setSelectedOptions(prev => ({
       ...prev,
       [questionUid]: optionUid
     }));
-  };
 
-  const handleSubmitAnswer = async (questionUid: string) => {
-    if (!examId || !selectedOptions[questionUid]) {
+    // Step 2: Wait for the state to update and add a short delay
+    await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
+
+    // Step 3: Validate and submit the answer
+    if (!examId || !optionUid) {
       toast({
         title: "No Option Selected",
         description: "Please select an option before submitting.",
@@ -73,11 +77,11 @@ export default function ExamPage() {
       await JobPreparationService.submitExamAnswer(
         examId,
         questionUid,
-        selectedOptions[questionUid]
+        optionUid
       );
-      
+
       setSubmittedAnswers(prev => new Set(prev).add(questionUid));
-      
+
       toast({
         title: "Answer Submitted",
         description: "Your answer has been submitted successfully.",
@@ -92,6 +96,7 @@ export default function ExamPage() {
       setIsSubmitting(false);
     }
   };
+
 
   const handleEndExam = async () => {
     try {
@@ -193,6 +198,28 @@ export default function ExamPage() {
     );
   }
 
+  const handleStartExam = async () => {
+    setLoading(true);
+
+    try {
+      const response = await fetch(`/api/exams/${examData.uid}/start/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to start exam");
+      const result = await response.json();
+      setStatus("running");
+    } catch (err) {
+      console.error("Error starting exam:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 w-full">
       <div className="bg-white dark:bg-gray-800 shadow-sm border-b sticky top-0 z-10">
@@ -210,10 +237,19 @@ export default function ExamPage() {
               </div>
             </div>
             <div className="text-right">
-              <div className="text-gray-600 dark:text-gray-400 flex items-center gap-2">
-                <Clock className="h-4 w-4" />
-                Time Remaining: {formatTime(timeRemaining)}
-              </div>
+              {examData.status === 'in_progress' ? (
+                <div className="text-gray-600 dark:text-gray-400 flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Time Remaining: {formatTime(timeRemaining)}
+                </div>
+              ) : examData.status === 'not_started' ? (
+                <button
+                  onClick={handleStartExam}
+                  className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  Start Exam
+                </button>
+              ) : null}
             </div>
           </div>
         </div>
@@ -263,27 +299,15 @@ export default function ExamPage() {
                               ? 'opacity-75 cursor-not-allowed'
                               : ''
                             }`}
-                          onClick={() => handleOptionSelect(question.question_uid, option.uid)}
+                          onClick={() => {
+                            handleSelectAndSubmit(question.question_uid, option.uid);
+                          }}
                           disabled={submittedAnswers.has(question.question_uid)}
                         >
                           <span className="font-medium mr-2">{option.option_label}</span>
                           {option.option_text}
                         </Button>
                       ))}
-                    </div>
-
-                    <div className="flex justify-end pt-4">
-                      <Button
-                        onClick={() => handleSubmitAnswer(question.question_uid)}
-                        disabled={
-                          isSubmitting ||
-                          !selectedOptions[question.question_uid] ||
-                          submittedAnswers.has(question.question_uid)
-                        }
-                        className="min-w-32 text-white"
-                      >
-                        {submittedAnswers.has(question.question_uid) ? 'Submitted' : 'Submit Answer'}
-                      </Button>
                     </div>
                   </div>
                 </CardContent>
