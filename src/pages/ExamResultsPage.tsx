@@ -48,6 +48,9 @@ interface ExamResults {
       order: number;
       is_correct: boolean;
     }[];
+    selected_option_uid?: string;
+    is_correct?: boolean;
+    explanation?: string;
   }[];
 }
 
@@ -180,30 +183,52 @@ export default function ExamResultsPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {question.options.map((option) => (
-                        <div
-                          key={option.uid}
-                          className={`p-3 rounded-lg border ${option.is_correct
-                            ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800'
-                            : 'bg-gray-50 border-gray-200 dark:bg-gray-800 dark:border-gray-700'
-                            }`}
-                        >
-                          <div className="flex items-center space-x-2">
-                            {option.is_correct ? (
-                              <CheckCircle className="h-4 w-4 text-green-600" />
-                            ) : (
-                              <div className="h-4 w-4" />
-                            )}
-                            <span className="font-medium">{option.option_label}</span>
-                            <span>{option.option_text}</span>
-                            {option.is_correct && (
-                              <Badge variant="secondary" className="ml-auto">
-                                Correct Answer
-                              </Badge>
-                            )}
+                      {question.options.map((option) => {
+                        const isUserSelected = option.uid === question.selected_option_uid;
+                        const isCorrect = option.is_correct;
+                        const isWrongSelected = isUserSelected && !isCorrect;
+
+                        const baseClass = `p-3 rounded-lg border`;
+                        const selectedClass = isCorrect
+                          ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800'
+                          : isWrongSelected
+                            ? 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800'
+                            : 'bg-gray-50 border-gray-200 dark:bg-gray-800 dark:border-gray-700';
+
+                        return (
+                          <div key={option.uid} className={`${baseClass} ${selectedClass}`}>
+                            <div className="flex items-center space-x-2">
+                              {isCorrect ? (
+                                <CheckCircle className="h-4 w-4 text-green-600" />
+                              ) : isWrongSelected ? (
+                                <XCircle className="h-4 w-4 text-red-600" />
+                              ) : (
+                                <div className="h-4 w-4" />
+                              )}
+                              <span className="font-medium">{option.option_label}</span>
+                              <span>{option.option_text}</span>
+                              {isCorrect && (
+                                <Badge variant="secondary" className="ml-auto">
+                                  Correct Answer
+                                </Badge>
+                              )}
+                              {isUserSelected && !isCorrect && (
+                                <Badge variant="destructive" className="ml-auto">
+                                  Your Answer
+                                </Badge>
+                              )}
+                            </div>
                           </div>
+                        );
+                      })}
+
+                      {/* Show Explanation */}
+                      {question.explanation && (
+                        <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 text-yellow-800 dark:text-yellow-100 rounded-md">
+                          <h4 className="font-semibold mb-1">Explanation:</h4>
+                          <p>{question.explanation}</p>
                         </div>
-                      ))}
+                      )}
                     </div>
                   </CardContent>
                 </Card>
