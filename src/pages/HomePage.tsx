@@ -4,7 +4,6 @@ import Header from '@/components/Header';
 import BCSJobPreparation from '@/components/BCSJobPreparation';
 import SearchSection from '@/components/SearchSection';
 import TutorSearchResults from '@/components/TutorSearchResults';
-import RecommendedTutors from '@/components/RecommendedTutors';
 import MobileAppDownload from '@/components/MobileAppDownload';
 import Footer from '@/components/Footer';
 
@@ -15,7 +14,7 @@ const HomePage: React.FC = () => {
       <BCSJobPreparation />
       <SearchSection />
       <TutorSearchResults />
-      <RecommendedTutors />
+      {/* <RecommendedTutors /> */}
       <hr className="border-gray-200 dark:border-gray-700" />
       <MobileAppDownload />
       <Footer />

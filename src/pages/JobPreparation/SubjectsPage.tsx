@@ -31,7 +31,7 @@ const SubjectsPage: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate('/job-preparation');
+    navigate('/job-preparation/questions');
   };
 
   const handlePageChange = (page: number) => {

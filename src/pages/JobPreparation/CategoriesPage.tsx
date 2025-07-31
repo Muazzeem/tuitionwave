@@ -8,6 +8,7 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { BookOpen } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
 import { Category } from '@/types/jobPreparation';
+import DashboardHeader from '@/components/DashboardHeader';
 
 const CategoriesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -102,7 +103,8 @@ const CategoriesPage: React.FC = () => {
 
 
   return (
-    <div className="flex-1 overflow-auto dark:bg-gray-900">
+    <div className="flex-1 overflow-auto dark:bg-gray-900 h-screen">
+      <DashboardHeader userName="BCS Candidate" />
       <main className="flex-1 bg-gray-50 dark:bg-gray-900">
         <div className="p-6">
           <div>
