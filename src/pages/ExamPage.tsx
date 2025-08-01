@@ -313,20 +313,19 @@ export default function ExamPage() {
                 </CardContent>
               </Card>
             ))}
-
-            {/* End Exam Button */}
-            <div className="flex justify-center pt-6">
-              <Button
-                variant="default"
-                onClick={() => setShowEndExamDialog(true)}
-                disabled={isSubmitting}
-                className="min-w-48 text-white"
-              >
-                Submit Answers
-              </Button>
-            </div>
+          </div>
+          <div className="flex justify-center pt-6 pb-4">
+            <Button
+              variant="default"
+              onClick={() => setShowEndExamDialog(true)}
+              disabled={isSubmitting}
+              className="min-w-48 text-white"
+            >
+              Submit Answers
+            </Button>
           </div>
         </div>
+        <div className="pb-20"></div>
       </ScrollArea>
       
       <ConfirmationDialog
@@ -334,7 +333,7 @@ export default function ExamPage() {
         onClose={() => setShowEndExamDialog(false)}
         onConfirm={handleEndExam}
         title="End Exam"
-        description="Are you sure you want to end the exam? This action cannot be undone."
+        description={`You have answered ${getAnsweredCount()} out of ${examData.exam_questions?.length || 0} questions. Are you sure you want to submit the exam?`}
         variant="confirmation"
       />
     </div>

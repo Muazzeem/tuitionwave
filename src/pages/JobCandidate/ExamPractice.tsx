@@ -11,6 +11,7 @@ import JobPreparationService from "@/services/JobPreparationService";
 import { Category, Subject, Topic } from "@/types/jobPreparation";
 import { getAccessToken } from "@/utils/auth";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 
 interface ExamRecord {
   id: string;
@@ -33,8 +34,12 @@ export default function ExamPractice() {
   const [questionLimit, setQuestionLimit] = useState(0);
   const [durationMinutes, setDurationMinutes] = useState(0);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
-  const [activeTab, setActiveTab] = useState("create");
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const tabParam = searchParams.get("tab") || "create"; // default to 'create'
+  const [activeTab, setActiveTab] = useState(tabParam);
   
   // Exam list states
   const [examFilter, setExamFilter] = useState<'all' | 'active' | 'running' | 'completed' | 'failed'>('all');
@@ -68,7 +73,10 @@ export default function ExamPractice() {
     }
   };
 
-  // Reset selections when category changes
+  useEffect(() => {
+    setActiveTab(tabParam);
+  }, [tabParam]);
+
   useEffect(() => {
     setSelectedSubjects([]);
     setSelectedTopics([]);
@@ -156,13 +164,13 @@ export default function ExamPractice() {
       }
 
       const data = await response.json();
-      console.log('Exam created successfully:', data);
       toast({
         title: "Success",
         description: "Exam created successfully!",
       });
 
       setShowSummaryModal(false);
+      navigate(`/job-preparation/practice?tab=history`);
 
     } catch (error: any) {
       toast({
@@ -171,6 +179,11 @@ export default function ExamPractice() {
         variant: "destructive",
       });
     }
+  };
+
+  const handleTabChange = (value) => {
+    setActiveTab(value);
+    setSearchParams({ tab: value });
   };
 
   return (
@@ -184,7 +197,7 @@ export default function ExamPractice() {
             <p className="text-muted-foreground mt-1">Customize your exam parameters</p>
           </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="create">Create Exam</TabsTrigger>
               <TabsTrigger value="history">Exam History</TabsTrigger>

@@ -351,7 +351,7 @@ export default function ExamHistory({
                     </div>
                   </div>
 
-                  {exam.status === 'completed' && exam.percentage > 0 && (
+                  {exam.status && (
                     <div className="border-t">
                       <div className="text-sm">
                         <span className="text-muted-foreground">Score: </span>

@@ -235,6 +235,15 @@ export default function ExamResultsPage() {
               ))}
             </div>
           </div>
+          <div className="flex justify-center space-x-4">
+            <Button onClick={() => navigate('/job-preparation/practice?tab=create')} variant="outline">
+              Back to Exam Practice
+            </Button>
+            <Button size='sm' className='text-white' onClick={() => navigate('/job-preparation/dashboard')}>
+              Go to Dashboard
+            </Button>
+          </div>
+          <div className="pb-20"></div>
         </ScrollArea>
       </div>
     );
@@ -432,7 +441,7 @@ export default function ExamResultsPage() {
               <Button onClick={() => setShowReviewMode(true)} variant="outline">
                 Review Answers
               </Button>
-              <Button onClick={() => navigate('/job-preparation/practice')} variant="outline">
+              <Button onClick={() => navigate('/job-preparation/practice?tab=create')} variant="outline">
                 Back to Exam Practice
               </Button>
               <Button size='sm' className='text-white' onClick={() => navigate('/job-preparation/dashboard')}>

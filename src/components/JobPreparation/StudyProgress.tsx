@@ -1,17 +1,37 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { BookOpen } from 'lucide-react';
+import { getAccessToken } from '@/utils/auth';
 
 export default function StudyProgress() {
-  const subjects = [
-    { name: 'বাংলা', progress: 85, total: 120, completed: 102 },
-    { name: 'English', progress: 72, total: 100, completed: 72 },
-    { name: 'গণিত', progress: 60, total: 80, completed: 48 },
-    { name: 'সাধারণ জ্ঞান', progress: 90, total: 150, completed: 135 },
-    { name: 'বিজ্ঞান', progress: 45, total: 90, completed: 40 }
-  ];
+  const [subjects, setSubjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProgress = async () => {
+      const accessToken = getAccessToken();
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/exams/study-progress/`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch progress');
+
+        const data = await response.json();
+        setSubjects(data);
+      } catch (error) {
+        console.error('Error fetching study progress:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProgress();
+  }, []);
 
   return (
     <Card className='dark:bg-gray-800 dark:border-gray-700'>
@@ -22,19 +42,23 @@ export default function StudyProgress() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {subjects.map((subject) => (
-            <div key={subject.name} className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="font-medium">{subject.name}</span>
-                <span className="text-muted-foreground">
-                  {subject.completed}/{subject.total}
-                </span>
-              </div>
-              <Progress value={subject.progress} className="h-2" />
+        {loading ? (
+          <p className="text-sm text-muted-foreground">Loading...</p>
+        ) : (
+            <div className="space-y-4">
+              {subjects.map((subject) => (
+                <div key={subject.subject_name} className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">{subject.subject_name}</span>
+                    <span className="text-muted-foreground">
+                      {subject.completed}/{subject.total}
+                    </span>
+                  </div>
+                  <Progress value={subject.progress} className="h-2" />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+        )}
       </CardContent>
     </Card>
   );

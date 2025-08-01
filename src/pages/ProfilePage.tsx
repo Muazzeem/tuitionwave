@@ -111,7 +111,7 @@ const ProfilePage: React.FC = () => {
        <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
         <div className="p-4 sm:p-6">
           <div className="flex justify-between items-center mb-4 sm:mb-6">
-            <h1 className="text-xl sm:text-2xl font-bold">Edit Profile</h1>
+            <h1 className="text-3xl sm:text-2xl font-bold">Edit Profile</h1>
             
             {!isLoading && tutorData && (
               <SocialShare
