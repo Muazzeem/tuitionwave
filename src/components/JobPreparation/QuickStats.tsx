@@ -1,19 +1,49 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { BookOpen, Trophy, Target, TrendingUp } from 'lucide-react';
+import { getAccessToken } from '@/utils/auth';
 
-interface QuickStatsProps {
-  data: {
-    totalExams: number;
-    completedExams: number;
-    averageScore: number;
-    currentRank: number;
-    totalStudents: number;
-  };
+interface QuickStatsData {
+  totalExams: number;
+  completedExams: number;
+  averageScore: number;
+  currentRank: number;
+  totalStudents: number;
 }
 
-export default function QuickStats({ data }: QuickStatsProps) {
+export default function QuickStatsSection() {
+  const [data, setData] = useState<QuickStatsData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const accessToken = getAccessToken();
+    fetch(`${import.meta.env.VITE_API_URL}/api/users/quick-stats/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add auth token if required:
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch stats');
+        return res.json();
+      })
+      .then((json) => {
+        setData(json);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message || 'Error loading stats');
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <p className="text-muted-foreground">Loading quick stats...</p>;
+  if (error) return <p className="text-red-500">Error: {error}</p>;
+  if (!data) return null;
+
   const stats = [
     {
       title: 'Total Exams',

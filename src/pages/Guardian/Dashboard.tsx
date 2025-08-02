@@ -12,7 +12,7 @@ export default function GuardianDashboard() {
             <DashboardHeader userName={userProfile?.first_name || 'Guardian'} />
 
             <div className="p-6">
-                <h2 className="text-xl font-bold mb-6 dark:text-white">Guardian Dashboard</h2>
+                <h2 className="text-3xl font-bold mb-6 dark:text-white">Guardian Dashboard</h2>
 
                 <StatsCards />
 

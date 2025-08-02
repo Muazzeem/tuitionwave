@@ -24,7 +24,6 @@ import DashboardHeader from '@/components/DashboardHeader';
 import ExamStatusCards from '@/components/JobPreparation/ExamStatusCards';
 import PerformanceChart from '@/components/JobPreparation/PerformanceChart';
 import RankingSystem from '@/components/JobPreparation/RankingSystem';
-import RecentActivities from '@/components/JobPreparation/RecentActivities';
 import StudyProgress from '@/components/JobPreparation/StudyProgress';
 import QuickStats from '@/components/JobPreparation/QuickStats';
 
@@ -33,10 +32,6 @@ export default function JobPreparationDashboard() {
 
   // Mock data - in real app, this would come from API
   const dashboardData = {
-    totalExams: 45,
-    completedExams: 32,
-    averageScore: 78.5,
-    currentRank: 156,
     totalStudents: 2847,
     studyStreak: 12,
     weeklyGoal: 5,
@@ -54,28 +49,18 @@ export default function JobPreparationDashboard() {
               <h1 className="text-3xl font-bold text-foreground">BCS Preparation Dashboard</h1>
               <p className="text-muted-foreground mt-1">Track your progress and improve your performance</p>
             </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                {dashboardData.studyStreak} day streak
-              </Badge>
-              <Badge variant="outline" className="flex items-center gap-1">
-                <Trophy className="h-3 w-3" />
-                Rank #{dashboardData.currentRank}
-              </Badge>
-            </div>
           </div>
 
           <div className='mt-5'>
-            <QuickStats data={dashboardData} />
+            <QuickStats />
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-5">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="performance">Performance</TabsTrigger>
               <TabsTrigger value="ranking">Ranking</TabsTrigger>
-              <TabsTrigger value="activities">Activities</TabsTrigger>
+              {/* <TabsTrigger value="activities">Activities</TabsTrigger> */}
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6 mt-5">
@@ -114,9 +99,9 @@ export default function JobPreparationDashboard() {
               <RankingSystem />
             </TabsContent>
 
-            <TabsContent value="activities" className="space-y-6 mt-5">
+            {/* <TabsContent value="activities" className="space-y-6 mt-5">
               <RecentActivities />
-            </TabsContent>
+            </TabsContent> */}
           </Tabs>
         </div>
       </ScrollArea>

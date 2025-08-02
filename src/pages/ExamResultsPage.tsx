@@ -12,6 +12,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import DashboardHeader from '@/components/DashboardHeader';
 
 interface ExamResults {
+  result_status: string;
   uid: string;
   exam_type: string;
   status: string;
@@ -30,7 +31,7 @@ interface ExamResults {
   cut_marks: number;
   subjects_info: { uid: string; title: string; }[];
   topics_info: { uid: string; name: string; }[];
-  exam_questions: {
+  questions: {
     uid: string;
     order: number;
     topic_name: string;
@@ -43,12 +44,16 @@ interface ExamResults {
     time_limit_seconds: number;
     options: {
       uid: string;
-      option_text: string;
-      option_label: string;
+      text: string;
+      label: string;
       order: number;
       is_correct: boolean;
     }[];
-    selected_option_uid?: string;
+    selected_option?: {
+      uid: string;
+      text: string;
+      label: string;
+    };
     is_correct?: boolean;
     explanation?: string;
   }[];
@@ -69,7 +74,7 @@ export default function ExamResultsPage() {
       if (!examId) return;
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/exams/${examId}/`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/exams/${examId}/results`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
@@ -82,6 +87,7 @@ export default function ExamResultsPage() {
 
         const data: ExamResults = await response.json();
         setExamResults(data);
+        console.log(data);
       } catch (error) {
         toast({
           title: "Error",
@@ -115,8 +121,10 @@ export default function ExamResultsPage() {
     return obtainedMarks >= cutMarks ? 'PASS' : 'FAIL';
   };
 
-  const getPassFailColor = (obtainedMarks: number, cutMarks: number) => {
-    return obtainedMarks >= cutMarks ? 'text-green-600' : 'text-red-600';
+  const getPassFailColor = (resultStatus: string) => {
+    if (resultStatus === 'pass') return 'text-green-600';
+    if (resultStatus === 'fail') return 'text-red-600';
+    return 'text-gray-600';
   };
 
   const calculateTimeTaken = () => {
@@ -169,7 +177,7 @@ export default function ExamResultsPage() {
         <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
           <div className="container mx-auto px-4 py-8">
             <div className="max-w-4xl mx-auto space-y-6">
-              {examResults.exam_questions.map((question, index) => (
+              {examResults.questions.map((question, index) => (
                 <Card key={question.uid}>
                   <CardHeader>
                     <CardTitle className="text-lg">
@@ -184,7 +192,7 @@ export default function ExamResultsPage() {
                   <CardContent>
                     <div className="space-y-3">
                       {question.options.map((option) => {
-                        const isUserSelected = option.uid === question.selected_option_uid;
+                        const isUserSelected = option.uid === question.selected_option?.uid;
                         const isCorrect = option.is_correct;
                         const isWrongSelected = isUserSelected && !isCorrect;
 
@@ -205,8 +213,8 @@ export default function ExamResultsPage() {
                               ) : (
                                 <div className="h-4 w-4" />
                               )}
-                              <span className="font-medium">{option.option_label}</span>
-                              <span>{option.option_text}</span>
+                              <span className="font-medium">{option.label}</span>
+                              <span>{option.text}</span>
                               {isCorrect && (
                                 <Badge variant="secondary" className="ml-auto">
                                   Correct Answer
@@ -266,10 +274,10 @@ export default function ExamResultsPage() {
 
                   {examResults.exam_type === 'model_test' && (
                     <Badge
-                      variant={passFailStatus === 'PASS' ? 'default' : 'destructive'}
-                      className={`text-lg px-4 py-2 ${getPassFailColor(examResults.obtained_marks, examResults.cut_marks)}`}
+                      variant={examResults.result_status === 'pass' ? 'default' : 'destructive'}
+                      className={`text-lg px-4 py-2 capitalize ${getPassFailColor(examResults.result_status)}`}
                     >
-                      <span className='text-white'>{passFailStatus}</span>
+                      <span className='text-white'>{examResults.result_status}</span>
                     </Badge>
                   )}
                 </CardTitle>
@@ -343,7 +351,7 @@ export default function ExamResultsPage() {
                       </div>
                       <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                         <span className="text-gray-600 dark:text-gray-400">Cut-off Marks:</span>
-                        <span className="font-bold text-lg">{examResults.cut_marks}</span>
+                        <span className="font-bold text-lg">{examResults.cut_marks || 0}</span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                         <span className="text-gray-600 dark:text-gray-400">Time Allocated:</span>
@@ -396,41 +404,62 @@ export default function ExamResultsPage() {
                     <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-gray-600 dark:text-gray-400">Exam Type:</span>
-                        <span className="font-medium">{examResults.exam_type}</span>
+                        <span className="font-medium capitalize">{examResults.exam_type}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600 dark:text-gray-400">Status:</span>
-                        <Badge variant="secondary">{examResults.status}</Badge>
+                        <Badge variant="secondary" className='capitalize'>{examResults.status}</Badge>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600 dark:text-gray-400">Started At:</span>
-                        <span className="font-medium">{new Date(examResults.started_at).toLocaleString()}</span>
+                        <span className="font-medium">
+                          {new Date(examResults.started_at).toLocaleDateString(undefined, {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })} at {new Date(examResults.started_at).toLocaleTimeString(undefined, {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                          })}
+                        </span>
                       </div>
+
                       <div className="flex justify-between">
                         <span className="text-gray-600 dark:text-gray-400">Completed At:</span>
-                        <span className="font-medium">{new Date(examResults.completed_at).toLocaleString()}</span>
+                        <span className="font-medium">
+                          {new Date(examResults.completed_at).toLocaleDateString(undefined, {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })} at {new Date(examResults.completed_at).toLocaleTimeString(undefined, {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                          })}
+                        </span>
                       </div>
                     </div>
                   </div>
 
                   <div>
                     <h3 className="font-semibold mb-3">Subjects Covered</h3>
-                    <div className="space-y-2 mb-4">
+                    {/* <div className="space-y-2 mb-4">
                       {examResults.subjects_info.map((subject) => (
                         <Badge key={subject.uid} variant="secondary" className="mr-2 mb-2">
                           {subject.title}
                         </Badge>
                       ))}
-                    </div>
+                    </div> */}
 
                     <h3 className="font-semibold mb-3">Topics Covered</h3>
-                    <div className="space-y-2">
+                    {/* <div className="space-y-2">
                       {examResults.topics_info.map((topic) => (
                         <Badge key={topic.uid} variant="outline" className="mr-2 mb-2">
                           {topic.name}
                         </Badge>
                       ))}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </CardContent>
