@@ -3,9 +3,13 @@ import DashboardHeader from '@/components/DashboardHeader';
 import StatsCards from '@/components/StatsCards';
 import RecentRequests from '@/components/RecentRequests';
 import { useAuth } from '@/contexts/AuthContext';
+import { useEffect } from 'react';
 
 export default function GuardianDashboard() {
     const { userProfile } = useAuth();
+    useEffect(() => {
+        document.title = "Tuition Wave | Guardian Dashboard";
+    }, []);
     
     return (
         <div className="flex-1 overflow-auto dark:bg-gray-900">

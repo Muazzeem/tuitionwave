@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -13,6 +13,9 @@ import StudyProgress from '@/components/JobPreparation/StudyProgress';
 import QuickStats from '@/components/JobPreparation/QuickStats';
 
 export default function JobPreparationDashboard() {
+  useEffect(() => {
+    document.title = "Tuition Wave | Candidate Dashboard";
+  }, []);
   const [activeTab, setActiveTab] = useState('overview');
 
   // Mock data - in real app, this would come from API

@@ -11,6 +11,10 @@ const Dashboard: React.FC = () => {
   const { userProfile } = useAuth();
 
   useEffect(() => {
+    document.title = "Tuition Wave | Tutor Dashboard";
+  }, []);
+
+  useEffect(() => {
     console.log(userProfile);
   }, [userProfile]);
   
