@@ -110,7 +110,7 @@ const TutorSearchResults: React.FC = () => {
     <div className="container mx-auto px-4 py-10">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Search Results</h2>
-        <Link to="/find-tutors" className="text-blue-600 flex items-center hover:underline">
+        <Link to="/guardian/find-tutors" className="text-blue-600 flex items-center hover:underline">
           View all Tutors <ArrowRight size={16} className="ml-1" />
         </Link>
       </div>

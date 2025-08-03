@@ -6,7 +6,6 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { ChevronLeft, Clock, CheckCircle, HelpCircle } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
@@ -176,7 +175,7 @@ const ReadingModePage: React.FC = () => {
                   Questions (Reading Mode)
                 </h2>
               </div>
-              <Button className='hidden md:block'
+              <Button className='hidden md:block text-white'
                 onClick={handleModeToggle}
                 variant="default"
               >
@@ -201,13 +200,6 @@ const ReadingModePage: React.FC = () => {
                       <CardHeader>
                         <CardTitle className="flex items-center justify-between">
                           <span className='text-lg md:text-lg'>Question #{question.question_number}</span>
-                          <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            <Clock className="h-4 w-4" />
-                            <span>{question.time_limit_seconds}s</span>
-                            <Badge variant="outline">
-                              {question.marks} {question.marks === 1 ? 'mark' : 'marks'}
-                            </Badge>
-                          </div>
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -236,19 +228,6 @@ const ReadingModePage: React.FC = () => {
                             );
                           })}
                         </div>
-                        
-                        {question.correct_option && (
-                          <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                            <div className="flex items-center space-x-2 mb-2">
-                              <CheckCircle className="h-5 w-5 text-green-600" />
-                              <span className="font-semibold text-green-800 dark:text-green-200">Correct Answer:</span>
-                            </div>
-                            <p className="text-green-700 dark:text-green-300">
-                              {question.correct_option.option_label} {question.correct_option.option_text}
-                            </p>
-                          </div>
-                        )}
-                        
                         {question.explanation && (
                           <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                             <div className="flex items-center space-x-2 mb-2">

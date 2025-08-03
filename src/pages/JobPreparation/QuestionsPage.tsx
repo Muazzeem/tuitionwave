@@ -282,7 +282,6 @@ const QuestionsPage: React.FC = () => {
               Switch to Reading
             </Button>
 
-            {/* Show subtopics if available */}
             {subtopicsData && subtopicsData.results.length > 0 && (
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
@@ -292,15 +291,16 @@ const QuestionsPage: React.FC = () => {
                   </h3>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {selectedSubtopicId && (
-                    <Badge
-                      variant="outline"
-                      className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors px-3 py-2 text-sm rounded-full"
-                      onClick={handleShowAllQuestions}
-                    >
-                      Show All Questions
-                    </Badge>
-                  )}
+                  <div
+                    className={`inline-flex items-center px-3 py-2 rounded-full text-sm font-medium cursor-pointer transition-all hover:scale-105 ${selectedSubtopicId === null
+                      ? 'bg-blue-600 text-white shadow-lg'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                      }`}
+                    onClick={handleShowAllQuestions}
+                  >
+                    <HelpCircle className="h-4 w-4 mr-2" />
+                    <span>All Questions</span>
+                  </div>
                   {subtopicsData.results.map((subtopic) => (
                     subtopic.total_questions > 0 && (
                       <div
@@ -344,11 +344,6 @@ const QuestionsPage: React.FC = () => {
                           <CardTitle className="flex items-center justify-between">
                             <span className='text-lg md:text-lg'>Question #{question.question_number}</span>
                             <div className="flex items-center space-x-2 text-sm text-gray-600">
-                              <Clock className="h-4 w-4" />
-                              <span>{question.time_limit_seconds}s</span>
-                              <Badge variant="outline">
-                                {question.marks} {question.marks === 1 ? 'mark' : 'marks'}
-                              </Badge>
                               {isAnswered && (
                                 <Badge variant={result?.is_correct ? "default" : "destructive"}>
                                   {result?.is_correct ? 'Correct' : 'Incorrect'}
@@ -412,29 +407,8 @@ const QuestionsPage: React.FC = () => {
                             })}
                           </div>
 
-                          {isAnswered && (
-                            <div className="mt-4 flex items-center space-x-2">
-                              <Button
-                                variant="outline"
-                                onClick={() => handleShowAnswer(question.uid)}
-                              >
-                                {showResult ? 'Hide Result' : 'Show Result'}
-                              </Button>
-                            </div>
-                          )}
-
                           {isAnswered && showResult && result && (
                             <>
-                              <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                                <div className="flex items-center space-x-2 mb-2">
-                                  <CheckCircle className="h-5 w-5 text-green-600" />
-                                  <span className="font-semibold text-green-800 dark:text-green-200">Correct Answer:</span>
-                                </div>
-                                <p className="text-green-700 dark:text-green-300">
-                                  {result.correct_option_label} {result.correct_option_text}
-                                </p>
-                              </div>
-
                               {result.explanation && (
                                 <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                                   <div className="flex items-center space-x-2 mb-2">
