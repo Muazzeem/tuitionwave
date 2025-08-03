@@ -20,7 +20,8 @@ const Dashboard: React.FC = () => {
 
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
         <div className="p-6">
-          <h2 className="text-3xl font-bold mb-6 dark:text-white">Tutor Dashboard</h2>
+          <h2 className="text-3xl font-bold text-foreground">Tutor Dashboard</h2>
+          <p className="text-muted-foreground mb-6">Manage your tutor profile and requests</p>
 
           <StatsCards />
 

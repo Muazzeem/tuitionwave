@@ -1,31 +1,31 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Step } from '@/components/ProfileStepper';
 import RegistrationForm from '@/components/Registration/RegistrationForm';
 import OTPVerification from '@/components/Registration/OTPVerification';
 import RegistrationSuccess from '@/components/Registration/RegistrationSuccess';
 import { RegistrationData } from '@/types/common';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
-const steps: Step[] = [
-  { id: 1, title: 'Create Account' },
-  { id: 2, title: 'Verify Email' },
-  { id: 3, title: 'Upload NID' },
-  { id: 4, title: 'Success' },
-];
 
 const RegistrationPage = () => {
+  const { fetchProfile, userProfile } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [registrationData, setRegistrationData] = useState<RegistrationData>({
     email: '',
     phone: '',
     password1: '',
     password2: '',
-    user_type: 'GUARDIAN',
   });
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (userProfile) {
+      navigate('/dashboard');
+    }
+  }, [userProfile]);
 
   const handleRegistrationSubmit = async (formData: RegistrationData) => {
     try {
@@ -39,7 +39,6 @@ const RegistrationPage = () => {
           phone: formData.phone,
           password1: formData.password1,
           password2: formData.password2,
-          user_type: formData.user_type,
         }),
       });
 
@@ -87,37 +86,8 @@ const RegistrationPage = () => {
     }
   };
 
-  const handleNIDUpload = async (nidFile: File) => {
-    try {
-      // Create form data
-      const formData = new FormData();
-      formData.append('email', registrationData.email);
-      formData.append('nid_document', nidFile);
-
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/upload-nid/`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'NID upload failed');
-      }
-
-      // Show success message and move to success step
-      setCurrentStep(4);
-    } catch (error: any) {
-
-    }
-  };
-
   const handleLoginRedirect = () => {
-    // Redirect to login page or dashboard based on the user type
-    if (registrationData.user_type === 'TEACHER') {
-      navigate('/teacher/dashboard');
-    } else {
-      navigate('/guardian/dashboard');
-    }
+    navigate('/dashboard');
   };
 
   return (

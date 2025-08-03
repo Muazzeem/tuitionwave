@@ -5,11 +5,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Users, Calendar, Loader2 } from "lucide-react";
 import { getAccessToken } from "@/utils/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function CreateModelTest() {
-  const [selectedTab, setSelectedTab] = useState("running");
   const [examData, setExamData] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabFromUrl = searchParams.get("tab") || "running";
+  const [selectedTab, setSelectedTab] = useState(tabFromUrl);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -19,6 +21,19 @@ export default function CreateModelTest() {
     { id: "upcoming", label: "Upcoming Exams", param: "upcoming=true" },
     { id: "expired", label: "Expired Exams", param: "past=true" }
   ];
+
+  useEffect(() => {
+    setSearchParams({ tab: selectedTab });
+  }, [selectedTab]);
+
+  useEffect(() => {
+    const currentTab = searchParams.get("tab") || "running";
+    if (currentTab !== selectedTab) {
+      setSelectedTab(currentTab);
+    }
+  }, [searchParams]);
+
+
 
   useEffect(() => {
     const accessToken = getAccessToken();
@@ -171,13 +186,18 @@ export default function CreateModelTest() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4 sm:p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredExams.map((exam) => (
               <Card
-                onClick={() => createExam(exam)}
+                onClick={() => {
+                  exam.is_active && (
+                    createExam(exam)
+                  )
+                }}
                 key={exam.uid}
-                className="bg-gray-100 border-gray-200 hover:border-gray-300 transition-colors cursor-pointer
-                          dark:bg-gray-800 dark:border-gray-700 dark:hover:border-gray-600"
+                className={`bg-gray-100 border-gray-200 hover:border-gray-300 transition-colors
+                dark:bg-gray-800 dark:border-gray-700 dark:hover:border-gray-600
+                ${exam.is_active ? 'cursor-pointer' : ''}`}
               >
                 <CardContent className="p-6">
                   <div className="space-y-4">
@@ -213,7 +233,7 @@ export default function CreateModelTest() {
                         </span>
                       </div>
 
-                      {exam.user_exam && (
+                      {exam.user_exam && exam.is_active && (
                         <div className="flex flex-col text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700">
                           <div className="flex justify-between">
                             <span>Exam Status:</span>

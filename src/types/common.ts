@@ -16,7 +16,6 @@ export interface RegistrationData {
   phone: string;
   password1: string;
   password2: string;
-  user_type: 'TEACHER' | 'GUARDIAN';
   first_name?: string;
   last_name?: string;
   nid_document?: File;

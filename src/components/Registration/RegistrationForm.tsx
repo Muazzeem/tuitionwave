@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { EyeIcon, EyeOffIcon, Lock, Mail, Phone } from 'lucide-react';
 import { RegistrationData } from '@/types/common';
 import GoogleLoginButton from '../GoogleLoginButton';
@@ -20,14 +19,12 @@ interface RegistrationFormProps {
 const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialData }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [userType, setUserType] = useState<'teacher' | 'guardian' | null>(localStorage.getItem('userType') as 'teacher' | 'guardian');
   const { fetchProfile, userProfile } = useAuth();
   const [formData, setFormData] = useState<RegistrationData>(initialData || {
     email: '',
     phone: '',
     password1: '',
     password2: '',
-    user_type: 'GUARDIAN',
   });
 
   
@@ -39,13 +36,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleUserTypeChange = (value: string) => {
-    setFormData(prev => ({ 
-      ...prev, 
-      user_type: value as 'TEACHER' | 'GUARDIAN'
-    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,11 +82,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
         });
         
         // Navigate based on user type
-        if (userType === 'teacher') {
-          navigate('/teacher/dashboard');
-        } else {
-          navigate('/guardian/dashboard');
-        }
+        navigate('/dashboard');
       } catch (error) {
         toast({
           title: "Login Failed",
@@ -113,8 +99,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
       <p className="text-gray-500 mb-6 dark:text-gray-400">Let's create your account!</p>
 
       <div className="mb-6">
-                <GoogleLoginButton
-                  userType={userType}
+        <GoogleLoginButton
                   onSuccess={handleGoogleLoginSuccess}
                   disabled={loading}
                 />

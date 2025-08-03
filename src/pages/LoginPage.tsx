@@ -11,13 +11,20 @@ import GoogleLoginButton from '@/components/GoogleLoginButton';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { fetchProfile } = useAuth();
+  const { fetchProfile, userProfile } = useAuth();
   const [step, setStep] = useState<1 | 2>(1);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+
+
+  useEffect(() => {
+    if (userProfile) {
+      navigate('/dashboard');
+    }
+  }, [userProfile]);
 
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -71,7 +78,7 @@ const LoginPage: React.FC = () => {
         title: "Google Login Success",
         description: "Successfully logged in with Google!",
       });
-      navigate('/dashboard');
+      // navigate('/dashboard');
     } catch (error) {
       toast({
         title: "Login Failed",

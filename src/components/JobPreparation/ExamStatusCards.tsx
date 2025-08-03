@@ -25,7 +25,7 @@ const getExamAction = (status: string, uid: string) => {
     case 'completed':
       return { label: 'View Results', to: `/job-preparation/exam/${uid}/results` };
     case 'not_started':
-      return { label: 'View Results', to: `/job-preparation/practice?tab=history` };
+      return { label: 'View', to: `/job-preparation/practice?tab=history` };
     default:
       return null;
   }
@@ -104,7 +104,11 @@ export default function ExamStatusCards() {
                 {getStatusIcon(exam.status)}
                 <div>
                   <h4 className="font-medium">
-                    {exam.subject_names.join(', ') || exam.topic_names.join(', ') || exam.exam_type_display}
+                    {exam.subject_names?.length > 0
+                      ? `${exam.subject_names.slice(0, 3).join(', ')}${exam.subject_names.length > 3 ? ', ...' : ''}`
+                      : exam.topic_names?.length > 0
+                        ? `${exam.topic_names.slice(0, 3).join(', ')}${exam.topic_names.length > 3 ? ', ...' : ''}`
+                        : exam.exam_type_display}
                   </h4>
                   <p className="text-sm text-muted-foreground">
                     {new Date(exam.created_at).toLocaleString('en-US', {

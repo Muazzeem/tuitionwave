@@ -8,7 +8,7 @@ const PublicDashboard = () => {
 
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
         <div className="p-6">
-          <h2 className="text-xl font-bold mb-6 dark:text-white">Dashboard</h2>
+          <h2 className="text-3xl font-bold text-foreground">Dashboard</h2>
         </div>
       </ScrollArea>
     </div>

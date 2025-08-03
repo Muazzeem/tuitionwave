@@ -1,25 +1,10 @@
 
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  BookOpen, 
-  Trophy, 
-  Target, 
-  Clock, 
-  TrendingUp, 
-  Users, 
-  Award,
-  Calendar,
-  BarChart3,
-  CheckCircle,
-  XCircle,
-  PlayCircle
-} from 'lucide-react';
+import { Target, } from 'lucide-react';
 import DashboardHeader from '@/components/DashboardHeader';
 import ExamStatusCards from '@/components/JobPreparation/ExamStatusCards';
 import PerformanceChart from '@/components/JobPreparation/PerformanceChart';
