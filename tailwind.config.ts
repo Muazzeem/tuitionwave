@@ -64,12 +64,12 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				tuitionwave: {
-					blue: '#00b4ff',
+					blue: 'hsl(202 100% 50%)',
 					lightblue: '#e8f0fe',
 					red: '#ea4335',
 					yellow: '#fbbc04',
 					green: '#34a853',
-					gray: '#192642',
+					gray: 'hsl(215 28% 17%)',
 				}
 			},
 			borderRadius: {
