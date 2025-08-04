@@ -1,39 +1,21 @@
 
 export interface Message {
   id: string;
-  sender_id: string;
-  receiver_id: string;
-  message_text: string;
-  timestamp: string;
-  is_read: boolean;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  timestamp: Date;
+  read: boolean;
   attachment?: string;
-  sender?: {
-    id: string;
-    first_name: string;
-    last_name: string;
-    profile_picture?: string;
-  };
-  receiver?: {
-    id: string;
-    first_name: string;
-    last_name: string;
-    profile_picture?: string;
-  };
+  type?: 'text' | 'image' | 'file';
 }
 
-export interface ChatUser {
+export interface Friend {
   id: string;
-  first_name: string;
-  last_name: string;
-  profile_picture?: string;
-  last_message?: string;
-  last_message_time?: string;
-  unread_count?: number;
-}
-
-export interface MessageAttachment {
-  url: string;
   name: string;
-  size: number;
-  type: string;
+  avatar: string;
+  lastMessage?: string;
+  lastMessageTime?: Date;
+  unreadCount?: number;
+  isOnline?: boolean;
 }
