@@ -47,6 +47,9 @@ import ExamPage from "./pages/ExamPage";
 import ExamResultsPage from "./pages/ExamResultsPage";
 
 
+import { Loader2 } from "lucide-react";
+
+
 const queryClient = new QueryClient();
 
 
@@ -85,7 +88,9 @@ const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => 
   }, [location.pathname, navigate, userProfile, fetchProfile]);
   
   if (isValidating) {
-    return <div className="flex justify-center items-center h-screen">Validating session...</div>;
+    return <div className="flex justify-center items-center h-screen">
+      <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+    </div>
   }
   
   return <>{children}</>;
