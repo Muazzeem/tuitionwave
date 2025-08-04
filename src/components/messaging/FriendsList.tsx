@@ -51,10 +51,10 @@ const FriendsList: React.FC<FriendsListProps> = ({
   });
 
   return (
-    <Card className="w-full md:w-80 lg:w-96 h-full bg-background border-r flex flex-col shadow-sm">
+    <Card className="w-full md:w-80 lg:w-96 h-full bg-background border-r flex flex-col shadow-sm dark:bg-gray-900">
       {/* Header */}
-      <div className="p-4 border-b bg-muted/30">
-        <div className="flex items-center justify-between mb-4">
+      <div className="p-4 border-b">
+        <div className="flex items-center justify-between mb-4 ">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-primary/10 rounded-full">
               <MessageCircle className="h-5 w-5 text-primary" />
@@ -64,9 +64,6 @@ const FriendsList: React.FC<FriendsListProps> = ({
               <p className="text-xs text-muted-foreground">{friends.length} conversations</p>
             </div>
           </div>
-          <Button variant="ghost" size="sm" className="p-2 hover:bg-muted">
-            <Settings className="h-4 w-4" />
-          </Button>
         </div>
         
         {/* <div className="relative">
@@ -81,7 +78,7 @@ const FriendsList: React.FC<FriendsListProps> = ({
       </div>
 
       {/* Friends List */}
-      <div className="flex-1 overflow-y-auto dark:bg-gray-800">
+      <div className="flex-1 overflow-y-auto dark:bg-gray-900">
         {isLoading ? (
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>

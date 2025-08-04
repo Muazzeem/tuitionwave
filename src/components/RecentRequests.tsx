@@ -271,7 +271,7 @@ const RecentRequests: React.FC = () => {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+    <div className="bg-white dark:bg-background p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-900">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-bold dark:text-white">Recent Request</h2>
         <Link to={`/requests`}>

@@ -36,7 +36,7 @@ export default function ExamSummaryModal({
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <div className="grid grid-cols-2 gap-4 p-4 bg-muted/30 rounded-lg">
+          <div className="grid grid-cols-2 gap-4 p-4 bg-gray-900 rounded-lg shadow-lg">
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">{questionLimit}</div>
               <div className="text-sm text-muted-foreground">Questions</div>
@@ -53,7 +53,7 @@ export default function ExamSummaryModal({
                 <FileText className="h-4 w-4" />
                 Selected Subjects ({selectedSubjects.length})
               </h4>
-              <div className="space-y-2 max-h-32 overflow-y-auto">
+              <div className="space-y-2 max-h-32 overflow-y-auto bg-gray-900 rounded-lg">
                 {selectedSubjects.map(subject => (
                   <div key={subject.uid} className="flex justify-between items-center p-2 bg-muted/20 rounded">
                     <span className="text-sm">{subject.subject_title}</span>
@@ -87,10 +87,12 @@ export default function ExamSummaryModal({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} className='border-primary text-primary-foreground text-white
+          hover:bg-primary-700
+          '>
             Cancel
           </Button>
-          <Button onClick={onConfirm} className='text-white bg-blue-500'>
+          <Button onClick={onConfirm} className='text-white bg-primary hover:bg-primary-700'>
             Start Exam
           </Button>
         </DialogFooter>

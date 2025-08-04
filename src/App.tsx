@@ -197,7 +197,7 @@ const App = () => (
                       <MainLayout><ProfilePage /></MainLayout>
                     </AuthGuard>
                   } />
-                  <Route path="/profile" element={
+                <Route path="guardian/profile" element={
                     <AuthGuard>
                       <MainLayout><GuardianProfile /></MainLayout>
                     </AuthGuard>
@@ -214,14 +214,23 @@ const App = () => (
                   } />
                   
 
-                  <Route path="/message" element={
-                    <AuthGuard>
-                      <div className="flex h-screen bg-gray-50">
-                        <Sidebar />
-                        <MessagePage />
-                      </div>
-                    </AuthGuard>
-                  } />
+                <Route path="teacher/message" element={
+                  <AuthGuard>
+                    <div className="flex h-screen bg-gray-50">
+                      <Sidebar />
+                      <MessagePage />
+                    </div>
+                  </AuthGuard>
+                } />
+
+                <Route path="guardian/message" element={
+                  <AuthGuard>
+                    <div className="flex h-screen bg-gray-50">
+                      <Sidebar />
+                      <MessagePage />
+                    </div>
+                  </AuthGuard>
+                } />
 
                   <Route path="/message/:userId" element={
                     <AuthGuard>

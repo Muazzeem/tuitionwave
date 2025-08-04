@@ -63,7 +63,7 @@ export default function RankingSystem() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-      <Card className="lg:col-span-2 dark:bg-gray-800 dark:border-gray-700">
+      <Card className="lg:col-span-2 dark:bg-background dark:border-gray-900 shadow-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Trophy className="h-5 w-5" />
@@ -80,7 +80,7 @@ export default function RankingSystem() {
                 {topRankers.map((user) => (
                 <div
                   key={user.id}
-                  className="flex items-center justify-between p-4 border dark:border-gray-700 rounded-lg"
+                    className="flex items-center justify-between p-4 border dark:border-primary-700 rounded-lg"
                 >
                   <div className="flex items-center gap-3">
                     {getRankIcon(user.rank)}
@@ -116,7 +116,7 @@ export default function RankingSystem() {
       </Card>
 
 
-      <Card className="dark:bg-gray-800 dark:border-gray-700">
+      <Card className="dark:bg-background dark:border-gray-900 shadow-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Award className="h-5 w-5" />

@@ -346,13 +346,13 @@ const GeneralSettings = () => {
   };
 
   return (
-    <div className="p-6 dark:bg-gray-800">
+    <div className="p-6 dark:bg-background">
       <h2 className="text-2xl font-bold mb-6">General Settings</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Profile Picture Section */}
         <div className="flex flex-col items-center space-y-4">
           <div className="relative">
-            <div className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center overflow-hidden border-4 border-gray-300 dark:border-gray-600">
+            <div className="w-32 h-32 rounded-full bg-primary-200 dark:bg-primary-800 flex items-center justify-center overflow-hidden border-4 border-gray-300 dark:border-primary-600">
               {previewUrl ? (
                 <img
                   src={previewUrl}
@@ -379,7 +379,7 @@ const GeneralSettings = () => {
               type="button"
               variant="outline"
               onClick={triggerFileInput}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 bg-primary hover:bg-primary-700 dark:text-white"
             >
               <Camera className="w-4 h-4" />
               <span>{previewUrl ? 'Change Picture' : 'Upload Picture'}</span>
@@ -409,7 +409,7 @@ const GeneralSettings = () => {
               name="first_name"
               value={formData.first_name || ''}
               onChange={handleChange}
-              className="mt-1"
+              className="mt-1 dark:bg-gray-900 border-primary-200"
             />
           </div>
           <div>
@@ -419,7 +419,7 @@ const GeneralSettings = () => {
               name="last_name"
               value={formData.last_name || ''}
               onChange={handleChange}
-              className="mt-1"
+              className="mt-1 dark:bg-gray-900 border-primary-200"
             />
           </div>
           <div>
@@ -429,7 +429,7 @@ const GeneralSettings = () => {
               name="email"
               value={formData.email || ''}
               onChange={handleChange}
-              className="mt-1"
+              className="mt-1 dark:bg-gray-900 border-primary-200"
               disabled
             />
           </div>
@@ -441,7 +441,7 @@ const GeneralSettings = () => {
               value={formData.phone || ''}
               onChange={handleChange}
               placeholder='+880123456789'
-              className="mt-1"
+              className="mt-1 dark:bg-gray-900 border-primary-200"
             />
           </div>
         </div>
@@ -588,7 +588,7 @@ const GeneralSettings = () => {
               name="address"
               value={formData.address || ''}
               onChange={handleChange}
-              className="mt-1"
+              className="mt-1 dark:bg-gray-900 border-primary-200"
             />
           </div>
 

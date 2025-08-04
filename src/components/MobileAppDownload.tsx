@@ -21,7 +21,7 @@ const MobileAppDownload: React.FC = () => {
           <div className="text-white">
             <div className="space-y-6">
               <div className="flex items-center gap-4">
-                <div className="bg-white/20 p-3 rounded-full">
+                <div className="bg-primary p-3 rounded-full">
                   <Smartphone className="h-6 w-6" />
                 </div>
                 <div>
@@ -31,7 +31,7 @@ const MobileAppDownload: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="bg-white/20 p-3 rounded-full">
+                <div className="bg-primary p-3 rounded-full">
                   <Download className="h-6 w-6" />
                 </div>
                 <div>
@@ -41,7 +41,7 @@ const MobileAppDownload: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="bg-white/20 p-3 rounded-full">
+                <div className="bg-primary p-3 rounded-full">
                   <QrCode className="h-6 w-6" />
                 </div>
                 <div>
@@ -53,7 +53,7 @@ const MobileAppDownload: React.FC = () => {
           </div>
 
           <div className="flex justify-center">
-            <Card className="bg-white/10 border-white/20 backdrop-blur-sm">
+            <Card className="bg-white/10 border-primary backdrop-blur-sm">
               <CardHeader className="text-center">
                 <CardTitle className="text-white">Scan QR Code</CardTitle>
               </CardHeader>
@@ -73,14 +73,14 @@ const MobileAppDownload: React.FC = () => {
                   <div className="flex gap-2 justify-center">
                     <Button 
                       variant="outline" 
-                      className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                      className="bg-primary border-gray-900 text-white hover:bg-primary-700 shadow-xl"
                     >
                       <Download className="h-4 w-4 mr-2" />
                       Android
                     </Button>
                     <Button 
                       variant="outline" 
-                      className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                      className="bg-white/20 border-primary text-white hover:bg-primary-700 shadow-xl"
                     >
                       <Download className="h-4 w-4 mr-2" />
                       iOS

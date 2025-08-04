@@ -196,7 +196,7 @@ export default function CreateModelTest() {
                 }}
                 key={exam.uid}
                 className={`bg-gray-100 border-gray-200 hover:border-gray-300 transition-colors
-                dark:bg-gray-800 dark:border-gray-700 dark:hover:border-gray-600
+                dark:bg-background dark:border-gray-900 dark:hover:border-primary-600 shadow-md
                 ${exam.is_active ? 'cursor-pointer' : ''}`}
               >
                 <CardContent className="p-6">
@@ -225,7 +225,7 @@ export default function CreateModelTest() {
                       <span className="text-gray-600 dark:text-gray-400 text-sm">{exam.duration}</span>
                     </div>
 
-                    <div className="flex flex-col gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex flex-col gap-2 pt-2 border-t border-primary dark:border-primary-700">
                       <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
                         <span>{exam.totalQuestions} questions</span>
                         <span className="text-orange-500 font-mono dark:text-orange-400">
@@ -250,7 +250,7 @@ export default function CreateModelTest() {
                     </div>
 
                     {exam.configurations && exam.configurations.length > 0 && (
-                      <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+                      <div className="pt-2 border-t border-gray-200 dark:border-primary-700">
                         <div className="text-xs text-gray-500 dark:text-gray-400">
                           Topics: {exam.configurations.map(config => config.topic_name).join(', ')}
                         </div>

@@ -44,7 +44,10 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
   };
 
   return (
-    <div className="flex justify-between items-center py-2 px-4 sm:px-6 border-b border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700 relative z-20">
+    <div
+      className="flex justify-between items-center py-2 px-4 sm:px-6 dark:bg-background relative z-20 shadow-md"
+      style={{ backgroundColor: "#192642" }}
+    >
       <div className="flex-1 min-w-0">
         {/* <h1 className="text-md sm:text-md font-bold truncate text-gray-900 dark:text-white">
           <span className="hidden sm:inline">Welcome Back, </span>
@@ -53,13 +56,13 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
         </h1> */}
       </div>
 
-      <div className="absolute left-1/2 transform -translate-x-1/2 hidden xl:flex items-center gap-3 border p-2 rounded-xl border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+      <div className="absolute left-1/2 transform -translate-x-1/2 hidden xl:flex items-center gap-3 border p-2 rounded-3xl border-gray-200 dark:bg-gray-900 dark:border-gray-700">
         <Link
           to="/dashboard/guardian"
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border ${
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
             userTypeFromUrl === 'GUARDIAN'
-              ? 'bg-blue-600 text-white border-blue-600 shadow-md dark:bg-blue-500 dark:border-blue-500'
-              : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-blue-400'
+            ? 'bg-primary-600 text-white'
+            : 'bg-gray-900'
           }`}
         >
           Guardian
@@ -67,10 +70,10 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
 
         <Link
           to="/dashboard/teacher"
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border ${
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
             userTypeFromUrl === 'TEACHER'
-              ? 'bg-blue-600 text-white border-blue-600 shadow-md dark:bg-blue-500 dark:border-blue-500'
-              : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-blue-400'
+            ? 'bg-primary-600 text-white'
+            : 'bg-gray-900'
           }`}
         >
           Tutor
@@ -78,10 +81,10 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
 
         <Link
           to="/job-preparation/dashboard"
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border ${
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
             userTypeFromUrl === 'STUDENT'
-              ? 'bg-blue-600 text-white border-blue-600 shadow-md dark:bg-blue-500 dark:border-blue-500'
-              : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-blue-400'
+            ? 'bg-primary-600 text-white'
+            : 'bg-gray-900'
           }`}
         >
           Job Preparation

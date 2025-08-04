@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { MessageCircle, Sparkles, Users, ArrowLeft } from 'lucide-react';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 const EmptyState: React.FC = () => {
@@ -27,18 +26,18 @@ const EmptyState: React.FC = () => {
         <h3 className="text-xl font-semibold text-foreground mb-3">
           Welcome to Messages
         </h3>
-        <p className="text-muted-foreground mb-6 leading-relaxed">
+        <p className="text-muted-foreground mb-6 leading-relaxed text-sm">
           Select a conversation from the sidebar to start messaging with your tutors and students.
         </p>
         
         <div className="space-y-3">
-          <div className="flex items-center gap-3 text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">
-            <Users className="h-4 w-4 text-primary flex-shrink-0" />
-            <span>Connect with tutors and students instantly</span>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground bg-primary/50 p-3 rounded-lg">
+            <Users className="h-4 w-4 text-white flex-shrink-0" />
+            <span className='text-white'>Connect with tutors and students instantly</span>
           </div>
-          <div className="flex items-center gap-3 text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">
-            <MessageCircle className="h-4 w-4 text-primary flex-shrink-0" />
-            <span>Share files, images, and messages seamlessly</span>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground bg-primary/50 p-3 rounded-lg">
+            <MessageCircle className="h-4 w-4 text-white flex-shrink-0" />
+            <span className='text-white'>Share files, images, and messages seamlessly</span>
           </div>
         </div>
         

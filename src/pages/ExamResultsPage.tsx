@@ -148,7 +148,7 @@ export default function ExamResultsPage() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center w-full">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading results...</p>
+          <p className="text-gray-600 dark:text-white">Loading results...</p>
         </div>
       </div>
     );
@@ -158,7 +158,7 @@ export default function ExamResultsPage() {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center w-full">
         <div className="text-center">
-          <p className="text-gray-600 dark:text-gray-400">Results not found</p>
+          <p className="text-gray-600 dark:text-white">Results not found</p>
           <Button onClick={() => navigate('/exam-practice')} className="mt-4">
             Back to Exam Practice
           </Button>
@@ -178,12 +178,12 @@ export default function ExamResultsPage() {
           <div className="container mx-auto px-4 py-8">
             <div className="max-w-4xl mx-auto space-y-6">
               {examResults.questions.map((question, index) => (
-                <Card key={question.uid}>
+                <Card key={question.uid} className='bg-background border-primary-200 shadow-md'>
                   <CardHeader>
                     <CardTitle className="text-lg">
                       Question {index + 1}: {question.question_text}
                     </CardTitle>
-                    <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+                    <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-white">
                       <span>Subject: {question.subject_title}</span>
                       <span>Topic: {question.topic_name}</span>
                       <span>Marks: {question.marks}</span>
@@ -264,7 +264,7 @@ export default function ExamResultsPage() {
         <div className="container mx-auto px-4 py-8 w-full">
           <div className="max-w-4xl mx-auto space-y-6">
             {/* Score Overview */}
-            <Card>
+            <Card className="dark:bg-background dark:border-gray-900 shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
@@ -290,10 +290,10 @@ export default function ExamResultsPage() {
                   <div className={`text-xl font-semibold ${getGradeColor(examResults.percentage)}`}>
                     {getGradeText(examResults.percentage)}
                   </div>
-                  <p className="text-gray-600 dark:text-gray-400 mt-2">
+                  <p className="text-gray-600 dark:text-white mt-2">
                     You scored {examResults.obtained_marks} out of {examResults.total_marks} marks
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-sm text-gray-500 dark:text-white mt-1">
                     Cut-off marks: {examResults.cut_marks}
                   </p>
                 </div>
@@ -304,32 +304,32 @@ export default function ExamResultsPage() {
                   <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                     <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
                     <div className="text-2xl font-bold text-green-600">{examResults.correct_answers}</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Correct</div>
+                    <div className="text-sm text-gray-600 dark:text-white">Correct</div>
                   </div>
 
                   <div className="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
                     <XCircle className="h-8 w-8 text-red-600 mx-auto mb-2" />
                     <div className="text-2xl font-bold text-red-600">{examResults.incorrect_answers}</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Incorrect</div>
+                    <div className="text-sm text-gray-600 dark:text-white">Incorrect</div>
                   </div>
 
                   <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                     <HelpCircle className="h-8 w-8 text-gray-600 mx-auto mb-2" />
                     <div className="text-2xl font-bold text-gray-600">{examResults.unanswered}</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Unanswered</div>
+                    <div className="text-sm text-gray-600 dark:text-white">Unanswered</div>
                   </div>
 
                   <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                     <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
                     <div className="text-2xl font-bold text-blue-600">{formatTime(timeTaken)}</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Time Taken</div>
+                    <div className="text-sm text-gray-600 dark:text-white">Time Taken</div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Exam Overview */}
-            <Card>
+            <Card className="dark:bg-background dark:border-gray-900 shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Target className="h-5 w-5 text-blue-500" />
@@ -341,24 +341,24 @@ export default function ExamResultsPage() {
                   <div>
                     <h3 className="font-semibold mb-3">Performance Summary</h3>
                     <div className="space-y-3">
-                      <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                        <span className="text-gray-600 dark:text-gray-400">Obtained Marks:</span>
+                      <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-primary-800 rounded-lg">
+                        <span className="text-gray-600 dark:text-white">Obtained Marks:</span>
                         <span className="font-bold text-lg">{examResults.obtained_marks}</span>
                       </div>
-                      <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                        <span className="text-gray-600 dark:text-gray-400">Total Marks:</span>
+                      <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-primary-800 rounded-lg">
+                        <span className="text-gray-600 dark:text-white">Total Marks:</span>
                         <span className="font-bold text-lg">{examResults.total_marks}</span>
                       </div>
-                      <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                        <span className="text-gray-600 dark:text-gray-400">Cut-off Marks:</span>
+                      <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-primary-800 rounded-lg">
+                        <span className="text-gray-600 dark:text-white">Cut-off Marks:</span>
                         <span className="font-bold text-lg">{examResults.cut_marks || 0}</span>
                       </div>
-                      <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                        <span className="text-gray-600 dark:text-gray-400">Time Allocated:</span>
+                      <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-primary-800 rounded-lg">
+                        <span className="text-gray-600 dark:text-white">Time Allocated:</span>
                         <span className="font-bold text-lg">{formatTime(examResults.duration_minutes)}</span>
                       </div>
-                      <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                        <span className="text-gray-600 dark:text-gray-400">Time Taken:</span>
+                      <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-primary-800 rounded-lg">
+                        <span className="text-gray-600 dark:text-white">Time Taken:</span>
                         <span className="font-bold text-lg">{formatTime(timeTaken)}</span>
                       </div>
                     </div>
@@ -376,7 +376,7 @@ export default function ExamResultsPage() {
                         <span className="font-bold text-lg text-red-600">{examResults.incorrect_answers}</span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                        <span className="text-gray-700 dark:text-gray-400">Unanswered:</span>
+                        <span className="text-gray-700 dark:text-white">Unanswered:</span>
                         <span className="font-bold text-lg text-gray-600">{examResults.unanswered}</span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
@@ -390,7 +390,7 @@ export default function ExamResultsPage() {
             </Card>
 
             {/* Exam Details */}
-            <Card>
+            <Card className="dark:bg-background dark:border-gray-900 shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <BookOpen className="h-5 w-5 text-blue-500" />
@@ -403,15 +403,15 @@ export default function ExamResultsPage() {
                     <h3 className="font-semibold mb-3">Exam Information</h3>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-400">Exam Type:</span>
+                        <span className="text-gray-600 dark:text-white">Exam Type:</span>
                         <span className="font-medium capitalize">{examResults.exam_type}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-400">Status:</span>
+                        <span className="text-gray-600 dark:text-white">Status:</span>
                         <Badge variant="secondary" className='capitalize'>{examResults.status}</Badge>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-400">Started At:</span>
+                        <span className="text-gray-600 dark:text-white">Started At:</span>
                         <span className="font-medium">
                           {new Date(examResults.started_at).toLocaleDateString(undefined, {
                             year: 'numeric',
@@ -426,7 +426,7 @@ export default function ExamResultsPage() {
                       </div>
 
                       <div className="flex justify-between">
-                        <span className="text-gray-600 dark:text-gray-400">Completed At:</span>
+                        <span className="text-gray-600 dark:text-white">Completed At:</span>
                         <span className="font-medium">
                           {new Date(examResults.completed_at).toLocaleDateString(undefined, {
                             year: 'numeric',

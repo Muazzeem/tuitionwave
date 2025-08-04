@@ -472,7 +472,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
             />
           </Card>
         ) : (
-          <div className="flex-1 flex items-center justify-center">
+            <div className="flex-1 flex items-center justify-center dark:bg-gray-900">
             <EmptyState />
           </div>
         )}

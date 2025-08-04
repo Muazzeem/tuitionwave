@@ -237,7 +237,7 @@ export default function ExamHistory({
     switch (exam.status) {
       case 'not_started':
         return (
-          <Button size="sm" className="flex-1 text-white flex-1 text-white hover:bg-gray-100 dark:hover:bg-gray-900" onClick={() => {
+          <Button size="sm" className="flex-1 text-white flex-1 text-white dark:bg-primary hover:bg-primary-700" onClick={() => {
             handleStartExam();
             setSelectedExam(exam);
           }}>
@@ -246,7 +246,7 @@ export default function ExamHistory({
         );
       case 'in_progress':
         return (
-          <Button size="sm" variant="outline" className="flex-1 text-white flex-1 text-white hover:bg-gray-100 dark:hover:bg-gray-900"
+          <Button size="sm" variant="outline" className="flex-1 text-white flex-1 text-white dark:bg-primary hover:bg-primary-700"
             onClick={() => handleContinueExam(exam)}
           >
             Continue
@@ -255,7 +255,7 @@ export default function ExamHistory({
       case 'completed':
       case 'failed':
         return (
-          <Button size="sm" variant="outline" className="flex-1 text-white flex-1 text-white hover:bg-gray-100 dark:hover:bg-gray-900"
+          <Button size="sm" variant="outline" className="flex-1 text-white flex-1 text-white dark:bg-primary hover:bg-primary-800"
             onClick={() => handleViewResults(exam)}
           >
             View Results
@@ -321,7 +321,7 @@ export default function ExamHistory({
       {(!loading || !useInternalApi) && examRecords.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {displayedExams.map((exam) => (
-            <Card key={exam.uid} className="hover:shadow-md transition-shadow dark:bg-gray-800 dark:border-gray-700">
+            <Card key={exam.uid} className="hover:shadow-md transition-shadow dark:bg-background dark:border-gray-900 shadow-md">
               <CardContent className="p-4">
                 <div className="space-y-3">
                   <div className="flex items-start justify-between">
@@ -352,7 +352,7 @@ export default function ExamHistory({
                   </div>
 
                   {exam.status && (
-                    <div className="border-t">
+                    <div className="">
                       <div className="text-sm">
                         <span className="text-muted-foreground">Score: </span>
                         <span className={`font-medium ${exam.percentage >= 50 ? 'text-green-600' : 'text-red-600'}`}>
@@ -362,7 +362,7 @@ export default function ExamHistory({
                     </div>
                   )}
 
-                  <div className="pt-2 border-t">
+                  <div className="pt-2">
                     <div className="text-xs text-muted-foreground flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       {exam.completed_at

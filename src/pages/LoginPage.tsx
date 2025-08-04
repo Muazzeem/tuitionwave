@@ -161,7 +161,7 @@ const LoginPage: React.FC = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        className="w-full"
+                      className="w-full dark:bg-gray-900 border-primary-200"
                         disabled={loading}
                       />
                     </div>
@@ -177,7 +177,7 @@ const LoginPage: React.FC = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        className="w-full pr-10"
+                      className="w-full pr-10 dark:bg-gray-900 border-primary-200"
                         disabled={loading}
                       />
                       <button
@@ -196,7 +196,7 @@ const LoginPage: React.FC = () => {
                   
                   <Button 
                     type="submit" 
-                    className="w-full min-h-[55px] bg-blue-600 hover:bg-blue-700 mt-2 dark:text-white"
+                  className="w-full min-h-[55px] bg-primary hover:bg-primary-700 mt-2 dark:text-white"
                     disabled={loading}
                   >
                     {loading ? 'Logging in...' : 'Log in'}
@@ -204,12 +204,12 @@ const LoginPage: React.FC = () => {
                   
                   <div className="text-center text-sm">
                     <div className="text-center mt-4 text-sm">
-                      Don't have an account? <Link to="/auth/registration" className="text-blue-600 hover:underline font-medium">Sign Up</Link>
+                    Don't have an account? <Link to="/auth/registration" className="text-primary hover:underline font-medium">Sign Up</Link>
                     </div>
                   </div>
                 </div>
               </form>
-            </div>
+          </div>
         </div>
       </div>
     </div>

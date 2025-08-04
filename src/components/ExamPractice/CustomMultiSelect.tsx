@@ -51,7 +51,7 @@ export default function CustomMultiSelect({
   return (
     <div className="multi-select-container relative">
       <div
-        className="flex min-h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm  cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex min-h-10 w-full rounded-md border border-input bg-gray-900 px-3 py-2 text-sm shadow-sm  cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
         onClick={() => !disabled && setIsOpen(!isOpen)}
       >
         <div className="flex items-center justify-between w-full">
@@ -85,20 +85,20 @@ export default function CustomMultiSelect({
       )} */}
 
       {isOpen && !disabled && (
-        <div className="absolute z-50 min-w-full mt-1 overflow-hidden rounded-md border bg-popover shadow-lg animate-in fade-in-0 zoom-in-95">
+        <div className="absolute bg-gray-900 z-50 min-w-full mt-1 overflow-hidden rounded-md border bg-popover shadow-lg animate-in fade-in-0 zoom-in-95">
           <div className="p-2 border-b">
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search..."
-                className="pl-8 h-9"
+                className="pl-8 h-9 bg-gray-900"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onClick={(e) => e.stopPropagation()}
               />
             </div>
           </div>
-          <div className="max-h-60 overflow-y-auto p-1">
+          <div className="max-h-60 overflow-y-auto p-1 bg-gray-900">
             {isLoading ? (
               <div className="px-2 py-2 text-sm text-center">Loading...</div>
             ) : filteredOptions.length === 0 ? (

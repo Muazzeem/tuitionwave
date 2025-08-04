@@ -92,7 +92,7 @@ const PasswordSettings = () => {
     }
 
     return (
-        <div className="p-6 space-y-8 dark:bg-gray-800 dark:border-gray-700">
+        <div className="p-6 space-y-8 dark:bg-background dark:border-gray-700">
             <div>
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Password</h2>
                 <p className="text-gray-500 mt-1 dark:text-gray-300">Manage and change your password</p>
@@ -104,7 +104,7 @@ const PasswordSettings = () => {
                     <div className="relative">
                         <Input
                             type={showCurrentPassword ? "text" : "password"}
-                            className="pl-10 pr-10 bg-white dark:bg-black"
+                            className="pl-10 pr-10 dark:bg-gray-900 border-primary-200"
                             placeholder="Current password "
                             value={currentPassword}
                             onChange={(e) => setCurrentPassword(e.target.value)}
@@ -130,7 +130,7 @@ const PasswordSettings = () => {
                     <div className="relative">
                         <Input
                             type={showNewPassword ? "text" : "password"}
-                            className="pl-10 pr-10 bg-white dark:bg-black"
+                            className="pl-10 pr-10 dark:bg-gray-900 border-primary-200"
                             placeholder="New password"
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
@@ -157,7 +157,7 @@ const PasswordSettings = () => {
                     <div className="relative">
                         <Input
                             type={showConfirmPassword ? "text" : "password"}
-                            className="pl-10 pr-10 bg-white dark:bg-black"
+                            className="pl-10 pr-10 dark:bg-gray-900 border-primary-200"
                             placeholder="Confirm password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -179,8 +179,8 @@ const PasswordSettings = () => {
             </div>
 
             <div className="flex justify-end gap-3 pt-4">
-                <Button variant="outline" className="px-6">Cancel</Button>
-                <Button className="px-6 bg-blue-600 hover:bg-blue-700 dark:text-gray-300"
+                <Button variant="outline" className="px-6 dark:border-primary">Cancel</Button>
+                <Button className="px-6 bg-primary hover:bg-primary-700 dark:text-white"
                 disabled={isSaving}
                 onClick={handleChangePassword}>
                     Save Changes

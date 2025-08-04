@@ -24,8 +24,8 @@ const Sidebar = () => {
     { icon: Home, text: 'Dashboard', path: `/dashboard/guardian` },
     { icon: Search, text: 'Find Tutor', path: '/guardian/find-tutors' },
     { icon: ScrollText, text: 'Contracts', path: `/guardian/requests` },
-    { icon: MessageSquare, text: 'Message', path: '/message' },
-    { icon: User, text: 'Profile', path: `/profile/` },
+    { icon: MessageSquare, text: 'Message', path: '/guardian/message' },
+    { icon: User, text: 'Profile', path: `/guardian/profile/` },
   ];
 
   const studentMenuItems = [
@@ -38,7 +38,7 @@ const Sidebar = () => {
   const tutorMenuItems = [
     { icon: Home, text: 'Dashboard', path: `/dashboard/teacher` },
     { icon: ScrollText, text: 'Contracts', path: `/teacher/requests` },
-    { icon: MessageSquare, text: 'Message', path: '/message' },
+    { icon: MessageSquare, text: 'Message', path: '/teacher/message' },
     { icon: User, text: 'Profile', path: `/teacher/profile/` },
   ];
 
@@ -63,7 +63,7 @@ const Sidebar = () => {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className={`${isExpanded ? 'w-60' : 'w-13'} bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex-col h-screen transition-all duration-500 relative z-10 hidden md:flex`}>
+      <div className={`${isExpanded ? 'w-60' : 'w-13'} bg-white dark:bg-background border-r border-gray-900 dark:border-gray-900 flex-col h-screen transition-all duration-500 relative z-10 hidden md:flex shadow-lg`}>
         <div className="p-3 flex justify-between items-center align-middle">
           {isExpanded && (
             <h1 className="text-xl font-bold mt-2 dark:text-white">
@@ -96,7 +96,7 @@ const Sidebar = () => {
                     to={item.path}
                     className={`flex items-center px-1 lg:px-4 md:px-4 py-2 text-sm ${
                       isActive
-                        ? 'bg-blue-500 text-white'
+                      ? 'bg-primary-500 text-white'
                         : 'text-gray-700 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-900/30'
                     } ${!isExpanded && 'justify-center'}`}
                     title={!isExpanded ? item.text : ""}

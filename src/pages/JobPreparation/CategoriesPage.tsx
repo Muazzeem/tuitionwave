@@ -119,7 +119,7 @@ const CategoriesPage: React.FC = () => {
                   {categoriesData?.results.map((category) => (
                     <Card 
                       key={category.uid} 
-                      className="cursor-pointer hover:shadow-lg transition-shadow"
+                      className="cursor-pointer hover:shadow-lg transition-shadow dark:bg-background border-primary-200 shadow-md"
                       onClick={() => handleCategoryClick(category)}
                     >
                       <CardHeader>

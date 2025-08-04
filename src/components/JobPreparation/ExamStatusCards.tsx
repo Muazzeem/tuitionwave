@@ -89,7 +89,7 @@ export default function ExamStatusCards() {
   if (error) return <p className="text-red-600">{error}</p>;
 
   return (
-    <Card className="dark:bg-gray-800 dark:border-gray-700">
+    <Card className="dark:bg-background dark:border-gray-900 shadow-md">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <FileText className="h-5 w-5" />
@@ -99,7 +99,7 @@ export default function ExamStatusCards() {
       <CardContent>
         <div className="space-y-4">
           {exams.slice(0, 5).map((exam) => (
-            <div key={exam.uid} className="flex items-center justify-between p-4 border dark:border-gray-700 rounded-lg">
+            <div key={exam.uid} className="flex items-center justify-between p-4 border dark:border-primary-700 rounded-lg">
               <div className="flex items-center gap-3">
                 {getStatusIcon(exam.status)}
                 <div>
@@ -130,7 +130,7 @@ export default function ExamStatusCards() {
                   const action = getExamAction(exam.status, exam.uid);
                   return action ? (
                     <Link to={action.to}>
-                      <Button size="sm" variant="outline" className="text-sm hover:bg-gray-900">
+                      <Button size="sm" variant="outline" className="text-sm bg-primary hover:bg-primary-700">
                         {action.label}
                       </Button>
                     </Link>

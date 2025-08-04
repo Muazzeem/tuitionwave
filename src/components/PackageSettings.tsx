@@ -52,24 +52,24 @@ const PackageSettings = () => {
       <DashboardHeader userName="Settings" />
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
         <div className="p-4 sm:p-6 max-w-full lg:max-w-[1211px] mx-auto">
-          <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <Card className="bg-white dark:bg-background border border-primary-200 dark:border-primary-700">
             <CardContent className="p-0">
-              <div className="p-6 space-y-6 dark:bg-gray-900">
+              <div className="p-6 space-y-6 dark:bg-background">
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Package Information</h2>
+                  <h2 className="text-3xl font-semibold text-gray-900 dark:text-white">Package Information</h2>
                   <p className="text-gray-500 mt-1 dark:text-gray-300">View your current package details and subscription status</p>
                 </div>
                 
                 {!hasActivePackage ? (
-                  <Card className="dark:bg-gray-800 dark:border-gray-700 border-orange-200 dark:border-orange-800">
+                  <Card className="dark:bg-gray-900 dark:border-gray-700 border-orange-200 dark:border-red-800 shadow-md">
                     <CardContent className="p-6">
                       <div className="text-center py-8">
                         <div className="flex justify-center mb-4">
                           <div className="bg-orange-100 dark:bg-orange-900/20 p-3 rounded-full">
-                            <AlertCircle className="h-8 w-8 text-orange-600 dark:text-orange-400" />
+                            <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
                           </div>
                         </div>
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                        <h3 className="text-2xl font-semibold text-red-900 dark:text-red-500 mb-2">
                           No Active Package
                         </h3>
                         <p className="text-gray-600 dark:text-gray-400 mb-4 max-w-md mx-auto">

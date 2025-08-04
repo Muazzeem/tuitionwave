@@ -11,19 +11,19 @@ const GuardianProfile = () => {
             <DashboardHeader userName="Mamun" />
             <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
                 <div className="p-6 max-w-[1211px] mx-auto">
-                    <div className="bg-white rounded-lg border border-gray-200 dark:border-gray-800 dark:bg-gray-700">
-                        <Tabs defaultValue="general" className="w-full dark:bg-gray-800">
+                    <div className="rounded-lg">
+                        <Tabs defaultValue="general" className="w-full dark:bg-background">
                             <div className="px-4 pt-4">
-                                <TabsList className="w-fit space-x-1 bg-gray-100 p-1 rounded-lg h-auto dark:bg-gray-800">
+                                <TabsList className="w-fit space-x-1 bg-gray-100 p-1 rounded-lg h-auto dark:bg-background">
                                     <TabsTrigger 
                                         value="general"
-                                        className="rounded-md px-6 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-black"
+                                        className="rounded-md px-6 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-primary-500"
                                     >
                                         General
                                     </TabsTrigger>
                                     <TabsTrigger 
                                         value="password"
-                                        className="rounded-md px-6 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-black"
+                                        className="rounded-md px-6 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-primary-500"
                                     >
                                         Password
                                     </TabsTrigger> 

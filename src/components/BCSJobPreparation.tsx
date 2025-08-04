@@ -51,7 +51,7 @@ const BCSJobPreparation: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* Become a Tutor Card */}
-          <Card className="bg-black/50 border-gray-700 text-white backdrop-blur-md shadow-xl">
+          <Card className="bg-black/50 border-primary-700 text-white backdrop-blur-md shadow-xl">
             <CardHeader>
               <CardTitle className="text-2xl">Become a Tutor</CardTitle>
               <p className="text-gray-300">
@@ -61,7 +61,7 @@ const BCSJobPreparation: React.FC = () => {
             <CardContent>
               <div className="text-3xl font-bold text-blue-400 mb-4">৳12,500</div>
               <Button 
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-primary hover:bg-primary-700 text-white"
                 onClick={() => navigate('/auth/registration')}
               >
                 Start Teaching
@@ -70,7 +70,7 @@ const BCSJobPreparation: React.FC = () => {
           </Card>
 
           {/* Job Preparation Card */}
-          <Card className="bg-black/50 border-gray-700 text-white backdrop-blur-sm">
+          <Card className="bg-black/50 border-primary-700 text-white backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="text-2xl">Job Preparation</CardTitle>
               <div className="flex gap-2 flex-wrap mb-4">
@@ -78,7 +78,7 @@ const BCSJobPreparation: React.FC = () => {
                   <Badge 
                     key={type.label}
                     variant={type.active ? "default" : "secondary"}
-                    className={type.active ? "bg-blue-600 text-white" : "bg-gray-600 text-gray-300"}
+                    className={type.active ? "bg-primary-500 text-white" : "bg-gray-600 text-gray-300"}
                   >
                     {type.label}
                   </Badge>
@@ -98,7 +98,7 @@ const BCSJobPreparation: React.FC = () => {
                 ))}
               </div>
               <Button 
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full bg-primary hover:bg-primary-700 text-white"
                 size='lg'
                 onClick={() => navigate('/job-preparation/dashboard')}
               >
@@ -111,9 +111,9 @@ const BCSJobPreparation: React.FC = () => {
         {/* Features Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {features.map((feature, index) => (
-            <Card key={index} className="bg-black/30 border-gray-700 text-white backdrop-blur-sm">
+            <Card key={index} className="bg-black/30 border-primary-700 text-white backdrop-blur-sm">
               <CardContent className="p-4 text-center">
-                <feature.icon className="h-8 w-8 mx-auto mb-3 text-blue-400" />
+                <feature.icon className="h-8 w-8 mx-auto mb-3 text-primary" />
                 <h3 className="font-semibold mb-2">{feature.title}</h3>
                 <p className="text-sm text-gray-300">{feature.description}</p>
               </CardContent>

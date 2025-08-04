@@ -102,7 +102,7 @@ export default function ExamConfiguration({
 
   return (
     <div className="relative mt-6">
-      <Card className='dark:bg-gray-800 dark:border-gray-700'>
+      <Card className='dark:bg-background dark:border-gray-900'>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5" />
@@ -115,10 +115,10 @@ export default function ExamConfiguration({
             <div className="space-y-2">
               <Label className="text-sm font-medium">Category</Label>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger>
+                <SelectTrigger className='dark:bg-gray-900'>
                   <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className='dark:bg-gray-900'>
                   {categoriesLoading ? (
                     <SelectItem value="loading" disabled>Loading...</SelectItem>
                   ) : (
@@ -142,6 +142,7 @@ export default function ExamConfiguration({
                 min="0"
                 max="200"
                 placeholder="00"
+                className='dark:bg-gray-900'
               />
             </div>
 
@@ -155,6 +156,7 @@ export default function ExamConfiguration({
                 min="0"
                 max="300"
                 placeholder="00"
+                className='dark:bg-gray-900'
               />
             </div>
             {/* Subjects Selection */}

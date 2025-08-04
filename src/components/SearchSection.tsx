@@ -255,15 +255,15 @@ const SearchSection: React.FC = () => {
   }
 
   return (
-    <div className="text-white relative py-10 dark:bg-gray-800">
+    <div className="text-white relative py-10 dark:bg-gray-900">
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center mb-12">
-          <h1 className="text-3xl font-bold mb-4">
+          <h1 className="text-3xl font-bold mb-4 capitalize">
             Find a right tutor in your area
           </h1>
         </div>
 
-        <div className="bg-white rounded-lg shadow-xl p-6 dark:bg-gray-900 backdrop-blur-sm bg-opacity-95">
+        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-background backdrop-blur-sm bg-opacity-95">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-gray-800 font-medium text-lg dark:text-white flex items-center gap-2">
               <Search className="h-5 w-5" />
@@ -286,13 +286,13 @@ const SearchSection: React.FC = () => {
               <label className="block text-xs font-medium text-gray-600 mb-2 dark:text-gray-300">
                 Institution
               </label>
-              <Select 
+              <Select
                 open={isOpen} 
                 onOpenChange={setIsOpen}
                 value={selectedInstitution}
                 onValueChange={handleInstitutionSelect}
               >
-                <SelectTrigger className="w-full text-black dark:text-white border-gray-300 hover:border-blue-400 transition-colors dark:border-gray-700">
+                <SelectTrigger className="w-full text-black dark:text-white border-gray-300 hover:border-blue-400 transition-colors dark:border-primary-700 dark:bg-gray-900">
                   <SelectValue placeholder="Select Institution" className="text-black dark:text-white" />
                 </SelectTrigger>
                 <SelectContent>
@@ -301,11 +301,11 @@ const SearchSection: React.FC = () => {
                       placeholder="Search Institution..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="h-8 focus-visible:ring-1 focus-visible:ring-offset-0 text-black dark:text-white"
+                      className="h-8 focus-visible:ring-1 focus-visible:ring-offset-0 text-black dark:text-white dark:bg-gray-900"
                       onClick={(e) => e.stopPropagation()}
                     />
                   </div>
-                  <ScrollArea className="h-60">
+                  <ScrollArea className="h-60 dark:bg-gray-900">
                     {filteredInstitutions.length > 0 ? (
                       filteredInstitutions.map((institution) => (
                         <SelectItem
@@ -336,7 +336,7 @@ const SearchSection: React.FC = () => {
                 value={selectedCity}
                 onValueChange={handleCitySelect}
               >
-                <SelectTrigger className="w-full h-10 text-black dark:text-white border-gray-300 hover:border-blue-400 transition-colors dark:border-gray-700">
+                <SelectTrigger className="w-full h-10 text-black dark:text-white border-gray-300 hover:border-blue-400 transition-colors dark:border-primary-700 dark:bg-gray-900">
                   <SelectValue placeholder="Select City" />
                 </SelectTrigger>
                 <SelectContent>
@@ -349,7 +349,7 @@ const SearchSection: React.FC = () => {
                       onClick={(e) => e.stopPropagation()}
                     />
                   </div>
-                  <ScrollArea className="h-60">
+                  <ScrollArea className="h-60 dark:bg-gray-900">
                     {filteredCities.length > 0 ? (
                       filteredCities.map((city) => (
                         <SelectItem 
@@ -378,11 +378,11 @@ const SearchSection: React.FC = () => {
                 value={selectedSubject}
                 onValueChange={handleSubjectSelect}
               >
-                <SelectTrigger className="w-full h-10 text-black dark:text-white border-gray-300 hover:border-blue-400 transition-colors dark:border-gray-700">
+                <SelectTrigger className="w-full h-10 text-black dark:text-white border-gray-300 hover:border-blue-400 transition-colors dark:border-primary-700 dark:bg-gray-900">
                   <SelectValue placeholder="Select Subject" />
                 </SelectTrigger>
                 <SelectContent>
-                  <ScrollArea className="h-60">
+                  <ScrollArea className="h-60 dark:bg-gray-900">
                     {subjects.map((subject) => (
                       <SelectItem 
                         key={subject.id} 
@@ -400,7 +400,7 @@ const SearchSection: React.FC = () => {
 
           {/* Active Filters Section */}
           {hasActiveFilters && (
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6">
+            <div className="bg-blue-50 dark:bg-gray-900 rounded-lg p-4 mb-6">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Active Filters:</h4>
                 <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -445,8 +445,8 @@ const SearchSection: React.FC = () => {
                   </div>
                 )}
                 {selectedGender && (
-                  <div className="flex items-center bg-pink-100 dark:bg-pink-800 text-pink-800 dark:text-pink-100 px-3 py-2 rounded-full text-sm font-medium shadow-sm">
-                    <span>Gender: {selectedGender}</span>
+                  <div className="flex items-center bg-pink-100 dark:bg-primary-800 text-pink-800 dark:text-pink-100 px-3 py-2 rounded-full text-sm font-medium shadow-sm">
+                    <span className="capitalize">Gender: {selectedGender}</span>
                     <button 
                       onClick={() => clearFilter('gender')}
                       className="ml-2 hover:text-pink-900 dark:hover:text-pink-200 transition-colors"
@@ -489,7 +489,7 @@ const SearchSection: React.FC = () => {
             </div>
 
             <Button 
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 dark:text-white font-medium px-6 py-2 transition-all duration-200 shadow-lg hover:shadow-xl"
+              className="bg-primary hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-700 dark:text-white font-medium px-6 py-2 transition-all duration-200 shadow-lg hover:shadow-xl"
               onClick={handleSearch}
               disabled={isSearching}
             >

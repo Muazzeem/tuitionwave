@@ -25,7 +25,7 @@ const Header = () => {
           {/* Logo */}
           <Link to="/">
             <button 
-              className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400 flex-shrink-0 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+              className="text-xl sm:text-2xl font-bold text-primary-600 dark:text-primary-400 flex-shrink-0 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
             >
               Tuition Wave
             </button>
@@ -56,7 +56,7 @@ const Header = () => {
             
             {userProfile ? (
               <button
-                className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="bg-primary hover:bg-primary-700 text-white rounded-full px-6 py-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg border border-gray-900"
                 onClick={goToDashboard}
               >
                 Go to Dashboard
@@ -64,7 +64,7 @@ const Header = () => {
             ) : (
               <Link to="/login">
                 <button
-                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="bg-primary hover:bg-primary-700 text-white rounded-full px-6 py-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Login
                 </button>
@@ -117,7 +117,7 @@ const Header = () => {
               <div className="pt-4">
                 {userProfile ? (
                   <button
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-3 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="w-full bg-primary-600 hover:bg-blue-700 text-white rounded-full px-6 py-3 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     onClick={goToDashboard}
                   >
                     Go to Dashboard

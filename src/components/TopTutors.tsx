@@ -85,7 +85,7 @@ const TopTutors: React.FC = () => {
   }
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-none border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+    <div className="bg-white p-4 rounded-lg shadow-md border border-gray-100 dark:bg-background dark:border-gray-900">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-bold">New Tutors</h2>
         <button className="text-sm text-tuitionwave-blue hover:underline">

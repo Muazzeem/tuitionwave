@@ -72,7 +72,7 @@ export default function PerformanceChart() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="dark:bg-gray-900 dark:border-gray-700">
+      <Card className="dark:bg-background dark:border-gray-900 shadow-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
@@ -100,7 +100,7 @@ export default function PerformanceChart() {
         </CardContent>
       </Card>
 
-      <Card className="dark:bg-gray-900 dark:border-gray-700">
+      <Card className="dark:bg-background dark:border-gray-900 shadow-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5" />
