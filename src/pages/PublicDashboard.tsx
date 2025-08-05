@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
+import SocialMediaCards from "@/components/SocialMediaCard";
 
 const PublicDashboard = () => {
   useEffect(() => {
@@ -255,6 +256,7 @@ const PublicDashboard = () => {
                 </CardContent>
               </Card>
             </div>
+            <SocialMediaCards />
           </div>
         </div>
       </ScrollArea>
