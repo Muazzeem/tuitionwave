@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { CheckCircle, XCircle, PlayCircle, Clock, FileText, Users, Calendar, Filter, Loader2, AlertCircle } from "lucide-react";
+import { CheckCircle, XCircle, PlayCircle, Clock, FileText, Users, Calendar, Filter, Loader2, AlertCircle, BookOpen, PlusCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { getAccessToken } from '@/utils/auth';
 import ConfirmationDialog from '../ConfirmationDialog';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'react-router-dom';
 
 interface ApiExamRecord {
   uid: string;
@@ -385,11 +386,38 @@ export default function ExamHistory({
       )}
 
       {(!loading || !useInternalApi) && examRecords.length === 0 && (
-        <div className="text-center py-12">
-          <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground">
-            {examFilter === 'all' ? 'No exams found' : `No ${examFilter.replace('_', ' ')} exams found`}
-          </p>
+        <div className="text-center py-16">
+          <Card className="max-w-md mx-auto shadow-sm">
+            <CardContent className="p-8">
+              <div className="w-20 h-20 bg-muted/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <BookOpen className="h-10 w-10 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-medium text-foreground mb-3">No Exam History</h3>
+              <p className="text-muted-foreground mb-6">
+                {examFilter === 'all' 
+                  ? 'You haven\'t taken any exams yet. Start your preparation journey!' 
+                  : `No ${examFilter.replace('_', ' ')} exams found. Try a different filter or create a new exam.`
+                }
+              </p>
+              <div className="space-y-3">
+                <Link to="/job-preparation/practice">
+                  <Button className="w-full bg-primary hover:bg-primary-700 text-primary-foreground">
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Create New Exam
+                  </Button>
+                </Link>
+                {examFilter !== 'all' && (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => handleFilterChange('all')}
+                    className="w-full"
+                  >
+                    View All Exams
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
 

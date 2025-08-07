@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, XCircle, PlayCircle, Clock, FileText } from 'lucide-react';
+import { CheckCircle, XCircle, PlayCircle, Clock, FileText, BookOpen } from 'lucide-react';
 import { getAccessToken } from '@/utils/auth';
 import { Link } from 'react-router-dom';
 
@@ -97,49 +97,64 @@ export default function ExamStatusCards() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {exams.slice(0, 5).map((exam) => (
-            <div key={exam.uid} className="flex items-center justify-between p-4 border dark:border-primary-700 rounded-lg">
-              <div className="flex items-center gap-3">
-                {getStatusIcon(exam.status)}
-                <div>
-                  <h4 className="font-medium">
-                    {exam.subject_names?.length > 0
-                      ? `${exam.subject_names.slice(0, 3).join(', ')}${exam.subject_names.length > 3 ? ', ...' : ''}`
-                      : exam.topic_names?.length > 0
-                        ? `${exam.topic_names.slice(0, 3).join(', ')}${exam.topic_names.length > 3 ? ', ...' : ''}`
-                        : exam.exam_type_display}
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(exam.created_at).toLocaleString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </p>
+        {exams.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-muted/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <BookOpen className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-medium text-foreground mb-2">No Exams Found</h3>
+            <p className="text-muted-foreground mb-4">You haven't taken any exams yet. Start your preparation journey today!</p>
+            <Link to="/job-preparation/practice">
+              <Button className="bg-primary hover:bg-primary-700 text-primary-foreground">
+                Start First Exam
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {exams.slice(0, 5).map((exam) => (
+              <div key={exam.uid} className="flex items-center justify-between p-4 border dark:border-primary-700 rounded-lg">
+                <div className="flex items-center gap-3">
+                  {getStatusIcon(exam.status)}
+                  <div>
+                    <h4 className="font-medium">
+                      {exam.subject_names?.length > 0
+                        ? `${exam.subject_names.slice(0, 3).join(', ')}${exam.subject_names.length > 3 ? ', ...' : ''}`
+                        : exam.topic_names?.length > 0
+                          ? `${exam.topic_names.slice(0, 3).join(', ')}${exam.topic_names.length > 3 ? ', ...' : ''}`
+                          : exam.exam_type_display}
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(exam.created_at).toLocaleString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Badge variant="outline" className={getStatusBadge(exam.status)}>
+                    {exam.status.replace('_', ' ').replace(/^\w/, c => c.toUpperCase())}
+                  </Badge>
+                  <span className={`text-sm font-medium ${exam.percentage >= 50 ? 'text-green-600' : 'text-red-600'}`}>
+                    {exam.percentage}%
+                  </span>
+                  {(() => {
+                    const action = getExamAction(exam.status, exam.uid);
+                    return action ? (
+                      <Link to={action.to}>
+                        <Button size="sm" variant="outline" className="text-sm bg-primary hover:bg-primary-700">
+                          {action.label}
+                        </Button>
+                      </Link>
+                    ) : null;
+                  })()}
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Badge variant="outline" className={getStatusBadge(exam.status)}>
-                  {exam.status.replace('_', ' ').replace(/^\w/, c => c.toUpperCase())}
-                </Badge>
-                <span className={`text-sm font-medium ${exam.percentage >= 50 ? 'text-green-600' : 'text-red-600'}`}>
-                  {exam.percentage}%
-                </span>
-                {(() => {
-                  const action = getExamAction(exam.status, exam.uid);
-                  return action ? (
-                    <Link to={action.to}>
-                      <Button size="sm" variant="outline" className="text-sm bg-primary hover:bg-primary-700">
-                        {action.label}
-                      </Button>
-                    </Link>
-                  ) : null;
-                })()}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
