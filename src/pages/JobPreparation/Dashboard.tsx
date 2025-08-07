@@ -11,6 +11,7 @@ import PerformanceChart from '@/components/JobPreparation/PerformanceChart';
 import RankingSystem from '@/components/JobPreparation/RankingSystem';
 import StudyProgress from '@/components/JobPreparation/StudyProgress';
 import QuickStats from '@/components/JobPreparation/QuickStats';
+import SocialMediaCards from '@/components/SocialMediaCard';
 
 export default function JobPreparationDashboard() {
   useEffect(() => {
@@ -91,6 +92,7 @@ export default function JobPreparationDashboard() {
               <RecentActivities />
             </TabsContent> */}
           </Tabs>
+          <SocialMediaCards />
         </div>
       </ScrollArea>
     </div>

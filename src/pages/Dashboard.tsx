@@ -5,6 +5,7 @@ import TopTutors from "@/components/TopTutors";
 import RecentRequests from "@/components/RecentRequests";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/contexts/AuthContext";
+import SocialMediaCards from "@/components/SocialMediaCard";
 
 
 const Dashboard: React.FC = () => {
@@ -37,6 +38,7 @@ const Dashboard: React.FC = () => {
               <TopTutors />
             </div>
           </div>
+          <SocialMediaCards />
         </div>
       </ScrollArea>
     </div>
