@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { CheckCircle, XCircle, PlayCircle, Clock, FileText, Users, Calendar, Filter, Loader2, AlertCircle, BookOpen, PlusCircle } from "lucide-react";
+import { CheckCircle, XCircle, PlayCircle, Clock, FileText, Calendar, Filter, Loader2, AlertCircle, BookOpen, PlusCircle, Trophy, Target, Users } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { getAccessToken } from '@/utils/auth';
 import ConfirmationDialog from '../ConfirmationDialog';
@@ -65,7 +65,7 @@ export default function ExamHistory({
   onExamUpdate
 }: ExamHistoryProps) {
   const navigate = useNavigate();
-  
+
   const [internalExamRecords, setInternalExamRecords] = useState<ApiExamRecord[]>([]);
   const [internalExamFilter, setInternalExamFilter] = useState<'all' | 'not_started' | 'in_progress' | 'completed'>('all');
   const [internalCurrentPage, setInternalCurrentPage] = useState(1);
@@ -91,7 +91,7 @@ export default function ExamHistory({
 
     try {
       const statusParam = status !== 'all' && status ? `?status=${status}&page=${page}` : `?page=${page}`;
-      const url = `${import.meta.env.VITE_API_URL}/api/exams/${statusParam}`;
+      const url = `${import.meta.env.VITE_API_URL}/api/exams?exam_type=custom${statusParam}`;
 
       const response = await fetch(url, {
         method: 'GET',
@@ -215,10 +215,10 @@ export default function ExamHistory({
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      completed: 'bg-green-100 text-green-800 border-green-200',
-      failed: 'bg-red-100 text-red-800 border-red-200',
-      in_progress: 'bg-blue-100 text-blue-800 border-blue-200',
-      not_started: 'bg-orange-100 text-orange-800 border-orange-200'
+      completed: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800',
+      failed: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800',
+      in_progress: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800',
+      not_started: 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800'
     };
     return variants[status as keyof typeof variants] || 'bg-gray-100 text-gray-800 border-gray-200';
   };
@@ -238,27 +238,40 @@ export default function ExamHistory({
     switch (exam.status) {
       case 'not_started':
         return (
-          <Button size="sm" className="flex-1 text-white flex-1 text-white dark:bg-primary hover:bg-primary-700" onClick={() => {
-            handleStartExam();
-            setSelectedExam(exam);
-          }}>
+          <Button
+            size="sm"
+            className="w-full sm:flex-1 bg-primary hover:bg-primary/90 text-white transition-colors"
+            onClick={() => {
+              handleStartExam();
+              setSelectedExam(exam);
+            }}
+          >
+            <PlayCircle className="h-4 w-4 mr-2" />
             Start Exam
           </Button>
         );
       case 'in_progress':
         return (
-          <Button size="sm" variant="outline" className="flex-1 text-white flex-1 text-white dark:bg-primary hover:bg-primary-700"
+          <Button
+            size="sm"
+            variant="outline"
+            className="w-full sm:flex-1 border-primary text-primary hover:bg-primary hover:text-white transition-colors"
             onClick={() => handleContinueExam(exam)}
           >
+            <PlayCircle className="h-4 w-4 mr-2" />
             Continue
           </Button>
         );
       case 'completed':
       case 'failed':
         return (
-          <Button size="sm" variant="outline" className="flex-1 text-white flex-1 text-white dark:bg-primary hover:bg-primary-800"
+          <Button
+            size="sm"
+            variant="outline"
+            className="w-full sm:flex-1 border-primary hover:border-primary hover:text-primary transition-colors"
             onClick={() => handleViewResults(exam)}
           >
+            <Trophy className="h-4 w-4 mr-2" />
             View Results
           </Button>
         );
@@ -267,230 +280,279 @@ export default function ExamHistory({
     }
   };
 
+  const getScoreColor = (percentage: number) => {
+    if (percentage >= 80) return 'text-green-600 dark:text-green-400';
+    if (percentage >= 60) return 'text-yellow-600 dark:text-yellow-400';
+    return 'text-red-600 dark:text-red-400';
+  };
+
   if (error && useInternalApi) {
     return (
-      <div className="space-y-6">
-        <Alert variant="destructive">
+      <div className="space-y-6 p-4">
+        <Alert variant="destructive" className="max-w-2xl mx-auto">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             {error}
           </AlertDescription>
         </Alert>
-        <Button onClick={() => fetchExams(examFilter, currentPage)} variant="outline">
-          Try Again
-        </Button>
+        <div className="text-center">
+          <Button onClick={() => fetchExams(examFilter, currentPage)} variant="outline">
+            <Loader2 className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 mt-6">
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4" />
-          <Label className="text-sm font-medium">Filter by Status:</Label>
-          <Select value={examFilter} onValueChange={handleFilterChange}>
-            <SelectTrigger className="w-40">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="not_started">Not Started</SelectItem>
-              <SelectItem value="in_progress">In Progress</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="text-sm text-muted-foreground">
-          {loading && useInternalApi ? (
+    <div className="w-full bg-gray-900">
+      <div className="space-y-6 mt-6">
+        {/* Header and Filter Section */}
+        <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between rounded-lg p-4 border shadow-sm">
+          <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Loading...
+              <Filter className="h-5 w-5 text-primary" />
+              <Label className="text-sm font-medium whitespace-nowrap">Filter Status:</Label>
             </div>
-          ) : (
-            `Showing ${examRecords.length} ${useInternalApi ? `of ${totalCount}` : ''} exams`
-          )}
-        </div>
-      </div>
+            <Select value={examFilter} onValueChange={handleFilterChange}>
+              <SelectTrigger className="w-full sm:w-40 bg-background border-muted">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-background">
+                <SelectItem value="all">All Exams</SelectItem>
+                <SelectItem value="not_started">Not Started</SelectItem>
+                <SelectItem value="in_progress">In Progress</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-      {loading && useInternalApi && examRecords.length === 0 && (
-        <div className="flex justify-center items-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <div className="text-sm text-muted-foreground">
+            {loading && useInternalApi ? (
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Loading exams...</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                <span>
+                  Showing {examRecords.length} {useInternalApi ? `of ${totalCount}` : ''} exams
+                </span>
+              </div>
+            )}
+          </div>
         </div>
-      )}
 
-      {(!loading || !useInternalApi) && examRecords.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {displayedExams.map((exam) => (
-            <Card key={exam.uid} className="hover:shadow-md transition-shadow dark:bg-background dark:border-gray-900 shadow-md">
-              <CardContent className="p-4">
+        {/* Loading State */}
+        {loading && useInternalApi && examRecords.length === 0 && (
+          <div className="flex justify-center items-center py-16">
+            <div className="text-center space-y-4">
+              <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
+              <p className="text-muted-foreground">Loading your exams...</p>
+            </div>
+          </div>
+        )}
+
+        {/* Exam Cards Grid */}
+        {(!loading || !useInternalApi) && examRecords.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            {displayedExams.map((exam) => (
+              <Card key={exam.uid} className="group hover:shadow-lg transition-all duration-200 dark:bg-background  dark:border-primary-800 hover:border-primary/50">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="space-y-4">
+                    {/* Header */}
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-semibold text-sm sm:text-base line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+                        {exam.exam_type_display}
+                      </h3>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        {getStatusIcon(exam.status)}
+                      </div>
+                    </div>
+
+                    {/* Status Badge */}
+                    <div>
+                      <Badge
+                        variant="outline"
+                        className={`text-xs font-medium ${getStatusBadge(exam.status)}`}
+                      >
+                        {exam.status_display}
+                      </Badge>
+                    </div>
+
+                    {/* Exam Details */}
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-3 w-3 flex-shrink-0" />
+                          <span>{exam.question_limit} Questions</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-3 w-3 flex-shrink-0" />
+                          <span>{exam.duration_minutes} Min</span>
+                        </div>
+                      </div>
+
+                      {/* Score Display */}
+                      {(exam.status === 'completed' || exam.status === 'failed') && (
+                        <div className="bg-gray-900 rounded-lg p-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-muted-foreground">Score</span>
+                            <span className={`font-bold text-lg ${getScoreColor(exam.percentage)}`}>
+                              {exam.percentage.toFixed(1)}%
+                            </span>
+                          </div>
+                          <div className="w-full bg-muted rounded-full h-2 mt-2">
+                            <div
+                              className={`h-2 rounded-full transition-all ${exam.percentage >= 80 ? 'bg-green-500' :
+                                exam.percentage >= 60 ? 'bg-yellow-500' : 'bg-red-500'
+                                }`}
+                              style={{ width: `${Math.min(exam.percentage, 100)}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Date Information */}
+                      <div className="text-xs text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-3 w-3 flex-shrink-0" />
+                          <span className="truncate">
+                            {exam.completed_at
+                              ? `Completed: ${formatDate(exam.completed_at)}`
+                              : exam.started_at
+                                ? `Started: ${formatDate(exam.started_at)}`
+                                : `Created: ${formatDate(exam.created_at)}`
+                            }
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Button */}
+                    <div className="pt-2 border-t border-muted">
+                      {getActionButton(exam)}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* Empty State */}
+        {(!loading || !useInternalApi) && examRecords.length === 0 && (
+          <div className="text-center py-12 sm:py-16">
+            <Card className="max-w-md mx-auto shadow-md border border-primary bg-background">
+              <CardContent className="p-6 sm:p-8">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                  <BookOpen className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-3">No Exam History</h3>
+                <p className="text-sm sm:text-base text-muted-foreground mb-6 leading-relaxed">
+                  {examFilter === 'all'
+                    ? 'You haven\'t taken any exams yet. Start your preparation journey and track your progress!'
+                    : `No ${examFilter.replace('_', ' ')} exams found. Try a different filter or create a new exam to get started.`
+                  }
+                </p>
                 <div className="space-y-3">
-                  <div className="flex items-start justify-between">
-                    <h3 className="font-medium line-clamp-2">{exam.exam_type_display}</h3>
-                    <div className="flex items-center gap-1">
-                      {getStatusIcon(exam.status)}
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Badge
+                  <Link to="/job-preparation/practice" className="block">
+                    <Button className="w-full bg-primary hover:bg-primary/90 text-white transition-colors">
+                      <PlusCircle className="h-4 w-4 mr-2" />
+                      Create New Exam
+                    </Button>
+                  </Link>
+                  {examFilter !== 'all' && (
+                    <Button
                       variant="outline"
-                      className={`text-xs ${getStatusBadge(exam.status)}`}
+                      onClick={() => handleFilterChange('all')}
+                      className="w-full hover:bg-muted transition-colors"
                     >
-                      {exam.status_display}
-                    </Badge>
-
-                    <div className="text-sm text-muted-foreground mt-5">
-                      <div className="flex items-center gap-2 mb-1">
-                        <FileText className="h-3 w-3" />
-                        {exam.question_limit} Questions
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-3 w-3" />
-                        {exam.duration_minutes} Minutes
-                      </div>
-                    </div>
-                  </div>
-
-                  {exam.status && (
-                    <div className="">
-                      <div className="text-sm">
-                        <span className="text-muted-foreground">Score: </span>
-                        <span className={`font-medium ${exam.percentage >= 50 ? 'text-green-600' : 'text-red-600'}`}>
-                          {exam.percentage.toFixed(1)}%
-                        </span>
-                      </div>
-                    </div>
+                      View All Exams
+                    </Button>
                   )}
-
-                  <div className="pt-2">
-                    <div className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {exam.completed_at
-                        ? `Completed: ${formatDate(exam.completed_at)}`
-                        : exam.started_at
-                          ? `Started: ${formatDate(exam.started_at)}`
-                          : `Created: ${formatDate(exam.created_at)}`
-                      }
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2 pt-2">
-                    {getActionButton(exam)}
-                  </div>
                 </div>
               </CardContent>
             </Card>
-          ))}
-        </div>
-      )}
+          </div>
+        )}
 
-      {(!loading || !useInternalApi) && examRecords.length === 0 && (
-        <div className="text-center py-16">
-          <Card className="max-w-md mx-auto shadow-sm">
-            <CardContent className="p-8">
-              <div className="w-20 h-20 bg-muted/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <BookOpen className="h-10 w-10 text-muted-foreground" />
-              </div>
-              <h3 className="text-xl font-medium text-foreground mb-3">No Exam History</h3>
-              <p className="text-muted-foreground mb-6">
-                {examFilter === 'all' 
-                  ? 'You haven\'t taken any exams yet. Start your preparation journey!' 
-                  : `No ${examFilter.replace('_', ' ')} exams found. Try a different filter or create a new exam.`
-                }
-              </p>
-              <div className="space-y-3">
-                <Link to="/job-preparation/practice">
-                  <Button className="w-full bg-primary hover:bg-primary-700 text-primary-foreground">
-                    <PlusCircle className="h-4 w-4 mr-2" />
-                    Create New Exam
-                  </Button>
-                </Link>
-                {examFilter !== 'all' && (
-                  <Button 
-                    variant="outline" 
-                    onClick={() => handleFilterChange('all')}
-                    className="w-full"
-                  >
-                    View All Exams
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+        {/* Pagination */}
+        {(!loading || !useInternalApi) && totalPages > 1 && (
+          <div className="flex justify-center pt-6 pb-4">
+            <Pagination>
+              <PaginationContent className="flex-wrap gap-1">
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage > 1) {
+                        handlePageChange(currentPage - 1);
+                      }
+                    }}
+                    className={`${currentPage === 1 ? 'pointer-events-none opacity-50' : 'hover:bg-muted'} transition-colors`}
+                  />
+                </PaginationItem>
 
-      {(!loading || !useInternalApi) && totalPages > 1 && (
-        <div className="flex justify-center">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (currentPage > 1) {
-                      handlePageChange(currentPage - 1);
-                    }
-                  }}
-                  className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
-                />
-              </PaginationItem>
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
 
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                let pageNum;
-                if (totalPages <= 5) {
-                  pageNum = i + 1;
-                } else if (currentPage <= 3) {
-                  pageNum = i + 1;
-                } else if (currentPage >= totalPages - 2) {
-                  pageNum = totalPages - 4 + i;
-                } else {
-                  pageNum = currentPage - 2 + i;
-                }
+                  return (
+                    <PaginationItem key={pageNum}>
+                      <PaginationLink
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handlePageChange(pageNum);
+                        }}
+                        isActive={currentPage === pageNum}
+                        className="transition-colors hover:bg-muted"
+                      >
+                        {pageNum}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                })}
 
-                return (
-                  <PaginationItem key={pageNum}>
-                    <PaginationLink
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handlePageChange(pageNum);
-                      }}
-                      isActive={currentPage === pageNum}
-                    >
-                      {pageNum}
-                    </PaginationLink>
-                  </PaginationItem>
-                );
-              })}
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage < totalPages) {
+                        handlePageChange(currentPage + 1);
+                      }
+                    }}
+                    className={`${currentPage === totalPages ? 'pointer-events-none opacity-50' : 'hover:bg-muted'} transition-colors`}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
 
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (currentPage < totalPages) {
-                      handlePageChange(currentPage + 1);
-                    }
-                  }}
-                  className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
-      )}
-      
-      <ConfirmationDialog
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        onConfirm={handleConfirmCreateExam}
-        title="Are you sure?"
-        description=""
-        variant="confirmation"
-      />
+        {/* Confirmation Dialog */}
+        <ConfirmationDialog
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          onConfirm={handleConfirmCreateExam}
+          title="Start Exam Confirmation"
+          description="Are you ready to begin this exam? Once started, the timer will begin and you cannot pause the exam."
+          variant="confirmation"
+        />
+      </div>
     </div>
   );
 }

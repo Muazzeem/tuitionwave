@@ -111,7 +111,7 @@ const ProfilePage: React.FC = () => {
        <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
         <div className="p-4 sm:p-6">
           <div className="flex justify-between items-center mb-4 sm:mb-6">
-            <h1 className="text-3xl sm:text-2xl font-bold">Edit Profile</h1>
+            <h1 className="lg:text-3xl sm:text-2xl font-bold">Edit Profile</h1>
             
             {!isLoading && tutorData && (
               <SocialShare
@@ -131,7 +131,7 @@ const ProfilePage: React.FC = () => {
 
           <div className="flex justify-center w-full">
             <div className="w-full max-w-4xl">
-              <div className="bg-gray-800 dark:bg-gray-800 p-4 sm:p-6 lg:p-8 rounded-lg border dark:border-gray-700">
+              <div className="bg-background p-4 sm:p-6 lg:p-8 rounded-lg">
                 <div className="mb-6 sm:mb-8">
                   <ProfileStepper
                     steps={steps}

@@ -62,28 +62,6 @@ export default function CustomMultiSelect({
         </div>
       </div>
 
-      {/* Selected Items */}
-      {/* {selectedItems.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-2">
-          {selectedItems.map(item => (
-            <Badge
-              key={item.uid}
-              variant="secondary"
-              className="flex items-center gap-1 dark:bg-gray-900 dark:border-gray-700"
-            >
-              {item.label}
-              <X
-                className="h-3 w-3 cursor-pointer hover:text-destructive"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRemove(item.uid);
-                }}
-              />
-            </Badge>
-          ))}
-        </div>
-      )} */}
-
       {isOpen && !disabled && (
         <div className="absolute bg-gray-900 z-50 min-w-full mt-1 overflow-hidden rounded-md border bg-popover shadow-lg animate-in fade-in-0 zoom-in-95">
           <div className="p-2 border-b">

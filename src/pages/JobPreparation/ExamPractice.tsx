@@ -1,29 +1,25 @@
-
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import DashboardHeader from "@/components/DashboardHeader";
 import ExamConfiguration from "@/components/ExamPractice/ExamConfiguration";
 import ExamSummaryModal from "@/components/ExamPractice/ExamSummaryModal";
 import ExamHistory from "@/components/ExamPractice/ExamHistory";
 import JobPreparationService from "@/services/JobPreparationService";
-import { Category, Subject, Topic } from "@/types/jobPreparation";
+import { Subject, Topic } from "@/types/jobPreparation";
 import { getAccessToken } from "@/utils/auth";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-
-interface ExamRecord {
-  id: string;
-  title: string;
-  category: string;
-  status: 'active' | 'running' | 'completed' | 'failed';
-  questionsCount: number;
-  duration: number;
-  score?: number;
-  completedAt?: string;
-  createdAt: string;
-}
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  PlusCircle,
+  History,
+  Target,
+  Sparkles,
+  TrendingUp
+} from "lucide-react";
 
 export default function ExamPractice() {
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -38,13 +34,12 @@ export default function ExamPractice() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const tabParam = searchParams.get("tab") || "create"; // default to 'create'
+  const tabParam = searchParams.get("tab") || "create";
   const [activeTab, setActiveTab] = useState(tabParam);
-  
-  // Exam list states
-  const [examFilter, setExamFilter] = useState<'all' | 'active' | 'running' | 'completed' | 'failed'>('all');
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+
+  useEffect(() => {
+    document.title = "Tuition Wave | Exam Preparation";
+  }, []);
 
   // Fetch categories
   const { data: categoriesData, isLoading: categoriesLoading } = useQuery({
@@ -89,8 +84,7 @@ export default function ExamPractice() {
     setSelectedSubjects(prev => {
       const isSelected = prev.some(s => s.uid === subject.uid);
       if (isSelected) {
-        // Remove subject and its topics
-        setSelectedTopics(prevTopics => 
+        setSelectedTopics(prevTopics =>
           prevTopics.filter(topic => topic.subject.uid !== subject.uid)
         );
         setSubjectTopics(prevSubjectTopics => {
@@ -100,7 +94,6 @@ export default function ExamPractice() {
         });
         return prev.filter(s => s.uid !== subject.uid);
       } else {
-        // Add subject and fetch its topics
         fetchTopicsForSubject(subject.uid);
         return [...prev, subject];
       }
@@ -186,24 +179,66 @@ export default function ExamPractice() {
     setSearchParams({ tab: value });
   };
 
+  // Quick stats for display
+  const getQuickStats = () => {
+    return {
+      selectedSubjects: selectedSubjects.length,
+      selectedTopics: selectedTopics.length,
+      questionLimit: questionLimit || 0,
+      duration: durationMinutes || 0
+    };
+  };
+
+  const stats = getQuickStats();
+
   return (
-      <div className="flex-1 overflow-auto dark:bg-gray-900">
+    <div className="flex-1 overflow-auto dark:bg-gray-900">
       <DashboardHeader userName="John" />
 
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
-        <div className="p-6 space-y-6">
-          <div className="">
-            <h2 className="text-3xl font-bold text-foreground">Exam Practice</h2>
-            <p className="text-muted-foreground mt-1">Customize your exam parameters</p>
+        <div className="p-4 md:p-6 space-y-6">
+          {/* Enhanced Header */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary-500 rounded-xl p-3">
+                <Target className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold text-foreground">Exam Practice</h2>
+                <p className="text-muted-foreground">Create custom exams or review your performance history</p>
+              </div>
+            </div>
           </div>
 
+          {/* Enhanced Tabs */}
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="create">Create Exam</TabsTrigger>
-              <TabsTrigger value="history">Exam History</TabsTrigger>
-            </TabsList>
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-1 shadow-sm border border-gray-200 dark:border-gray-700 w-fit">
+              <TabsList className="grid grid-cols-2 bg-transparent gap-1 mb-3">
+                <TabsTrigger
+                  value="create"
+                  className="flex gap-2 pt-3 pb-3 items-center data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-primary-500 data-[state=active]:text-white data-[state=active]:shadow-sm rounded-lg transition-all"
+                >
+                  <PlusCircle className="h-4 w-4" />
+                  <span className="font-medium">Create New Exam</span>
+                  {activeTab === 'create' && (
+                    <Sparkles className="h-4 w-4 animate-pulse" />
+                  )}
+                </TabsTrigger>
 
-            <TabsContent value="create" className="space-y-6">
+                <TabsTrigger
+                  value="history"
+                  className="flex items-center gap-2 pt-3 pb-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-primary-500 data-[state=active]:text-white data-[state=active]:shadow-sm rounded-lg transition-all"
+                >
+                  <History className="h-4 w-4" />
+                  <span className="font-medium">Exam History</span>
+                  {activeTab === 'history' && (
+                    <TrendingUp className="h-4 w-4" />
+                  )}
+                </TabsTrigger>
+              </TabsList>
+            </div>
+
+            <TabsContent value="create" className="space-y-6 mt-6">
               <ExamConfiguration
                 selectedCategory={selectedCategory}
                 setSelectedCategory={setSelectedCategory}
@@ -227,7 +262,7 @@ export default function ExamPractice() {
               />
             </TabsContent>
 
-            <TabsContent value="history" className="space-y-6">
+            <TabsContent value="history" className="space-y-6 mt-6">
               <ExamHistory
                 useInternalApi={true}
               />

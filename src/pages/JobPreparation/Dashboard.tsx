@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -59,7 +59,7 @@ export default function JobPreparationDashboard() {
                 </div>
                 <div className="space-y-6">
                   <StudyProgress />
-                  <Card className='dark:bg-gray-800 dark:border-gray-700'>
+                  <Card className='bg-background border-gray-900 shadow-xl'>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg flex items-center gap-2">
                         <Target className="h-5 w-5" />
@@ -67,9 +67,9 @@ export default function JobPreparationDashboard() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-2">
+                      <div className="space-y-2l">
                         <div className="flex justify-between text-sm">
-                          <span>Progress</span>
+                          <span className='pb-2'>Progress</span>
                           <span>{dashboardData.weeklyCompleted}/{dashboardData.weeklyGoal} exams</span>
                         </div>
                         <Progress value={(dashboardData.weeklyCompleted / dashboardData.weeklyGoal) * 100} />

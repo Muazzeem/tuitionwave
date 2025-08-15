@@ -404,7 +404,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
 
       <div className="flex flex-col items-center space-y-4">
         <div className="relative">
-          <div className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center overflow-hidden border-4 border-gray-300 dark:border-gray-600">
+          <div className="w-32 h-32 rounded-full bg-primary-200 dark:bg-primary-800 flex items-center justify-center overflow-hidden border-4 border-gray-300 dark:border-primary-600">
             {previewUrl ? (
               <img
                 src={previewUrl}
@@ -431,7 +431,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             type="button"
             variant="outline"
             onClick={triggerFileInput}
-            className="flex items-center space-x-2"
+            className="flex items-center space-x-2 bg-primary hover:bg-primary-700 dark:text-white"
           >
             <Camera className="w-4 h-4" />
             <span>{previewUrl ? 'Change Picture' : 'Upload Picture'}</span>
@@ -460,7 +460,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             name="first_name"
             value={formData.first_name || ''}
             onChange={handleChange}
-            className="mt-1"
+            className="mt-1 dark:bg-gray-900 border-primary-900"
           />
         </div>
         <div>
@@ -470,7 +470,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             name="last_name"
             value={formData.last_name || ''}
             onChange={handleChange}
-            className="mt-1"
+            className="mt-1 dark:bg-gray-900 border-primary-900"
           />
         </div>
         <div>
@@ -480,7 +480,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             name="email"
             value={formData.email || ''}
             onChange={handleChange}
-            className="mt-1"
+            className="mt-1 dark:bg-gray-900 border-primary-900"
             disabled
           />
         </div>
@@ -492,7 +492,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             value={formData.phone || ''}
             onChange={handleChange}
             placeholder='+880123456789'
-            className="mt-1"
+            className="mt-1 dark:bg-gray-900 border-primary-900"
           />
         </div>
       </div>
@@ -504,7 +504,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             value={formData.gender}
             onValueChange={(value) => updateFormData({ gender: value })}
           >
-            <SelectTrigger id="gender" className="mt-1">
+            <SelectTrigger id="gender" className="mt-1 dark:bg-gray-900 border-primary-900">
               <SelectValue placeholder="Select Gender" />
             </SelectTrigger>
             <SelectContent>
@@ -523,7 +523,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
                 id="birthDate"
                 variant="outline"
                 className={cn(
-                  "w-full justify-start text-left font-normal mt-1",
+                  "w-full justify-start text-left font-normal mt-1 dark:bg-gray-900 border-primary-900",
                   !formData.birthDate && "text-muted-foreground"
                 )}
               >
@@ -560,7 +560,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             placeholder="Enter LinkedIn url"
             value={formData.linkedinProfile}
             onChange={(e) => updateFormData({ linkedinProfile: e.target.value })}
-            className="pl-10"
+            className="pl-10 dark:bg-gray-900 border-primary-900"
           />
           <Linkedin className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
         </div>
@@ -572,7 +572,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
               <Label>Division</Label>
               <div className="relative mt-1">
                 <div
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between bg-white dark:bg-gray-800 dark:border-gray-600"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between dark:bg-gray-900 border-primary-900"
                   onClick={() => setShowDivisionDropdown(!showDivisionDropdown)}
                 >
                   <span className={getSelectedDivisionName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
@@ -581,7 +581,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
                   <ChevronDown className="w-4 h-4 text-gray-400" />
                 </div>
                 {showDivisionDropdown && (
-                  <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
+                <div className="absolute z-10 w-full mt-1 dark:bg-gray-900 border-primary-900 rounded-md shadow-lg">
                     <div className="p-2 border-b border-gray-200 dark:border-gray-600">
                       <div className="relative">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -615,7 +615,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
                 <Label>District</Label>
                 <div className="relative mt-1">
                   <div
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between bg-white dark:bg-gray-800 dark:border-gray-600"
+                  className="w-full px-3 py-2 border rounded-md cursor-pointer flex items-center justify-between dark:bg-gray-900 border-primary-900"
                     onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
                   >
                     <span className={getSelectedDistrictName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
@@ -705,7 +705,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
               name="address"
               value={formData.address || ''}
               onChange={handleChange}
-              className="mt-1"
+            className="mt-1 dark:bg-gray-900 border-primary-900"
             />
           </div>
         </div>
@@ -717,7 +717,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
         <Button
           type="button"
           onClick={handleSubmit}
-          className="px-6 dark:bg-blue-600 dark:text-white"
+          className="px-6 dark:bg-primary dark:text-white"
           disabled={isSaving}
         >
           {isSaving ? 'Saving...' : 'Save & Next'}

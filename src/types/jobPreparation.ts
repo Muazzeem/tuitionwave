@@ -36,6 +36,7 @@ export interface QuestionOption {
 }
 
 export interface Question {
+  image: string;
   uid: string;
   question_number: number;
   question_text: string;
