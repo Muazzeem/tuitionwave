@@ -240,7 +240,7 @@ export default function ExamHistory({
         return (
           <Button
             size="sm"
-            className="w-full sm:flex-1 bg-primary hover:bg-primary/90 text-white transition-colors"
+            className="w-full sm:flex-1 border-primary bg-primary-600 hover:bg-primary-800 text-white transition-colors"
             onClick={() => {
               handleStartExam();
               setSelectedExam(exam);
@@ -254,8 +254,7 @@ export default function ExamHistory({
         return (
           <Button
             size="sm"
-            variant="outline"
-            className="w-full sm:flex-1 border-primary text-primary hover:bg-primary hover:text-white transition-colors"
+            className="w-full sm:flex-1 border-primary bg-primary-600 hover:bg-primary-800 text-white transition-colors"
             onClick={() => handleContinueExam(exam)}
           >
             <PlayCircle className="h-4 w-4 mr-2" />
@@ -267,8 +266,7 @@ export default function ExamHistory({
         return (
           <Button
             size="sm"
-            variant="outline"
-            className="w-full sm:flex-1 border-primary hover:border-primary hover:text-primary transition-colors"
+            className="w-full sm:flex-1 border-primary bg-primary-600 hover:bg-primary-800 text-white transition-colors"
             onClick={() => handleViewResults(exam)}
           >
             <Trophy className="h-4 w-4 mr-2" />
@@ -359,7 +357,7 @@ export default function ExamHistory({
         {(!loading || !useInternalApi) && examRecords.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {displayedExams.map((exam) => (
-              <Card key={exam.uid} className="group hover:shadow-lg transition-all duration-200 dark:bg-background  dark:border-primary-800 hover:border-primary/50">
+              <Card key={exam.uid} className="group hover:shadow-lg transition-all duration-200 dark:bg-background  dark:border-gray-900 hover:border-primary/50 shadow-lg">
                 <CardContent className="p-4 sm:p-6">
                   <div className="space-y-4">
                     {/* Header */}
