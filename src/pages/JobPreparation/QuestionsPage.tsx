@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { ChevronLeft, CheckCircle, XCircle, AlertCircle, HelpCircle, Target, BookOpen, Trophy, RefreshCw, TrendingUp, Brain, Star } from 'lucide-react';
+import { ChevronLeft, CheckCircle, XCircle, AlertCircle, HelpCircle, Target, BookOpen, Trophy, RefreshCw, TrendingUp, Brain, Star, Menu, X } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
 import { AnswerResult, QuestionState } from '@/types/common';
 import { Subtopic } from '@/types/jobPreparation';
@@ -23,6 +23,7 @@ const QuestionsPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1'));
   const [questionStates, setQuestionStates] = useState<QuestionState>({});
   const [selectedSubtopicId, setSelectedSubtopicId] = useState<string | null>(null);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const { categoryId, subjectId, topicId, subtopicId } = params;
 
   // Reset question states when changing topics, pages, or subtopics
@@ -130,19 +131,10 @@ const QuestionsPage: React.FC = () => {
     });
   };
 
-  const handleShowAnswer = (questionUid: string) => {
-    setQuestionStates(prev => ({
-      ...prev,
-      [questionUid]: {
-        ...prev[questionUid],
-        showResult: !prev[questionUid]?.showResult,
-      }
-    }));
-  };
-
   const handleSubtopicClick = (subtopic: Subtopic) => {
     setSelectedSubtopicId(subtopic.uid);
     setCurrentPage(1);
+    setShowMobileFilters(false);
     const newSearchParams = new URLSearchParams();
     setSearchParams(newSearchParams);
   };
@@ -150,6 +142,7 @@ const QuestionsPage: React.FC = () => {
   const handleShowAllQuestions = () => {
     setSelectedSubtopicId(null);
     setCurrentPage(1);
+    setShowMobileFilters(false);
     const newSearchParams = new URLSearchParams();
     setSearchParams(newSearchParams);
   };
@@ -171,6 +164,7 @@ const QuestionsPage: React.FC = () => {
     const newSearchParams = new URLSearchParams();
     if (page > 1) newSearchParams.set('page', page.toString());
     setSearchParams(newSearchParams);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleRefresh = () => {
@@ -185,7 +179,7 @@ const QuestionsPage: React.FC = () => {
 
     const getPageNumbers = () => {
       const pages: number[] = [];
-      const maxVisiblePages = 5;
+      const maxVisiblePages = window.innerWidth < 768 ? 3 : 5;
 
       if (totalPages <= maxVisiblePages) {
         for (let i = 1; i <= totalPages; i++) {
@@ -210,9 +204,9 @@ const QuestionsPage: React.FC = () => {
     const pageNumbers = getPageNumbers();
 
     return (
-      <div className="mt-8 flex justify-center">
+      <div className="mt-6 flex justify-center px-4">
         <Pagination>
-          <PaginationContent className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-2">
+          <PaginationContent className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-2 flex-wrap">
             {hasPrevious && (
               <PaginationItem>
                 <PaginationPrevious
@@ -257,17 +251,17 @@ const QuestionsPage: React.FC = () => {
     : null;
 
   const LoadingSkeleton = () => (
-    <div className="space-y-6 animate-pulse">
+    <div className="space-y-4 px-4 sm:px-0">
       {[1, 2, 3].map((i) => (
-        <Card key={i} className="overflow-hidden">
-          <CardHeader>
-            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+        <Card key={i} className="overflow-hidden animate-pulse">
+          <CardHeader className="pb-3">
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
           </CardHeader>
-          <CardContent>
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-4"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <CardContent className="space-y-3">
+            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+            <div className="grid grid-cols-1 gap-2">
               {[1, 2, 3, 4].map((j) => (
-                <div key={j} className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                <div key={j} className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
               ))}
             </div>
           </CardContent>
@@ -276,14 +270,49 @@ const QuestionsPage: React.FC = () => {
     </div>
   );
 
+  const SubtopicFilters = () => (
+    <div className="flex flex-wrap gap-2">
+      <button
+        className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all ${selectedSubtopicId === null
+          ? 'bg-blue-600 text-white shadow-md'
+          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+          }`}
+        onClick={handleShowAllQuestions}
+      >
+        <Star className="h-4 w-4 mr-2" />
+        <span>All Questions</span>
+        <Badge className="ml-2 bg-white/20 text-current border-none text-xs">
+          {questionsData?.count || 0}
+        </Badge>
+      </button>
+      {subtopicsData?.results.map((subtopic) => (
+        subtopic.total_questions > 0 && (
+          <button
+            key={subtopic.uid}
+            className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all ${selectedSubtopicId === subtopic.uid
+              ? 'bg-blue-600 text-white shadow-md'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              }`}
+            onClick={() => handleSubtopicClick(subtopic)}
+          >
+            <HelpCircle className="h-4 w-4 mr-2" />
+            <span className="truncate max-w-32">{subtopic.subtopic_name}</span>
+            <Badge className="ml-2 bg-white/20 text-current border-none text-xs">
+              {subtopic.total_questions}
+            </Badge>
+          </button>
+        )
+      ))}
+    </div>
+  );
+
   return (
     <div className="flex-1 overflow-auto dark:bg-gray-900 h-screen bg-gray-50 w-full">
-      {userProfile ? <DashboardHeader userName="BCS Candidate" /> :
-        <Header />
-      }
-      <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
-        <main className="flex-1 pb-20">
-          <div className={userProfile ? "p-6" : "p-6 container"}>
+      {userProfile ? <DashboardHeader userName="BCS Candidate" /> : <Header />}
+
+      <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(100vh - 160px)' }}>
+        <main className="flex-1 pb-6">
+          <div className={userProfile ? "p-6 max-w-7xl mx-auto" : "p-6 container"}>
             {/* Breadcrumb */}
             <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
               <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
@@ -293,105 +322,112 @@ const QuestionsPage: React.FC = () => {
 
             {/* Header Section */}
             <div className="mb-8">
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                <div className="flex items-center space-x-4">
-                  <Button
-                    variant="outline"
-                    onClick={handleBack}
-                    className="hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-colors"
-                  >
-                    <ChevronLeft className="h-4 w-4 mr-2" />
-                    Back to Topics
-                  </Button>
-                  <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center">
-                      <Brain className="h-8 w-8 mr-3 text-blue-600" />
-                      Practice Questions
-                    </h1>
-                    {selectedSubtopic ? (
-                      <p className="text-blue-600 font-medium mt-1 flex items-center">
-                        <Target className="h-4 w-4 mr-1" />
-                        {selectedSubtopic.subtopic_name}
-                      </p>
-                    ) : <p className='text-blue-600 font-medium mt-1 flex items-center'>
-                      <BookOpen className="h-4 w-4 mr-1" />
-                      All Questions
-                    </p>
-                    }
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Button
+                      variant="outline"
+                      onClick={handleBack}
+                      className="hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                    >
+                      <ChevronLeft className="h-4 w-4 mr-1" />
+                      <span className="hidden sm:inline">Back to Topic</span>
+                    </Button>
+                    <div>
+                      <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+                        <Brain className="h-6 w-6 mr-2 text-blue-600" />
+                        Practice Questions
+                      </h1>
+                      {selectedSubtopic ? (
+                        <p className="text-blue-600 font-medium text-sm flex items-center">
+                          <Target className="h-4 w-4 mr-1" />
+                          <span className="truncate">{selectedSubtopic.subtopic_name}</span>
+                        </p>
+                      ) : (
+                        <p className="text-blue-600 font-medium text-sm flex items-center">
+                          <BookOpen className="h-4 w-4 mr-1" />
+                          All Questions
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={handleRefresh}
+                      variant="outline"
+                      size="sm"
+                      className="border-blue-200 text-blue-700 hover:bg-red-700/30 dark:border-blue-700 dark:text-blue-300"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                      <span className="hidden sm:inline ml-2">Reset</span>
+                    </Button>
+                    <Button
+                      onClick={handleModeToggle}
+                      size="sm"
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      <BookOpen className="h-4 w-4" />
+                      <span className="hidden sm:inline ml-2">Reading</span>
+                    </Button>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button
-                    onClick={handleRefresh}
-                    variant="outline"
-                    className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900/20 transition-colors"
-                  >
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Reset Progress
-                  </Button>
-                  <Button
-                    onClick={handleModeToggle}
-                    className="bg-gradient-to-r from-blue-600 to-primary-600 text-white shadow-lg transition-all duration-200 transform hover:scale-105"
-                  >
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    Switch to Reading
-                  </Button>
-                </div>
+                {/* Progress Stats for Mobile */}
+                {progressStats.total > 0 && (
+                  <div className="sm:hidden bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Progress</span>
+                      <span className="text-sm font-bold text-blue-600">{progressStats.accuracy}%</span>
+                    </div>
+                    <div className="flex gap-4 text-xs">
+                      <span className="text-green-600">✓ {progressStats.correct}</span>
+                      <span className="text-red-600">✗ {progressStats.incorrect}</span>
+                      <span className="text-gray-600">Total: {progressStats.total}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
+                      <div
+                        className="bg-gradient-to-r from-green-500 to-blue-500 h-full rounded-full transition-all duration-500"
+                        style={{ width: `${progressStats.accuracy}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Subtopic Filter Section */}
+            {/* Subtopic Filters */}
             {subtopicsData && subtopicsData.results.length > 0 && (
-              <Card className="mb-8 border-0 shadow-lg bg-white/80 backdrop-blur-sm dark:bg-gray-800/80">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center text-lg font-semibold text-gray-800 dark:text-white">
-                    <BookOpen className="h-5 w-5 mr-2 text-blue-600" />
-                    Filter by Subtopic
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-3">
-                    <button
-                      className={`inline-flex items-center px-4 py-3 rounded-xl text-sm font-medium cursor-pointer transition-all duration-200 transform hover:scale-105 ${selectedSubtopicId === null
-                        ? 'bg-gradient-to-r from-blue-600 to-primary-600 text-white shadow-lg'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-                        }`}
-                      onClick={handleShowAllQuestions}
-                    >
-                      <Star className="h-4 w-4 mr-2" />
-                      <span>All Questions</span>
-                      <Badge className="ml-2 bg-white/20 text-current border-none">
-                        {questionsData?.count || 0}
-                      </Badge>
-                    </button>
-                    {subtopicsData.results.map((subtopic) => (
-                      subtopic.total_questions > 0 && (
-                        <button
-                          key={subtopic.uid}
-                          className={`inline-flex items-center px-4 py-3 rounded-xl text-sm font-medium cursor-pointer ${selectedSubtopicId === subtopic.uid
-                            ? 'bg-gradient-to-r from-blue-600 to-primary-600 text-white shadow-lg'
-                            : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                            }`}
-                          onClick={() => handleSubtopicClick(subtopic)}
-                        >
-                          <HelpCircle className="h-4 w-4 mr-2" />
-                          <span>{subtopic.subtopic_name}</span>
-                          <Badge className="ml-2 bg-white/20 text-current border-none">
-                            {subtopic.total_questions}
-                          </Badge>
-                        </button>
-                      )
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="mb-6">
+                {/* Mobile Filter Toggle */}
+                <div className="sm:hidden mb-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowMobileFilters(!showMobileFilters)}
+                    className="w-full justify-between"
+                  >
+                    <span>Filter by Subtopic</span>
+                    {showMobileFilters ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+                  </Button>
+                </div>
+
+                {/* Filters */}
+                <div className={`${showMobileFilters ? 'block' : 'hidden'} sm:block`}>
+                  <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-sm dark:bg-gray-800/80">
+                    <CardContent className="p-4">
+                      <SubtopicFilters />
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
             )}
+
+            {/* Questions */}
             {questionsLoading ? (
               <LoadingSkeleton />
             ) : (
               <>
-                  <div className="space-y-8">
+                  <div className="space-y-4 px-1 sm:px-0">
                     {questionsData?.results.map((question, index) => {
                       const questionState = questionStates[question.uid];
                       const isAnswered = questionState?.isAnswered;
@@ -402,97 +438,73 @@ const QuestionsPage: React.FC = () => {
                       return (
                         <Card
                           key={question.uid}
-                          className="border-0 shadow-xl bg-white dark:bg-background overflow-hidden transition-all duration-300 hover:shadow-2xl"
+                          className="border-0 shadow-md bg-white dark:bg-gray-800 overflow-hidden transition-all duration-300 hover:shadow-lg"
                         >
-                          <CardHeader className="bg-gradient-to-r from-primary-600/30 to-blue-600/30 border-b p-4">
-                            <CardTitle className="flex items-center justify-between">
-                              <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm md:text-base lg:text-lg">
+                          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b p-3 sm:p-4">
+                            <CardTitle className="flex items-start justify-between gap-3">
+                              <div className="flex items-start space-x-3 min-w-0 flex-1">
+                                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                                   {question.question_number}
                                 </div>
-                                <span className="mr-2 text-sm sm:text-sm md:text-base lg:text-lg">
+                                <span className="text-sm sm:text-base leading-relaxed text-gray-900 dark:text-white">
                                   {question.question_text}
                                 </span>
                               </div>
-                              <div className="flex items-center space-x-2">
-                                {isAnswered && (
-                                  <Badge
-                                    variant={result?.is_correct ? "default" : "destructive"}
-                                    className={`${result?.is_correct
-                                      ? 'bg-green-100 text-green-800 border-green-300'
-                                      : 'bg-red-100 text-red-800 border-red-300'
-                                      } px-3 py-1 font-medium`}
-                                  >
-                                    {result?.is_correct ? (
-                                      <>
-                                        <CheckCircle className="h-3 w-3 mr-1" />
-                                        Correct
-                                      </>
-                                    ) : (
-                                      <>
-                                        <XCircle className="h-3 w-3 mr-1" />
-                                        Incorrect
-                                      </>
-                                    )}
-                                  </Badge>
-                                )}
-                                {/* {isAnswered && (
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => handleShowAnswer(question.uid)}
-                                    className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-                                  >
-                                    {showResult ? (
-                                      <>
-                                        <EyeOff className="h-4 w-4 mr-1" />
-                                        Hide Answer
-                                      </>
-                                    ) : (
-                                      <>
-                                        <Eye className="h-4 w-4 mr-1" />
-                                        Show Answer
-                                      </>
-                                    )}
-                                  </Button>
-                                )} */}
-                              </div>
+                              {isAnswered && (
+                                <Badge
+                                  variant={result?.is_correct ? "default" : "destructive"}
+                                  className={`${result?.is_correct
+                                    ? 'bg-green-100 text-green-800 border-green-300'
+                                    : 'bg-red-100 text-red-800 border-red-300'
+                                    } px-2 py-1 text-xs font-medium flex-shrink-0`}
+                                >
+                                  {result?.is_correct ? (
+                                    <>
+                                      <CheckCircle className="h-3 w-3 mr-1" />
+                                      <span className="hidden sm:inline">Correct</span>
+                                      <span className="sm:hidden">✓</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <XCircle className="h-3 w-3 mr-1" />
+                                      <span className="hidden sm:inline">Incorrect</span>
+                                      <span className="sm:hidden">✗</span>
+                                    </>
+                                  )}
+                                </Badge>
+                              )}
                             </CardTitle>
                           </CardHeader>
-                          <CardContent className="p-5">
-                            <div className="mb-0">
-                              <p className="text-lg text-gray-800 dark:text-gray-200 leading-relaxed">
 
-                              </p>
-                              {question.image && (
-                                <div className="mt-4 rounded-lg overflow-hidden">
-                                  <img
-                                    src={question.image}
-                                    alt="Question illustration"
-                                    className="w-full max-h-48 object-contain mb-3"
-                                  />
-                                </div>
-                              )}
-                            </div>
+                          <CardContent className="p-3 sm:p-4">
+                            {question.image && (
+                              <div className="mb-4 rounded-lg overflow-hidden">
+                                <img
+                                  src={question.image}
+                                  alt="Question illustration"
+                                  className="w-full max-h-48 object-contain"
+                                />
+                              </div>
+                            )}
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               {question.options.map((option) => {
-                                let optionClassName = 'p-2 border-2 rounded-xl cursor-pointer';
+                                let optionClassName = 'p-3 border-2 rounded-lg cursor-pointer transition-all duration-200';
 
                                 if (selectedOption === option.option_label) {
                                   if (isAnswered) {
                                     if (result?.is_correct && option.option_label === result.correct_option_label) {
-                                      optionClassName += 'bg-gradient-to-r from-green-50 to-green-100 border-green-400 shadow-lg dark:from-green-900/20 dark:to-green-800/20';
+                                      optionClassName += ' bg-green-50 border-green-300 dark:bg-green-900/20 dark:border-green-600';
                                     } else if (!result?.is_correct && option.option_label === selectedOption) {
-                                      optionClassName += 'bg-gradient-to-r from-red-50 to-red-100 border-red-400 shadow-lg dark:from-red-900/20 dark:to-red-800/20';
+                                      optionClassName += ' bg-red-50 border-red-300 dark:bg-red-900/20 dark:border-red-600';
                                     }
                                   } else {
-                                    optionClassName += 'bg-gradient-to-r from-blue-50 to-blue-100 border-blue-400 shadow-lg dark:from-blue-900/20 dark:to-blue-800/20';
+                                    optionClassName += ' bg-blue-50 border-blue-300 dark:bg-blue-900/20 dark:border-blue-600';
                                   }
                                 } else if (isAnswered && showResult && option.option_label === result?.correct_option_label) {
-                                  optionClassName += 'bg-gradient-to-r from-green-50 to-green-100 border-green-400 shadow-lg dark:from-green-900/20 dark:to-green-800/20';
+                                  optionClassName += ' bg-green-50 border-green-300 dark:bg-green-900/20 dark:border-green-600';
                                 } else {
-                                  optionClassName += 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300';
+                                  optionClassName += ' bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300';
                                 }
 
                                 return (
@@ -506,27 +518,27 @@ const QuestionsPage: React.FC = () => {
                                     }}
                                   >
                                     <div className="flex items-center justify-between">
-                                      <div className="flex items-start space-x-3">
-                                        <div className="w-8 h-8 bg-white dark:bg-gray-600 rounded-full flex items-center justify-center font-bold text-gray-800 dark:text-white shadow-sm">
+                                      <div className="flex items-start space-x-3 min-w-0 flex-1">
+                                        <div className="w-6 h-6 bg-white dark:bg-gray-600 rounded-full flex items-center justify-center font-bold text-gray-800 dark:text-white shadow-sm text-sm flex-shrink-0">
                                           {option.option_label}
                                         </div>
-                                        <span className="text-gray-800 dark:text-gray-200 flex-1">
+                                        <span className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed">
                                           {option.option_text}
                                         </span>
                                       </div>
                                       {isAnswered && showResult && (
                                         <>
                                           {option.option_label === result?.correct_option_label && (
-                                            <CheckCircle className="h-6 w-6 text-green-600 ml-2" />
+                                            <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
                                           )}
                                           {option.option_label === selectedOption && !result?.is_correct && (
-                                            <XCircle className="h-6 w-6 text-red-600 ml-2" />
+                                            <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
                                           )}
                                         </>
                                       )}
                                       {selectedOption === option.option_label && !isAnswered && (
-                                        <div className="ml-2 animate-pulse">
-                                          <AlertCircle className="h-6 w-6 text-blue-600" />
+                                        <div className="animate-pulse flex-shrink-0">
+                                          <AlertCircle className="h-5 w-5 text-blue-600" />
                                         </div>
                                       )}
                                     </div>
@@ -536,16 +548,16 @@ const QuestionsPage: React.FC = () => {
                             </div>
 
                             {isAnswered && showResult && result && result.explanation && (
-                              <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border-l-4 border-blue-500">
+                              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500">
                                 <div className="flex items-start space-x-3">
-                                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                                    <HelpCircle className="h-4 w-4 text-white" />
+                                  <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <HelpCircle className="h-3 w-3 text-white" />
                                   </div>
-                                  <div className="flex-1">
-                                    <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">
+                                  <div className="min-w-0 flex-1">
+                                    <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-1 text-sm">
                                       Explanation
                                     </h4>
-                                    <p className="text-blue-700 dark:text-blue-300 leading-relaxed">
+                                    <p className="text-blue-700 dark:text-blue-300 text-sm leading-relaxed">
                                       {result.explanation}
                                     </p>
                                   </div>
@@ -554,9 +566,9 @@ const QuestionsPage: React.FC = () => {
                             )}
 
                             {question.negative_marks > 0 && (
-                              <div className="mt-4 flex items-center space-x-2 text-orange-600 dark:text-orange-400">
-                                <AlertCircle className="h-4 w-4" />
-                                <span className="text-sm font-medium">
+                              <div className="mt-3 flex items-center space-x-2 text-orange-600 dark:text-orange-400">
+                                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                                <span className="text-xs font-medium">
                                   Negative marks: {question.negative_marks}
                                 </span>
                               </div>
@@ -566,6 +578,7 @@ const QuestionsPage: React.FC = () => {
                       );
                     })}
                 </div>
+
                 {questionsData && renderPagination(
                   questionsData.count,
                   !!questionsData.next,
@@ -576,37 +589,37 @@ const QuestionsPage: React.FC = () => {
           </div>
         </main>
 
-        {/* Enhanced Progress Card */}
+        {/* Desktop Progress Card */}
         {progressStats.total > 0 && (
-          <div className="fixed bottom-6 right-6 z-50 hidden md:block">
-            <Card className="bg-white/95 backdrop-blur-lg dark:bg-gray-900/95 shadow-2xl border-0 w-80">
-              <CardContent className="p-3">
-                <div className="flex items-center space-x-4 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-                    <Trophy className="h-6 w-6 text-white" />
+          <div className="fixed bottom-6 right-6 z-50 hidden lg:block">
+            <Card className="bg-white/95 backdrop-blur-lg dark:bg-gray-900/95 shadow-2xl border-0 w-72">
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                    <Trophy className="h-5 w-5 text-white" />
                   </div>
                   <div>
                     <h3 className="font-bold text-lg text-gray-900 dark:text-white">
-                      Progress Tracker
+                      Progress
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
                       <TrendingUp className="h-3 w-3 mr-1" />
-                      {progressStats.accuracy}% accuracy rate
+                      {progressStats.accuracy}% accuracy
                     </p>
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Total Answered
+                      Answered
                     </span>
                     <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900/30 dark:text-purple-300 font-bold">
                       {progressStats.total}
                     </Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                  <div className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
                     <span className="text-sm font-medium text-green-700 dark:text-green-300 flex items-center">
                       <CheckCircle className="h-4 w-4 mr-1" />
                       Correct
@@ -616,7 +629,7 @@ const QuestionsPage: React.FC = () => {
                     </Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                  <div className="flex items-center justify-between p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
                     <span className="text-sm font-medium text-red-700 dark:text-red-300 flex items-center">
                       <XCircle className="h-4 w-4 mr-1" />
                       Incorrect
@@ -626,19 +639,17 @@ const QuestionsPage: React.FC = () => {
                     </Badge>
                   </div>
 
-                  {/* Enhanced Progress Bar */}
-                  <div className="mt-6">
-                    <div className="flex justify-between text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+                  {/* Progress Bar */}
+                  <div className="mt-4">
+                    <div className="flex justify-between text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
                       <span>Accuracy Rate</span>
                       <span>{progressStats.accuracy}%</span>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
                       <div
-                        className="bg-gradient-to-r from-green-500 to-emerald-500 h-full rounded-full transition-all duration-500 ease-out shadow-lg"
+                        className="bg-gradient-to-r from-green-500 to-emerald-500 h-full rounded-full transition-all duration-500 ease-out"
                         style={{ width: `${progressStats.accuracy}%` }}
-                      >
-                        <div className="w-full h-full bg-white/20 rounded-full animate-pulse"></div>
-                      </div>
+                      />
                     </div>
                     {progressStats.accuracy >= 80 && (
                       <p className="text-xs text-green-600 dark:text-green-400 mt-2 font-medium">
@@ -652,9 +663,10 @@ const QuestionsPage: React.FC = () => {
           </div>
         )}
 
-        {userProfile ? '' : <Footer />}
+        {!userProfile && <Footer />}
       </ScrollArea>
     </div>
   );
-}
+};
+
 export default QuestionsPage;

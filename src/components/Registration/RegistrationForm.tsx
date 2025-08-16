@@ -111,7 +111,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
                   <span className="w-full border-t border-gray-300 dark:border-gray-600" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500 dark:bg-gray-900 dark:text-gray-400">Or continue with email</span>
+          <span className="px-2 bg-white text-gray-500 dark:bg-background dark:text-gray-400">Or continue with email</span>
                 </div>
               </div>
       
@@ -127,7 +127,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
                 id="email"
                 type="email"
                 placeholder="example@gmail.com"
-                className="pl-10"
+                className="pl-10 bg-gray-900"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
@@ -146,7 +146,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
                 id="phone"
                 type="tel"
                 placeholder="Phone Number"
-                className="pl-10"
+                className="pl-10 bg-gray-900"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
@@ -169,7 +169,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
                 value={formData.password1}
                 onChange={handleChange}
                 required
-                className="pl-10"
+                className="pl-10 bg-gray-900"
               />
               <button
                 type="button"
@@ -199,7 +199,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
                 value={formData.password2}
                 onChange={handleChange}
                 required
-                className="pl-10"
+                className="pl-10 bg-gray-900"
               />
               <button
                 type="button"
@@ -238,7 +238,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
           
           <Button 
             type="submit" 
-            className="w-full min-h-[55px] bg-blue-600 hover:bg-blue-700 dark:text-white"
+            className="w-full min-h-[55px] bg-primary hover:bg-primary-700 dark:text-white shadow-xl"
             disabled={loading}
           >
             {loading ? 'Creating account...' : 'Sign up'}

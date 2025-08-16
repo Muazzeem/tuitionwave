@@ -14,10 +14,11 @@ import {
   BookOpen,
   Target,
   Lightbulb,
-  RefreshCw,
   Eye,
+  GraduationCap,
 } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import DashboardHeader from '@/components/DashboardHeader';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -29,7 +30,7 @@ const ReadingModePage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1'));
   const { categoryId, subjectId, topicId, subtopicId } = params;
 
-  const { data: readingQuestionsData, isLoading: readingQuestionsLoading, refetch } = useQuery({
+  const { data: readingQuestionsData, isLoading: readingQuestionsLoading } = useQuery({
     queryKey: ['questions-reading', topicId, currentPage],
     queryFn: () => JobPreparationService.getQuestionsReadingMode(topicId!, currentPage),
     enabled: !!topicId,
@@ -75,6 +76,7 @@ const ReadingModePage: React.FC = () => {
     const newSearchParams = new URLSearchParams();
     if (page > 1) newSearchParams.set('page', page.toString());
     setSearchParams(newSearchParams);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const renderPagination = (count: number, hasNext: boolean, hasPrevious: boolean) => {
@@ -84,7 +86,7 @@ const ReadingModePage: React.FC = () => {
 
     const getPageNumbers = () => {
       const pages: number[] = [];
-      const maxVisiblePages = 5;
+      const maxVisiblePages = window.innerWidth < 768 ? 3 : 5;
 
       if (totalPages <= maxVisiblePages) {
         for (let i = 1; i <= totalPages; i++) {
@@ -109,9 +111,9 @@ const ReadingModePage: React.FC = () => {
     const pageNumbers = getPageNumbers();
 
     return (
-      <div className="mt-8 flex justify-center">
+      <div className="mt-6 flex justify-center px-4">
         <Pagination>
-          <PaginationContent className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-2">
+          <PaginationContent className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-2 flex-wrap">
             {hasPrevious && (
               <PaginationItem>
                 <PaginationPrevious
@@ -151,17 +153,17 @@ const ReadingModePage: React.FC = () => {
   };
 
   const LoadingSkeleton = () => (
-    <div className="space-y-6 animate-pulse">
+    <div className="space-y-4 px-4 sm:px-0">
       {[1, 2, 3].map((i) => (
-        <Card key={i} className="overflow-hidden">
-          <CardHeader>
-            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+        <Card key={i} className="overflow-hidden animate-pulse">
+          <CardHeader className="pb-3">
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
           </CardHeader>
-          <CardContent>
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-4"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <CardContent className="space-y-3">
+            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+            <div className="grid grid-cols-1 gap-2">
               {[1, 2, 3, 4].map((j) => (
-                <div key={j} className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                <div key={j} className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
               ))}
             </div>
           </CardContent>
@@ -172,120 +174,139 @@ const ReadingModePage: React.FC = () => {
 
   return (
     <div className="flex-1 overflow-auto dark:bg-gray-900 h-screen bg-gray-50 w-full">
-      {userProfile ? <DashboardHeader userName="BCS Candidate" /> :
-        <Header />
-      }
-      <main className="flex-1">
-        <div className="p-6">
-          {/* Breadcrumb */}
-          <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-            <span className="hover:text-green-600 cursor-pointer transition-colors">Job Preparation</span>
-            <span>/</span>
-            <span className="text-green-600 font-medium">Reading Mode</span>
-          </div>
+      {userProfile ? <DashboardHeader userName="BCS Candidate" /> : <Header />}
 
-          {/* Header Section */}
-          <div className="mb-8">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-              <div className="flex items-center space-x-4">
-                <Button
-                  variant="outline"
-                  onClick={handleBack}
-                  className="hover:bg-green-100 dark:hover:bg-green-900/20 transition-colors"
-                >
-                  <ChevronLeft className="h-4 w-4 mr-2" />
-                  Back to Topics
-                </Button>
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center">
-                    <BookOpen className="h-8 w-8 mr-3 text-green-600" />
-                    Reading Mode
-                  </h1>
-                  <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center">
-                    <Eye className="h-4 w-4 mr-1" />
-                    Study questions with answers and explanations
-                  </p>
+      <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(100vh - 160px)' }}>
+        <main className="flex-1 pb-6">
+          <div className="p-4 sm:p-6 max-w-7xl mx-auto">
+            {/* Breadcrumb */}
+            <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+              <span className="hover:text-green-600 cursor-pointer transition-colors">Job Preparation</span>
+              <span>/</span>
+              <span className="text-green-600 font-medium">Reading Mode</span>
+            </div>
+
+            {/* Header Section */}
+            <div className="mb-8">
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Button
+                      variant="outline"
+                      onClick={handleBack}
+                      className="hover:bg-green-50 dark:hover:bg-green-900/20"
+                    >
+                      <ChevronLeft className="h-4 w-4 mr-1" />
+                      <span className="hidden sm:inline">Back to Topic</span>
+                    </Button>
+                    <div>
+                      <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+                        <GraduationCap className="h-6 w-6 mr-2 text-green-600" />
+                        Reading Mode
+                      </h1>
+                      <p className="text-green-600 font-medium text-sm flex items-center">
+                        <Eye className="h-4 w-4 mr-1" />
+                        Study with answers & explanations
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center">
+                    <Button
+                      onClick={handleModeToggle}
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      <Target className="h-4 w-4" />
+                      <span className="hidden sm:inline ml-2">Practice Mode</span>
+                    </Button>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  onClick={handleModeToggle}
-                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg transition-all duration-200 transform hover:scale-105"
-                >
-                  <Target className="h-4 w-4 mr-2" />
-                  Back to Practice
-                </Button>
+                {/* Study Stats */}
+                {readingQuestionsData && (
+                  <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 border border-green-200 dark:border-green-800">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <BookOpen className="h-5 w-5 text-green-600" />
+                        <span className="text-sm font-medium text-green-800 dark:text-green-200">
+                          Study Material
+                        </span>
+                      </div>
+                      <Badge className="bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">
+                        {readingQuestionsData.count} Questions
+                      </Badge>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
 
-          {/* Questions Section */}
-          {readingQuestionsLoading ? (
-            <LoadingSkeleton />
-          ) : (
-            <>
-                <div className="space-y-8">
+            {/* Questions Section */}
+            {readingQuestionsLoading ? (
+              <LoadingSkeleton />
+            ) : (
+              <>
+                  <div className="space-y-4 px-1 sm:px-0">
                   {readingQuestionsData?.results.map((question, index) => (
                     <Card
                       key={question.uid}
-                      className="border-0 shadow-xl bg-white dark:bg-background overflow-hidden transition-all duration-300 hover:shadow-2xl"
+                      className="border-0 shadow-md bg-white dark:bg-gray-800 overflow-hidden transition-all duration-300 hover:shadow-lg"
                     >
-                      <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-b p-4">
-                        <CardTitle className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold">
+                      <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b p-3 sm:p-4">
+                        <CardTitle className="flex items-start justify-between gap-3">
+                          <div className="flex items-start space-x-3 min-w-0 flex-1">
+                            <div className="w-8 h-8 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                               {question.question_number}
                             </div>
-                            <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                            <span className="text-sm sm:text-base leading-relaxed text-gray-900 dark:text-white">
                               {question.question_text}
                             </span>
                           </div>
+                          <Badge className="bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100 flex-shrink-0">
+                            Study
+                          </Badge>
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className="p-6">
-                        <div className="mb-0">
-                          {question.image && (
-                            <div className="mt-4 rounded-lg overflow-hidden shadow-md">
-                              <img
-                                src={question.image}
-                                alt="Question illustration"
-                                className="w-full max-h-96 object-contain bg-gray-50 dark:bg-gray-700"
-                              />
-                            </div>
-                          )}
-                        </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                      <CardContent className="p-3 sm:p-4">
+                        {question.image && (
+                          <div className="mb-4 rounded-lg overflow-hidden shadow-sm">
+                            <img
+                              src={question.image}
+                              alt="Question illustration"
+                              className="w-full max-h-64 sm:max-h-80 object-contain bg-gray-50 dark:bg-gray-700"
+                            />
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                           {question.options.map((option) => {
-                            let optionClassName = 'p-2 border-2 rounded-xl';
+                            let optionClassName = 'p-3 border-2 rounded-lg transition-all duration-200';
 
                             if (option.is_correct) {
-                              optionClassName += 'bg-gradient-to-r from-green-50 to-green-100 border-green-400 shadow-lg dark:from-green-900/30 dark:to-green-800/30 dark:border-green-500';
+                              optionClassName += ' bg-green-50 border-green-300 dark:bg-green-900/20 dark:border-green-600';
                             } else {
-                              optionClassName += 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600';
+                              optionClassName += ' bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600';
                             }
 
                             return (
                               <div key={option.uid} className={optionClassName}>
                                 <div className="flex items-center justify-between">
-                                  <div className="flex items-start space-x-3">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold shadow-sm ${option.is_correct
+                                  <div className="flex items-start space-x-3 min-w-0 flex-1">
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold shadow-sm text-sm flex-shrink-0 ${option.is_correct
                                       ? 'bg-green-600 text-white'
                                       : 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white'
                                       }`}>
                                       {option.option_label}
                                     </div>
-                                    <span className="text-gray-800 dark:text-gray-200 flex-1">
+                                    <span className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed">
                                       {option.option_text}
-                                  </span>
+                                    </span>
                                   </div>
                                   {option.is_correct && (
-                                    <div className="flex items-center space-x-2 ml-2">
-                                      <Badge className="bg-green-600 text-white text-xs">
-                                        Correct
-                                      </Badge>
-                                      <CheckCircle className="h-6 w-6 text-green-600" />
+                                    <div className="flex items-center space-x-2 flex-shrink-0">
+                                      <CheckCircle className="h-5 w-5 text-green-600" />
                                     </div>
                                   )}
                                 </div>
@@ -295,17 +316,17 @@ const ReadingModePage: React.FC = () => {
                         </div>
 
                         {question.explanation && (
-                          <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border-l-4 border-blue-500 mb-4">
+                          <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500 mb-4">
                             <div className="flex items-start space-x-3">
-                              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                                <Lightbulb className="h-4 w-4 text-white" />
-                            </div>
-                              <div className="flex-1">
-                                <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-2 flex items-center">
+                              <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <Lightbulb className="h-3 w-3 text-white" />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-1 text-sm flex items-center">
                                   <HelpCircle className="h-4 w-4 mr-1" />
-                                  Detailed Explanation
+                                  Explanation
                                 </h4>
-                                <p className="text-blue-700 dark:text-blue-300 leading-relaxed">
+                                <p className="text-blue-700 dark:text-blue-300 text-sm leading-relaxed">
                                   {question.explanation}
                                 </p>
                               </div>
@@ -315,28 +336,31 @@ const ReadingModePage: React.FC = () => {
 
                         {question.negative_marks > 0 && (
                           <div className="flex items-center space-x-2 p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-                            <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                            <div className="w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
                               <span className="text-white text-xs font-bold">!</span>
                             </div>
-                            <span className="text-orange-700 dark:text-orange-300 font-medium">
-                            Negative marks: {question.negative_marks}
+                            <span className="text-orange-700 dark:text-orange-300 font-medium text-sm">
+                              Negative marks: {question.negative_marks}
                             </span>
                           </div>
                         )}
                       </CardContent>
                     </Card>
                   ))}
-              </div>
-              {readingQuestionsData && renderPagination(
-                readingQuestionsData.count,
-                !!readingQuestionsData.next,
-                !!readingQuestionsData.previous
-              )}
-            </>
-          )}
-        </div>
-      </main>
-      {userProfile ? '' : <Footer />}
+                  </div>
+
+                {readingQuestionsData && renderPagination(
+                  readingQuestionsData.count,
+                  !!readingQuestionsData.next,
+                  !!readingQuestionsData.previous
+                )}
+              </>
+            )}
+          </div>
+        </main>
+
+        {!userProfile && <Footer />}
+      </ScrollArea>
     </div>
   );
 };

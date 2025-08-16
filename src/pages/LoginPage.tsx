@@ -89,7 +89,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen w-full">
+    <div className="flex h-screen w-full dark:bg-gray-900">
       {/* Left section with image */}
       <div className="hidden md:flex md:w-1/2 bg-gray-600 relative">
         <img 
@@ -116,18 +116,7 @@ const LoginPage: React.FC = () => {
       {/* Right section with form */}
       <div className="w-full md:w-1/2 flex items-center justify-center">
         <div className="w-full max-w-2xl">
-          <div className="bg-white rounded-lg p-6 shadow-sm border dark:bg-gray-900">
-              <div className="flex items-center mb-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setStep(1)}
-                  className="text-gray-500 hover:text-gray-700 p-0 h-auto"
-                >
-                  ← Back
-                </Button>
-              </div>
-              
+          <div className="bg-white rounded-lg p-6 shadow-sm border dark:bg-background">
               <h2 className="text-2xl font-bold mb-2">Log in to Dashboard</h2>
               <p className="text-gray-500 mb-6 dark:text-gray-400">Welcome! Please enter your credentials or continue with Google.</p>
               
@@ -145,7 +134,7 @@ const LoginPage: React.FC = () => {
                   <span className="w-full border-t border-gray-300 dark:border-gray-600" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500 dark:bg-gray-900 dark:text-gray-400">Or continue with email</span>
+                <span className="px-2 bg-white text-gray-500 dark:bg-background dark:text-gray-400">Or continue with email</span>
                 </div>
               </div>
               
@@ -161,7 +150,7 @@ const LoginPage: React.FC = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                      className="w-full dark:bg-gray-900 border-primary-200"
+                      className="w-full dark:bg-gray-900"
                         disabled={loading}
                       />
                     </div>
@@ -177,7 +166,7 @@ const LoginPage: React.FC = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                      className="w-full pr-10 dark:bg-gray-900 border-primary-200"
+                      className="w-full pr-10 dark:bg-gray-900"
                         disabled={loading}
                       />
                       <button
@@ -196,7 +185,7 @@ const LoginPage: React.FC = () => {
                   
                   <Button 
                     type="submit" 
-                  className="w-full min-h-[55px] bg-primary hover:bg-primary-700 mt-2 dark:text-white"
+                  className="w-full min-h-[55px] bg-primary hover:bg-primary-700 mt-2 dark:text-white shadow-xl"
                     disabled={loading}
                   >
                     {loading ? 'Logging in...' : 'Log in'}
