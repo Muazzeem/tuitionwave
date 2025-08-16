@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,13 +9,21 @@ import { BookOpen, Search, Star, TrendingUp, Users, Target } from 'lucide-react'
 import JobPreparationService from '@/services/JobPreparationService';
 import { Category } from '@/types/jobPreparation';
 import DashboardHeader from '@/components/DashboardHeader';
+import { useAuth } from '@/contexts/AuthContext';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const CategoriesPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { userProfile } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1'));
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
   const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
+
+  // Determine if user is on authorized or public route
+  const isAuthorizedRoute = location.pathname.startsWith('/job-preparation');
 
   const { data: categoriesData, isLoading: categoriesLoading, error } = useQuery({
     queryKey: ['categories', currentPage],
@@ -37,7 +45,8 @@ const CategoriesPage: React.FC = () => {
   }, [categoriesData, searchTerm]);
 
   const handleCategoryClick = (category: Category) => {
-    navigate(`/job-preparation/category/${category.uid}`);
+    const basePath = isAuthorizedRoute ? '/job-preparation' : '/questions';
+    navigate(`${basePath}/category/${category.uid}`);
   };
 
   const handlePageChange = (page: number) => {
@@ -228,7 +237,7 @@ const CategoriesPage: React.FC = () => {
   if (error) {
     return (
       <div className="flex-1 overflow-auto dark:bg-gray-900 h-screen">
-        <DashboardHeader userName="BCS Candidate" />
+        {userProfile ? <DashboardHeader userName="BCS Candidate" /> : <Header />}
         <main className="flex-1 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
           <div className="text-center">
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -245,13 +254,14 @@ const CategoriesPage: React.FC = () => {
             </Button>
           </div>
         </main>
+        {!userProfile && <Footer />}
       </div>
     );
   }
 
   return (
     <div className="flex-1 overflow-auto dark:bg-gray-900 h-screen bg-gray-50">
-      <DashboardHeader userName="BCS Candidate" />
+      {userProfile ? <DashboardHeader userName="BCS Candidate" /> : <Header />}
       <main className="flex-1 bg-gray-50 dark:bg-gray-900">
         <div className="p-6">
           {/* Header Section */}
@@ -309,6 +319,7 @@ const CategoriesPage: React.FC = () => {
           )}
         </div>
       </main>
+      {!userProfile && <Footer />}
     </div>
   );
 };

@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -44,12 +45,9 @@ import ExamPractice from "./pages/JobPreparation/ExamPractice";
 import ExamPage from "./pages/JobPreparation/ExamPage";
 import ExamResultsPage from "./pages/JobPreparation/ExamResultsPage";
 
-
 import { Loader2 } from "lucide-react";
 
-
 const queryClient = new QueryClient();
-
 
 const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
@@ -74,7 +72,8 @@ const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => 
         location.pathname !== "/terms" &&
         location.pathname !== "/how-it-works" &&
         location.pathname !== "/job-preparation" &&
-        !location.pathname.startsWith("/tutor/")
+        !location.pathname.startsWith("/tutor/") &&
+        !location.pathname.startsWith("/questions/")
       ) {
         navigate('/login');
       }
@@ -125,20 +124,16 @@ const App = () => (
                 <Route path="/faq" element={<FAQPage />} />
                 <Route path="/terms" element={<TermsPage />} />
 
-                <Route path="/unauthorized" element={
-                  <Unauthorized />
-                } />
+                <Route path="/unauthorized" element={<Unauthorized />} />
 
-
-                {/* Job Preparation routes */}
+                {/* Job Preparation routes for authorized users */}
                 <Route path="/job-preparation/dashboard" element={
                   <AuthGuard>
                     <MainLayout>
                       <JobPreparationDashboard />
                     </MainLayout>
                   </AuthGuard>
-                }
-                />
+                } />
                 <Route path="/job-preparation/create-model-test" element={
                   <AuthGuard>
                     <MainLayout>
@@ -152,16 +147,14 @@ const App = () => (
                       <CategoriesPage />
                     </MainLayout>
                   </AuthGuard>
-                }
-                />
+                } />
                 <Route path="/job-preparation/practice" element={
                   <AuthGuard>
                     <MainLayout>
                       <ExamPractice />
                     </MainLayout>
                   </AuthGuard>
-                }
-                />
+                } />
 
                 <Route path="/job-preparation/category/:categoryId" element={
                   <AuthGuard>
@@ -193,21 +186,11 @@ const App = () => (
                   </AuthGuard>
                 } />
 
-                {/* Public Question routes */}
-                <Route path="/questions" element={
-                  <CategoriesPage />
-                }
-                />
-                <Route path="/questions/category/:categoryId" element={
-                  <SubjectsPage />
-                } />
-                <Route path="/questions/category/:categoryId/subject/:subjectId" element={
-                  <TopicsPage />
-                } />
-                <Route path="/questions/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId" element={
-                  <QuestionsPage />
-                } />
-
+                {/* Public Question routes for unauthorized users */}
+                <Route path="/questions" element={<CategoriesPage />} />
+                <Route path="/questions/category/:categoryId" element={<SubjectsPage />} />
+                <Route path="/questions/category/:categoryId/subject/:subjectId" element={<TopicsPage />} />
+                <Route path="/questions/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId" element={<QuestionsPage />} />
                 <Route path="/questions/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId/reading" element={<ReadingModePage />} />
 
                 <Route path="/job-preparation/exam/:examId" element={
@@ -259,7 +242,6 @@ const App = () => (
                     <MainLayout><Settings /></MainLayout>
                   </AuthGuard>
                 } />
-
 
                 <Route path="teacher/message" element={
                   <AuthGuard>

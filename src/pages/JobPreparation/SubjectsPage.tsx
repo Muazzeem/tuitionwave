@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,12 +18,15 @@ const SubjectsPage: React.FC = () => {
   const { userProfile } = useAuth();
   const params = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1'));
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
   const [filteredSubjects, setFilteredSubjects] = useState<Subject[]>([]);
   const { categoryId } = params;
 
+  // Determine if user is on authorized or public route
+  const isAuthorizedRoute = location.pathname.startsWith('/job-preparation');
 
   const { data: subjectsData, isLoading: subjectsLoading, error } = useQuery({
     queryKey: ['subjects', categoryId, currentPage],
@@ -46,11 +49,13 @@ const SubjectsPage: React.FC = () => {
   }, [subjectsData, searchTerm]);
 
   const handleSubjectClick = (subject: Subject) => {
-    navigate(`/job-preparation/category/${categoryId}/subject/${subject.uid}`);
+    const basePath = isAuthorizedRoute ? '/job-preparation' : '/questions';
+    navigate(`${basePath}/category/${categoryId}/subject/${subject.uid}`);
   };
 
   const handleBack = () => {
-    navigate('/job-preparation/questions');
+    const basePath = isAuthorizedRoute ? '/job-preparation' : '/questions';
+    navigate(`${basePath}/questions`);
   };
 
   const handlePageChange = (page: number) => {
