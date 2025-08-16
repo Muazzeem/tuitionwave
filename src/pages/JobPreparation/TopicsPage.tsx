@@ -167,7 +167,7 @@ const TopicsPage: React.FC = () => {
         <Header />
       }
       <main className="flex-1">
-        <div className="p-6">
+        <div className={userProfile ? "p-6" : "p-6 container"}>
           {/* Breadcrumb */}
           <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
             <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
@@ -242,7 +242,7 @@ const TopicsPage: React.FC = () => {
               </div>
             ) : (
               <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {filteredTopics.map((topic, index) => (
                         <Card
                           key={topic.uid}

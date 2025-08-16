@@ -283,7 +283,7 @@ const QuestionsPage: React.FC = () => {
       }
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
         <main className="flex-1 pb-20">
-          <div className="p-6">
+          <div className={userProfile ? "p-6" : "p-6 container"}>
             {/* Breadcrumb */}
             <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
               <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>

@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
@@ -56,6 +56,8 @@ const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => 
   const { userProfile, fetchProfile } = useAuth();
 
   useEffect(() => {
+    let isMounted = true;
+
     const validateToken = async () => {
       setIsValidating(true);
       const isValid = await AuthService.ensureValidToken();
@@ -64,25 +66,42 @@ const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => 
         if (!userProfile) {
           await fetchProfile();
         }
-      } else if (
-        !location.pathname.startsWith("/auth") &&
-        location.pathname !== "/" &&
-        location.pathname !== "/login" &&
-        location.pathname !== "/faq" &&
-        location.pathname !== "/terms" &&
-        location.pathname !== "/how-it-works" &&
-        location.pathname !== "/job-preparation" &&
-        !location.pathname.startsWith("/tutor/") &&
-        !location.pathname.startsWith("/questions/")
-      ) {
-        navigate('/login');
+      } else {
+        const publicPaths = [
+          "/",
+          "/login",
+          "/faq",
+          "/terms",
+          "/how-it-works",
+          "/auth/registration"
+        ];
+
+        const allowedPrefixes = [
+          "/auth",
+          "/tutor/",
+          "/questions",
+          "/job-preparation"
+        ];
+
+        const isPublic =
+          publicPaths.includes(location.pathname) ||
+          allowedPrefixes.some((prefix) => location.pathname.startsWith(prefix));
+
+        if (!isPublic && isMounted) {
+          navigate("/login", { replace: true });
+        }
       }
 
-      setIsValidating(false);
+      if (isMounted) setIsValidating(false);
     };
 
     validateToken();
-  }, [location.pathname, navigate, userProfile, fetchProfile]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [location.pathname, navigate]);
+
 
   if (isValidating) {
     return <div className="flex justify-center items-center h-screen">
@@ -93,7 +112,6 @@ const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => 
   return <>{children}</>;
 };
 
-// Main Layout Component
 const MainLayout = ({ children }: { children: React.ReactNode }) => (
   <div className="flex h-screen bg-gray-50">
     <Sidebar />

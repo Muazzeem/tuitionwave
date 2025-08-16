@@ -163,7 +163,7 @@ const CategoriesPage: React.FC = () => {
   };
 
   const renderGridView = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
       {filteredCategories.map((category) => {
         const IconComponent = getCategoryIcon(category.category_no);
         const gradient = getCategoryGradient(category.category_no);
@@ -263,7 +263,7 @@ const CategoriesPage: React.FC = () => {
     <div className="flex-1 overflow-auto dark:bg-gray-900 h-screen bg-gray-50">
       {userProfile ? <DashboardHeader userName="BCS Candidate" /> : <Header />}
       <main className="flex-1 bg-gray-50 dark:bg-gray-900">
-        <div className="p-6">
+        <div className={userProfile ? "p-6" : "p-6 container"}>
           {/* Header Section */}
           <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
             <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
@@ -297,7 +297,6 @@ const CategoriesPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Content */}
           {categoriesLoading ? (
             <div className="flex items-center justify-center py-16">
               <div className="text-center">
