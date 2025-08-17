@@ -87,7 +87,6 @@ const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => 
           allowedPrefixes.some((prefix) => location.pathname.startsWith(prefix));
 
         if (!isPublic && isMounted) {
-          // Pass current location to login page for redirect after login
           navigate("/login", { 
             replace: true, 
             state: { from: location } 
@@ -114,12 +113,17 @@ const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => 
   return <>{children}</>;
 };
 
-const MainLayout = ({ children }: { children: React.ReactNode }) => (
-  <div className="flex h-screen bg-gray-50">
-    <Sidebar />
-    {children}
-  </div>
-);
+const MainLayout = ({ children }: { children: React.ReactNode }) => {
+  const { userProfile } = useAuth();
+
+  return (
+    <div className="flex h-screen dark:bg-gray-900">
+      {userProfile && <Sidebar />}
+      <div className="flex-1">{children}</div>
+    </div>
+  );
+};
+
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -162,11 +166,9 @@ const App = () => (
                   </AuthGuard>
                 } />
                 <Route path="/job-preparation/questions" element={
-                  <AuthGuard>
-                    <MainLayout>
-                      <CategoriesPage />
-                    </MainLayout>
-                  </AuthGuard>
+                  <MainLayout>
+                    <CategoriesPage />
+                  </MainLayout>
                 } />
                 <Route path="/job-preparation/practice" element={
                   <AuthGuard>
@@ -177,41 +179,26 @@ const App = () => (
                 } />
 
                 <Route path="/job-preparation/category/:categoryId" element={
-                  <AuthGuard>
                     <MainLayout>
                       <SubjectsPage />
-                    </MainLayout>
-                  </AuthGuard>
+                  </MainLayout>
                 } />
                 <Route path="/job-preparation/category/:categoryId/subject/:subjectId" element={
-                  <AuthGuard>
                     <MainLayout>
                       <TopicsPage />
-                    </MainLayout>
-                  </AuthGuard>
+                  </MainLayout>
                 } />
                 <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId" element={
-                  <AuthGuard>
                     <MainLayout>
                       <QuestionsPage />
-                    </MainLayout>
-                  </AuthGuard>
+                  </MainLayout>
                 } />
 
                 <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId/reading" element={
-                  <AuthGuard>
                     <MainLayout>
                       <ReadingModePage />
-                    </MainLayout>
-                  </AuthGuard>
+                  </MainLayout>
                 } />
-
-                {/* Public Question routes for unauthorized users */}
-                <Route path="/questions" element={<CategoriesPage />} />
-                <Route path="/questions/category/:categoryId" element={<SubjectsPage />} />
-                <Route path="/questions/category/:categoryId/subject/:subjectId" element={<TopicsPage />} />
-                <Route path="/questions/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId" element={<QuestionsPage />} />
-                <Route path="/questions/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId/reading" element={<ReadingModePage />} />
 
                 <Route path="/job-preparation/exam/:examId" element={
                   <AuthGuard>

@@ -321,7 +321,7 @@ export default function ExamResultsPage() {
 
             {/* Hero Section with Main Score */}
             <div className="relative">
-              <Card className={`${performanceData.bgColor} border-0 shadow-sm overflow-hidden`}>
+              <Card className={`${performanceData.bgColor} shadow-sm overflow-hidden`}>
                 <CardContent className="p-8 text-center relative">
                   <div className="mb-6">
                     <h1 className={`text-5xl font-bold mb-2 ${performanceData.color}`}>

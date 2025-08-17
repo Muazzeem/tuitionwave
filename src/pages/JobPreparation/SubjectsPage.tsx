@@ -258,7 +258,7 @@ const SubjectsPage: React.FC = () => {
         <Header />
       }
       <main className="flex-1">
-        <div className={userProfile ? "p-6 max-w-7xl mx-auto" : "p-6 container"}>
+        <div className={userProfile ? "p-2 md:p-6 max-w-7xl mx-auto" : "p-2 md:p-6 container"}>
           {/* Breadcrumb */}
           <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
             <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
@@ -277,7 +277,7 @@ const SubjectsPage: React.FC = () => {
                   className="hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-colors"
                 >
                   <ChevronLeft className="h-4 w-4 mr-2" />
-                  Back to Categories
+                  <span className="hidden sm:inline">Back to Categories</span>
                 </Button>
                 <div>
                   <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">

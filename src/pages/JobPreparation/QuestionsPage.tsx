@@ -310,9 +310,9 @@ const QuestionsPage: React.FC = () => {
     <div className="flex-1 overflow-auto dark:bg-gray-900 h-screen bg-gray-50 w-full">
       {userProfile ? <DashboardHeader userName="BCS Candidate" /> : <Header />}
 
-      <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(100vh - 160px)' }}>
+      <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(110vh - 160px)' }}>
         <main className="flex-1 pb-6">
-          <div className={userProfile ? "p-6 max-w-7xl mx-auto" : "p-6 container"}>
+          <div className={userProfile ? "p-2 md:p-6 max-w-7xl mx-auto" : "p-2 md:p-6 container"}>
             {/* Breadcrumb */}
             <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
               <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
@@ -334,7 +334,7 @@ const QuestionsPage: React.FC = () => {
                       <span className="hidden sm:inline">Back to Topic</span>
                     </Button>
                     <div>
-                      <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+                      <h1 className="sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center">
                         <Brain className="h-6 w-6 mr-2 text-blue-600" />
                         Practice Questions
                       </h1>
@@ -489,7 +489,7 @@ const QuestionsPage: React.FC = () => {
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               {question.options.map((option) => {
-                                let optionClassName = 'p-3 border-2 rounded-lg cursor-pointer transition-all duration-200';
+                                let optionClassName = 'p-1 md:p-3 border-2 rounded-lg cursor-pointer transition-all duration-200';
 
                                 if (selectedOption === option.option_label) {
                                   if (isAnswered) {
@@ -578,12 +578,26 @@ const QuestionsPage: React.FC = () => {
                       );
                     })}
                 </div>
+                  {questionsData && (
+                    <>
+                      {!userProfile && (
+                        <div className="mb-4 p-4 bg-red-100 text-yellow-800 rounded mt-5">
+                          <span className='text-lg'>
+                            Please log in to access all the questions.
+                          </span>
+                        </div>
+                      )}
 
-                {questionsData && renderPagination(
-                  questionsData.count,
-                  !!questionsData.next,
-                  !!questionsData.previous
-                )}
+                      {
+                        userProfile &&
+                        renderPagination(
+                          questionsData.count,
+                          !!questionsData.next,
+                          !!questionsData.previous
+                        )
+                      }
+                    </>
+                  )}
               </>
             )}
           </div>

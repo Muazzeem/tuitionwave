@@ -40,7 +40,7 @@ const Header = () => {
                 Home
               </button>
             </Link>
-            <Link to="/questions">
+            <Link to="/job-preparation/questions">
               <button
                 className="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition-colors py-2"
               >
@@ -62,13 +62,17 @@ const Header = () => {
                 Go to Dashboard
               </button>
             ) : (
-              <Link to="/login">
-                <button
+                <Link to="/login">
+                  <button
                     className="bg-primary hover:bg-primary-700 text-white rounded-full px-6 py-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Login
-                </button>
-              </Link>
+                    onClick={() => {
+                      localStorage.setItem("lastVisitedUrl", window.location.pathname);
+                      console.log("Saved URL:", window.location.href);
+                    }}
+                  >
+                    Login
+                  </button>
+                </Link>
             )}
           </div>
 
@@ -105,7 +109,7 @@ const Header = () => {
                   Home
                 </button>
               </Link>
-              <Link to="/job-preparation">
+              <Link to="/job-preparation/questions">
                 <button
                   className="text-left text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition-colors py-3 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
                 >
