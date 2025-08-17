@@ -307,7 +307,7 @@ export default function ExamHistory({
     <div className="w-full bg-gray-900">
       <div className="space-y-6 mt-6">
         {/* Header and Filter Section */}
-        <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between rounded-lg p-4 border shadow-sm">
+        <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <Filter className="h-5 w-5 text-primary" />
@@ -317,7 +317,7 @@ export default function ExamHistory({
               <SelectTrigger className="w-full sm:w-40 bg-background border-muted">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-background">
+              <SelectContent className="bg-gray-900">
                 <SelectItem value="all">All Exams</SelectItem>
                 <SelectItem value="not_started">Not Started</SelectItem>
                 <SelectItem value="in_progress">In Progress</SelectItem>
@@ -357,7 +357,7 @@ export default function ExamHistory({
         {(!loading || !useInternalApi) && examRecords.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {displayedExams.map((exam) => (
-              <Card key={exam.uid} className="group hover:shadow-lg transition-all duration-200 dark:bg-background  dark:border-gray-900 hover:border-primary/50 shadow-lg">
+              <Card key={exam.uid} className="group transition-all duration-300 hover:-translate-y-1 dark:bg-background hover:border-primary shadow-lg">
                 <CardContent className="p-4 sm:p-6">
                   <div className="space-y-4">
                     {/* Header */}

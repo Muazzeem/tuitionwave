@@ -226,11 +226,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
             />
             <Label htmlFor="terms" className="text-sm">
               By creating an account means you agree to the{' '}
-              <Link to="/terms" className="text-blue-600 hover:underline">
+              <Link to="/terms" className="text-primary-600 hover:underline">
                 Terms & Conditions
               </Link>{' '}
               and our{' '}
-              <Link to="/privacy" className="text-blue-600 hover:underline">
+              <Link to="/privacy" className="text-primary-600 hover:underline">
                 Privacy Policy
               </Link>
             </Label>
@@ -238,15 +238,15 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
           
           <Button 
             type="submit" 
-            className="w-full min-h-[55px] bg-primary hover:bg-primary-700 dark:text-white shadow-xl"
+            className="w-full min-h-[55px] bg-primary hover:bg-primary-700 dark:text-white shadow-xl text-md"
             disabled={loading}
           >
             {loading ? 'Creating account...' : 'Sign up'}
           </Button>
         
-          <div className="text-center mt-4">
+          <div className="text-center mt-4 text-md">
             Already have an account?{' '}
-            <Link to="/login" className="text-blue-600 hover:underline font-medium">
+            <Link to="/login" className="text-primary hover:underline font-medium">
               Sign In
             </Link>
           </div>

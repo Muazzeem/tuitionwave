@@ -357,7 +357,7 @@ const QuestionsPage: React.FC = () => {
                       onClick={handleRefresh}
                       variant="outline"
                       size="sm"
-                      className="border-blue-200 text-blue-700 hover:bg-red-700/30 dark:border-blue-700 dark:text-blue-300"
+                      className="border-blue-200 text-blue-700 dark:border-blue-700 dark:text-blue-300"
                     >
                       <RefreshCw className="h-4 w-4" />
                       <span className="hidden sm:inline ml-2">Reset</span>

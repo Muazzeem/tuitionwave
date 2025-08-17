@@ -185,14 +185,14 @@ const LoginPage: React.FC = () => {
                   
                   <Button 
                     type="submit" 
-                  className="w-full min-h-[55px] bg-primary hover:bg-primary-700 mt-2 dark:text-white shadow-xl"
+                  className="w-full min-h-[55px] bg-primary hover:bg-primary-700 mt-2 dark:text-white shadow-xl text-md"
                     disabled={loading}
                   >
                     {loading ? 'Logging in...' : 'Log in'}
                   </Button>
                   
-                  <div className="text-center text-sm">
-                    <div className="text-center mt-4 text-sm">
+                <div className="text-center text-md">
+                  <div className="text-center mt-4">
                     Don't have an account? <Link to="/auth/registration" className="text-primary hover:underline font-medium">Sign Up</Link>
                     </div>
                   </div>
