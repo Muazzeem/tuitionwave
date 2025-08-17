@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,6 +11,7 @@ import GoogleLoginButton from '@/components/GoogleLoginButton';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { fetchProfile, userProfile } = useAuth();
   const [step, setStep] = useState<1 | 2>(1);
   const [email, setEmail] = useState('');
@@ -19,13 +20,14 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
+  // Get the redirect path from location state or default to dashboard
+  const from = location.state?.from?.pathname || '/dashboard';
 
   useEffect(() => {
     if (userProfile) {
-      navigate('/dashboard');
+      navigate(from, { replace: true });
     }
-  }, [userProfile]);
-
+  }, [userProfile, navigate, from]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +56,9 @@ const LoginPage: React.FC = () => {
         title: "Login Success",
         description: "Successfully logged in!",
       });
-      navigate('/dashboard');
+      
+      // Redirect to the original page or dashboard
+      navigate(from, { replace: true });
     } catch (error) {
       toast({
         title: "Login Failed",
@@ -78,7 +82,9 @@ const LoginPage: React.FC = () => {
         title: "Google Login Success",
         description: "Successfully logged in with Google!",
       });
-      // navigate('/dashboard');
+      
+      // Redirect to the original page or dashboard
+      navigate(from, { replace: true });
     } catch (error) {
       toast({
         title: "Login Failed",

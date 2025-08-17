@@ -1,7 +1,7 @@
 
 // src/components/AuthGuard.tsx
 import { useEffect, useState, ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthService from '@/services/AuthService';
 
@@ -18,6 +18,7 @@ const AuthGuard = ({
 }: AuthGuardProps) => {
   const { userProfile, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
@@ -28,8 +29,11 @@ const AuthGuard = ({
         const isValid = await AuthService.ensureValidToken();
         
         if (!isValid || !userProfile) {
-          // Redirect to login if not authenticated
-          navigate(fallbackPath, { replace: true });
+          // Redirect to login with current location for redirect after login
+          navigate(fallbackPath, { 
+            replace: true, 
+            state: { from: location } 
+          });
         } else if (allowedRoles && !allowedRoles.includes(userProfile?.user_type)) {
           navigate('/unauthorized', { replace: true });
         } else {
@@ -40,7 +44,7 @@ const AuthGuard = ({
       
       checkAuth();
     }
-  }, [userProfile, loading, navigate, fallbackPath, allowedRoles]);
+  }, [userProfile, loading, navigate, fallbackPath, allowedRoles, location]);
 
   if (loading || isChecking) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;

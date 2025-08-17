@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -88,7 +87,11 @@ const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => 
           allowedPrefixes.some((prefix) => location.pathname.startsWith(prefix));
 
         if (!isPublic && isMounted) {
-          navigate("/login", { replace: true });
+          // Pass current location to login page for redirect after login
+          navigate("/login", { 
+            replace: true, 
+            state: { from: location } 
+          });
         }
       }
 
@@ -100,8 +103,7 @@ const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => 
     return () => {
       isMounted = false;
     };
-  }, [location.pathname, navigate]);
-
+  }, [location.pathname, navigate, fetchProfile, userProfile]);
 
   if (isValidating) {
     return <div className="flex justify-center items-center h-screen">
