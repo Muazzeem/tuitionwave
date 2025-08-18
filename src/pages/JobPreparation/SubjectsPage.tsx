@@ -87,37 +87,8 @@ const SubjectsPage: React.FC = () => {
     return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
   };
 
-  const renderPagination = (count: number, hasNext: boolean, hasPrevious: boolean) => {
+  const renderPagination = (hasNext: boolean, hasPrevious: boolean) => {
     if (searchTerm.trim()) return null; // Hide pagination when searching
-
-    const totalPages = Math.ceil(count / 20);
-    if (totalPages <= 1) return null;
-
-    const getPageNumbers = () => {
-      const pages: number[] = [];
-      const maxVisiblePages = 5;
-
-      if (totalPages <= maxVisiblePages) {
-        for (let i = 1; i <= totalPages; i++) {
-          pages.push(i);
-        }
-      } else {
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-        if (endPage - startPage + 1 < maxVisiblePages) {
-          startPage = Math.max(1, endPage - maxVisiblePages + 1);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-          pages.push(i);
-        }
-      }
-
-      return pages;
-    };
-
-    const pageNumbers = getPageNumbers();
 
     return (
       <div className="mt-8 flex justify-center">
@@ -132,17 +103,9 @@ const SubjectsPage: React.FC = () => {
               </PaginationItem>
             )}
 
-            {pageNumbers.map((pageNum) => (
-              <PaginationItem key={pageNum}>
-                <PaginationLink
-                  onClick={() => handlePageChange(pageNum)}
-                  isActive={currentPage === pageNum}
-                  className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                >
-                  {pageNum}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
+            <PaginationItem>
+              <PaginationLink isActive>{currentPage}</PaginationLink>
+            </PaginationItem>
 
             {hasNext && (
               <PaginationItem>
@@ -157,6 +120,7 @@ const SubjectsPage: React.FC = () => {
       </div>
     );
   };
+
 
   const renderGridView = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
@@ -315,11 +279,7 @@ const SubjectsPage: React.FC = () => {
           ) : (
             <>
               {renderGridView()}
-              {subjectsData && renderPagination(
-                subjectsData.count,
-                !!subjectsData.next,
-                !!subjectsData.previous
-              )}
+                  {subjectsData && renderPagination(!!subjectsData.next, !!subjectsData.previous)}
             </>
           )}
         </div>
