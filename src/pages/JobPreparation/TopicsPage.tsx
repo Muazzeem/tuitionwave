@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
@@ -8,12 +9,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { ChevronLeft, HelpCircle, Search, BookOpen, Target, Clock } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
 import { Topic } from '@/types/jobPreparation';
 import DashboardHeader from '@/components/DashboardHeader';
 import { useAuth } from '@/contexts/AuthContext';
+import TutorPagination from '@/components/FindTutors/TutorPagination';
 
 const TopicsPage: React.FC = () => {
   const params = useParams();
@@ -89,76 +90,6 @@ const TopicsPage: React.FC = () => {
         </CardContent>
       </Card>
     ));
-  };
-
-  const renderPagination = (count: number, hasNext: boolean, hasPrevious: boolean) => {
-    const totalPages = Math.ceil(count / 20);
-
-    if (totalPages <= 1) return null;
-
-    const getPageNumbers = () => {
-      const pages: number[] = [];
-      const maxVisiblePages = 5;
-
-      if (totalPages <= maxVisiblePages) {
-        for (let i = 1; i <= totalPages; i++) {
-          pages.push(i);
-        }
-      } else {
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-        if (endPage - startPage + 1 < maxVisiblePages) {
-          startPage = Math.max(1, endPage - maxVisiblePages + 1);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-          pages.push(i);
-        }
-      }
-
-      return pages;
-    };
-
-    const pageNumbers = getPageNumbers();
-
-    return (
-      <div className="mt-12 flex justify-center">
-        <Pagination>
-          <PaginationContent>
-            {hasPrevious && (
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  className="cursor-pointer hover:bg-primary/10 transition-colors"
-                />
-              </PaginationItem>
-            )}
-
-            {pageNumbers.map((pageNum) => (
-              <PaginationItem key={pageNum}>
-                <PaginationLink
-                  onClick={() => handlePageChange(pageNum)}
-                  isActive={currentPage === pageNum}
-                  className="cursor-pointer hover:bg-primary/10 transition-colors"
-                >
-                  {pageNum}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-
-            {hasNext && (
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className="cursor-pointer hover:bg-primary/10 transition-colors"
-                />
-              </PaginationItem>
-            )}
-          </PaginationContent>
-        </Pagination>
-      </div>
-    );
   };
 
   return (
@@ -242,61 +173,65 @@ const TopicsPage: React.FC = () => {
               </div>
             ) : (
               <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {filteredTopics.map((topic, index) => (
-                        <Card
-                          key={topic.uid}
-                          className={`cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all bg-background border shadow-md duration-300 dark:bg-background hover:border-primary`}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredTopics.map((topic, index) => (
+                    <Card
+                      key={topic.uid}
+                      className={`cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all bg-background border shadow-md duration-300 dark:bg-background hover:border-primary`}
                       onClick={() => handleTopicClick(topic)}
                     >
-                          <CardHeader className="pb-3">
-                            <CardTitle className="flex items-center space-x-3">
-                              <div className={`p-2 rounded-lg ${getTopicColor(index)}`}>
-                                {getTopicIcon(index)}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors truncate">
-                                  {topic.topic_name}
-                                </h3>
-                              </div>
+                      <CardHeader className="pb-3">
+                        <CardTitle className="flex items-center space-x-3">
+                          <div className={`p-2 rounded-lg ${getTopicColor(index)}`}>
+                            {getTopicIcon(index)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors truncate">
+                              {topic.topic_name}
+                            </h3>
+                          </div>
                         </CardTitle>
                       </CardHeader>
-                          <CardContent className="space-y-4">
+                      <CardContent className="space-y-4">
                         <div className="flex flex-wrap gap-2">
-                              <Badge
-                                variant="secondary"
-                                className="bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors"
-                              >
-                                <HelpCircle className="h-3 w-3 mr-1" />
-                                {topic.total_questions} Questions
-                              </Badge>
+                          <Badge
+                            variant="secondary"
+                            className="bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors"
+                          >
+                            <HelpCircle className="h-3 w-3 mr-1" />
+                            {topic.total_questions} Questions
+                          </Badge>
                           {topic.subtopics_count > 0 && (
-                                <Badge
-                                  variant="default"
-                                  className="bg-gradient-to-r from-blue-600 to-primary-600 transition-all text-white"
-                                >
-                                  <BookOpen className="h-3 w-3 mr-1" />
-                                  {topic.subtopics_count} Sub-Topics
-                                </Badge>
+                            <Badge
+                              variant="default"
+                              className="bg-gradient-to-r from-blue-600 to-primary-600 transition-all text-white"
+                            >
+                              <BookOpen className="h-3 w-3 mr-1" />
+                              {topic.subtopics_count} Sub-Topics
+                            </Badge>
                           )}
                         </div>
 
-                            {/* Progress Indicator */}
-                            <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
-                              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                                <span>Click to start practicing</span>
-                                <ChevronLeft className="h-3 w-3 rotate-180 group-hover:translate-x-1 transition-transform" />
-                              </div>
-                            </div>
+                        {/* Progress Indicator */}
+                        <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+                          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                            <span>Click to start practicing</span>
+                            <ChevronLeft className="h-3 w-3 rotate-180 group-hover:translate-x-1 transition-transform" />
+                          </div>
+                        </div>
                       </CardContent>
                     </Card>
                   ))}
                 </div>
 
-                {topicsData && renderPagination(
-                  topicsData.count,
-                  !!topicsData.next,
-                  !!topicsData.previous
+                {topicsData && !searchTerm.trim() && (
+                  <TutorPagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(topicsData.count / 20)}
+                    onPageChange={handlePageChange}
+                    hasNext={!!topicsData.next}
+                    hasPrevious={!!topicsData.previous}
+                  />
                 )}
               </>
             )}

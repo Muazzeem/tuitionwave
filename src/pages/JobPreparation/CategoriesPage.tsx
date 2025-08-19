@@ -1,10 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { BookOpen, Search, Star, TrendingUp, Users, Target } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
 import { Category } from '@/types/jobPreparation';
@@ -12,6 +12,7 @@ import DashboardHeader from '@/components/DashboardHeader';
 import { useAuth } from '@/contexts/AuthContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import TutorPagination from '@/components/FindTutors/TutorPagination';
 
 const CategoriesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -91,77 +92,6 @@ const CategoriesPage: React.FC = () => {
     return gradients[categoryNo % gradients.length];
   };
 
-  const renderPagination = (count: number, hasNext: boolean, hasPrevious: boolean) => {
-    if (searchTerm.trim()) return null; // Hide pagination when searching
-
-    const totalPages = Math.ceil(count / 20);
-    if (totalPages <= 1) return null;
-
-    const getPageNumbers = () => {
-      const pages: number[] = [];
-      const maxVisiblePages = 5;
-
-      if (totalPages <= maxVisiblePages) {
-        for (let i = 1; i <= totalPages; i++) {
-          pages.push(i);
-        }
-      } else {
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-        if (endPage - startPage + 1 < maxVisiblePages) {
-          startPage = Math.max(1, endPage - maxVisiblePages + 1);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-          pages.push(i);
-        }
-      }
-
-      return pages;
-    };
-
-    const pageNumbers = getPageNumbers();
-
-    return (
-      <div className="mt-8 flex justify-center">
-        <Pagination>
-          <PaginationContent>
-            {hasPrevious && (
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                />
-              </PaginationItem>
-            )}
-
-            {pageNumbers.map((pageNum) => (
-              <PaginationItem key={pageNum}>
-                <PaginationLink
-                  onClick={() => handlePageChange(pageNum)}
-                  isActive={currentPage === pageNum}
-                  className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                >
-                  {pageNum}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-
-            {hasNext && (
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                />
-              </PaginationItem>
-            )}
-          </PaginationContent>
-        </Pagination>
-      </div>
-    );
-  };
-
   const renderGridView = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
       {filteredCategories.map((category) => {
@@ -188,7 +118,6 @@ const CategoriesPage: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
-
               {/* Category preview info */}
               <div className="mt-0 pt-3 border-t border-gray-100 dark:border-gray-700">
                 <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 space-x-4">
@@ -208,6 +137,7 @@ const CategoriesPage: React.FC = () => {
       })}
     </div>
   );
+
   const renderEmptyState = () => (
     <div className="text-center py-16">
       <div className="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6">
@@ -306,13 +236,17 @@ const CategoriesPage: React.FC = () => {
             </div>
           ) : filteredCategories.length === 0 ? (
             renderEmptyState()
-            ) : (
-              <>
+          ) : (
+            <>
               {renderGridView()}
-              {categoriesData && renderPagination(
-                categoriesData.count,
-                !!categoriesData.next,
-                !!categoriesData.previous
+              {categoriesData && !searchTerm.trim() && (
+                <TutorPagination
+                  currentPage={currentPage}
+                  totalPages={Math.ceil(categoriesData.count / 20)}
+                  onPageChange={handlePageChange}
+                  hasNext={!!categoriesData.next}
+                  hasPrevious={!!categoriesData.previous}
+                />
               )}
             </>
           )}

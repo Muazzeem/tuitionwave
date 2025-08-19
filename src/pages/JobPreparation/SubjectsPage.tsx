@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
@@ -7,12 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { ChevronLeft, Search, BookOpen, TrendingUp } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
 import { Subject } from '@/types/jobPreparation';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardHeader from '@/components/DashboardHeader';
+import TutorPagination from '@/components/FindTutors/TutorPagination';
 
 const SubjectsPage: React.FC = () => {
   const { userProfile } = useAuth();
@@ -86,41 +87,6 @@ const SubjectsPage: React.FC = () => {
     if (count >= 20) return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
     return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
   };
-
-  const renderPagination = (hasNext: boolean, hasPrevious: boolean) => {
-    if (searchTerm.trim()) return null; // Hide pagination when searching
-
-    return (
-      <div className="mt-8 flex justify-center">
-        <Pagination>
-          <PaginationContent>
-            {hasPrevious && (
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                />
-              </PaginationItem>
-            )}
-
-            <PaginationItem>
-              <PaginationLink isActive>{currentPage}</PaginationLink>
-            </PaginationItem>
-
-            {hasNext && (
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                />
-              </PaginationItem>
-            )}
-          </PaginationContent>
-        </Pagination>
-      </div>
-    );
-  };
-
 
   const renderGridView = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
@@ -231,7 +197,6 @@ const SubjectsPage: React.FC = () => {
           </div>
 
           {/* Header Section */}
-
           <div className="mb-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
               <div className="flex items-center space-x-4">
@@ -279,7 +244,15 @@ const SubjectsPage: React.FC = () => {
           ) : (
             <>
               {renderGridView()}
-                  {subjectsData && renderPagination(!!subjectsData.next, !!subjectsData.previous)}
+              {subjectsData && !searchTerm.trim() && (
+                <TutorPagination
+                  currentPage={currentPage}
+                  totalPages={Math.ceil(subjectsData.count / 20)}
+                  onPageChange={handlePageChange}
+                  hasNext={!!subjectsData.next}
+                  hasPrevious={!!subjectsData.previous}
+                />
+              )}
             </>
           )}
         </div>
