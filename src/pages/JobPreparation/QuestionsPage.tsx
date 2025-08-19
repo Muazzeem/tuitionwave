@@ -371,7 +371,7 @@ const QuestionsPage: React.FC = () => {
                             <CardTitle className="flex items-start justify-between gap-3">
                               <div className="flex items-start space-x-3 min-w-0 flex-1">
                                 <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                                  {index + 1}
+                                  {question.question_number}
                                 </div>
                                 <span className="text-sm sm:text-base leading-relaxed text-gray-900 dark:text-white">
                                   {question.question_text}
