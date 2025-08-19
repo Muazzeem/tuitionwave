@@ -31,6 +31,8 @@ export interface PackageData {
 }
 
 export interface ProfileData {
+  is_tutor: boolean;
+  is_student: boolean;
   has_document: any;
   has_nid: any;
   user_type: string;

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { ChevronDown, User, LogOut, Settings, Package, Menu, X } from "lucide-react";
+import { ChevronDown, LogOut, Settings, Package, Menu, X } from "lucide-react";
 import NotificationDropdown from "./NotificationDropdown";
 import { useAuth } from "@/contexts/AuthContext";
-import { ThemeToggle } from "./ThemeToggle";
 import { Link } from "react-router-dom";
 
 interface HeaderProps {
@@ -93,7 +92,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
 
       <div className="flex items-center gap-2 sm:gap-4">
         {/* <ThemeToggle /> */}
-        {/* <NotificationDropdown onMarkAllRead={handleMarkAllNotificationsRead} /> */}
+        <NotificationDropdown onMarkAllRead={handleMarkAllNotificationsRead} />
 
         <button
           onClick={toggleMobileMenu}

@@ -32,7 +32,7 @@ const TutorPagination = ({
   // Function to generate page numbers to display
   const getPageNumbers = () => {
     const pageNumbers = [];
-    const maxVisiblePages = 5;
+    const maxVisiblePages = 4;
     
     if (totalPages <= maxVisiblePages) {
       // Show all pages if total is small

@@ -17,6 +17,7 @@ import {
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import SocialMediaCards from "@/components/SocialMediaCard";
+import { useAuth } from "@/contexts/AuthContext";
 
 const PublicDashboard = () => {
   useEffect(() => {

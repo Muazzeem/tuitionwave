@@ -262,9 +262,6 @@ const RecentRequests: React.FC = () => {
     },
   });
 
-  if (isLoading) {
-    return <div className="dark:text-white">Loading...</div>;
-  }
 
   if (error) {
     return <div className="dark:text-white">Error loading requests</div>;

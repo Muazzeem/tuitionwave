@@ -257,7 +257,7 @@ const ReadingModePage: React.FC = () => {
                         <CardTitle className="flex items-start justify-between gap-3">
                           <div className="flex items-start space-x-3 min-w-0 flex-1">
                             <div className="w-8 h-8 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                              {question.question_number}
+                              {index + 1}
                             </div>
                             <span className="text-sm sm:text-base leading-relaxed text-gray-900 dark:text-white">
                               {question.question_text}

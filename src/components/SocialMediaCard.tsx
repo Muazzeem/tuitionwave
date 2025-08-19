@@ -44,10 +44,6 @@ const SocialMediaCards = () => {
         }
     };
 
-    if (loading) {
-        return <div className="text-white">Loading...</div>;
-    }
-
     return (
         <div className="z-10">
             <div className="w-full mx-auto pt-8">

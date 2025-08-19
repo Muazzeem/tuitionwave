@@ -6,7 +6,6 @@ import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { ChevronLeft, CheckCircle, XCircle, AlertCircle, HelpCircle, Target, BookOpen, Trophy, RefreshCw, TrendingUp, Brain, Star, Menu, X } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
 import { AnswerResult, QuestionState } from '@/types/common';
@@ -14,6 +13,7 @@ import { Subtopic } from '@/types/jobPreparation';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import DashboardHeader from '@/components/DashboardHeader';
 import { useAuth } from '@/contexts/AuthContext';
+import TutorPagination from '@/components/FindTutors/TutorPagination';
 
 const QuestionsPage: React.FC = () => {
   const { userProfile } = useAuth();
@@ -170,79 +170,6 @@ const QuestionsPage: React.FC = () => {
   const handleRefresh = () => {
     setQuestionStates({});
     refetch();
-  };
-
-  const renderPagination = (count: number, hasNext: boolean, hasPrevious: boolean) => {
-    const totalPages = Math.ceil(count / 20);
-
-    if (totalPages <= 1) return null;
-
-    const getPageNumbers = () => {
-      const pages: number[] = [];
-      const maxVisiblePages = window.innerWidth < 768 ? 3 : 5;
-
-      if (totalPages <= maxVisiblePages) {
-        for (let i = 1; i <= totalPages; i++) {
-          pages.push(i);
-        }
-      } else {
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-        if (endPage - startPage + 1 < maxVisiblePages) {
-          startPage = Math.max(1, endPage - maxVisiblePages + 1);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-          pages.push(i);
-        }
-      }
-
-      return pages;
-    };
-
-    const pageNumbers = getPageNumbers();
-
-    return (
-      <div className="mt-6 flex justify-center px-4">
-        <Pagination>
-          <PaginationContent className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-2 flex-wrap">
-            {hasPrevious && (
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  className="cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                />
-              </PaginationItem>
-            )}
-
-            {pageNumbers.map((pageNum) => (
-              <PaginationItem key={pageNum}>
-                <PaginationLink
-                  onClick={() => handlePageChange(pageNum)}
-                  isActive={currentPage === pageNum}
-                  className={`cursor-pointer transition-all ${currentPage === pageNum
-                    ? 'bg-blue-600 text-white shadow-lg'
-                    : 'hover:bg-blue-50 dark:hover:bg-blue-900/20'
-                    }`}
-                >
-                  {pageNum}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-
-            {hasNext && (
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className="cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                />
-              </PaginationItem>
-            )}
-          </PaginationContent>
-        </Pagination>
-      </div>
-    );
   };
 
   // Get currently selected subtopic data for display
@@ -444,7 +371,7 @@ const QuestionsPage: React.FC = () => {
                             <CardTitle className="flex items-start justify-between gap-3">
                               <div className="flex items-start space-x-3 min-w-0 flex-1">
                                 <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                                  {question.question_number}
+                                  {index + 1}
                                 </div>
                                 <span className="text-sm sm:text-base leading-relaxed text-gray-900 dark:text-white">
                                   {question.question_text}
@@ -588,14 +515,13 @@ const QuestionsPage: React.FC = () => {
                         </div>
                       )}
 
-                      {
-                        userProfile &&
-                        renderPagination(
-                          questionsData.count,
-                          !!questionsData.next,
-                          !!questionsData.previous
-                        )
-                      }
+                      <TutorPagination
+                        currentPage={currentPage}
+                        totalPages={Math.ceil(questionsData.count / 20)}
+                        onPageChange={handlePageChange}
+                        hasNext={!!questionsData.next}
+                        hasPrevious={!!questionsData.previous}
+                      />
                     </>
                   )}
               </>
