@@ -66,6 +66,13 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
 
     const accessToken = getAccessToken();
 
+    const enforceHttps = (url: string) => {
+        if (url.startsWith("http://")) {
+            return url.replace("http://", "https://");
+        }
+        return url;
+    };
+
     const fetchNotifications = useCallback(async (page: number = 1, append: boolean = false) => {
         if (append) {
             setLoadingMore(true);
@@ -79,7 +86,8 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
                 ? `${import.meta.env.VITE_API_URL}/api/notifications`
                 : nextUrl || `${import.meta.env.VITE_API_URL}/api/notifications?page=${page}`;
 
-            const response = await fetch(url, {
+            const backEndUrl = enforceHttps(url);
+            const response = await fetch(backEndUrl, {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
                 },
