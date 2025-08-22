@@ -237,7 +237,7 @@ const QuestionsPage: React.FC = () => {
     <div className="flex-1 overflow-auto dark:bg-gray-900 h-screen bg-gray-50 w-full">
       {userProfile ? <DashboardHeader userName="BCS Candidate" /> : <Header />}
 
-      <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(110vh - 160px)' }}>
+      <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(109vh - 160px)' }}>
         <main className="flex-1 pb-6">
           <div className={userProfile ? "p-2 md:p-6 max-w-7xl mx-auto" : "p-2 md:p-6 container"}>
             {/* Breadcrumb */}
@@ -604,6 +604,7 @@ const QuestionsPage: React.FC = () => {
         )}
 
         {!userProfile && <Footer />}
+        <div className="h-20 md:h-8"></div>
       </ScrollArea>
     </div>
   );

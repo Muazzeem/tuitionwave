@@ -14,6 +14,7 @@ import { Subject } from '@/types/jobPreparation';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardHeader from '@/components/DashboardHeader';
 import TutorPagination from '@/components/FindTutors/TutorPagination';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const SubjectsPage: React.FC = () => {
   const { userProfile } = useAuth();
@@ -187,77 +188,80 @@ const SubjectsPage: React.FC = () => {
       {userProfile ? <DashboardHeader userName="BCS Candidate" /> :
         <Header />
       }
-      <main className="flex-1">
-        <div className={userProfile ? "p-2 md:p-6 max-w-7xl mx-auto" : "p-2 md:p-6 container"}>
-          {/* Breadcrumb */}
-          <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-            <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
-            <span>/</span>
-            <span className="text-blue-600 font-medium">Subjects</span>
-          </div>
+      <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(109vh - 160px)' }}>
+        <main className="flex-1">
+          <div className={userProfile ? "p-2 md:p-6 max-w-7xl mx-auto" : "p-2 md:p-6 container"}>
+            {/* Breadcrumb */}
+            <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+              <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
+              <span>/</span>
+              <span className="text-blue-600 font-medium">Subjects</span>
+            </div>
 
-          {/* Header Section */}
-          <div className="mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-              <div className="flex items-center space-x-4">
-                <Button
-                  variant="outline"
-                  onClick={handleBack}
-                  className="hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-colors"
-                >
-                  <ChevronLeft className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">Back to Categories</span>
-                </Button>
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-                    Subjects
-                  </h1>
-                  <p className="text-gray-600 dark:text-gray-400 mt-1">
-                    Choose a subject to start practicing
-                  </p>
+            {/* Header Section */}
+            <div className="mb-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div className="flex items-center space-x-4">
+                  <Button
+                    variant="outline"
+                    onClick={handleBack}
+                    className="hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-colors"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-2" />
+                    <span className="hidden sm:inline">Back to Categories</span>
+                  </Button>
+                  <div>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                      Subjects
+                    </h1>
+                    <p className="text-gray-600 dark:text-gray-400 mt-1">
+                      Choose a subject to start practicing
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Search Bar */}
-            <div className="relative max-w-md">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search Subjects..."
-                value={searchTerm}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="pl-10 focus:ring-2 focus:ring-primary/20 transition-all"
-              />
-            </div>
-          </div>
-
-          {/* Content */}
-          {subjectsLoading ? (
-            <div className="flex items-center justify-center py-16">
-              <div className="text-center">
-                <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-gray-600 dark:text-gray-400">Loading subjects...</p>
+              {/* Search Bar */}
+              <div className="relative max-w-md">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search Subjects..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="pl-10 focus:ring-2 focus:ring-primary/20 transition-all"
+                />
               </div>
             </div>
-          ) : filteredSubjects.length === 0 ? (
-            renderEmptyState()
-          ) : (
-            <>
-              {renderGridView()}
-              {subjectsData && !searchTerm.trim() && (
-                <TutorPagination
-                  currentPage={currentPage}
-                  totalPages={Math.ceil(subjectsData.count / 20)}
-                  onPageChange={handlePageChange}
-                  hasNext={!!subjectsData.next}
-                  hasPrevious={!!subjectsData.previous}
-                />
-              )}
-            </>
-          )}
-        </div>
-      </main>
-      {userProfile ? '' : <Footer />}
+
+            {/* Content */}
+            {subjectsLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <div className="text-center">
+                  <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                  <p className="text-gray-600 dark:text-gray-400">Loading subjects...</p>
+                </div>
+              </div>
+            ) : filteredSubjects.length === 0 ? (
+              renderEmptyState()
+            ) : (
+              <>
+                {renderGridView()}
+                {subjectsData && !searchTerm.trim() && (
+                  <TutorPagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(subjectsData.count / 20)}
+                    onPageChange={handlePageChange}
+                    hasNext={!!subjectsData.next}
+                    hasPrevious={!!subjectsData.previous}
+                  />
+                )}
+              </>
+            )}
+          </div>
+        </main>
+        <div className="h-20 md:h-8"></div>
+        {userProfile ? '' : <Footer />}
+      </ScrollArea>
     </div>
   );
 };

@@ -17,7 +17,7 @@ interface ApiExamRecord {
   uid: string;
   exam_type: string;
   exam_type_display: string;
-  status: 'not_started' | 'in_progress' | 'completed' | 'failed';
+  status: 'not_started' | 'in_progress' | 'completed' | 'failed' | 'expired';
   status_display: string;
   question_limit: number;
   total_questions: number;
@@ -62,7 +62,6 @@ export default function ExamHistory({
   totalPages: externalTotalPages,
   itemsPerPage = 10,
   useInternalApi = false,
-  onExamUpdate
 }: ExamHistoryProps) {
   const navigate = useNavigate();
 
@@ -191,7 +190,8 @@ export default function ExamHistory({
   };
 
   const handleViewResults = (exam: ApiExamRecord) => {
-    navigate(`/job-preparation/exam/${exam.uid}/results`);
+    console.log(exam)
+    // navigate(`/job-preparation/exam/${exam.uid}/results`);
   };
 
   const displayedExams = useInternalApi
@@ -208,6 +208,8 @@ export default function ExamHistory({
         return <PlayCircle className="h-4 w-4 text-blue-500" />;
       case 'not_started':
         return <Clock className="h-4 w-4 text-orange-500" />;
+      case 'expired':
+        return <Clock className="h-4 w-4 text-red-500" />;
       default:
         return <Clock className="h-4 w-4 text-gray-500" />;
     }
@@ -262,6 +264,7 @@ export default function ExamHistory({
           </Button>
         );
       case 'completed':
+      case 'expired':
       case 'failed':
         return (
           <Button

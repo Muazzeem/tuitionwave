@@ -13,6 +13,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import TutorPagination from '@/components/FindTutors/TutorPagination';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const CategoriesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -190,69 +191,72 @@ const CategoriesPage: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 overflow-auto dark:bg-gray-900 h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col dark:bg-gray-900">
       {userProfile ? <DashboardHeader userName="BCS Candidate" /> : <Header />}
-      <main className="flex-1 bg-gray-50 dark:bg-gray-900">
-        <div className={userProfile ? "p-2 md:p-6 max-w-7xl mx-auto" : "p-2 md:p-6 container"}>
-          {/* Header Section */}
-          <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-            <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
-            <span>/</span>
-            <span className="text-blue-600 font-medium">Categories</span>
-          </div>
+      <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(109vh - 160px)' }}>
+        <main className="flex-1 bg-gray-50 dark:bg-gray-900">
+          <div className={userProfile ? "p-2 md:p-6 max-w-7xl mx-auto" : "p-2 md:p-6 container"}>
+            {/* Header Section */}
+            <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+              <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
+              <span>/</span>
+              <span className="text-blue-600 font-medium">Categories</span>
+            </div>
 
-          <div className="mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-              <div className="flex items-center space-x-4">
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-                    Categories
-                  </h1>
-                  <p className="text-gray-600 dark:text-gray-400 mt-1">
-                    Choose a categories to start practicing
-                  </p>
+            <div className="mb-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div className="flex items-center space-x-4">
+                  <div>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                      Categories
+                    </h1>
+                    <p className="text-gray-600 dark:text-gray-400 mt-1">
+                      Choose a categories to start practicing
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Search Bar */}
-            <div className="relative max-w-md">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search Categories..."
-                value={searchTerm}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="pl-10 focus:ring-2 focus:ring-primary/20 transition-all"
-              />
-            </div>
-          </div>
-
-          {categoriesLoading ? (
-            <div className="flex items-center justify-center py-16">
-              <div className="text-center">
-                <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-gray-600 dark:text-gray-400">Loading categories...</p>
+              {/* Search Bar */}
+              <div className="relative max-w-md">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search Categories..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="pl-10 focus:ring-2 focus:ring-primary/20 transition-all"
+                />
               </div>
             </div>
-          ) : filteredCategories.length === 0 ? (
-            renderEmptyState()
-          ) : (
-            <>
-              {renderGridView()}
-              {categoriesData && !searchTerm.trim() && (
-                <TutorPagination
-                  currentPage={currentPage}
-                  totalPages={Math.ceil(categoriesData.count / 20)}
-                  onPageChange={handlePageChange}
-                  hasNext={!!categoriesData.next}
-                  hasPrevious={!!categoriesData.previous}
-                />
-              )}
-            </>
-          )}
-        </div>
-      </main>
-      {!userProfile && <Footer />}
+
+            {categoriesLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <div className="text-center">
+                  <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                  <p className="text-gray-600 dark:text-gray-400">Loading categories...</p>
+                </div>
+              </div>
+            ) : filteredCategories.length === 0 ? (
+              renderEmptyState()
+            ) : (
+              <>
+                {renderGridView()}
+                {categoriesData && !searchTerm.trim() && (
+                  <TutorPagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(categoriesData.count / 20)}
+                    onPageChange={handlePageChange}
+                    hasNext={!!categoriesData.next}
+                    hasPrevious={!!categoriesData.previous}
+                  />
+                )}
+              </>
+            )}
+          </div>
+        </main>
+        <div className="h-20 md:h-8"></div>
+        {!userProfile && <Footer />}
+      </ScrollArea>
     </div>
   );
 };
