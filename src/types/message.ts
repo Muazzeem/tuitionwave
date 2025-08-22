@@ -1,31 +1,35 @@
 
 export interface Message {
   id: string;
-  senderId: string;
-  receiverId: string;
+  sender_id: string;
+  receiver_id: string;
   content: string;
-  timestamp: Date;
-  isRead: boolean;
-  attachment?: string | {
-    url: string;
+  timestamp: string;
+  is_read: boolean;
+  attachment?: string;
+  sender?: {
+    id: string;
     name: string;
-    size: number;
-    type: string;
+    avatar?: string;
   };
-  messageType: 'text' | 'image' | 'file';
-  replyTo?: string;
+  receiver?: {
+    id: string;
+    name: string;
+    avatar?: string;
+  };
 }
 
 export interface Friend {
   id: string;
   name: string;
-  avatar: string;
-  lastSeen: Date;
-  isOnline: boolean;
-  unreadCount: number;
-  lastMessage?: {
-    content: string;
-    timestamp: Date;
-    senderId: string;
-  };
+  avatar?: string;
+  last_message?: Message;
+  unread_count?: number;
+  is_online?: boolean;
+  last_seen?: string;
+}
+
+export interface MessageThread {
+  friend: Friend;
+  messages: Message[];
 }

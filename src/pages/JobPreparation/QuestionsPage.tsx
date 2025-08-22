@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
@@ -178,17 +179,17 @@ const QuestionsPage: React.FC = () => {
     : null;
 
   const LoadingSkeleton = () => (
-    <div className="space-y-4 px-4 sm:px-0">
+    <div className="space-y-3">
       {[1, 2, 3].map((i) => (
-        <Card key={i} className="overflow-hidden animate-pulse">
-          <CardHeader className="pb-3">
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+        <Card key={i} className="animate-pulse">
+          <CardHeader className="pb-2">
+            <div className="h-4 bg-muted rounded w-3/4"></div>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+          <CardContent className="space-y-2">
+            <div className="h-3 bg-muted rounded w-full"></div>
             <div className="grid grid-cols-1 gap-2">
               {[1, 2, 3, 4].map((j) => (
-                <div key={j} className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                <div key={j} className="h-8 bg-muted rounded"></div>
               ))}
             </div>
           </CardContent>
@@ -200,15 +201,16 @@ const QuestionsPage: React.FC = () => {
   const SubtopicFilters = () => (
     <div className="flex flex-wrap gap-2">
       <button
-        className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all ${selectedSubtopicId === null
-          ? 'bg-blue-600 text-white shadow-md'
-          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+        className={`inline-flex items-center px-2 py-1.5 rounded-md text-xs font-medium transition-all ${selectedSubtopicId === null
+          ? 'bg-primary text-primary-foreground shadow-sm'
+          : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
           }`}
         onClick={handleShowAllQuestions}
       >
-        <Star className="h-4 w-4 mr-2" />
-        <span>All Questions</span>
-        <Badge className="ml-2 bg-white/20 text-current border-none text-xs">
+        <Star className="h-3 w-3 mr-1" />
+        <span className="hidden sm:inline">All Questions</span>
+        <span className="sm:hidden">All</span>
+        <Badge className="ml-1 bg-white/20 text-current border-none text-xs">
           {questionsData?.count || 0}
         </Badge>
       </button>
@@ -216,15 +218,15 @@ const QuestionsPage: React.FC = () => {
         subtopic.total_questions > 0 && (
           <button
             key={subtopic.uid}
-            className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all ${selectedSubtopicId === subtopic.uid
-              ? 'bg-blue-600 text-white shadow-md'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+            className={`inline-flex items-center px-2 py-1.5 rounded-md text-xs font-medium transition-all ${selectedSubtopicId === subtopic.uid
+              ? 'bg-primary text-primary-foreground shadow-sm'
+              : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               }`}
             onClick={() => handleSubtopicClick(subtopic)}
           >
-            <HelpCircle className="h-4 w-4 mr-2" />
-            <span className="truncate max-w-32">{subtopic.subtopic_name}</span>
-            <Badge className="ml-2 bg-white/20 text-current border-none text-xs">
+            <HelpCircle className="h-3 w-3 mr-1" />
+            <span className="truncate max-w-24 sm:max-w-32">{subtopic.subtopic_name}</span>
+            <Badge className="ml-1 bg-white/20 text-current border-none text-xs">
               {subtopic.total_questions}
             </Badge>
           </button>
@@ -234,87 +236,88 @@ const QuestionsPage: React.FC = () => {
   );
 
   return (
-    <div className="flex-1 overflow-auto dark:bg-gray-900 h-screen bg-gray-50 w-full">
+    <div className="flex-1 overflow-auto bg-background h-screen w-full">
       {userProfile ? <DashboardHeader userName="BCS Candidate" /> : <Header />}
 
-      <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(110vh - 160px)' }}>
-        <main className="flex-1 pb-6">
-          <div className={userProfile ? "p-2 md:p-6 max-w-7xl mx-auto" : "p-2 md:p-6 container"}>
+      <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(100vh - 160px)' }}>
+        <main className="flex-1 pb-4">
+          <div className="p-2 sm:p-4 max-w-4xl mx-auto">
             {/* Breadcrumb */}
-            <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-              <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
+            <div className="mb-3 flex items-center space-x-2 text-xs text-muted-foreground">
+              <span className="hover:text-primary cursor-pointer transition-colors">Job Preparation</span>
               <span>/</span>
-              <span className="text-blue-600 font-medium">Practice Questions</span>
+              <span className="text-primary font-medium">Practice Questions</span>
             </div>
 
             {/* Header Section */}
-            <div className="mb-8">
-              <div className="flex flex-col gap-4">
+            <div className="mb-4">
+              <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2 min-w-0 flex-1">
                     <Button
                       variant="outline"
+                      size="sm"
                       onClick={handleBack}
-                      className="hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                      className="flex-shrink-0"
                     >
-                      <ChevronLeft className="h-4 w-4 mr-1" />
-                      <span className="hidden sm:inline">Back to Topic</span>
+                      <ChevronLeft className="h-3 w-3 mr-1" />
+                      <span className="hidden sm:inline">Back</span>
                     </Button>
-                    <div>
-                      <h1 className="sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-                        <Brain className="h-6 w-6 mr-2 text-blue-600" />
-                        Practice Questions
+                    <div className="min-w-0 flex-1">
+                      <h1 className="text-lg sm:text-xl font-bold text-foreground flex items-center">
+                        <Brain className="h-4 w-4 mr-2 text-primary flex-shrink-0" />
+                        <span className="truncate">Practice Questions</span>
                       </h1>
                       {selectedSubtopic ? (
-                        <p className="text-blue-600 font-medium text-sm flex items-center">
-                          <Target className="h-4 w-4 mr-1" />
+                        <p className="text-primary font-medium text-xs flex items-center">
+                          <Target className="h-3 w-3 mr-1 flex-shrink-0" />
                           <span className="truncate">{selectedSubtopic.subtopic_name}</span>
                         </p>
                       ) : (
-                        <p className="text-blue-600 font-medium text-sm flex items-center">
-                          <BookOpen className="h-4 w-4 mr-1" />
+                        <p className="text-primary font-medium text-xs flex items-center">
+                          <BookOpen className="h-3 w-3 mr-1 flex-shrink-0" />
                           All Questions
                         </p>
                       )}
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 flex-shrink-0">
                     <Button
                       onClick={handleRefresh}
                       variant="outline"
                       size="sm"
-                      className="border-blue-200 text-blue-700 dark:border-blue-700 dark:text-blue-300"
+                      className="px-2"
                     >
-                      <RefreshCw className="h-4 w-4" />
-                      <span className="hidden sm:inline ml-2">Reset</span>
+                      <RefreshCw className="h-3 w-3" />
+                      <span className="hidden sm:inline ml-1">Reset</span>
                     </Button>
                     <Button
                       onClick={handleModeToggle}
                       size="sm"
-                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                      className="px-2"
                     >
-                      <BookOpen className="h-4 w-4" />
-                      <span className="hidden sm:inline ml-2">Reading</span>
+                      <BookOpen className="h-3 w-3" />
+                      <span className="hidden sm:inline ml-1">Reading</span>
                     </Button>
                   </div>
                 </div>
 
                 {/* Progress Stats for Mobile */}
                 {progressStats.total > 0 && (
-                  <div className="sm:hidden bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Progress</span>
-                      <span className="text-sm font-bold text-blue-600">{progressStats.accuracy}%</span>
+                  <div className="sm:hidden bg-card rounded-lg p-2 shadow-sm border">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-medium text-foreground">Progress</span>
+                      <span className="text-xs font-bold text-primary">{progressStats.accuracy}%</span>
                     </div>
-                    <div className="flex gap-4 text-xs">
+                    <div className="flex gap-3 text-xs">
                       <span className="text-green-600">✓ {progressStats.correct}</span>
                       <span className="text-red-600">✗ {progressStats.incorrect}</span>
-                      <span className="text-gray-600">Total: {progressStats.total}</span>
+                      <span className="text-muted-foreground">Total: {progressStats.total}</span>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
+                    <div className="w-full bg-muted rounded-full h-1.5 mt-1">
                       <div
-                        className="bg-gradient-to-r from-green-500 to-blue-500 h-full rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-green-500 to-primary h-full rounded-full transition-all duration-500"
                         style={{ width: `${progressStats.accuracy}%` }}
                       />
                     </div>
@@ -325,23 +328,24 @@ const QuestionsPage: React.FC = () => {
 
             {/* Subtopic Filters */}
             {subtopicsData && subtopicsData.results.length > 0 && (
-              <div className="mb-6">
+              <div className="mb-4">
                 {/* Mobile Filter Toggle */}
-                <div className="sm:hidden mb-3">
+                <div className="sm:hidden mb-2">
                   <Button
                     variant="outline"
+                    size="sm"
                     onClick={() => setShowMobileFilters(!showMobileFilters)}
                     className="w-full justify-between"
                   >
-                    <span>Filter by Subtopic</span>
-                    {showMobileFilters ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+                    <span className="text-xs">Filter by Subtopic</span>
+                    {showMobileFilters ? <X className="h-3 w-3" /> : <Menu className="h-3 w-3" />}
                   </Button>
                 </div>
 
                 {/* Filters */}
                 <div className={`${showMobileFilters ? 'block' : 'hidden'} sm:block`}>
-                  <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-sm dark:bg-gray-800/80">
-                    <CardContent className="p-4">
+                  <Card className="border-0 shadow-sm bg-card/80 backdrop-blur-sm">
+                    <CardContent className="p-3">
                       <SubtopicFilters />
                     </CardContent>
                   </Card>
@@ -354,176 +358,176 @@ const QuestionsPage: React.FC = () => {
               <LoadingSkeleton />
             ) : (
               <>
-                  <div className="space-y-4 px-1 sm:px-0">
-                    {questionsData?.results.map((question, index) => {
-                      const questionState = questionStates[question.uid];
-                      const isAnswered = questionState?.isAnswered;
-                      const showResult = questionState?.showResult;
-                      const selectedOption = questionState?.selectedOption;
-                      const result = questionState?.result;
+                <div className="space-y-3">
+                  {questionsData?.results.map((question, index) => {
+                    const questionState = questionStates[question.uid];
+                    const isAnswered = questionState?.isAnswered;
+                    const showResult = questionState?.showResult;
+                    const selectedOption = questionState?.selectedOption;
+                    const result = questionState?.result;
 
-                      return (
-                        <Card
-                          key={question.uid}
-                          className="border-0 shadow-md bg-white dark:bg-gray-800 overflow-hidden transition-all duration-300 hover:shadow-lg"
-                        >
-                          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b p-3 sm:p-4">
-                            <CardTitle className="flex items-start justify-between gap-3">
-                              <div className="flex items-start space-x-3 min-w-0 flex-1">
-                                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                                  {question.question_number}
-                                </div>
-                                <span className="text-sm sm:text-base leading-relaxed text-gray-900 dark:text-white">
-                                  {question.question_text}
-                                </span>
+                    return (
+                      <Card
+                        key={question.uid}
+                        className="border-0 shadow-sm bg-card overflow-hidden transition-all duration-300 hover:shadow-md"
+                      >
+                        <CardHeader className="bg-muted/30 border-b p-3">
+                          <CardTitle className="flex items-start justify-between gap-2">
+                            <div className="flex items-start space-x-2 min-w-0 flex-1">
+                              <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-xs flex-shrink-0">
+                                {question.question_number}
                               </div>
-                              {isAnswered && (
-                                <Badge
-                                  variant={result?.is_correct ? "default" : "destructive"}
-                                  className={`${result?.is_correct
-                                    ? 'bg-green-100 text-green-800 border-green-300'
-                                    : 'bg-red-100 text-red-800 border-red-300'
-                                    } px-2 py-1 text-xs font-medium flex-shrink-0`}
-                                >
-                                  {result?.is_correct ? (
-                                    <>
-                                      <CheckCircle className="h-3 w-3 mr-1" />
-                                      <span className="hidden sm:inline">Correct</span>
-                                      <span className="sm:hidden">✓</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <XCircle className="h-3 w-3 mr-1" />
-                                      <span className="hidden sm:inline">Incorrect</span>
-                                      <span className="sm:hidden">✗</span>
-                                    </>
-                                  )}
-                                </Badge>
-                              )}
-                            </CardTitle>
-                          </CardHeader>
-
-                          <CardContent className="p-3 sm:p-4">
-                            {question.image && (
-                              <div className="mb-4 rounded-lg overflow-hidden">
-                                <img
-                                  src={question.image}
-                                  alt="Question illustration"
-                                  className="w-full max-h-48 object-contain"
-                                />
-                              </div>
-                            )}
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              {question.options.map((option) => {
-                                let optionClassName = 'p-1 md:p-3 border-2 rounded-lg cursor-pointer transition-all duration-200';
-
-                                if (selectedOption === option.option_label) {
-                                  if (isAnswered) {
-                                    if (result?.is_correct && option.option_label === result.correct_option_label) {
-                                      optionClassName += ' bg-green-50 border-green-300 dark:bg-green-900/20 dark:border-green-600';
-                                    } else if (!result?.is_correct && option.option_label === selectedOption) {
-                                      optionClassName += ' bg-red-50 border-red-300 dark:bg-red-900/20 dark:border-red-600';
-                                    }
-                                  } else {
-                                    optionClassName += ' bg-blue-50 border-blue-300 dark:bg-blue-900/20 dark:border-blue-600';
-                                  }
-                                } else if (isAnswered && showResult && option.option_label === result?.correct_option_label) {
-                                  optionClassName += ' bg-green-50 border-green-300 dark:bg-green-900/20 dark:border-green-600';
-                                } else {
-                                  optionClassName += ' bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300';
-                                }
-
-                                return (
-                                  <div
-                                    key={option.uid}
-                                    className={optionClassName}
-                                    onClick={() => {
-                                      if (!isAnswered) {
-                                        handleOptionSelect(question.uid, option.option_label);
-                                      }
-                                    }}
-                                  >
-                                    <div className="flex items-center justify-between">
-                                      <div className="flex items-start space-x-3 min-w-0 flex-1">
-                                        <div className="w-6 h-6 bg-white dark:bg-gray-600 rounded-full flex items-center justify-center font-bold text-gray-800 dark:text-white shadow-sm text-sm flex-shrink-0">
-                                          {option.option_label}
-                                        </div>
-                                        <span className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed">
-                                          {option.option_text}
-                                        </span>
-                                      </div>
-                                      {isAnswered && showResult && (
-                                        <>
-                                          {option.option_label === result?.correct_option_label && (
-                                            <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                                          )}
-                                          {option.option_label === selectedOption && !result?.is_correct && (
-                                            <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
-                                          )}
-                                        </>
-                                      )}
-                                      {selectedOption === option.option_label && !isAnswered && (
-                                        <div className="animate-pulse flex-shrink-0">
-                                          <AlertCircle className="h-5 w-5 text-blue-600" />
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                );
-                              })}
+                              <span className="text-sm leading-relaxed text-foreground">
+                                {question.question_text}
+                              </span>
                             </div>
+                            {isAnswered && (
+                              <Badge
+                                variant={result?.is_correct ? "default" : "destructive"}
+                                className={`${result?.is_correct
+                                  ? 'bg-green-100 text-green-800 border-green-300'
+                                  : 'bg-red-100 text-red-800 border-red-300'
+                                  } px-1.5 py-0.5 text-xs flex-shrink-0`}
+                              >
+                                {result?.is_correct ? (
+                                  <>
+                                    <CheckCircle className="h-3 w-3 mr-1" />
+                                    <span className="hidden sm:inline">Correct</span>
+                                    <span className="sm:hidden">✓</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <XCircle className="h-3 w-3 mr-1" />
+                                    <span className="hidden sm:inline">Incorrect</span>
+                                    <span className="sm:hidden">✗</span>
+                                  </>
+                                )}
+                              </Badge>
+                            )}
+                          </CardTitle>
+                        </CardHeader>
 
-                            {isAnswered && showResult && result && result.explanation && (
-                              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500">
-                                <div className="flex items-start space-x-3">
-                                  <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <HelpCircle className="h-3 w-3 text-white" />
-                                  </div>
-                                  <div className="min-w-0 flex-1">
-                                    <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-1 text-sm">
-                                      Explanation
-                                    </h4>
-                                    <p className="text-blue-700 dark:text-blue-300 text-sm leading-relaxed">
-                                      {result.explanation}
-                                    </p>
+                        <CardContent className="p-3">
+                          {question.image && (
+                            <div className="mb-3 rounded-md overflow-hidden">
+                              <img
+                                src={question.image}
+                                alt="Question illustration"
+                                className="w-full max-h-40 object-contain"
+                              />
+                            </div>
+                          )}
+
+                          <div className="space-y-2">
+                            {question.options.map((option) => {
+                              let optionClassName = 'p-2 border rounded-md cursor-pointer transition-all duration-200';
+
+                              if (selectedOption === option.option_label) {
+                                if (isAnswered) {
+                                  if (result?.is_correct && option.option_label === result.correct_option_label) {
+                                    optionClassName += ' bg-green-50 border-green-300 text-green-800';
+                                  } else if (!result?.is_correct && option.option_label === selectedOption) {
+                                    optionClassName += ' bg-red-50 border-red-300 text-red-800';
+                                  }
+                                } else {
+                                  optionClassName += ' bg-primary/10 border-primary text-primary';
+                                }
+                              } else if (isAnswered && showResult && option.option_label === result?.correct_option_label) {
+                                optionClassName += ' bg-green-50 border-green-300 text-green-800';
+                              } else {
+                                optionClassName += ' bg-muted/50 border-border hover:bg-accent hover:text-accent-foreground';
+                              }
+
+                              return (
+                                <div
+                                  key={option.uid}
+                                  className={optionClassName}
+                                  onClick={() => {
+                                    if (!isAnswered) {
+                                      handleOptionSelect(question.uid, option.option_label);
+                                    }
+                                  }}
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-start space-x-2 min-w-0 flex-1">
+                                      <div className="w-5 h-5 bg-background rounded-full flex items-center justify-center font-bold text-foreground shadow-sm text-xs flex-shrink-0">
+                                        {option.option_label}
+                                      </div>
+                                      <span className="text-sm leading-relaxed">
+                                        {option.option_text}
+                                      </span>
+                                    </div>
+                                    {isAnswered && showResult && (
+                                      <>
+                                        {option.option_label === result?.correct_option_label && (
+                                          <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                                        )}
+                                        {option.option_label === selectedOption && !result?.is_correct && (
+                                          <XCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
+                                        )}
+                                      </>
+                                    )}
+                                    {selectedOption === option.option_label && !isAnswered && (
+                                      <div className="animate-pulse flex-shrink-0">
+                                        <AlertCircle className="h-4 w-4 text-primary" />
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
-                              </div>
-                            )}
+                              );
+                            })}
+                          </div>
 
-                            {question.negative_marks > 0 && (
-                              <div className="mt-3 flex items-center space-x-2 text-orange-600 dark:text-orange-400">
-                                <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                                <span className="text-xs font-medium">
-                                  Negative marks: {question.negative_marks}
-                                </span>
+                          {isAnswered && showResult && result && result.explanation && (
+                            <div className="mt-3 p-2 bg-primary/10 rounded-md border-l-4 border-primary">
+                              <div className="flex items-start space-x-2">
+                                <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                                  <HelpCircle className="h-3 w-3 text-primary-foreground" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <h4 className="font-semibold text-primary mb-1 text-xs">
+                                    Explanation
+                                  </h4>
+                                  <p className="text-primary/80 text-sm leading-relaxed">
+                                    {result.explanation}
+                                  </p>
+                                </div>
                               </div>
-                            )}
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
+                            </div>
+                          )}
+
+                          {question.negative_marks > 0 && (
+                            <div className="mt-2 flex items-center space-x-2 text-orange-600">
+                              <AlertCircle className="h-3 w-3 flex-shrink-0" />
+                              <span className="text-xs font-medium">
+                                Negative marks: {question.negative_marks}
+                              </span>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
-                  {questionsData && (
-                    <>
-                      {!userProfile && (
-                        <div className="mb-4 p-4 bg-red-100 text-yellow-800 rounded mt-5">
-                          <span className='text-lg'>
-                            Please log in to access all the questions.
-                          </span>
-                        </div>
-                      )}
+                {questionsData && (
+                  <>
+                    {!userProfile && (
+                      <div className="mb-3 p-3 bg-destructive/10 text-destructive rounded-md mt-4">
+                        <span className="text-sm">
+                          Please log in to access all the questions.
+                        </span>
+                      </div>
+                    )}
 
-                      <TutorPagination
-                        currentPage={currentPage}
-                        totalPages={Math.ceil(questionsData.count / 20)}
-                        onPageChange={handlePageChange}
-                        hasNext={!!questionsData.next}
-                        hasPrevious={!!questionsData.previous}
-                      />
-                    </>
-                  )}
+                    <TutorPagination
+                      currentPage={currentPage}
+                      totalPages={Math.ceil(questionsData.count / 20)}
+                      onPageChange={handlePageChange}
+                      hasNext={!!questionsData.next}
+                      hasPrevious={!!questionsData.previous}
+                    />
+                  </>
+                )}
               </>
             )}
           </div>
@@ -531,68 +535,68 @@ const QuestionsPage: React.FC = () => {
 
         {/* Desktop Progress Card */}
         {progressStats.total > 0 && (
-          <div className="fixed bottom-6 right-6 z-50 hidden lg:block">
-            <Card className="bg-white/95 backdrop-blur-lg dark:bg-gray-900/95 shadow-2xl border-0 w-72">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                    <Trophy className="h-5 w-5 text-white" />
+          <div className="fixed bottom-4 right-4 z-50 hidden lg:block">
+            <Card className="bg-card/95 backdrop-blur-lg shadow-xl border w-64">
+              <CardContent className="p-3">
+                <div className="flex items-center space-x-2 mb-3">
+                  <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-md flex items-center justify-center">
+                    <Trophy className="h-4 w-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg text-gray-900 dark:text-white">
+                    <h3 className="font-bold text-sm text-foreground">
                       Progress
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                    <p className="text-xs text-muted-foreground flex items-center">
                       <TrendingUp className="h-3 w-3 mr-1" />
                       {progressStats.accuracy}% accuracy
                     </p>
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between p-2 bg-purple-50 rounded-md">
+                    <span className="text-xs font-medium text-purple-700">
                       Answered
                     </span>
-                    <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900/30 dark:text-purple-300 font-bold">
+                    <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-300 font-bold text-xs">
                       {progressStats.total}
                     </Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <span className="text-sm font-medium text-green-700 dark:text-green-300 flex items-center">
-                      <CheckCircle className="h-4 w-4 mr-1" />
+                  <div className="flex items-center justify-between p-2 bg-green-50 rounded-md">
+                    <span className="text-xs font-medium text-green-700 flex items-center">
+                      <CheckCircle className="h-3 w-3 mr-1" />
                       Correct
                     </span>
-                    <Badge className="bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 font-bold">
+                    <Badge className="bg-green-100 text-green-800 border-green-300 font-bold text-xs">
                       {progressStats.correct}
                     </Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                    <span className="text-sm font-medium text-red-700 dark:text-red-300 flex items-center">
-                      <XCircle className="h-4 w-4 mr-1" />
+                  <div className="flex items-center justify-between p-2 bg-red-50 rounded-md">
+                    <span className="text-xs font-medium text-red-700 flex items-center">
+                      <XCircle className="h-3 w-3 mr-1" />
                       Incorrect
                     </span>
-                    <Badge className="bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 font-bold">
+                    <Badge className="bg-red-100 text-red-800 border-red-300 font-bold text-xs">
                       {progressStats.incorrect}
                     </Badge>
                   </div>
 
                   {/* Progress Bar */}
-                  <div className="mt-4">
-                    <div className="flex justify-between text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+                  <div className="mt-3">
+                    <div className="flex justify-between text-xs font-medium text-muted-foreground mb-1">
                       <span>Accuracy Rate</span>
                       <span>{progressStats.accuracy}%</span>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                    <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
                       <div
-                        className="bg-gradient-to-r from-green-500 to-emerald-500 h-full rounded-full transition-all duration-500 ease-out"
+                        className="bg-gradient-to-r from-green-500 to-primary h-full rounded-full transition-all duration-500 ease-out"
                         style={{ width: `${progressStats.accuracy}%` }}
                       />
                     </div>
                     {progressStats.accuracy >= 80 && (
-                      <p className="text-xs text-green-600 dark:text-green-400 mt-2 font-medium">
+                      <p className="text-xs text-green-600 mt-1 font-medium">
                         🎉 Excellent performance!
                       </p>
                     )}
@@ -604,7 +608,7 @@ const QuestionsPage: React.FC = () => {
         )}
 
         {!userProfile && <Footer />}
-        <div className="h-20 md:h-8"></div>
+        <div className="h-16 sm:h-8"></div>
       </ScrollArea>
     </div>
   );
