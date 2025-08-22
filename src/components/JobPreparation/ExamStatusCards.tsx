@@ -85,53 +85,58 @@ export default function ExamStatusCards() {
     fetchExams();
   }, []);
 
-  if (loading) return <p>Loading exams...</p>;
-  if (error) return <p className="text-red-600">{error}</p>;
+  if (loading) return <p className="text-center p-4">Loading exams...</p>;
+  if (error) return <p className="text-red-600 text-center p-4">{error}</p>;
 
   return (
-    <Card className="dark:bg-background dark:border-gray-900 shadow-md">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
+    <Card className="w-full mx-auto dark:bg-background dark:border-gray-900 shadow-md">
+      <CardHeader className="px-4 sm:px-6">
+        <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
           <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-blue-500" />
-            Recent Exam Activities
+            <FileText className="h-5 w-5 text-blue-500 flex-shrink-0" />
+            <span className="text-base sm:text-lg">Recent Exam Activities</span>
           </div>
           {exams.length > 0 && (
-            <Badge variant="primary" className="text-xs">
+            <Badge variant="primary" className="text-xs self-start sm:self-center">
               {exams.length} total
             </Badge>
           )}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+
+      <CardContent className="px-4 sm:px-6">
         {exams.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
-              <BookOpen className="h-10 w-10 text-blue-500" />
+          <div className="text-center py-8 sm:py-12">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+              <BookOpen className="h-8 w-8 sm:h-10 sm:w-10 text-blue-500" />
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-3">Ready to start your journey?</h3>
-            <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
+            <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2 sm:mb-3 px-4">
+              Ready to start your journey?
+            </h3>
+            <p className="text-muted-foreground mb-6 max-w-sm mx-auto text-sm sm:text-base px-4">
               Take your first exam and begin tracking your progress. Every expert was once a beginner!
             </p>
-            <div className="space-y-3">
+            <div className="space-y-3 px-4">
               <Link to="/job-preparation/practice">
-                <Button className="bg-gradient-to-r from-blue-500 to-primary-500 hover:from-blue-600 hover:to-primary-600 text-white px-6 py-2 text-base font-medium">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-primary-500 hover:from-blue-600 hover:to-primary-600 text-white px-6 py-2 text-sm sm:text-base font-medium">
                   🚀 Take Your First Exam
                 </Button>
               </Link>
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 max-w-md mx-auto">
-                <p className="text-sm text-green-700 dark:text-green-300">
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 sm:p-4 max-w-md mx-auto">
+                <p className="text-xs sm:text-sm text-green-700 dark:text-green-300">
                   💡 Tip: Start with easier topics to build confidence and momentum
                 </p>
               </div>
             </div>
           </div>
         ) : (
-            <div className="space-y-3">
+            <div className="space-y-3 sm:space-y-4">
               {exams.slice(0, 5).map((exam, index) => (
                 <div
                   key={exam.uid}
-                  className={`group relative p-4 border rounded-lg transition-all hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 ${index === 0 ? 'bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10 border-blue-200 dark:border-blue-800' : 'dark:border-gray-700'
+                  className={`group relative p-3 sm:p-4 border rounded-lg transition-all hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 ${index === 0
+                    ? 'bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10 border-blue-200 dark:border-blue-800'
+                    : 'dark:border-gray-700'
                     }`}
                 >
                   {index === 0 && (
@@ -140,7 +145,80 @@ export default function ExamStatusCards() {
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between">
+                  {/* Mobile Layout */}
+                  <div className="block sm:hidden space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-3 flex-1 min-w-0">
+                        <div className="flex-shrink-0 mt-1">
+                          {getStatusIcon(exam.status)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-sm mb-1 line-clamp-2">
+                            {exam.subject_names?.length > 0
+                              ? `${exam.subject_names.slice(0, 1).join('')}${exam.subject_names.length > 1 ? ` +${exam.subject_names.length - 1} more` : ''}`
+                              : exam.topic_names?.length > 0
+                                ? `${exam.topic_names.slice(0, 1).join('')}${exam.topic_names.length > 1 ? ` +${exam.topic_names.length - 1} more` : ''}`
+                                : exam.exam_type_display}
+                          </h4>
+                          <Badge
+                            variant="outline"
+                            className={`${getStatusBadge(exam.status)} font-medium hidden sm:block text-xs`}
+                          >
+                            {exam.status.replace('_', ' ').replace(/^\w/, c => c.toUpperCase())}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <div className={`text-lg font-bold ${exam.percentage >= 80 ? 'text-green-600' :
+                          exam.percentage >= 60 ? 'text-yellow-600' :
+                            exam.percentage >= 40 ? 'text-orange-600' :
+                              'text-red-600'
+                          }`}>
+                          {exam.percentage}%
+                        </div>
+                        <div className="text-xs text-muted-foreground hidden sm:block">
+                          {exam.percentage >= 80 ? 'Excellent' :
+                            exam.percentage >= 60 ? 'Good' :
+                              exam.percentage >= 40 ? 'Fair' :
+                                'Needs Work'}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <div className="flex items-center gap-3">
+                        <span className="flex items-center gap-1">
+                          {new Date(exam.created_at).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          {new Date(exam.created_at).toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </span>
+                      </div>
+                      {(() => {
+                        const action = getExamAction(exam.status, exam.uid);
+                        return action ? (
+                          <Link to={action.to}>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-xs bg-gradient-to-r from-blue-500 to-primary-500 text-white border-none hover:from-blue-600 hover:to-primary-600 transition-all h-7 px-3"
+                            >
+                              {action.label}
+                            </Button>
+                          </Link>
+                        ) : null;
+                      })()}
+                    </div>
+                  </div>
+
+                  {/* Desktop/Tablet Layout */}
+                  <div className="hidden sm:flex items-center justify-between">
                     <div className="flex items-center gap-4 flex-1 min-w-0">
                       <div className="flex-shrink-0">
                         {getStatusIcon(exam.status)}
@@ -157,14 +235,14 @@ export default function ExamStatusCards() {
 
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <span className="flex items-center gap-1">
-                            📅 {new Date(exam.created_at).toLocaleDateString('en-US', {
+                            {new Date(exam.created_at).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
                               year: 'numeric',
                             })}
                           </span>
                           <span className="flex items-center gap-1">
-                            ⏱️ {new Date(exam.created_at).toLocaleTimeString('en-US', {
+                            {new Date(exam.created_at).toLocaleTimeString('en-US', {
                               hour: '2-digit',
                               minute: '2-digit',
                             })}
@@ -176,7 +254,7 @@ export default function ExamStatusCards() {
                     <div className="flex items-center gap-3 flex-shrink-0">
                       <Badge
                         variant="outline"
-                        className={`${getStatusBadge(exam.status)} font-medium`}
+                        className={`${getStatusBadge(exam.status)} font-medium hidden md:inline-flex`}
                       >
                         {exam.status.replace('_', ' ').replace(/^\w/, c => c.toUpperCase())}
                       </Badge>
@@ -189,7 +267,7 @@ export default function ExamStatusCards() {
                           }`}>
                           {exam.percentage}%
                         </div>
-                        <div className="text-xs text-muted-foreground">
+                        <div className="text-xs text-muted-foreground hidden sm:block">
                           {exam.percentage >= 80 ? 'Excellent' :
                             exam.percentage >= 60 ? 'Good' :
                               exam.percentage >= 40 ? 'Fair' :
@@ -203,7 +281,7 @@ export default function ExamStatusCards() {
                           <Link to={action.to}>
                             <Button
                               size="sm"
-                              variant="outline"
+                              variant="ghost"
                               className="text-sm bg-gradient-to-r from-blue-500 to-primary-500 text-white border-none hover:from-blue-600 hover:to-primary-600 transition-all"
                             >
                               {action.label}
@@ -219,27 +297,27 @@ export default function ExamStatusCards() {
               {exams.length > 5 && (
                 <div className="text-center pt-4 border-t dark:border-gray-800">
                   <Link to="/exam-history">
-                    <Button variant="ghost" className="text-blue-600 dark:text-blue-400 hover:text-blue-700">
+                    <Button variant="ghost" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 text-sm sm:text-base">
                       View All {exams.length} Exams →
                     </Button>
                   </Link>
                 </div>
               )}
 
-              <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-semibold text-purple-800 dark:text-purple-300 mb-1">
+              <div className="mt-6 p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-purple-800 dark:text-purple-300 mb-1 text-sm sm:text-base">
                       Keep the momentum going! 🎯
                     </h4>
-                    <p className="text-sm text-purple-600 dark:text-purple-400">
+                    <p className="text-xs sm:text-sm text-purple-600 dark:text-purple-400">
                       Take another exam to improve your ranking
                     </p>
                   </div>
-                  <Link to="/job-preparation/practice">
+                  <Link to="/job-preparation/practice" className="w-full sm:w-auto">
                     <Button
                       size="sm"
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                      className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xs sm:text-sm"
                     >
                       Take Another Exam
                     </Button>

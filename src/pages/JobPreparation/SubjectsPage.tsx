@@ -103,7 +103,7 @@ const SubjectsPage: React.FC = () => {
                 <BookOpen className="h-5 w-5 text-white" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors truncate">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors line-clamp-1">
                   {subject.subject_title}
                 </h3>
               </div>

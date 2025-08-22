@@ -76,7 +76,7 @@ export default function QuickStatsSection() {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat, index) => (
         <Card key={index} className='dark:bg-background dark:border-gray-900 shadow-md'>
           <CardContent className="p-4">

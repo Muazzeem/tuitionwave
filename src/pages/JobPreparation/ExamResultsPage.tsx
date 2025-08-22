@@ -90,7 +90,6 @@ export default function ExamResultsPage() {
 
         const data: ExamResults = await response.json();
         setExamResults(data);
-        console.log(data);
       } catch (error) {
         toast({
           title: "Error",
