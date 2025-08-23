@@ -155,7 +155,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
       </label>
 
       <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger id={label.toLowerCase()} className="mt-1">
+        <SelectTrigger id={label.toLowerCase()} className="mt-1 dark:bg-gray-900 border-primary-900">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
 

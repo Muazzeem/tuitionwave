@@ -624,7 +624,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
                     <ChevronDown className="w-4 h-4 text-gray-400" />
                   </div>
                   {showDistrictDropdown && (
-                    <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
+                  <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
                       <div className="p-2 border-b border-gray-200 dark:border-gray-600">
                         <div className="relative">
                           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -659,7 +659,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
                 <Label>Upazila</Label>
                 <div className="relative mt-1">
                   <div
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between bg-white dark:bg-gray-800 dark:border-gray-600"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between dark:bg-gray-900 border-primary-900"
                     onClick={() => setShowUpazilaDropdown(!showUpazilaDropdown)}
                   >
                     <span className={getSelectedUpazilaName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
@@ -668,7 +668,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
                     <ChevronDown className="w-4 h-4 text-gray-400" />
                   </div>
                   {showUpazilaDropdown && (
-                    <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
+                  <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
                       <div className="p-2 border-b border-gray-200 dark:border-gray-600">
                         <div className="relative">
                           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -684,7 +684,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
                         {filteredUpazilas.map((upazila) => (
                           <div
                             key={upazila.id}
-                            className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                            className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer"
                             onClick={() => handleUpazilaSelect(upazila)}
                           >
                             {upazila.name}
@@ -711,7 +711,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
         </div>
 
       <div className="flex justify-between pt-4">
-        <Button variant="outline" className="px-6" disabled={isSaving}>
+        <Button variant="outline" className="px-6 dark:bg-gray-900 hover:border-primary-900" disabled={isSaving}>
           Cancel
         </Button>
         <Button

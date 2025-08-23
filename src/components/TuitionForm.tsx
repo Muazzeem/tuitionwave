@@ -328,7 +328,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
             placeholder="Enter days per week"
             value={formData.activeDaysIds.length} 
             onChange={(e) => updateFormData({ daysPerWeek: e.target.value })}
-            className="mt-1"
+            className="mt-1 dark:bg-gray-900 border-primary-900"
           />
         )}
       </div>
@@ -339,7 +339,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
           value={formData.teachingType}
           onValueChange={(value) => updateFormData({ teachingType: value })}
         >
-          <SelectTrigger id="teachingType" className="mt-1">
+          <SelectTrigger id="teachingType" className="mt-1 dark:bg-gray-900 border-primary-900">
             <SelectValue placeholder="Select Teaching Type" />
           </SelectTrigger>
           <SelectContent>
@@ -386,7 +386,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
               placeholder="Search or create subjects..."
               value={searchTerm}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="flex-1"
+              className="flex-1 dark:bg-gray-900 border-primary-900"
             />
           </div>
 
@@ -450,7 +450,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
             placeholder='Sunday 10:00 AM to 12:00 PM'
             value={formData.preferredTime}
             onChange={(e) => updateFormData({ preferredTime: e.target.value })}
-            className="mt-1"
+            className="mt-1 dark:bg-gray-900 border-primary-900"
           />
         </div>
       </div>
@@ -464,7 +464,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
             placeholder="Min salary"
             value={formData.minSalary}
             onChange={(e) => updateFormData({ minSalary: e.target.value })}
-            className="mt-1"
+            className="mt-1 dark:bg-gray-900 border-primary-900"
           />
         </div>
         <div>
@@ -475,7 +475,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
             placeholder="Max salary"
             value={formData.maxSalary}
             onChange={(e) => updateFormData({ maxSalary: e.target.value })}
-            className="mt-1"
+            className="mt-1 dark:bg-gray-900 border-primary-900"
           />
         </div>
       </div>
@@ -489,7 +489,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
             placeholder="Min hourly charge"
             value={formData.minHourlyCharge}
             onChange={(e) => updateFormData({ minHourlyCharge: e.target.value })}
-            className="mt-1"
+            className="mt-1 dark:bg-gray-900 border-primary-900"
           />
         </div>
         <div>
@@ -500,13 +500,13 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
             placeholder="Max hourly charge"
             value={formData.maxHourlyCharge}
             onChange={(e) => updateFormData({ maxHourlyCharge: e.target.value })}
-            className="mt-1"
+            className="mt-1 dark:bg-gray-900 border-primary-900"
           />
         </div>
       </div>
 
       <div className="flex justify-between pt-4">
-        <Button variant="outline" className="px-6" onClick={onPrev} disabled={isLoading}>
+        <Button variant="outline" className="px-6 dark:bg-gray-900 hover:border-primary-900" onClick={onPrev} disabled={isLoading}>
           Previous
         </Button>
         <Button

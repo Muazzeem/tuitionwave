@@ -143,7 +143,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="text-gray-400 hover:text-gray-600 p-1 h-auto"
+                className="dark:bg-gray-900 border-primary-900 "
                 onClick={(e) => {
                   e.stopPropagation();
                   removeCV();
@@ -166,60 +166,63 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
         </div>
       </div>
 
-      <div>
-        <SearchableSelect
-          label="Degree"
-          value={formData.degree}
-          onValueChange={(value) => updateFormData({ degree: value })}
-          apiEndpoint="/api/degrees/"
-          placeholder="Select Degree"
-          createEntityName="Degree"
-        />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="col-span-1 lg:col-span-2">
+          <SearchableSelect
+            label="Degree"
+            value={formData.degree}
+            onValueChange={(value) => updateFormData({ degree: value })}
+            apiEndpoint="/api/degrees/"
+            placeholder="Select Degree"
+            createEntityName="Degree"
+          />
+        </div>
+
+        <div className="col-span-1 lg:col-span-2">
+          <SearchableSelect
+            label="Institute"
+            value={formData.institute}
+            onValueChange={(value) => updateFormData({ institute: value })}
+            apiEndpoint="/api/institutes/"
+            placeholder="Select Institute"
+            createEntityName="Institute"
+          />
+        </div>
+
+        <div className="col-span-1 lg:col-span-2">
+          <SearchableSelect
+            label="Department"
+            value={formData.department}
+            onValueChange={(value) => updateFormData({ department: value })}
+            apiEndpoint="/api/departments/"
+            placeholder="Select Department"
+            createEntityName="Department"
+          />
+        </div>
+
+        <div className="col-span-1 lg:col-span-2">
+          <Label htmlFor="currentStatus">Current Status</Label>
+          <Select
+            value={formData.currentStatus}
+            onValueChange={(value) => updateFormData({ currentStatus: value })}
+          >
+            <SelectTrigger id="currentStatus" className="mt-1 dark:bg-gray-900 border-primary-900">
+              <SelectValue placeholder="Select Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="RUNNING">Running</SelectItem>
+              <SelectItem value="COMPLETED">Completed</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
-      <div>
-        <SearchableSelect
-          label="Institute"
-          value={formData.institute}
-          onValueChange={(value) => updateFormData({ institute: value })}
-          apiEndpoint="/api/institutes/"
-          placeholder="Select Institute"
-          createEntityName="Institute"
-        />
-      </div>
-
-      <div>
-        <SearchableSelect
-          label="Department"
-          value={formData.department}
-          onValueChange={(value) => updateFormData({ department: value })}
-          apiEndpoint="/api/departments/"
-          placeholder="Select Department"
-          createEntityName="Department"
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="currentStatus">Current Status</Label>
-        <Select
-          value={formData.currentStatus}
-          onValueChange={(value) => updateFormData({ currentStatus: value })}
-        >
-          <SelectTrigger id="currentStatus" className="mt-1">
-            <SelectValue placeholder="Select Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="RUNNING">Running</SelectItem>
-            <SelectItem value="COMPLETED">Completed</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
 
       <div className="flex justify-between pt-4">
-        <Button variant="outline" className="px-6" onClick={onPrev} disabled={isLoading}>
+        <Button variant="outline" className="px-6 dark:bg-gray-900 hover:border-primary-900" onClick={onPrev} disabled={isLoading}>
           Previous
         </Button>
-        <Button type="button" onClick={handleSubmit} className="px-6 px-6 dark:bg-blue-600 dark:text-white" disabled={isLoading}>
+        <Button type="button" onClick={handleSubmit} className="px-6 dark:bg-blue-600 dark:text-white" disabled={isLoading}>
           {isLoading ? 'Saving...' : 'Save & Next'}
         </Button>
       </div>
