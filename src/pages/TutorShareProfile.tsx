@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Star, MapPin, GraduationCap, DollarSign, Users, Calendar } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { Star, MapPin, GraduationCap, DollarSign, Users, Calendar, Share2, Link2, Facebook, Twitter, MessageCircle } from 'lucide-react';
 import { Tutor } from '@/types/tutor';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -13,6 +14,7 @@ const TutorShareProfile: React.FC = () => {
   const [tutor, setTutor] = useState<Tutor | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [copySuccess, setCopySuccess] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -50,8 +52,122 @@ const TutorShareProfile: React.FC = () => {
   const handleDownloadImage = () => {
     if (!cardRef.current) return;
     htmlToImage.toPng(cardRef.current)
-      .then((dataUrl) => saveAs(dataUrl, 'my-profile.png'))
+      .then((dataUrl) => saveAs(dataUrl, `${tutor?.full_name || 'tutor'}-profile.png`))
       .catch((err) => console.error('Failed to generate image:', err));
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+    }
+  };
+
+  const handleShare = (platform: string) => {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent(`${tutor?.full_name} - Professional Tutor`);
+    const description = encodeURIComponent(
+      `${tutor?.full_name} from ${tutor?.institute?.name}. ${tutor?.teaching_type_display} tutoring available. Rating: ${tutor?.avg_rating || 'New'}/5`
+    );
+
+    let shareUrl = '';
+    switch (platform) {
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+        break;
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+        break;
+      case 'whatsapp':
+        shareUrl = `https://wa.me/?text=${title}%20${url}`;
+        break;
+      case 'linkedin':
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+        break;
+    }
+
+    if (shareUrl) {
+      window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
+  };
+
+  // Generate meta tags for social sharing
+  const generateMetaTags = () => {
+    if (!tutor) return null;
+
+    const profileUrl = window.location.href;
+    const profileImage = tutor.profile_picture.replace(/^http:\/\//i, "https://");
+    const title = `${tutor.full_name} - Professional Tutor`;
+    const description = `${tutor.full_name} from ${tutor.institute?.name}. ${tutor.teaching_type_display} tutoring available. Rating: ${tutor.avg_rating || 'New'}/5. ${tutor.expected_salary?.display_range || 'Contact for pricing'}/month.`;
+    const location = tutor.upazila?.[0]
+      ? `${tutor.upazila[0].name}, ${tutor.upazila[0].district.name}`
+      : 'Location not specified';
+
+    return (
+      <Helmet>
+        {/* Primary Meta Tags */}
+        <title>{title}</title>
+        <meta name="title" content={title} />
+        <meta name="description" content={description} />
+        <meta name="keywords" content={`tutor, ${tutor.full_name}, ${tutor.institute?.name}, ${location}, online tutoring, home tutoring`} />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="profile" />
+        <meta property="og:url" content={profileUrl} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={profileImage} />
+        <meta property="og:image:width" content="400" />
+        <meta property="og:image:height" content="400" />
+        <meta property="og:site_name" content="TutorConnect" />
+        <meta property="profile:first_name" content={tutor.full_name.split(' ')[0]} />
+        <meta property="profile:last_name" content={tutor.full_name.split(' ').slice(1).join(' ')} />
+
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={profileUrl} />
+        <meta property="twitter:title" content={title} />
+        <meta property="twitter:description" content={description} />
+        <meta property="twitter:image" content={profileImage} />
+
+        {/* Additional Meta Tags */}
+        <meta name="author" content={tutor.full_name} />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href={profileUrl} />
+
+        {/* Schema.org structured data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": tutor.full_name,
+            "image": profileImage,
+            "description": description,
+            "url": profileUrl,
+            "worksFor": {
+              "@type": "EducationalOrganization",
+              "name": tutor.institute?.name
+            },
+            "address": tutor.upazila?.[0] ? {
+              "@type": "PostalAddress",
+              "addressLocality": tutor.upazila[0].name,
+              "addressRegion": tutor.upazila[0].district.name,
+              "addressCountry": "BD"
+            } : undefined,
+            "aggregateRating": tutor.avg_rating ? {
+              "@type": "AggregateRating",
+              "ratingValue": tutor.avg_rating,
+              "reviewCount": tutor.review_count || 0,
+              "bestRating": 5,
+              "worstRating": 1
+            } : undefined
+          })}
+        </script>
+      </Helmet>
+    );
   };
 
   if (loading) {
@@ -72,6 +188,10 @@ const TutorShareProfile: React.FC = () => {
   if (error || !tutor) {
     return (
       <div className="min-h-screen flex flex-col">
+        <Helmet>
+          <title>Tutor Profile Not Found</title>
+          <meta name="description" content="The tutor profile you are looking for does not exist." />
+        </Helmet>
         <Header />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -86,19 +206,65 @@ const TutorShareProfile: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-900">
+      {generateMetaTags()}
       <Header />
       <main className="flex-1 py-8">
         <div className="container mx-auto px-4 max-w-4xl">
-          {/* Card */}
+          {/* Share Actions */}
+          <div className="mb-6 flex flex-wrap gap-3 justify-center">
+            <button
+              onClick={handleCopyLink}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${copySuccess
+                ? 'bg-green-600 text-white'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                }`}
+            >
+              <Link2 className="w-4 h-4" />
+              {copySuccess ? 'Copied!' : 'Copy Link'}
+            </button>
+
+            <button
+              onClick={() => handleShare('facebook')}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
+              <Facebook className="w-4 h-4" />
+              Facebook
+            </button>
+
+            <button
+              onClick={() => handleShare('twitter')}
+              className="flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg transition-colors"
+            >
+              <Twitter className="w-4 h-4" />
+              Twitter
+            </button>
+
+            <button
+              onClick={() => handleShare('whatsapp')}
+              className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+            >
+              <MessageCircle className="w-4 h-4" />
+              WhatsApp
+            </button>
+
+            <button
+              onClick={() => handleShare('linkedin')}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg transition-colors"
+            >
+              <Share2 className="w-4 h-4" />
+              LinkedIn
+            </button>
+          </div>
+
+          {/* Profile Card */}
           <div ref={cardRef} className="border border-primary-800 rounded-xl p-5 shadow-xl overflow-hidden mb-4 dark:bg-background">
             <div className="md:flex">
               {/* Profile Image */}
               <div className="md:w-1/3">
                 <div className="aspect-square md:aspect-auto md:h-full relative">
                   <img
-                    src={
-                      tutor.profile_picture.replace(/^http:\/\//i, "https://")
-                    }
+                    src={tutor.profile_picture.replace(/^http:\/\//i, "https://")}
+                    alt={`${tutor.full_name} - Professional Tutor`}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-4 right-4">{getTeachingTypeBadge()}</div>
@@ -173,12 +339,14 @@ const TutorShareProfile: React.FC = () => {
           </div>
 
           {/* Download Button */}
-          <button
-            onClick={handleDownloadImage}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Download as Image
-          </button>
+          <div className="text-center">
+            <button
+              onClick={handleDownloadImage}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Download as Image
+            </button>
+          </div>
         </div>
       </main>
       <Footer />
