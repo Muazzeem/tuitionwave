@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { format } from 'date-fns';
 import LinkPreview from './LinkPreview';
 import { detectUrls } from '@/utils/linkUtils';
-import { Download, FileText, Image, Video, Paperclip, File } from 'lucide-react';
+import { Download, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface Message {
@@ -165,8 +165,8 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
           {message.text && (
             <div
               className={`px-4 py-2 rounded-2xl shadow-sm max-w-xs break-words ${isOwnMessage
-                  ? 'bg-blue-500 text-white rounded-br-md'
-                  : 'bg-white text-gray-900 border rounded-bl-md'
+                ? 'bg-primary-700 text-white rounded-br-md'
+                : 'bg-background text-white border rounded-bl-md'
                 }`}
             >
               <p className="text-sm leading-relaxed">{message.text}</p>

@@ -426,7 +426,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="h-full bg-background flex w-100 relative">
+    <div className="h-full bg-gray:900 flex w-100 relative">
       {/* Friends List - Responsive visibility */}
       <div className={`transition-all duration-300 ${
         isMobile 
@@ -448,7 +448,7 @@ const MessagingInterface: React.FC<MessagingInterfaceProps> = ({ onClose }) => {
         isMobile && !selectedFriend ? 'hidden' : 'flex'
       } ${showFilesSidebar && !isMobile ? 'mr-80' : ''}`}>
         {selectedFriend ? (
-          <Card className="h-full flex flex-col border-0 rounded-none md:border md:rounded-lg shadow-sm">
+          <Card className="h-full bg-gray:900 flex flex-col border-0 rounded-none md:border md:rounded-lg shadow-sm">
             <ChatHeader
               friend={selectedFriend}
               onBack={handleBackToList}
