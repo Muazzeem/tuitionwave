@@ -97,9 +97,7 @@ const TutorShareProfile: React.FC = () => {
                 <div className="aspect-square md:aspect-auto md:h-full relative">
                   <img
                     src={
-                      tutor.profile_picture
-                        ? tutor.profile_picture.replace(/^http:\/\//i, "https://")
-                        : "/placeholder.svg"
+                      tutor.profile_picture.replace(/^http:\/\//i, "https://")
                     }
                     className="w-full h-full object-cover"
                   />
