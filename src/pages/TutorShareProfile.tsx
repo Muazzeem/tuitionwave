@@ -96,7 +96,11 @@ const TutorShareProfile: React.FC = () => {
               <div className="md:w-1/3">
                 <div className="aspect-square md:aspect-auto md:h-full relative">
                   <img
-                    src={tutor.profile_picture || '/placeholder.svg'}
+                    src={
+                      tutor.profile_picture
+                        ? tutor.profile_picture.replace(/^http:\/\//i, "https://")
+                        : "/placeholder.svg"
+                    }
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-4 right-4">{getTeachingTypeBadge()}</div>
