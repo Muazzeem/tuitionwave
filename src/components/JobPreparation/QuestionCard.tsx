@@ -89,7 +89,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           </div>
         )}
 
-        <div className="grid grid-cols-1 gap-2 sm:gap-3 mb-4">
+        <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-2 sm:gap-3 mb-4">
           {question.options.map((option) => {
             let optionClassName = 'p-2 sm:p-3 border-2 rounded-lg transition-all duration-200';
 
@@ -170,12 +170,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           (mode === 'practice' && isAnswered && showResult && result?.explanation)) && (
           <div className="p-2 sm:p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500 mb-3">
             <div className="flex items-start space-x-2 sm:space-x-3">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                <Lightbulb className="h-2 w-2 sm:h-3 sm:w-3 text-white" />
-              </div>
               <div className="min-w-0 flex-1">
                 <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-1 text-xs sm:text-sm flex items-center">
-                  <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                   Explanation
                 </h4>
                 <p className="text-blue-700 dark:text-blue-300 text-xs sm:text-sm leading-relaxed">

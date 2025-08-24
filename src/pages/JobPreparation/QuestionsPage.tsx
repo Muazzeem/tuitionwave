@@ -349,6 +349,7 @@ const QuestionsPage: React.FC = () => {
               </>
             )}
           </div>
+          <div className="h-20 md:h-8"></div>
         </main>
 
         {/* Desktop Progress Card */}
