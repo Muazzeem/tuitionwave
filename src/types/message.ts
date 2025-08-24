@@ -1,21 +1,35 @@
 
 export interface Message {
   id: string;
-  sender_id: string;
-  receiver_id: string;
   content: string;
-  timestamp: string;
-  is_read: boolean;
-  attachment?: string;
-  sender?: {
+  sender: {
     id: string;
     name: string;
     avatar?: string;
   };
-  receiver?: {
-    id: string;
+  timestamp: string;
+  type: 'text' | 'image' | 'file' | 'link';
+  attachment?: string | {
+    url: string;
     name: string;
-    avatar?: string;
+    size: number;
+    type: string;
+  };
+  isRead: boolean;
+  reactions?: {
+    emoji: string;
+    count: number;
+    users: string[];
+  }[];
+  replyTo?: string;
+  editedAt?: string;
+  metadata?: {
+    linkPreview?: {
+      title: string;
+      description: string;
+      image?: string;
+      url: string;
+    };
   };
 }
 
@@ -23,13 +37,20 @@ export interface Friend {
   id: string;
   name: string;
   avatar?: string;
-  last_message?: Message;
-  unread_count?: number;
-  is_online?: boolean;
-  last_seen?: string;
+  isOnline: boolean;
+  lastSeen?: string;
+  unreadCount: number;
+  lastMessage?: {
+    content: string;
+    timestamp: string;
+    isOwn: boolean;
+  };
 }
 
-export interface MessageThread {
-  friend: Friend;
+export interface ChatState {
   messages: Message[];
+  friends: Friend[];
+  selectedFriendId: string | null;
+  isLoading: boolean;
+  error: string | null;
 }

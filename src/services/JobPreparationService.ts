@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import { CategoriesResponse, SubjectsResponse, TopicsResponse, SubtopicsResponse, QuestionsResponse, ExamData } from '@/types/jobPreparation';
 import { getAccessToken } from '@/utils/auth';
@@ -61,6 +60,14 @@ class JobPreparationService {
 
   async getQuestionsReadingMode(topicUid: string, page: number = 1): Promise<QuestionsResponse> {
     const response = await axios.get(`${API_BASE_URL}/api/topics/${topicUid}/questions/reading-mode/`, {
+      params: { page },
+      headers: this.getAuthHeaders(),
+    });
+    return response.data;
+  }
+
+  async getQuestionsReadingModeBySubtopic(subtopicUid: string, page: number = 1): Promise<QuestionsResponse> {
+    const response = await axios.get(`${API_BASE_URL}/api/subtopics/${subtopicUid}/questions/reading-mode/`, {
       params: { page },
       headers: this.getAuthHeaders(),
     });
