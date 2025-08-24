@@ -1,56 +1,44 @@
 
 export interface Message {
   id: string;
+  sender: string;
   content: string;
-  sender: {
-    id: string;
-    name: string;
-    avatar?: string;
-  };
-  timestamp: string;
-  type: 'text' | 'image' | 'file' | 'link';
+  timestamp: Date;
   attachment?: string | {
     url: string;
     name: string;
     size: number;
     type: string;
   };
-  isRead: boolean;
-  reactions?: {
-    emoji: string;
-    count: number;
-    users: string[];
-  }[];
-  replyTo?: string;
-  editedAt?: string;
-  metadata?: {
-    linkPreview?: {
-      title: string;
-      description: string;
-      image?: string;
-      url: string;
-    };
-  };
+  isOwn?: boolean;
+  avatar?: string;
+  status?: 'sent' | 'delivered' | 'read';
 }
 
 export interface Friend {
   id: string;
   name: string;
-  avatar?: string;
+  avatar: string;
+  lastSeen: string;
   isOnline: boolean;
-  lastSeen?: string;
-  unreadCount: number;
-  lastMessage?: {
-    content: string;
-    timestamp: string;
-    isOwn: boolean;
-  };
+  lastMessage?: string;
+  unreadCount?: number;
 }
 
-export interface ChatState {
-  messages: Message[];
-  friends: Friend[];
-  selectedFriendId: string | null;
-  isLoading: boolean;
-  error: string | null;
+export interface FileAttachment {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  url: string;
+  uploadedAt: Date;
+  sender: string;
+}
+
+export interface LinkPreviewData {
+  url: string;
+  title: string;
+  description: string;
+  image?: string;
+  siteName?: string;
 }
