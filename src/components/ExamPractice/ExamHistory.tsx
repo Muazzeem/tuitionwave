@@ -190,8 +190,7 @@ export default function ExamHistory({
   };
 
   const handleViewResults = (exam: ApiExamRecord) => {
-    console.log(exam)
-    // navigate(`/job-preparation/exam/${exam.uid}/results`);
+    navigate(`/job-preparation/exam/${exam.uid}/results`);
   };
 
   const displayedExams = useInternalApi
@@ -333,7 +332,6 @@ export default function ExamHistory({
             {loading && useInternalApi ? (
               <div className="flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Loading exams...</span>
               </div>
             ) : (
               <div className="flex items-center gap-2">
@@ -397,7 +395,7 @@ export default function ExamHistory({
                       </div>
 
                       {/* Score Display */}
-                      {(exam.status === 'completed' || exam.status === 'failed') && (
+                      {exam.status && (
                         <div className="bg-gray-900 rounded-lg p-3">
                           <div className="flex items-center justify-between">
                             <span className="text-sm text-muted-foreground">Score</span>
@@ -477,70 +475,6 @@ export default function ExamHistory({
                 </div>
               </CardContent>
             </Card>
-          </div>
-        )}
-
-        {/* Pagination */}
-        {(!loading || !useInternalApi) && totalPages > 1 && (
-          <div className="flex justify-center pt-6 pb-4">
-            <Pagination>
-              <PaginationContent className="flex-wrap gap-1">
-                <PaginationItem>
-                  <PaginationPrevious
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (currentPage > 1) {
-                        handlePageChange(currentPage - 1);
-                      }
-                    }}
-                    className={`${currentPage === 1 ? 'pointer-events-none opacity-50' : 'hover:bg-muted'} transition-colors`}
-                  />
-                </PaginationItem>
-
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  let pageNum;
-                  if (totalPages <= 5) {
-                    pageNum = i + 1;
-                  } else if (currentPage <= 3) {
-                    pageNum = i + 1;
-                  } else if (currentPage >= totalPages - 2) {
-                    pageNum = totalPages - 4 + i;
-                  } else {
-                    pageNum = currentPage - 2 + i;
-                  }
-
-                  return (
-                    <PaginationItem key={pageNum}>
-                      <PaginationLink
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handlePageChange(pageNum);
-                        }}
-                        isActive={currentPage === pageNum}
-                        className="transition-colors hover:bg-muted"
-                      >
-                        {pageNum}
-                      </PaginationLink>
-                    </PaginationItem>
-                  );
-                })}
-
-                <PaginationItem>
-                  <PaginationNext
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (currentPage < totalPages) {
-                        handlePageChange(currentPage + 1);
-                      }
-                    }}
-                    className={`${currentPage === totalPages ? 'pointer-events-none opacity-50' : 'hover:bg-muted'} transition-colors`}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
           </div>
         )}
 

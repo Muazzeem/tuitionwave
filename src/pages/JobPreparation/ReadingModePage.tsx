@@ -47,34 +47,6 @@ const ReadingModePage: React.FC = () => {
     queryFn: () => JobPreparationService.getSubtopics(topicId!, 1),
     enabled: !!topicId,
   });
-
-  const { data: categoryData } = useQuery({
-    queryKey: ['category', categoryId],
-    queryFn: async () => {
-      const categories = await JobPreparationService.getCategories(1);
-      return categories.results.find(cat => cat.uid === categoryId);
-    },
-    enabled: !!categoryId,
-  });
-
-  const { data: subjectData } = useQuery({
-    queryKey: ['subject', subjectId],
-    queryFn: async () => {
-      const subjects = await JobPreparationService.getSubjects(categoryId!, 1);
-      return subjects.results.find(sub => sub.uid === subjectId);
-    },
-    enabled: !!subjectId && !!categoryId,
-  });
-
-  const { data: topicData } = useQuery({
-    queryKey: ['topic', topicId],
-    queryFn: async () => {
-      const topics = await JobPreparationService.getTopics(subjectId!, 1);
-      return topics.results.find(topic => topic.uid === topicId);
-    },
-    enabled: !!topicId && !!subjectId,
-  });
-
   const handleBack = () => {
     navigate(`/job-preparation/category/${categoryId}/subject/${subjectId}`);
   };

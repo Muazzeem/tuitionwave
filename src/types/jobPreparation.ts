@@ -50,6 +50,7 @@ export interface Question {
 }
 
 export interface ExamQuestion {
+  image: any;
   uid: string;
   order: number;
   topic_name: string;

@@ -8,9 +8,6 @@ import { CheckCircle, XCircle, Clock, Trophy, Target, BookOpen, ArrowLeft, HelpC
 import { getAccessToken } from '@/utils/auth';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import QuestionCard from '@/components/JobPreparation/QuestionCard';
-import { Question } from '@/types/jobPreparation';
-import { AnswerResult } from '@/types/common';
 import DashboardHeader from '@/components/DashboardHeader';
 
 interface ExamResults {
@@ -34,6 +31,7 @@ interface ExamResults {
   subjects_info: { uid: string; title: string; }[];
   topics_info: { uid: string; name: string; }[];
   questions: {
+    image: string;
     uid: string;
     order: number;
     topic_name: string;
@@ -108,59 +106,6 @@ export default function ExamResultsPage() {
     fetchExamResults();
   }, [examId, accessToken, toast, navigate]);
 
-  const convertToQuestions = (): Question[] => {
-    if (!examResults?.questions) return [];
-    
-    return examResults.questions.map(q => ({
-      uid: q.question_uid,
-      question_number: q.question_number,
-      question_text: q.question_text,
-      marks: q.marks,
-      negative_marks: q.negative_marks,
-      time_limit_seconds: q.time_limit_seconds,
-      image: '',
-      explanation: q.explanation,
-      options: q.options.map(opt => ({
-        uid: opt.uid,
-        option_label: opt.label,
-        option_text: opt.text,
-        order: opt.order,
-        is_correct: opt.is_correct
-      }))
-    }));
-  };
-
-  const createResultsMapping = (): { [key: string]: AnswerResult } => {
-    if (!examResults?.questions) return {};
-    
-    const results: { [key: string]: AnswerResult } = {};
-    
-    examResults.questions.forEach(q => {
-      const correctOption = q.options.find(opt => opt.is_correct);
-      results[q.question_uid] = {
-        is_correct: q.is_correct || false,
-        correct_option_label: correctOption?.label || '',
-        explanation: q.explanation || ''
-      };
-    });
-    
-    return results;
-  };
-
-  const createSelectedOptionsMapping = (): { [key: string]: string } => {
-    if (!examResults?.questions) return {};
-    
-    const selectedOptions: { [key: string]: string } = {};
-    
-    examResults.questions.forEach(q => {
-      if (q.selected_option) {
-        selectedOptions[q.question_uid] = q.selected_option.label;
-      }
-    });
-    
-    return selectedOptions;
-  };
-
   const getPerformanceData = (percentage: number) => {
     if (percentage >= 90) return { color: 'text-emerald-600', bgColor: 'bg-emerald-50 dark:bg-emerald-900/20' };
     if (percentage >= 80) return { color: 'text-green-600', bgColor: 'bg-green-50 dark:bg-green-900/20' };
@@ -224,9 +169,6 @@ export default function ExamResultsPage() {
   const timeTaken = calculateTimeTaken();
   const performanceData = getPerformanceData(examResults.percentage);
   const accuracyRate = getAccuracyRate();
-  const questions = convertToQuestions();
-  const resultsMapping = createResultsMapping();
-  const selectedOptionsMapping = createSelectedOptionsMapping();
 
   if (showReviewMode) {
     return (
@@ -234,37 +176,103 @@ export default function ExamResultsPage() {
         <DashboardHeader userName="John" />
 
         <ScrollArea type="always" style={{ height: 'calc(110vh - 180px)' }}>
-          <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
-            <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
-              {questions.map((question, index) => {
-                const selectedOption = selectedOptionsMapping[question.uid];
-                const result = resultsMapping[question.uid];
-                
-                return (
-                  <div key={question.uid} className="relative">
-                    <QuestionCard
-                      question={question}
-                      isAnswered={true}
-                      showResult={true}
-                      selectedOption={selectedOption}
-                      result={result}
-                      mode="reading"
-                    />
-                    
-                    {/* Additional exam-specific info */}
-                    {examResults.questions[index].topic_name && (
-                      <div className="mt-2 flex items-center gap-2 px-3 sm:px-4">
-                        <Badge variant="outline" className="text-xs">
-                          {examResults.questions[index].topic_name}
-                        </Badge>
-                        <Badge variant="outline" className="text-xs">
-                          {examResults.questions[index].subject_title}
-                        </Badge>
+          <div className="container mx-auto px-4 py-6">
+            <div className="max-w-4xl mx-auto space-y-6">
+              {examResults.questions.map((question, index) => (
+                <Card key={question.uid} className='bg-white dark:bg-background border border-gray-200 dark:border-gray-900 shadow-sm hover:shadow-md transition-all duration-200 p-0'>
+                  <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b p-3 sm:p-4">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                          {index + 1}
+                        </div>
+                        <div>
+                          <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white">
+                            {question.question_text}
+                          </CardTitle>
+                          {question.topic_name && (
+                            <div className="flex items-center gap-2 mt-1">
+                              <Badge variant="outline" className="text-xs">
+                                {question.topic_name}
+                              </Badge>
+                              <Badge variant="outline" className="text-xs">
+                                {question.subject_title}
+                              </Badge>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-3 sm:p-4">
+                    {question.image && (
+                      <div className="mb-4 rounded-lg overflow-hidden shadow-sm">
+                        <img
+                          src={question.image}
+                          alt="Question illustration"
+                          className="w-full max-h-48 sm:max-h-64 object-contain bg-gray-50 dark:bg-gray-700"
+                        />
                       </div>
                     )}
-                  </div>
-                );
-              })}
+                    <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-2 sm:gap-3 mb-4">
+                      {question.options.map((option) => {
+                        const isUserSelected = option.uid === question.selected_option?.uid;
+                        const isCorrect = option.is_correct;
+                        const isWrongSelected = isUserSelected && !isCorrect;
+
+                        let optionClass = 'p-2 rounded-xl border-2 transition-all duration-200';
+                        let badgeElement = null;
+
+                        if (isCorrect) {
+                          optionClass += ' bg-green-50 border-green-300 dark:bg-green-900/20 dark:border-green-700';
+                          badgeElement = (
+                            <Badge className="bg-green-600 text-white text-xs px-2 py-0.5">
+                              Correct Answer
+                            </Badge>
+                          );
+                        } else if (isWrongSelected) {
+                          optionClass += ' bg-red-50 border-red-300 dark:bg-red-900/20 dark:border-red-700';
+                          badgeElement = (
+                            <Badge variant="destructive" className="text-xs px-2 py-0.5">
+                              Your Answer
+                            </Badge>
+                          );
+                        } else if (isUserSelected) {
+                          optionClass += ' bg-blue-50 border-blue-300 dark:bg-blue-900/20 dark:border-blue-700';
+                        } else {
+                          optionClass += ' bg-gray-50 border-gray-200 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-750';
+                        }
+
+                        return (
+                          <div key={option.uid} className={optionClass}>
+                            <div className="flex items-center space-x-4">
+                              <div className="flex items-center space-x-3 flex-1">
+                                <span className="font-semibold text-sm text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-600 rounded-full w-6 h-6 flex items-center justify-center">
+                                  {option.label}
+                                </span>
+                                <span className="text-gray-900 dark:text-white flex-1">{option.text}</span>
+                              </div>
+                              <div className="hidden md:block">{badgeElement}</div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {question.explanation && (
+                      <div className="lg:col-span-2 mt-6 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-l-4 border-blue-400 rounded-r-xl">
+                        <div className="flex items-start space-x-3">
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Explanation</h4>
+                            <p className="text-blue-800 dark:text-blue-200 leading-relaxed">
+                              {question.explanation}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
 
@@ -652,6 +660,58 @@ export default function ExamResultsPage() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Subject/Topic Coverage */}
+            {/* {(examResults.subjects_info.length > 0 || examResults.topics_info.length > 0) && (
+              <Card className="bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Users className="h-5 w-5 text-indigo-500" />
+                    <span>Coverage Analysis</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {examResults.subjects_info.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Subjects Covered</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {examResults.subjects_info.map((subject) => (
+                          <Badge
+                            key={subject.uid}
+                            variant="secondary"
+                            className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
+                          >
+                            {subject.title}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {examResults.topics_info.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Topics Covered</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {examResults.topics_info.slice(0, 10).map((topic) => (
+                          <Badge
+                            key={topic.uid}
+                            variant="outline"
+                            className="px-3 py-1 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600"
+                          >
+                            {topic.name}
+                          </Badge>
+                        ))}
+                        {examResults.topics_info.length > 10 && (
+                          <Badge variant="outline" className="px-3 py-1">
+                            +{examResults.topics_info.length - 10} more
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )} */}
 
             {/* Action Buttons */}
             <Card className="bg-background text-white border-0 shadow-sm">

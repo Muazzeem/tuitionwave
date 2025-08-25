@@ -68,7 +68,7 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
 
     const enforceHttps = (url: string) => {
         if (url.startsWith("http://")) {
-            return url.replace("http://", "https://");
+            return url.replace("http://", "http://");
         }
         return url;
     };
