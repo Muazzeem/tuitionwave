@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -68,9 +69,10 @@ const TutorShareProfile: React.FC = () => {
 
   const handleShare = (platform: string) => {
     const url = encodeURIComponent(window.location.href);
-    const title = encodeURIComponent(`${tutor?.full_name} - Professional Tutor`);
+    const tutorName = typeof tutor?.full_name === 'string' ? tutor.full_name : 'Professional Tutor';
+    const title = encodeURIComponent(`${tutorName} - Professional Tutor`);
     const description = encodeURIComponent(
-      `${tutor?.full_name} from ${tutor?.institute?.name}. ${tutor?.teaching_type_display} tutoring available. Rating: ${tutor?.avg_rating || 'New'}/5`
+      `${tutorName} from ${tutor?.institute?.name}. ${tutor?.teaching_type_display} tutoring available. Rating: ${tutor?.avg_rating || 'New'}/5. ${tutor?.expected_salary?.display_range || 'Contact for pricing'}/month.`
     );
 
     let shareUrl = '';
@@ -94,17 +96,21 @@ const TutorShareProfile: React.FC = () => {
     }
   };
 
-  // Generate meta tags for social sharing
+  // Generate enhanced meta tags for social sharing
   const generateMetaTags = () => {
     if (!tutor) return null;
 
     const profileUrl = window.location.href;
-    const profileImage = tutor.profile_picture.replace(/^http:\/\//i, "https://");
-    const title = `${tutor.full_name} - Professional Tutor`;
-    const description = `${tutor.full_name} from ${tutor.institute?.name}. ${tutor.teaching_type_display} tutoring available. Rating: ${tutor.avg_rating || 'New'}/5. ${tutor.expected_salary?.display_range || 'Contact for pricing'}/month.`;
+    const profileImage = tutor.profile_picture?.replace(/^http:\/\//i, "https://") || '/lovable-uploads/56c05a63-4266-4a9d-ad96-7c9d83120840.png';
+    const tutorName = typeof tutor.full_name === 'string' ? tutor.full_name : 'Professional Tutor';
+    const title = `${tutorName} - Professional Tutor | TutorConnect`;
+    const instituteName = tutor.institute?.name || 'Educational Institution';
+    const salaryRange = tutor.expected_salary?.display_range || 'Contact for pricing';
+    const description = `Connect with ${tutorName}, a professional tutor from ${instituteName}. Offering ${tutor.teaching_type_display} tutoring services. Rating: ${tutor.avg_rating || 'New'}/5 stars. Monthly fee: ${salaryRange}. Book now for quality education!`;
+    
     const location = tutor.upazila?.[0]
       ? `${tutor.upazila[0].name}, ${tutor.upazila[0].district.name}`
-      : 'Location not specified';
+      : 'Available nationwide';
 
     return (
       <Helmet>
@@ -112,44 +118,64 @@ const TutorShareProfile: React.FC = () => {
         <title>{title}</title>
         <meta name="title" content={title} />
         <meta name="description" content={description} />
-        <meta name="keywords" content={`tutor, ${tutor.full_name}, ${tutor.institute?.name}, ${location}, online tutoring, home tutoring`} />
+        <meta name="keywords" content={`tutor, ${tutorName}, ${instituteName}, ${location}, online tutoring, home tutoring, education, teaching`} />
 
-        {/* Open Graph / Facebook */}
+        {/* Enhanced Open Graph / Facebook */}
         <meta property="og:type" content="profile" />
         <meta property="og:url" content={profileUrl} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:image" content={profileImage} />
-        <meta property="og:image:width" content="400" />
-        <meta property="og:image:height" content="400" />
+        <meta property="og:image:secure_url" content={profileImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={`${tutorName} - Professional Tutor Profile Picture`} />
         <meta property="og:site_name" content="TutorConnect" />
-        <meta property="profile:first_name" content={tutor.full_name.split(' ')[0]} />
-        <meta property="profile:last_name" content={tutor.full_name.split(' ').slice(1).join(' ')} />
+        <meta property="og:locale" content="en_US" />
+        
+        {/* Enhanced Profile-specific Open Graph */}
+        <meta property="profile:first_name" content={tutorName.split(' ')[0]} />
+        <meta property="profile:last_name" content={tutorName.split(' ').slice(1).join(' ') || ''} />
+        <meta property="profile:username" content={tutorName.replace(/\s+/g, '').toLowerCase()} />
 
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={profileUrl} />
-        <meta property="twitter:title" content={title} />
-        <meta property="twitter:description" content={description} />
-        <meta property="twitter:image" content={profileImage} />
+        {/* Enhanced Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@tutorconnect" />
+        <meta name="twitter:creator" content="@tutorconnect" />
+        <meta name="twitter:url" content={profileUrl} />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={profileImage} />
+        <meta name="twitter:image:alt" content={`${tutorName} - Professional Tutor`} />
 
-        {/* Additional Meta Tags */}
-        <meta name="author" content={tutor.full_name} />
+        {/* LinkedIn specific */}
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta name="linkedin:owner" content="tutorconnect" />
+
+        {/* Additional Meta Tags for better sharing */}
+        <meta name="author" content={tutorName} />
         <meta name="robots" content="index, follow" />
+        <meta name="revisit-after" content="7 days" />
         <link rel="canonical" href={profileUrl} />
 
-        {/* Schema.org structured data */}
+        {/* Enhanced Schema.org structured data */}
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Person",
-            "name": tutor.full_name,
-            "image": profileImage,
+            "name": tutorName,
+            "image": {
+              "@type": "ImageObject",
+              "url": profileImage,
+              "width": 400,
+              "height": 400
+            },
             "description": description,
             "url": profileUrl,
+            "jobTitle": "Professional Tutor",
             "worksFor": {
               "@type": "EducationalOrganization",
-              "name": tutor.institute?.name
+              "name": instituteName
             },
             "address": tutor.upazila?.[0] ? {
               "@type": "PostalAddress",
@@ -163,7 +189,13 @@ const TutorShareProfile: React.FC = () => {
               "reviewCount": tutor.review_count || 0,
               "bestRating": 5,
               "worstRating": 1
-            } : undefined
+            } : undefined,
+            "offers": {
+              "@type": "Offer",
+              "price": salaryRange,
+              "priceCurrency": "BDT",
+              "description": `${tutor.teaching_type_display} tutoring services`
+            }
           })}
         </script>
       </Helmet>
@@ -189,7 +221,7 @@ const TutorShareProfile: React.FC = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Helmet>
-          <title>Tutor Profile Not Found</title>
+          <title>Tutor Profile Not Found | TutorConnect</title>
           <meta name="description" content="The tutor profile you are looking for does not exist." />
         </Helmet>
         <Header />
@@ -203,6 +235,8 @@ const TutorShareProfile: React.FC = () => {
       </div>
     );
   }
+
+  const tutorName = typeof tutor.full_name === 'string' ? tutor.full_name : 'Professional Tutor';
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-900">
@@ -263,8 +297,8 @@ const TutorShareProfile: React.FC = () => {
               <div className="md:w-1/3">
                 <div className="aspect-square md:aspect-auto md:h-full relative">
                   <img
-                    src={tutor.profile_picture.replace(/^http:\/\//i, "https://")}
-                    alt={`${tutor.full_name} - Professional Tutor`}
+                    src={tutor.profile_picture?.replace(/^http:\/\//i, "https://") || '/lovable-uploads/56c05a63-4266-4a9d-ad96-7c9d83120840.png'}
+                    alt={`${tutorName} - Professional Tutor`}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-4 right-4">{getTeachingTypeBadge()}</div>
@@ -275,7 +309,7 @@ const TutorShareProfile: React.FC = () => {
               <div className="md:w-2/3 p-6 md:p-8">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h1 className="text-3xl font-bold text-gray-100 mb-2 capitalize">{tutor.full_name}</h1>
+                    <h1 className="text-3xl font-bold text-gray-100 mb-2 capitalize">{tutorName}</h1>
                     <div className="flex items-center gap-2 mb-3">
                       <GraduationCap className="w-5 h-5 text-blue-500" />
                       <span className="text-blue-600 font-medium">{tutor.institute?.name}</span>

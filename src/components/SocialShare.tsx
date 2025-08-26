@@ -4,7 +4,6 @@ import { Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 
-
 interface SocialShareProps {
   tutorUid: string;
 }
@@ -20,6 +19,10 @@ const SocialShare: React.FC<SocialShareProps> = ({
     try {
       await navigator.clipboard.writeText(profileUrl);
       window.open(profileUrl, '_blank');
+      toast({
+        title: 'Success',
+        description: 'Link copied to clipboard and opened in new tab.',
+      });
     } catch (err) {
       toast({
         title: 'Error',

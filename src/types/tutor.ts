@@ -71,7 +71,7 @@ export interface Tutor {
   division: any;
   review_count: number;
   avg_rating: number;
-  full_name: ReactNode;
+  full_name: string;
   preferred_city: string;
   tuition_type: string;
   bio: ReactNode;
@@ -191,4 +191,3 @@ export interface PaginatedResponse<T> {
   previous: string | null;
   results: T[];
 }
-

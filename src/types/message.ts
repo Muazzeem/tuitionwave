@@ -1,44 +1,51 @@
 
 export interface Message {
   id: string;
-  sender: string;
+  sender_id: string;
+  receiver_id: string;
   content: string;
-  timestamp: Date;
-  attachment?: string | {
-    url: string;
-    name: string;
-    size: number;
-    type: string;
+  timestamp: string;
+  is_read: boolean;
+  attachment?: string;
+  sender?: {
+    id: string;
+    username: string;
+    first_name: string;
+    last_name: string;
+    profile_picture?: string;
   };
-  isOwn?: boolean;
-  avatar?: string;
-  status?: 'sent' | 'delivered' | 'read';
+  receiver?: {
+    id: string;
+    username: string;
+    first_name: string;
+    last_name: string;
+    profile_picture?: string;
+  };
 }
 
-export interface Friend {
+export interface ChatRoom {
   id: string;
-  name: string;
-  avatar: string;
-  lastSeen: string;
-  isOnline: boolean;
-  lastMessage?: string;
-  unreadCount?: number;
+  participants: string[];
+  last_message?: Message;
+  unread_count: number;
 }
 
-export interface FileAttachment {
+export interface FriendRequest {
   id: string;
-  name: string;
-  size: number;
-  type: string;
-  url: string;
-  uploadedAt: Date;
-  sender: string;
-}
-
-export interface LinkPreviewData {
-  url: string;
-  title: string;
-  description: string;
-  image?: string;
-  siteName?: string;
+  sender: {
+    id: string;
+    username: string;
+    first_name: string;
+    last_name: string;
+    profile_picture?: string;
+  };
+  receiver: {
+    id: string;
+    username: string;
+    first_name: string;
+    last_name: string;
+    profile_picture?: string;
+  };
+  status: 'pending' | 'accepted' | 'rejected';
+  created_at: string;
 }
