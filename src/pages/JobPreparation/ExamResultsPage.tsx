@@ -179,11 +179,11 @@ export default function ExamResultsPage() {
           <div className="container mx-auto px-4 py-6">
             <div className="max-w-4xl mx-auto space-y-6">
               {examResults.questions.map((question, index) => (
-                <Card key={question.uid} className='bg-white dark:bg-background border border-gray-200 dark:border-gray-900 shadow-sm hover:shadow-md transition-all duration-200 p-0'>
-                  <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b p-3 sm:p-4">
+                <Card key={question.uid} className='bg-white bg-background border border-gray-200 dark:border-gray-900 rounded-lg'>
+                  <CardHeader className="p-3 sm:p-4">
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                        <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                           {index + 1}
                         </div>
                         <div>
@@ -192,10 +192,10 @@ export default function ExamResultsPage() {
                           </CardTitle>
                           {question.topic_name && (
                             <div className="flex items-center gap-2 mt-1">
-                              <Badge variant="outline" className="text-xs">
+                              <Badge variant="outline" className="text-xs bg-gray-900 border border-gray-700">
                                 {question.topic_name}
                               </Badge>
-                              <Badge variant="outline" className="text-xs">
+                              <Badge variant="outline" className="text-xs bg-gray-900 border border-gray-700">
                                 {question.subject_title}
                               </Badge>
                             </div>

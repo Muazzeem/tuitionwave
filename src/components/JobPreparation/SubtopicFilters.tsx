@@ -37,9 +37,9 @@ const SubtopicFilters: React.FC<SubtopicFiltersProps> = ({
       >
         <Star className="h-4 w-4 mr-2" />
         <span>All Questions</span>
-        <Badge className="ml-2 bg-white/20 text-current border-none text-xs">
+        {/* <Badge className="ml-2 bg-white/20 text-current border-none text-xs">
           {totalQuestions}
-        </Badge>
+        </Badge> */}
       </button>
       
       {subtopics.map((subtopic) => (

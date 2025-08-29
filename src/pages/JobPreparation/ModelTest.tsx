@@ -190,7 +190,7 @@ export default function CreateModelTest() {
         const currentTab = tabs.find(tab => tab.id === selectedTab);
         const apiParam = currentTab?.param || "today=true";
 
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/model-tests?${apiParam}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/model-tests?${apiParam}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`
           }
@@ -300,7 +300,7 @@ export default function CreateModelTest() {
       // Case 4: No user exam exists, need to generate one
       if (!modelTest.user_exam) {
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/v1/model-tests/${modelTest.uid}/create-exam/`,
+          `${import.meta.env.VITE_API_URL}/api/model-tests/${modelTest.uid}/create-exam/`,
           {
             method: 'POST',
             headers: {

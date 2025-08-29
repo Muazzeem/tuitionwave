@@ -239,7 +239,7 @@ export default function ExamPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 w-full">
+    <div className="min-h-screen dark:to-gray-900 w-full">
       {/* Enhanced Header */}
       <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-lg border-b sticky top-0 z-10">
         <div className="w-full p-4">
@@ -299,11 +299,11 @@ export default function ExamPage() {
           <div className="max-w-4xl mx-auto space-y-8">
             {/* Questions */}
             {examData.exam_questions?.map((question, index) => (
-              <Card key={question.uid} className='bg-white dark:bg-background border border-gray-200 dark:border-gray-900 shadow-sm hover:shadow-md transition-all duration-200 p-0'>
-                <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b p-3 sm:p-4">
+              <Card key={question.uid} className='bg-white bg-background border border-gray-200 dark:border-gray-900 rounded-lg'>
+                <CardHeader className="p-2 sm:p-4 rounded-lg">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-full text-sm font-bold">
+                      <div className="flex items-center justify-center w-8 h-8 bg-primary-600 text-white rounded-full text-sm font-bold">
                         {index + 1}
                       </div>
                       <div>
@@ -312,10 +312,10 @@ export default function ExamPage() {
                         </CardTitle>
                         {question.topic_name && (
                           <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="outline" className="text-xs bg-gray-900 border border-gray-700">
                               {question.topic_name}
                             </Badge>
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="outline" className="text-xs bg-gray-900 border border-gray-700">
                               {question.subject_title}
                             </Badge>
                           </div>
@@ -323,15 +323,10 @@ export default function ExamPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      {submittedAnswers.has(question.question_uid) ? (
+                      {submittedAnswers.has(question.question_uid) && (
                         <div className="flex items-center gap-1 text-green-600">
                           <CheckCircle className="h-5 w-5" />
                           <span className="text-xs font-medium">Answered</span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1 text-gray-400">
-                          <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
-                          <span className="text-xs">Pending</span>
                         </div>
                       )}
                     </div>
@@ -358,7 +353,7 @@ export default function ExamPage() {
                           <Button
                             key={option.uid}
                             variant="outline"
-                            className={`w-full justify-start p-2 text-left h-auto min-h-[60px] transition-all dark:bg-gray-900 duration-200 ${isSelected
+                            className={`w-full rounded-lg shadow-md justify-start p-2 text-left h-auto min-h-[60px] transition-all dark:bg-gray-900 duration-200 ${isSelected
                               ? 'bg-blue-50 border-blue-500 text-blue-700 shadow-md dark:bg-gray-900 dark:border-blue-400 dark:text-blue-300'
                               : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
                               } ${isSubmitted
