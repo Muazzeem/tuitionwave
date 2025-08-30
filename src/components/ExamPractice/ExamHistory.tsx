@@ -5,13 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { CheckCircle, XCircle, PlayCircle, Clock, FileText, Calendar, Filter, Loader2, AlertCircle, BookOpen, PlusCircle, Trophy, Target, Users } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { getAccessToken } from '@/utils/auth';
 import ConfirmationDialog from '../ConfirmationDialog';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
+import TutorPagination from '../FindTutors/TutorPagination';
 
 interface ApiExamRecord {
   uid: string;
@@ -59,7 +59,6 @@ export default function ExamHistory({
   setExamFilter: externalSetExamFilter,
   currentPage: externalCurrentPage,
   setCurrentPage: externalSetCurrentPage,
-  totalPages: externalTotalPages,
   itemsPerPage = 10,
   useInternalApi = false,
 }: ExamHistoryProps) {
@@ -80,7 +79,6 @@ export default function ExamHistory({
   const setExamFilter = useInternalApi ? setInternalExamFilter : (externalSetExamFilter || (() => { }));
   const currentPage = useInternalApi ? internalCurrentPage : (externalCurrentPage || 1);
   const setCurrentPage = useInternalApi ? setInternalCurrentPage : (externalSetCurrentPage || (() => { }));
-  const totalPages = useInternalApi ? internalTotalPages : (externalTotalPages || 1);
   const accessToken = getAccessToken();
   const { toast } = useToast();
 
@@ -477,6 +475,14 @@ export default function ExamHistory({
             </Card>
           </div>
         )}
+
+        <TutorPagination
+          currentPage={currentPage}
+          totalPages={internalTotalPages}
+          onPageChange={handlePageChange}
+          hasNext={currentPage < internalTotalPages}
+          hasPrevious={currentPage > 1}
+        />
 
         {/* Confirmation Dialog */}
         <ConfirmationDialog

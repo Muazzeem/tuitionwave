@@ -42,7 +42,7 @@ export default function PerformanceChart() {
       })
       .catch((err) => console.error('Monthly performance error:', err));
 
-    fetch(`${import.meta.env.VITE_API_URL}/exam/subject-performance/`, {
+    fetch(`${import.meta.env.VITE_API_URL}/api/exams/subject-performance/`, {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }

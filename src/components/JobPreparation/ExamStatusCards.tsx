@@ -294,16 +294,6 @@ export default function ExamStatusCards() {
               </div>
             ))}
 
-              {exams.length > 5 && (
-                <div className="text-center pt-4 border-t dark:border-gray-800">
-                  <Link to="/exam-history">
-                    <Button variant="ghost" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 text-sm sm:text-base">
-                      View All {exams.length} Exams →
-                    </Button>
-                  </Link>
-                </div>
-              )}
-
               <div className="mt-6 p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
                   <div className="flex-1">

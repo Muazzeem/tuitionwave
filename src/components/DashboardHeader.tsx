@@ -23,6 +23,7 @@ const getUserTypeFromUrl = (pathname: string): string => {
 };
 
 const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
+  const isDashboard = window.location.pathname === "/dashboard";
   const { userProfile, clearProfile } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -31,10 +32,6 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   const userTypeFromUrl = getUserTypeFromUrl(location.pathname);
-
-  const handleMarkAllNotificationsRead = () => {
-    console.log("All notifications marked as read");
-  };
 
   const handleLogout = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -48,11 +45,15 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
       style={{ backgroundColor: "#192642" }}
     >
       <div className="flex-1 min-w-0">
-        {/* <h1 className="text-md sm:text-md font-bold truncate text-gray-900 dark:text-white">
-          <span className="hidden sm:inline">Welcome Back, </span>
-          <span className="sm:hidden">Hi, </span>
-          {userProfile?.first_name}!
-        </h1> */}
+        {isDashboard && (
+          <Link to="/">
+            <button
+              className="text-xl sm:text-2xl font-bold text-primary-600 dark:text-primary-400 flex-shrink-0 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
+            >
+              Tuition Wave
+            </button>
+          </Link>
+        )}
       </div>
 
       <div className="absolute left-1/2 transform -translate-x-1/2 hidden xl:flex items-center gap-3 border p-2 rounded-3xl border-gray-200 dark:bg-gray-900 dark:border-gray-700">

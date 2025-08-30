@@ -94,7 +94,7 @@ const Sidebar = () => {
         <div className="p-3 flex justify-between items-center align-middle">
           {isExpanded && (
             <h1 className="text-xl font-bold mt-2 dark:text-white">
-              <Link to="/" className="flex items-center">
+              <Link to="/dashboard" className="flex items-center">
                 Tuition Wave
               </Link>
             </h1>
