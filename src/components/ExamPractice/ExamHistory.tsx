@@ -59,6 +59,7 @@ export default function ExamHistory({
   setExamFilter: externalSetExamFilter,
   currentPage: externalCurrentPage,
   setCurrentPage: externalSetCurrentPage,
+  totalPages: externalTotalPages,
   itemsPerPage = 10,
   useInternalApi = false,
 }: ExamHistoryProps) {
@@ -79,6 +80,7 @@ export default function ExamHistory({
   const setExamFilter = useInternalApi ? setInternalExamFilter : (externalSetExamFilter || (() => { }));
   const currentPage = useInternalApi ? internalCurrentPage : (externalCurrentPage || 1);
   const setCurrentPage = useInternalApi ? setInternalCurrentPage : (externalSetCurrentPage || (() => { }));
+  const totalPages = useInternalApi ? internalTotalPages : (externalTotalPages || Math.ceil(examRecords.length / itemsPerPage));
   const accessToken = getAccessToken();
   const { toast } = useToast();
 
@@ -335,7 +337,7 @@ export default function ExamHistory({
               <div className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
                 <span>
-                  Showing {examRecords.length} {useInternalApi ? `of ${totalCount}` : ''} exams
+                  Showing {displayedExams.length} {useInternalApi ? `of ${totalCount}` : `of ${examRecords.length}`} exams
                 </span>
               </div>
             )}
@@ -353,7 +355,7 @@ export default function ExamHistory({
         )}
 
         {/* Exam Cards Grid */}
-        {(!loading || !useInternalApi) && examRecords.length > 0 && (
+        {(!loading || !useInternalApi) && displayedExams.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {displayedExams.map((exam) => (
               <Card key={exam.uid} className="group transition-all duration-300 hover:-translate-y-1 dark:bg-background hover:border-primary shadow-lg">
@@ -440,7 +442,7 @@ export default function ExamHistory({
         )}
 
         {/* Empty State */}
-        {(!loading || !useInternalApi) && examRecords.length === 0 && (
+        {(!loading || !useInternalApi) && displayedExams.length === 0 && (
           <div className="text-center py-12 sm:py-16">
             <Card className="max-w-md mx-auto shadow-md border border-primary bg-background">
               <CardContent className="p-6 sm:p-8">
@@ -476,13 +478,17 @@ export default function ExamHistory({
           </div>
         )}
 
-        <TutorPagination
-          currentPage={currentPage}
-          totalPages={internalTotalPages}
-          onPageChange={handlePageChange}
-          hasNext={currentPage < internalTotalPages}
-          hasPrevious={currentPage > 1}
-        />
+        {/* Pagination */}
+        {displayedExams.length > 0 && totalPages > 1 && (
+          <TutorPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            hasNext={useInternalApi ? currentPage < totalPages : currentPage * itemsPerPage < examRecords.length}
+            hasPrevious={currentPage > 1}
+            showWhenSinglePage={false}
+          />
+        )}
 
         {/* Confirmation Dialog */}
         <ConfirmationDialog
