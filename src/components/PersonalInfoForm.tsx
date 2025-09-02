@@ -14,27 +14,10 @@ import { cn } from '@/lib/utils';
 import axios from 'axios';
 import { useToast } from './ui/use-toast';
 import { getAccessToken } from '@/utils/auth';
-import { useAuth } from '@/contexts/AuthContext';
 
 import { Tutor } from '@/types/tutor';
 import { ProfileFormData, Division, District, Upazila } from '@/types/common';
-import { on } from 'events';
-
-interface User {
-  preferred_upazila: any;
-  preferred_districts: any;
-  division: any;
-  phone: string;
-  email: string;
-  id: number;
-  username: string;
-  first_name: string;
-  last_name: string;
-  profile_picture: string | null;
-  address: string;
-}
-
-
+import { ProfileCompletionAlertRef } from './ProfileCompletionAlert';
 
 
 interface PersonalInfoFormProps {
@@ -44,8 +27,8 @@ interface PersonalInfoFormProps {
 }
 
 const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFormData, onNext }) => {
+  const profileRef = useRef<ProfileCompletionAlertRef>(null);
   const { toast } = useToast();
-  const { userProfile } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState(false);
   const accessToken = getAccessToken();
@@ -360,29 +343,12 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             },
           }
         );
-        const payload = {
-          gender: formData.gender,
-          birth_date: formData.birthDate ? format(formData.birthDate, 'yyyy-MM-dd') : null,
-          linkedin_profile: formData.linkedinProfile,
-          description: formData.description,
-        };
-
-        await axios.put(
-          `${import.meta.env.VITE_API_URL}/api/tutors/${formData.uid}/`,
-          payload,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
       toast({
         title: "Success",
         description: "Personal information updated successfully!",
       });
       onNext();
+      profileRef.current?.reload();
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({

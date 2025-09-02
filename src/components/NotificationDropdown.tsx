@@ -4,7 +4,6 @@ import { getAccessToken } from "@/utils/auth";
 import { useToast } from '@/hooks/use-toast';
 
 interface NotificationProps {
-    onMarkAllRead: () => void;
 }
 
 interface Actor {
@@ -51,7 +50,7 @@ interface NotificationsResponse {
     results: NotificationItem[];
 }
 
-const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) => {
+const NotificationDropdown: React.FC<NotificationProps> = () => {
     const { toast } = useToast();
     const [isOpen, setIsOpen] = useState(false);
     const [notifications, setNotifications] = useState<NotificationItem[]>([]);
@@ -181,7 +180,6 @@ const NotificationDropdown: React.FC<NotificationProps> = ({ onMarkAllRead }) =>
             if (response.ok) {
                 setNotifications(notifications.map(notif => ({ ...notif, unread: false })));
                 setUnreadCount(0);
-                onMarkAllRead();
             } else {
                 console.error('Failed to mark all notifications as read');
             }

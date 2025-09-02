@@ -12,6 +12,7 @@ import { getAccessToken } from "@/utils/auth";
 import { useToast } from "@/hooks/use-toast";
 import PricingCards from "@/components/PricingCards";
 import { Tutor } from "@/types/tutor";
+import ProfileCompletionAlert from "@/components/ProfileCompletionAlert";
 
 const Dashboard: React.FC = () => {
   const { userProfile, reloadProfile } = useAuth();
@@ -86,6 +87,10 @@ const Dashboard: React.FC = () => {
             <p className="text-muted-foreground mb-6">
               Manage your tutor profile and requests
             </p>
+
+            <div className="mb-4 sm:mb-6">
+              <ProfileCompletionAlert />
+            </div>
 
             {tutor && tutor.package ? (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">

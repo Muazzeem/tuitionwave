@@ -1,20 +1,18 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DashboardHeader from '@/components/DashboardHeader';
 import { Step, ProfileStepper } from '@/components/ProfileStepper';
 import PersonalInfoForm from '@/components/PersonalInfoForm';
-import SocialShare from '@/components/SocialShare';
 import { ProfileFormData } from '@/types/tutor';
 import EducationForm from '@/components/EducationForm';
 import TuitionForm from '@/components/TuitionForm';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { getAccessToken } from '@/utils/auth';
-import axios from 'axios';
+import ProfileCompletionAlert, { ProfileCompletionAlertRef } from '@/components/ProfileCompletionAlert';
+
 
 const ProfilePage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
-  const [tutorData, setTutorData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const profileRef = useRef<ProfileCompletionAlertRef>(null);
   
   const [formData, setFormData] = useState<ProfileFormData & {
     daysPerWeek: string;
@@ -67,27 +65,6 @@ const ProfilePage: React.FC = () => {
     { id: 3, title: 'Tuition' }
   ];
 
-  useEffect(() => {
-    const fetchTutorData = async () => {
-      try {
-        const accessToken = getAccessToken();
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/tutors/my-profile`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-        });
-        setTutorData(response.data);
-      } catch (error) {
-        console.error('Error fetching tutor data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchTutorData();
-  }, []);
-
   const handleNext = () => {
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
@@ -114,9 +91,9 @@ const ProfilePage: React.FC = () => {
             <h1 className="lg:text-3xl sm:text-2xl font-bold">Edit Profile</h1>
           </div>
 
-          {/* <div className="mb-4 sm:mb-6">
-            <ProfileCompletionAlert />
-          </div> */}
+          <div className="mb-4 sm:mb-6">
+            <ProfileCompletionAlert ref={profileRef} />
+          </div> 
 
           <div className="flex justify-center w-full">
             <div className="w-full max-w-4xl">

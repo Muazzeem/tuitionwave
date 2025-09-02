@@ -7,7 +7,7 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   fetchProfile: () => Promise<void>;
-  reloadProfile: () => Promise<void>;
+  reloadProfile: () => Promise<void>; 
   clearProfile: () => void;
 }
 

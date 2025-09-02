@@ -26,7 +26,7 @@ import { ContractResponse } from "@/types/contract";
 import { useAuth } from "@/contexts/AuthContext";
 
 const MyRequest: React.FC = () => {
-  const { userProfile } = useAuth();
+  const { userProfile, reloadProfile } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -60,6 +60,10 @@ const MyRequest: React.FC = () => {
       clearTimeout(handler);
     };
   }, [searchQuery]);
+
+  useEffect(() => {
+    // reloadProfile();
+  }, []);
 
   // Build the query string based on all filters
   const buildQueryString = useCallback(() => {
