@@ -7,7 +7,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Badge } from '@/components/ui/badge';
 
-import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { Helmet } from 'react-helmet-async';
 
 
 
@@ -95,15 +95,15 @@ const TutorShareProfile: React.FC = () => {
 
     return (
       <div>
-        <HelmetProvider>
-          <Helmet>
-            <title>{title}</title>
-            <meta name="title" content={title} />
-            <meta name="description" content={description} />
-            <meta name="keywords" content={`tutor, ${tutorName}, ${instituteName}, ${location}, online tutoring, home tutoring, education, teaching`} />
-            <link rel="canonical" href="https://www.tacobell.com/" />
-          </Helmet>
-        </HelmetProvider>
+        <Helmet>
+          <title>{title}</title>
+          <meta name="description" content={description} />
+          <meta property="og:title" content={title} />
+          <meta property="og:description" content={description} />
+          <meta property="og:image" content={tutor.profile_picture} />
+          <meta property="og:url" content={window.location.href} />
+          <meta name="twitter:card" content="summary_large_image" />
+        </Helmet>
       </div>
     );
   };
