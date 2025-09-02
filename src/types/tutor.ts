@@ -193,7 +193,6 @@ export interface PaginatedResponse<T> {
   results: T[];
 }
 
-
 export interface Description {
   uid: string;
   text: string;

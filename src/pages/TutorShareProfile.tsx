@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Star, MapPin, GraduationCap, DollarSign, Users, Calendar, Share2, Link2, Facebook, Twitter, MessageCircle } from 'lucide-react';
@@ -83,28 +82,54 @@ const TutorShareProfile: React.FC = () => {
   // Generate enhanced meta tags for social sharing
   const generateMetaTags = () => {
     if (!tutor) return null;
+    
     const tutorName = typeof tutor.full_name === 'string' ? tutor.full_name : 'Professional Tutor';
-    const title = `${tutorName} | Tuition Wave`;
+    const title = `${tutorName} - Professional Tutor | Tuition Wave`;
     const instituteName = tutor.institute?.name || 'Educational Institution';
     const salaryRange = tutor.expected_salary?.display_range || 'Contact for pricing';
-    const description = `Connect with ${tutorName}, a professional tutor from ${instituteName}. Offering ${tutor.teaching_type_display} tutoring services. Rating: ${tutor.avg_rating || 'New'}/5 stars. Monthly fee: ${salaryRange}. Book now for quality education!`;
+    const description = `Connect with ${tutorName}, a professional tutor from ${instituteName}. Offering ${tutor.teaching_type_display?.toLowerCase()} tutoring services. Rating: ${tutor.avg_rating || 'New'}/5 stars. Monthly fee: ${salaryRange}. Book now for quality education!`;
     
     const location = tutor.upazila?.[0]
       ? `${tutor.upazila[0].name}, ${tutor.upazila[0].district.name}`
       : 'Available nationwide';
 
+    // Ensure absolute URL for image
+    const imageUrl = tutor.profile_picture?.startsWith('http') 
+      ? tutor.profile_picture 
+      : `${window.location.origin}${tutor.profile_picture}`;
+
     return (
-      <div>
-        <Helmet>
-          <title>{title}</title>
-          <meta name="description" content={description} />
-          <meta property="og:title" content={title} />
-          <meta property="og:description" content={description} />
-          <meta property="og:image" content={tutor.profile_picture} />
-          <meta property="og:url" content={window.location.href} />
-          <meta name="twitter:card" content="summary_large_image" />
-        </Helmet>
-      </div>
+      <Helmet>
+        {/* Basic Meta Tags */}
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta name="keywords" content={`tutor, ${tutorName}, ${instituteName}, ${location}, online tutoring, home tutoring, education, teaching`} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="profile" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={imageUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:site_name" content="Tuition Wave" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={imageUrl} />
+        
+        {/* LinkedIn */}
+        <meta property="og:locale" content="en_US" />
+        
+        {/* WhatsApp */}
+        <meta property="og:image:alt" content={`${tutorName} - Professional Tutor Profile`} />
+        
+        {/* Canonical URL */}
+        <link rel="canonical" href={window.location.href} />
+      </Helmet>
     );
   };
 

@@ -1,31 +1,13 @@
-
 export interface Message {
-  id: string;
-  text?: string;
-  sender: string;
+  id: number;
+  sender: number;
+  receiver: number;
+  content: string;
+  attachment: string | { url: string; name: string; size: number; type: string; } | null;
   timestamp: string;
-  type: 'text' | 'image' | 'file' | 'audio' | 'video';
-  attachment?: string | {
-    url: string;
-    name: string;
-    size: number;
-    type: string;
-  };
-  isRead?: boolean;
-  delivered?: boolean;
-  reactions?: Array<{
-    emoji: string;
-    users: string[];
-  }>;
-  replyTo?: string;
-  edited?: boolean;
-  editedAt?: string;
-}
-
-export interface Conversation {
-  id: string;
-  participants: string[];
-  lastMessage?: Message;
-  updatedAt: string;
-  unreadCount: number;
+  is_read: boolean;
+  sender_name?: string;
+  receiver_name?: string;
+  sender_profile_picture?: string;
+  receiver_profile_picture?: string;
 }
