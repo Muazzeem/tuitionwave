@@ -101,9 +101,9 @@ const TutorShareProfile: React.FC = () => {
     if (!tutor) return null;
 
     const profileUrl = window.location.href;
-    const profileImage = tutor.profile_picture?.replace(/^http:\/\//i, "https://") || '/lovable-uploads/56c05a63-4266-4a9d-ad96-7c9d83120840.png';
+    const profileImage = tutor.profile_picture
     const tutorName = typeof tutor.full_name === 'string' ? tutor.full_name : 'Professional Tutor';
-    const title = `${tutorName} - Professional Tutor | TutorConnect`;
+    const title = `${tutorName} | Tuition Wave`;
     const instituteName = tutor.institute?.name || 'Educational Institution';
     const salaryRange = tutor.expected_salary?.display_range || 'Contact for pricing';
     const description = `Connect with ${tutorName}, a professional tutor from ${instituteName}. Offering ${tutor.teaching_type_display} tutoring services. Rating: ${tutor.avg_rating || 'New'}/5 stars. Monthly fee: ${salaryRange}. Book now for quality education!`;
@@ -130,7 +130,7 @@ const TutorShareProfile: React.FC = () => {
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:alt" content={`${tutorName} - Professional Tutor Profile Picture`} />
-        <meta property="og:site_name" content="TutorConnect" />
+        <meta property="og:site_name" content="Tuition Wave" />
         <meta property="og:locale" content="en_US" />
         
         {/* Enhanced Profile-specific Open Graph */}
@@ -140,8 +140,8 @@ const TutorShareProfile: React.FC = () => {
 
         {/* Enhanced Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@tutorconnect" />
-        <meta name="twitter:creator" content="@tutorconnect" />
+        <meta name="twitter:site" content="@Tuition Wave" />
+        <meta name="twitter:creator" content="@Tuition Wave" />
         <meta name="twitter:url" content={profileUrl} />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
@@ -150,7 +150,7 @@ const TutorShareProfile: React.FC = () => {
 
         {/* LinkedIn specific */}
         <meta property="og:image:type" content="image/jpeg" />
-        <meta name="linkedin:owner" content="tutorconnect" />
+        <meta name="linkedin:owner" content="Tuition Wave" />
 
         {/* Additional Meta Tags for better sharing */}
         <meta name="author" content={tutorName} />
@@ -221,7 +221,7 @@ const TutorShareProfile: React.FC = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Helmet>
-          <title>Tutor Profile Not Found | TutorConnect</title>
+          <title>Tutor Profile Not Found | Tuition Wave</title>
           <meta name="description" content="The tutor profile you are looking for does not exist." />
         </Helmet>
         <Header />
@@ -297,7 +297,7 @@ const TutorShareProfile: React.FC = () => {
               <div className="md:w-1/3">
                 <div className="aspect-square md:aspect-auto md:h-full relative">
                   <img
-                    src={tutor.profile_picture?.replace(/^http:\/\//i, "https://") || '/lovable-uploads/56c05a63-4266-4a9d-ad96-7c9d83120840.png'}
+                    src={tutor.profile_picture}
                     alt={`${tutorName} - Professional Tutor`}
                     className="w-full h-full object-cover"
                   />

@@ -39,7 +39,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         },
       });
 
-      if (!response.ok) throw new Error('Failed to fetch profile');
+      if (!response.ok) {
+        localStorage.clear();
+      }
 
       const profileData = await response.json();
       setUserProfile(profileData);
