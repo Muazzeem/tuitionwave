@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
       <DashboardHeader userName="John" />
 
       <ScrollArea type="always" style={{ height: "calc(100vh - 100px)" }}>
-        {userProfile.is_tutor ? (
+        {tutor && userProfile.is_tutor && (
           <div className="p-6">
             <h2 className="text-3xl font-bold text-foreground">Tutor Dashboard</h2>
             <p className="text-muted-foreground mb-6">
@@ -93,22 +93,25 @@ const Dashboard: React.FC = () => {
             </div>
 
             {tutor && tutor.package ? (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+              <>
                 <StatsCards />
-                <div className="lg:col-span-8">
-                  <RecentRequests />
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+                  <div className="lg:col-span-8">
+                    <RecentRequests />
+                  </div>
+                  <div className="lg:col-span-4">
+                    <TopTutors />
+                  </div>
                 </div>
-                <div className="lg:col-span-4">
-                  <TopTutors />
-                </div>
-              </div>
+              </>
             ) : (
               <PricingCards />
             )}
 
             <SocialMediaCards />
           </div>
-        ) : (
+        )}
+        {userProfile && !userProfile.is_tutor && (
           <ErrorPage
             icon={ShieldX}
             title="Access Denied"

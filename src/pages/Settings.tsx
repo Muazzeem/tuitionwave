@@ -24,7 +24,7 @@ const Settings = () => {
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
         <div className="p-4 sm:p-6">
           <h1 className="lg:text-3xl sm:text-2xl font-bold">Settings</h1>
-          <div className="p-4 sm:p-6 w-full max-w-4xl mx-auto">
+          <div className="p-4 sm:p-6 w-full max-w-7xl mx-auto">
             <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 {getUserTypeFromUrl(window.location.pathname) === 'GUARDIAN' && (
