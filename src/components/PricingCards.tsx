@@ -4,49 +4,12 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { X, Copy, Phone, Loader2, Tag } from 'lucide-react';
+import { X, Loader2, Tag } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { getAccessToken } from '@/utils/auth';
+import { Package, PromoCodeResponse } from '@/types/tutor';
 
-interface Description {
-  uid: string;
-  text: string;
-}
-
-interface Package {
-  uid: string;
-  name: string;
-  price: string;
-  period: string;
-  package_expiry_date: string;
-  descriptions: Description[];
-  created_at: string;
-}
-
-interface PromoCodeResponse {
-  error: any;
-  success: boolean;
-  message: string;
-  pricing_details: {
-    original_price: number;
-    discounted_price: number;
-    discount_amount: number;
-    promo_code: string;
-  };
-  package: {
-    uid: string;
-    name: string;
-    price: string;
-    period: string;
-    package_expiry_date: string;
-    descriptions: Array<{
-      uid: string;
-      text: string;
-    }>;
-    created_at: string;
-  };
-}
 
 const PricingCards: React.FC = () => {
   const { userProfile } = useAuth();
@@ -252,7 +215,7 @@ const PricingCards: React.FC = () => {
 
   return (
     <>
-      <div className="py-12 px-4 max-w-7xl mx-auto">
+      <div className="mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {packages.map((pkg, index) => (
             <Card key={pkg.uid} className={`relative ${getCardStyle(index)} h-full flex flex-col`}>
@@ -301,7 +264,7 @@ const PricingCards: React.FC = () => {
 
       {/* Modal */}
       {isModalOpen && selectedTier && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-900 rounded-lg max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b">
@@ -317,7 +280,7 @@ const PricingCards: React.FC = () => {
             </div>
 
             {/* Modal Content */}
-            <div className="p-6">
+            <div className="p-6 shadow-xl">
               {/* Promo Code Section */}
               <Card className="border-blue-200 dark:border-gray-700 mb-6">
                 <CardHeader className="pb-3">
@@ -441,7 +404,7 @@ const PricingCards: React.FC = () => {
               {/* Action Buttons */}
               <div className="flex space-x-3">
                 <Button
-                  onClick={() => closeModal}
+                  onClick={closeModal}
                   variant="outline"
                   className="flex-1 bg-red-500 hover:bg-red-600 text-white"
                 >

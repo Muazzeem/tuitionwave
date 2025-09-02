@@ -20,9 +20,6 @@ import {
   PlusCircle, 
   Trophy, 
   Target, 
-  Users,
-  TrendingUp,
-  BarChart3,
   RefreshCw
 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -95,12 +92,10 @@ export default function ExamHistory({
   const [internalExamFilter, setInternalExamFilter] = useState<'all' | 'not_started' | 'in_progress' | 'completed'>('all');
   const [internalCurrentPage, setInternalCurrentPage] = useState(1);
   const [internalTotalPages, setInternalTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedExam, setSelectedExam] = useState<ApiExamRecord | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
 
   const examRecords = useInternalApi ? internalExamRecords : (externalExamRecords || []);
   const examFilter = useInternalApi ? internalExamFilter : (externalExamFilter || 'all');
@@ -113,7 +108,6 @@ export default function ExamHistory({
 
   const fetchExams = async (status: string = '', page: number = 1, showRefresh: boolean = false) => {
     if (showRefresh) {
-      setRefreshing(true);
     } else {
       setLoading(true);
     }
@@ -145,13 +139,11 @@ export default function ExamHistory({
       setInternalExamRecords(data.results);
       setInternalTotalPages(data.total_pages);
       setInternalCurrentPage(data.current_page);
-      setTotalCount(data.count);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch exams');
       setInternalExamRecords([]);
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
   };
 
@@ -172,12 +164,6 @@ export default function ExamHistory({
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-  };
-
-  const handleRefresh = () => {
-    if (useInternalApi) {
-      fetchExams(examFilter, currentPage, true);
-    }
   };
 
   const handleStartExam = () => {
@@ -446,60 +432,10 @@ export default function ExamHistory({
 
   return (
     <div className="w-full bg-gray-900 min-h-screen">
-      <div className="space-y-6 mt-6 p-4 md:p-6">
-        {/* Enhanced Header with Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-blue-100 text-sm font-medium">Total Exams</p>
-                  <p className="text-2xl font-bold">{useInternalApi ? totalCount : examRecords.length}</p>
-                </div>
-                <BarChart3 className="h-8 w-8 text-blue-200" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-green-100 text-sm font-medium">Completed</p>
-                  <p className="text-2xl font-bold">{stats.completed}</p>
-                </div>
-                <CheckCircle className="h-8 w-8 text-green-200" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white border-0">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-orange-100 text-sm font-medium">In Progress</p>
-                  <p className="text-2xl font-bold">{stats.inProgress}</p>
-                </div>
-                <PlayCircle className="h-8 w-8 text-orange-200" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-purple-100 text-sm font-medium">Not Started</p>
-                  <p className="text-2xl font-bold">{stats.notStarted}</p>
-                </div>
-                <Clock className="h-8 w-8 text-purple-200" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+      <div className="space-y-6">
 
         {/* Filter and Control Section */}
-        <Card className="border border-muted bg-card">
+        <Card className="bg-gray-900 border-0">
           <CardContent className="p-6">
             <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4">
@@ -518,27 +454,6 @@ export default function ExamHistory({
                     <SelectItem value="completed">Completed</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-
-              <div className="flex items-center gap-4">
-                {useInternalApi && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleRefresh}
-                    disabled={refreshing}
-                    className="flex items-center gap-2"
-                  >
-                    <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-                    Refresh
-                  </Button>
-                )}
-                <div className="text-sm text-muted-foreground flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span>
-                    Showing {displayedExams.length} {useInternalApi ? `of ${totalCount}` : `of ${examRecords.length}`} exams
-                  </span>
-                </div>
               </div>
             </div>
           </CardContent>
@@ -559,9 +474,9 @@ export default function ExamHistory({
 
         {/* Exam Cards Grid */}
         {(!loading || !useInternalApi) && displayedExams.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
             {displayedExams.map((exam) => (
-              <Card key={exam.uid} className="group transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl dark:bg-card border border-muted hover:border-primary/50">
+              <Card key={exam.uid} className="dark:bg-background border border-muted hover:border-primary/50">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
                     <CardTitle className="text-base font-semibold line-clamp-2 group-hover:text-primary transition-colors">
@@ -592,8 +507,8 @@ export default function ExamHistory({
                   </div>
 
                   {/* Score Display */}
-                  {(exam.status === 'completed' || exam.status === 'failed') && (
-                    <div className="bg-muted/30 rounded-lg p-4 border">
+                  {exam.status && (
+                    <div className="bg-muted/30 rounded-lg p-4 border border-gray-600">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium">Final Score</span>
                         <span className={`font-bold text-lg ${getScoreColor(exam.percentage)}`}>
@@ -701,12 +616,9 @@ export default function ExamHistory({
 
         {/* Enhanced Pagination */}
         {displayedExams.length > 0 && totalPages > 1 && (
-          <Card className="border-0 bg-card/50">
+          <Card className="border-0 bg-gray-900">
             <CardContent className="p-4">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="text-sm text-muted-foreground">
-                  Page {currentPage} of {totalPages} • {useInternalApi ? totalCount : examRecords.length} total exams
-                </div>
                 {renderPagination()}
               </div>
             </CardContent>

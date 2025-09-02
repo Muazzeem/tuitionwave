@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { getAccessToken, isTokenExpired, refreshAccessToken } from '@/utils/auth';
 import { ProfileData } from '@/types/common';
 
@@ -7,6 +7,7 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   fetchProfile: () => Promise<void>;
+  reloadProfile: () => Promise<void>;
   clearProfile: () => void;
 }
 
@@ -18,17 +19,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [error, setError] = useState<string | null>(null);
 
   const fetchProfile = async () => {
-    const storedProfile = sessionStorage.getItem('userProfile');
-    if (storedProfile) {
-      try {
-        setUserProfile(JSON.parse(storedProfile));
-        setLoading(false);
-        return;
-      } catch (e) {
-        sessionStorage.removeItem('userProfile');
-      }
-    }
-
     setLoading(true);
     setError(null);
 
@@ -57,10 +47,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch (err) {
       console.error('Profile fetch failed:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
+      setUserProfile(null);
       sessionStorage.removeItem('userProfile');
     } finally {
       setLoading(false);
     }
+  };
+
+  const reloadProfile = async () => {
+    setUserProfile(null);
+    sessionStorage.removeItem('userProfile');
+    await fetchProfile();
   };
 
   const clearProfile = () => {
@@ -95,6 +92,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         loading,
         error,
         fetchProfile,
+        reloadProfile,
         clearProfile,
       }}
     >

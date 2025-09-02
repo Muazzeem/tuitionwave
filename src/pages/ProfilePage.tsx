@@ -112,17 +112,6 @@ const ProfilePage: React.FC = () => {
         <div className="p-4 sm:p-6">
           <div className="flex justify-between items-center mb-4 sm:mb-6">
             <h1 className="lg:text-3xl sm:text-2xl font-bold">Edit Profile</h1>
-            
-            {!isLoading && tutorData && (
-              <SocialShare
-                tutorName={tutorData.full_name || 'Tutor'}
-                tutorUniversity={tutorData.institute?.name || 'University'}
-                tutorLocation={tutorData.city?.name || 'Location'}
-                tutorRate={tutorData.expected_salary?.max_amount || 0}
-                tutorType={tutorData.teaching_type_display || 'Online'}
-                tutorUid={tutorData.uid || ''}
-              />
-            )}
           </div>
 
           {/* <div className="mb-4 sm:mb-6">

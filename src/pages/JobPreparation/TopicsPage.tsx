@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, useLocation, Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -103,7 +103,9 @@ const TopicsPage: React.FC = () => {
           <div className={userProfile ? "p-2 md:p-6 max-w-7xl mx-auto" : "p-2 md:p-6 container"}>
             {/* Breadcrumb */}
             <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-              <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
+              <Link to="/job-preparation/questions">
+                <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
+              </Link>
               <span>/</span>
               <span className="text-blue-600 font-medium">Topics</span>
             </div>

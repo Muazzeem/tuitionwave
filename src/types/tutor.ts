@@ -63,6 +63,7 @@ export interface City {
 }
 
 export interface Tutor {
+  package: any;
   upazila: any;
   linkedin_profile: string;
   expected_salary: any;
@@ -190,4 +191,44 @@ export interface PaginatedResponse<T> {
   next: string | null;
   previous: string | null;
   results: T[];
+}
+
+
+export interface Description {
+  uid: string;
+  text: string;
+}
+
+export interface Package {
+  uid: string;
+  name: string;
+  price: string;
+  period: string;
+  package_expiry_date: string;
+  descriptions: Description[];
+  created_at: string;
+}
+
+export interface PromoCodeResponse {
+  error: any;
+  success: boolean;
+  message: string;
+  pricing_details: {
+    original_price: number;
+    discounted_price: number;
+    discount_amount: number;
+    promo_code: string;
+  };
+  package: {
+    uid: string;
+    name: string;
+    price: string;
+    period: string;
+    package_expiry_date: string;
+    descriptions: Array<{
+      uid: string;
+      text: string;
+    }>;
+    created_at: string;
+  };
 }

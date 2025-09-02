@@ -24,7 +24,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getAccessToken } from "@/utils/auth";
 import { ContractResponse } from "@/types/contract";
 import { useAuth } from "@/contexts/AuthContext";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const MyRequest: React.FC = () => {
   const { userProfile } = useAuth();

@@ -8,6 +8,7 @@ import { Clock, Calendar, PlayCircle, CheckCircle, Eye, Timer, BookOpen, Trophy,
 import { getAccessToken } from "@/utils/auth";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import TutorPagination from "@/components/FindTutors/TutorPagination";
 
 // Custom hook for countdown timer
 const useCountdown = (targetDate) => {
@@ -71,10 +72,15 @@ const useCountdown = (targetDate) => {
 };
 
 // Countdown Display Component
-const CountdownDisplay = ({ targetDate, className = "" }) => {
+const CountdownDisplay = ({ targetDate, className = "", hideForExpired = false, examStatus = "running" }) => {
   const timeLeft = useCountdown(targetDate);
 
   if (!timeLeft || !targetDate) {
+    return null;
+  }
+
+  // Hide countdown for expired tests if hideForExpired is true
+  if (hideForExpired && (timeLeft.expired || examStatus === "expired")) {
     return null;
   }
 
@@ -134,6 +140,8 @@ export default function CreateModelTest() {
   const [processingExams, setProcessingExams] = useState(new Set());
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     document.title = "Tuition Wave | Model Tests";
@@ -180,73 +188,78 @@ export default function CreateModelTest() {
     }
   }, [searchParams]);
 
-  useEffect(() => {
+
+  const fetchModelTests = async () => {
     const accessToken = getAccessToken();
+    try {
+      setLoading(true);
 
-    const fetchModelTests = async () => {
-      try {
-        setLoading(true);
+      const currentTab = tabs.find(tab => tab.id === selectedTab);
+      const apiParam = currentTab?.param || "today=true";
 
-        const currentTab = tabs.find(tab => tab.id === selectedTab);
-        const apiParam = currentTab?.param || "today=true";
-
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/model-tests?${apiParam}`, {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/model-tests?${apiParam}&page=${currentPage}`,
+        {
           headers: {
             Authorization: `Bearer ${accessToken}`
           }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
         }
+      );
 
-        const data = await response.json();
-
-        const transformedData = data.results.map((test) => {
-          return {
-            uid: test.uid,
-            title: test.name,
-            description: test.description || "No description available",
-            duration: `${test.duration_minutes} min`,
-            participants: "0 participants",
-            category: test.category.category_name,
-            status: selectedTab,
-            totalQuestions: test.total_questions,
-            configurations: test.configurations,
-            user_exam: test.user_exam || null,
-            is_active: test.is_active !== false,
-            passing_marks: test.passing_mark,
-            scheduled_date: test.scheduled_date
-              ? new Date(test.scheduled_date).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric"
-              })
-              : null,
-            expired_date: test.expired_date || null, // Keep as ISO string for countdown
-            expired_date_formatted: test.expired_date
-              ? new Date(test.expired_date).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric"
-              })
-              : null
-          };
-        });
-        setExamData(transformedData);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching model tests:', err);
-        setError('Failed to load model tests. Please try again later.');
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
 
+      const data = await response.json();
+
+      // Set total pages if your backend returns pagination metadata
+      setTotalPages(data.total_pages || 1);
+
+      const transformedData = data.results.map((test) => ({
+        uid: test.uid,
+        title: test.name,
+        description: test.description || "No description available",
+        duration: `${test.duration_minutes} min`,
+        participants: "0 participants",
+        category: test.category.category_name,
+        status: selectedTab,
+        totalQuestions: test.total_questions,
+        configurations: test.configurations,
+        user_exam: test.user_exam || null,
+        is_active: test.is_active !== false,
+        passing_marks: test.passing_mark,
+        scheduled_date: test.scheduled_date
+          ? new Date(test.scheduled_date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+          })
+          : null,
+        expired_date: test.expired_date || null,
+        expired_date_formatted: test.expired_date
+          ? new Date(test.expired_date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric"
+          })
+          : null
+      }));
+
+      setExamData(transformedData);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching model tests:', err);
+      setError('Failed to load model tests. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchModelTests();
-  }, [selectedTab]);
+  }, [selectedTab, currentPage]);
 
   const filteredExams = examData;
 
@@ -339,7 +352,6 @@ export default function CreateModelTest() {
         );
       }
     } catch (err) {
-      console.error("Error handling exam:", err);
       toast({
         title: "Error",
         description: "Failed to process exam. Please try again.",
@@ -365,9 +377,53 @@ export default function CreateModelTest() {
         bgColor: 'bg-orange-50 dark:bg-orange-900/20',
         borderColor: 'border-orange-200 dark:border-orange-800',
         action: 'Processing...',
-        disabled: true
+        disabled: true,
+        buttonClass: 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed'
       };
     }
+
+    // Check if exam is upcoming (disable button)
+    if (exam.status === 'upcoming') {
+      return {
+        icon: Clock,
+        label: 'Coming Soon',
+        color: 'text-blue-600',
+        bgColor: 'bg-blue-50 dark:bg-blue-900/20',
+        borderColor: 'border-blue-200 dark:border-blue-800',
+        action: 'Coming Soon',
+        disabled: true,
+        buttonClass: 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed text-gray-600'
+      };
+    }
+
+    // Check if exam is expired (change button color)
+
+    if (exam.status === 'expired') {
+      if (exam.user_exam) {
+        return {
+          icon: CheckCircle,
+          label: 'Expired',
+          color: 'text-gray-600',
+          bgColor: 'bg-gray-50 dark:bg-gray-900/20',
+          borderColor: 'border-gray-200 dark:border-gray-800',
+          action: 'View Result',
+          disabled: false,
+          buttonClass: 'dark:bg-red-800/80 text-white'
+        };
+      }
+
+      return {
+        icon: CheckCircle,
+        label: 'Expired',
+        color: 'text-gray-600',
+        bgColor: 'bg-gray-50 dark:bg-gray-900/20',
+        borderColor: 'border-gray-200 dark:border-gray-800',
+        action: 'Start Exam',
+        disabled: false,
+        buttonClass: 'dark:bg-red-800/80 text-white'
+      };
+    }
+
 
     if (exam.user_exam) {
       const status = exam.user_exam.status;
@@ -380,7 +436,8 @@ export default function CreateModelTest() {
             bgColor: 'bg-green-50 dark:bg-green-900/20',
             borderColor: 'border-green-200 dark:border-green-800',
             action: 'View Results',
-            disabled: false
+            disabled: false,
+            buttonClass: 'bg-gradient-to-r from-blue-500 to-primary-500 hover:from-blue-600 hover:to-primary-700 text-white'
           };
         case 'in_progress':
           return {
@@ -390,7 +447,8 @@ export default function CreateModelTest() {
             bgColor: 'bg-blue-50 dark:bg-blue-900/20',
             borderColor: 'border-blue-200 dark:border-blue-800',
             action: 'Continue Exam',
-            disabled: false
+            disabled: false,
+            buttonClass: 'bg-gradient-to-r from-blue-500 to-primary-500 hover:from-blue-600 hover:to-primary-700 text-white'
           };
       }
     }
@@ -403,7 +461,8 @@ export default function CreateModelTest() {
       bgColor: 'bg-blue-50 dark:bg-blue-900/20',
       borderColor: 'border-blue-200 dark:border-blue-800',
       action: 'Continue Exam',
-      disabled: false
+      disabled: false,
+      buttonClass: 'bg-gradient-to-r from-blue-500 to-primary-500 hover:from-blue-600 hover:to-primary-700 text-white'
     };
   };
 
@@ -460,8 +519,8 @@ export default function CreateModelTest() {
                 return (
                   <Card
                     key={exam.uid}
-                    className={`group transition-all duration-300 hover:shadow-lg ${exam.is_active
-                      ? 'hover:scale-[1.02] hover:border-primary-300 dark:hover:border-primary-600'
+                    className={`${exam.is_active
+                      ? 'hover:border-primary-300 dark:hover:border-primary-600'
                       : 'opacity-75 cursor-not-allowed'
                       } bg-white dark:bg-background border-gray-200 dark:border-gray-900 shadow-md`}
                   >
@@ -498,15 +557,15 @@ export default function CreateModelTest() {
                             <span>{exam.duration}</span>
                           </div>
                           <div className="flex flex-col gap-1">
-                            {/* Countdown Timer */}
+                            {/* Countdown Timer - Hidden for expired tests */}
                             {exam.expired_date && (
                               <CountdownDisplay
                                 targetDate={exam.expired_date}
                                 className="self-end"
+                                hideForExpired={exam.status === 'expired'}
+                                examStatus={exam.status}
                               />
                             )}
-                            {/* Formatted expiry date - fallback if no countdown */}
-                            
                           </div>
                         </div>
 
@@ -559,7 +618,7 @@ export default function CreateModelTest() {
                         {/* Action Button */}
                         {exam.is_active && exam.totalQuestions > 0 && (
                           <Button
-                            className="w-full mt-3 sm:mt-4 bg-gradient-to-r from-blue-500 to-primary-500 hover:from-blue-600 hover:to-primary-700 text-white group-hover:shadow-md transition-all text-xs sm:text-sm disabled:opacity-50"
+                            className={`w-full mt-3 sm:mt-4 group-hover:shadow-md transition-all text-xs sm:text-sm ${statusInfo.buttonClass} ${statusInfo.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                             size="sm"
                             onClick={() => handleStartExam(exam)}
                             disabled={statusInfo.disabled}
@@ -574,6 +633,14 @@ export default function CreateModelTest() {
                 );
               })}
             </div>
+          )}
+
+          {totalPages > 1 && (
+            <TutorPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
           )}
 
           {/* Enhanced Empty State */}
@@ -617,4 +684,3 @@ export default function CreateModelTest() {
     </div>
   );
 }
-

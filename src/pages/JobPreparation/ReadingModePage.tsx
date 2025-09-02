@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Badge } from '@/components/ui/badge';
@@ -105,12 +105,14 @@ const ReadingModePage: React.FC = () => {
     <div className="flex-1 overflow-auto dark:bg-gray-900 h-screen bg-gray-50 w-full">
       {userProfile ? <DashboardHeader userName="BCS Candidate" /> : <Header />}
 
-      <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(100vh - 160px)' }}>
+      <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(109vh - 160px)' }}>
         <main className="flex-1 pb-6">
           <div className="p-2 sm:p-4 md:p-6 max-w-7xl mx-auto">
             {/* Breadcrumb */}
             <div className="mb-4 sm:mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-              <span className="hover:text-green-600 cursor-pointer transition-colors">Job Preparation</span>
+              <Link to="/job-preparation/questions">
+                <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
+              </Link>
               <span>/</span>
               <span className="text-green-600 font-medium">Reading Mode</span>
             </div>
@@ -196,24 +198,40 @@ const ReadingModePage: React.FC = () => {
               <LoadingSkeleton />
             ) : (
               <>
-                <div className="space-y-3 sm:space-y-4 px-1 sm:px-0">
-                  {readingQuestionsData?.results.map((question) => (
-                    <QuestionCard
-                      key={question.uid}
-                      question={question}
-                      mode="reading"
-                    />
-                  ))}
-                </div>
+                  <div className="space-y-3 sm:space-y-4 px-1 sm:px-0">
+                    {readingQuestionsData?.results.map((question, index) => {
+                      const questionNumber = (currentPage - 1) * 20 + (index + 1);
+
+                      return (
+                        <QuestionCard
+                          key={question.uid}
+                          question={question}
+                          questionNumber={questionNumber}
+                          mode="reading"
+                        />
+                      );
+                    })}
+                  </div>
+
 
                 {readingQuestionsData && (
-                  <TutorPagination
-                    currentPage={currentPage}
-                    totalPages={Math.ceil(readingQuestionsData.count / 20)}
-                    onPageChange={handlePageChange}
-                    hasNext={!!readingQuestionsData.next}
-                    hasPrevious={!!readingQuestionsData.previous}
-                  />
+                    <>
+                      {!userProfile ? (
+                        <div className="mb-4 p-4 bg-red-100 text-yellow-800 rounded mt-5 text-center">
+                          <span className="text-md">
+                            Please log in to access all the questions.
+                          </span>
+                        </div>
+                      ) : (
+                          <TutorPagination
+                            currentPage={currentPage}
+                            totalPages={Math.ceil(readingQuestionsData.count / 20)}
+                            onPageChange={handlePageChange}
+                            hasNext={!!readingQuestionsData.next}
+                            hasPrevious={!!readingQuestionsData.previous}
+                          />
+                      )}
+                    </>
                 )}
               </>
             )}

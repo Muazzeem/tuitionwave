@@ -52,7 +52,7 @@ const PackageSettings = () => {
       <DashboardHeader userName="Settings" />
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
         <div className="p-4 sm:p-6 max-w-full lg:max-w-[1211px] mx-auto">
-          <Card className="bg-white dark:bg-background border border-primary-200 dark:border-primary-700">
+          <Card className="bg-white dark:bg-background">
             <CardContent className="p-0">
               <div className="p-6 space-y-6 dark:bg-background">
                 <div>

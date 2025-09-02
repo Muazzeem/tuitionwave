@@ -14,6 +14,7 @@ interface QuestionCardProps {
   result?: AnswerResult;
   onOptionSelect?: (questionUid: string, optionLabel: string) => void;
   mode: 'practice' | 'reading';
+  questionNumber: number;
 }
 
 const QuestionCard: React.FC<QuestionCardProps> = ({
@@ -23,7 +24,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   selectedOption,
   result,
   onOptionSelect,
-  mode
+  mode, questionNumber
 }) => {
   const handleOptionClick = (optionLabel: string) => {
     if (mode === 'practice' && !isAnswered && onOptionSelect) {
@@ -39,7 +40,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0 ${
               mode === 'reading' ? 'bg-gradient-to-r from-green-600 to-emerald-600' : 'bg-blue-600'
             }`}>
-              {question.question_number}
+              {questionNumber}
             </div>
             <span className="text-sm sm:text-base leading-relaxed text-gray-900 dark:text-white">
               {question.question_text}
