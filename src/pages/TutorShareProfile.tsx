@@ -1,14 +1,15 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { Star, MapPin, GraduationCap, DollarSign, Users, Calendar, Share2, Link2, Facebook, Twitter, MessageCircle } from 'lucide-react';
 import { Tutor } from '@/types/tutor';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Badge } from '@/components/ui/badge';
-import * as htmlToImage from 'html-to-image';
-import { saveAs } from 'file-saver';
+
+import { Helmet, HelmetProvider } from 'react-helmet-async';
+
+
 
 const TutorShareProfile: React.FC = () => {
   const { uid } = useParams();
@@ -50,23 +51,6 @@ const TutorShareProfile: React.FC = () => {
     }
   };
 
-  const handleDownloadImage = () => {
-    if (!cardRef.current) return;
-    htmlToImage.toPng(cardRef.current)
-      .then((dataUrl) => saveAs(dataUrl, `${tutor?.full_name || 'tutor'}-profile.png`))
-      .catch((err) => console.error('Failed to generate image:', err));
-  };
-
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy link:', err);
-    }
-  };
-
   const handleShare = (platform: string) => {
     const url = encodeURIComponent(window.location.href);
     const tutorName = typeof tutor?.full_name === 'string' ? tutor.full_name : 'Professional Tutor';
@@ -99,9 +83,6 @@ const TutorShareProfile: React.FC = () => {
   // Generate enhanced meta tags for social sharing
   const generateMetaTags = () => {
     if (!tutor) return null;
-
-    const profileUrl = window.location.href;
-    const profileImage = tutor.profile_picture
     const tutorName = typeof tutor.full_name === 'string' ? tutor.full_name : 'Professional Tutor';
     const title = `${tutorName} | Tuition Wave`;
     const instituteName = tutor.institute?.name || 'Educational Institution';
@@ -113,92 +94,17 @@ const TutorShareProfile: React.FC = () => {
       : 'Available nationwide';
 
     return (
-      <Helmet>
-        {/* Primary Meta Tags */}
-        <title>{title}</title>
-        <meta name="title" content={title} />
-        <meta name="description" content={description} />
-        <meta name="keywords" content={`tutor, ${tutorName}, ${instituteName}, ${location}, online tutoring, home tutoring, education, teaching`} />
-
-        {/* Enhanced Open Graph / Facebook */}
-        <meta property="og:type" content="profile" />
-        <meta property="og:url" content={profileUrl} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:image" content={profileImage} />
-        <meta property="og:image:secure_url" content={profileImage} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content={`${tutorName} - Professional Tutor Profile Picture`} />
-        <meta property="og:site_name" content="Tuition Wave" />
-        <meta property="og:locale" content="en_US" />
-        
-        {/* Enhanced Profile-specific Open Graph */}
-        <meta property="profile:first_name" content={tutorName.split(' ')[0]} />
-        <meta property="profile:last_name" content={tutorName.split(' ').slice(1).join(' ') || ''} />
-        <meta property="profile:username" content={tutorName.replace(/\s+/g, '').toLowerCase()} />
-
-        {/* Enhanced Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@Tuition Wave" />
-        <meta name="twitter:creator" content="@Tuition Wave" />
-        <meta name="twitter:url" content={profileUrl} />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={profileImage} />
-        <meta name="twitter:image:alt" content={`${tutorName} - Professional Tutor`} />
-
-        {/* LinkedIn specific */}
-        <meta property="og:image:type" content="image/jpeg" />
-        <meta name="linkedin:owner" content="Tuition Wave" />
-
-        {/* Additional Meta Tags for better sharing */}
-        <meta name="author" content={tutorName} />
-        <meta name="robots" content="index, follow" />
-        <meta name="revisit-after" content="7 days" />
-        <link rel="canonical" href={profileUrl} />
-
-        {/* Enhanced Schema.org structured data */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Person",
-            "name": tutorName,
-            "image": {
-              "@type": "ImageObject",
-              "url": profileImage,
-              "width": 400,
-              "height": 400
-            },
-            "description": description,
-            "url": profileUrl,
-            "jobTitle": "Professional Tutor",
-            "worksFor": {
-              "@type": "EducationalOrganization",
-              "name": instituteName
-            },
-            "address": tutor.upazila?.[0] ? {
-              "@type": "PostalAddress",
-              "addressLocality": tutor.upazila[0].name,
-              "addressRegion": tutor.upazila[0].district.name,
-              "addressCountry": "BD"
-            } : undefined,
-            "aggregateRating": tutor.avg_rating ? {
-              "@type": "AggregateRating",
-              "ratingValue": tutor.avg_rating,
-              "reviewCount": tutor.review_count || 0,
-              "bestRating": 5,
-              "worstRating": 1
-            } : undefined,
-            "offers": {
-              "@type": "Offer",
-              "price": salaryRange,
-              "priceCurrency": "BDT",
-              "description": `${tutor.teaching_type_display} tutoring services`
-            }
-          })}
-        </script>
-      </Helmet>
+      <div>
+        <HelmetProvider>
+          <Helmet>
+            <title>{title}</title>
+            <meta name="title" content={title} />
+            <meta name="description" content={description} />
+            <meta name="keywords" content={`tutor, ${tutorName}, ${instituteName}, ${location}, online tutoring, home tutoring, education, teaching`} />
+            <link rel="canonical" href="https://www.tacobell.com/" />
+          </Helmet>
+        </HelmetProvider>
+      </div>
     );
   };
 
@@ -220,10 +126,6 @@ const TutorShareProfile: React.FC = () => {
   if (error || !tutor) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Helmet>
-          <title>Tutor Profile Not Found | Tuition Wave</title>
-          <meta name="description" content="The tutor profile you are looking for does not exist." />
-        </Helmet>
         <Header />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -246,17 +148,6 @@ const TutorShareProfile: React.FC = () => {
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Share Actions */}
           <div className="mb-6 flex flex-wrap gap-3 justify-center">
-            <button
-              onClick={handleCopyLink}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${copySuccess
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                }`}
-            >
-              <Link2 className="w-4 h-4" />
-              {copySuccess ? 'Copied!' : 'Copy Link'}
-            </button>
-
             <button
               onClick={() => handleShare('facebook')}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
@@ -370,16 +261,6 @@ const TutorShareProfile: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Download Button */}
-          <div className="text-center">
-            <button
-              onClick={handleDownloadImage}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Download as Image
-            </button>
           </div>
         </div>
       </main>

@@ -45,7 +45,6 @@ import ExamPage from "./pages/JobPreparation/ExamPage";
 import ExamResultsPage from "./pages/JobPreparation/ExamResultsPage";
 
 import { Loader2 } from "lucide-react";
-import { HelmetProvider } from 'react-helmet-async';
 
 const queryClient = new QueryClient();
 
@@ -131,7 +130,6 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <HelmetProvider>
       <AuthProvider>
         <UserProfileProvider>
           <BrowserRouter>
@@ -333,7 +331,6 @@ const App = () => (
           </BrowserRouter>
         </UserProfileProvider>
       </AuthProvider>
-      </HelmetProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
