@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
@@ -132,11 +132,10 @@ const App = () => (
       <Sonner />
       <AuthProvider>
         <UserProfileProvider>
-          <BrowserRouter>
-            <TokenValidationWrapper>
-              <Routes>
-                {/* Public routes */}
-                <Route path="/" element={<HomePage />} />
+          <TokenValidationWrapper>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/auth/registration" element={<RegistrationPage />} />
                 <Route path="/tutor/:uid" element={<TutorShareProfile />} />
@@ -325,10 +324,9 @@ const App = () => (
                     <PublicDashboard />
                   </AuthGuard>
                 } />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </TokenValidationWrapper>
-          </BrowserRouter>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </TokenValidationWrapper>
         </UserProfileProvider>
       </AuthProvider>
     </TooltipProvider>
