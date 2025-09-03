@@ -304,9 +304,9 @@ const CreateContract: React.FC<{ uid: string; drawer: DrawerState}> = ({ uid, dr
   ];
 
   const memberOptions = [
-    { value: 1, label: '1' },
-    { value: 2, label: '2' },
-    { value: 3, label: '3' },
+    { value: "1", label: '1' },
+    { value: "2", label: '2' },
+    { value: "3", label: '3' },
   ]
 
   const genderOptions = [

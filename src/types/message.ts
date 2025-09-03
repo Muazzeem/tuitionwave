@@ -3,7 +3,7 @@ export interface Message {
   sender: number;
   receiver: number;
   content: string;
-  attachment: string | { url: string; name: string; size: number; type: string; } | null;
+  attachment: string | null;
   timestamp: string;
   is_read: boolean;
   sender_name?: string;

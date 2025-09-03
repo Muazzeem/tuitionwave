@@ -26,12 +26,7 @@ interface FileWithPreview {
 interface Message {
   id: number;
   text: string;
-  attachment?: {
-    url: string;
-    name: string;
-    size: number;
-    type: string;
-  } | string | null;
+  attachment?: string | null;
   sent_at: string;
   sender_name: string;
   sender_email: string;

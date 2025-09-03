@@ -27,7 +27,7 @@ interface TuitionFormData {
   maxHourlyCharge: string;
   activeDaysIds?: number[];
   preferredTime: string;
-  subjects?: number[]; // Array of subject IDs
+  subjects?: string[]; // Array of subject IDs
 }
 
 interface TuitionInfoResponse {
@@ -123,7 +123,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
 
         // Map the response data to form data with proper null checks
         const selectedDayIds = tuitionData.active_days ? tuitionData.active_days.map(day => day.id) : [];
-        const selectedSubjectIds = tuitionData.subjects ? tuitionData.subjects.map(subject => subject.id) : [];
+        const selectedSubjectIds = tuitionData.subjects ? tuitionData.subjects.map(subject => subject.id.toString()) : [];
         
         updateFormData({
           daysPerWeek: tuitionData.days_per_week?.toString() || '',
@@ -241,12 +241,13 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
 
   const handleSubjectSelection = (subjectId: number) => {
     const currentSelectedSubjects = formData.subjects || [];
-    let updatedSubjects: number[];
+    const subjectIdStr = subjectId.toString();
+    let updatedSubjects: string[];
 
-    if (currentSelectedSubjects.includes(subjectId)) {
-      updatedSubjects = currentSelectedSubjects.filter(id => id !== subjectId);
+    if (currentSelectedSubjects.includes(subjectIdStr)) {
+      updatedSubjects = currentSelectedSubjects.filter(id => id !== subjectIdStr);
     } else {
-      updatedSubjects = [...currentSelectedSubjects, subjectId];
+      updatedSubjects = [...currentSelectedSubjects, subjectIdStr];
     }
 
     updateFormData({ subjects: updatedSubjects });
@@ -280,7 +281,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
         days_per_week: parseInt(formData.daysPerWeek, 10),
         teaching_type: formData.teachingType,
         active_days: formData.activeDaysIds || [],
-        subjects: formData.subjects || [], // Send array of subject IDs
+        subjects: formData.subjects ? formData.subjects.map(id => parseInt(id)) : [], // Send array of subject IDs
         expected_salary: formData.minSalary && formData.maxSalary ? {
           min_amount: parseInt(formData.minSalary, 10),
           max_amount: parseInt(formData.maxSalary, 10),
@@ -410,7 +411,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
         <div className="mt-3">
       <div className="flex flex-wrap gap-2">
         {visibleSubjects.map((subject) => {
-          const isSelected = formData.subjects?.includes(subject.id) || false;
+          const isSelected = formData.subjects?.includes(subject.id.toString()) || false;
           return (
             <button
               key={subject.id}
