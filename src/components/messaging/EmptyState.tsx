@@ -23,7 +23,7 @@ const EmptyState: React.FC = () => {
           </div>
         </div>
         
-        <h3 className="text-xl font-semibold text-foreground mb-3">
+        <h3 className="text-xl font-semibold text-foreground mb-3 text-white">
           Welcome to Messages
         </h3>
         <p className="text-muted-foreground mb-6 leading-relaxed text-sm">

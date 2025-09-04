@@ -182,13 +182,13 @@ const QuestionsPage: React.FC = () => {
   const LoadingSkeleton = () => (
     <div className="space-y-4 px-1 sm:px-0">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-white dark:bg-gray-800 rounded-lg p-4 animate-pulse">
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-3"></div>
+        <div key={i} className="bg-gray-800 rounded-lg p-4 animate-pulse">
+          <div className="h-4 bg-gray-700 rounded w-3/4 mb-3"></div>
           <div className="space-y-2">
-            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+            <div className="h-3 bg-gray-700 rounded w-full"></div>
             <div className="grid grid-cols-1 gap-2">
               {[1, 2, 3, 4].map((j) => (
-                <div key={j} className="h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                <div key={j} className="h-8 bg-gray-700 rounded"></div>
               ))}
             </div>
           </div>
@@ -198,14 +198,14 @@ const QuestionsPage: React.FC = () => {
   );
 
   return (
-    <div className="flex-1 overflow-auto dark:bg-gray-900 h-screen bg-gray-50 w-full">
+    <div className="flex-1 overflow-auto bg-gray-900 h-screen bg-gray-50 w-full">
       {userProfile ? <DashboardHeader userName="BCS Candidate" /> : <Header />}
 
       <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(109vh - 160px)' }}>
         <main className="flex-1 pb-6">
           <div className="p-2 sm:p-4 md:p-6 max-w-7xl mx-auto">
             {/* Breadcrumb */}
-            <div className="mb-4 sm:mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="mb-4 sm:mb-6 flex items-center space-x-2 text-sm text-gray-600 text-gray-400">
               <Link to="/job-preparation/questions">
                 <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
               </Link>
@@ -221,13 +221,13 @@ const QuestionsPage: React.FC = () => {
                     <Button
                       variant="outline"
                       onClick={handleBack}
-                      className="hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                      className="hover:bg-blue-50 hover:bg-blue-900/20 border-0 text-white"
                     >
                       <ChevronLeft className="h-4 w-4 mr-1" />
                       <span className="hidden sm:inline">Back to Topic</span>
                     </Button>
                     <div>
-                      <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+                      <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 text-white flex items-center">
                         <Brain className="h-5 w-5 sm:h-6 sm:w-6 mr-2 text-blue-600" />
                         Practice Questions
                       </h1>
@@ -250,7 +250,7 @@ const QuestionsPage: React.FC = () => {
                       onClick={handleRefresh}
                       variant="outline"
                       size="sm"
-                      className="border-blue-200 text-blue-700 dark:border-blue-700 dark:text-blue-300"
+                      className="border-blue-200 text-blue-700 border-blue-700 text-blue-300"
                     >
                       <RefreshCw className="h-4 w-4" />
                       <span className="hidden sm:inline ml-2">Reset</span>
@@ -268,9 +268,9 @@ const QuestionsPage: React.FC = () => {
 
                 {/* Progress Stats for Mobile */}
                 {progressStats.total > 0 && (
-                  <div className="sm:hidden bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border">
+                  <div className="sm:hidden bg-white bg-gray-800 rounded-lg p-3 shadow-sm border">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Progress</span>
+                      <span className="text-sm font-medium text-gray-700 text-gray-300">Progress</span>
                       <span className="text-sm font-bold text-blue-600">{progressStats.accuracy}%</span>
                     </div>
                     <div className="flex gap-4 text-xs">
@@ -278,7 +278,7 @@ const QuestionsPage: React.FC = () => {
                       <span className="text-red-600">✗ {progressStats.incorrect}</span>
                       <span className="text-gray-600">Total: {progressStats.total}</span>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
+                    <div className="w-full bg-gray-200 bg-gray-700 rounded-full h-2 mt-2">
                       <div
                         className="bg-gradient-to-r from-green-500 to-blue-500 h-full rounded-full transition-all duration-500"
                         style={{ width: `${progressStats.accuracy}%` }}
@@ -360,17 +360,17 @@ const QuestionsPage: React.FC = () => {
         {/* Desktop Progress Card */}
         {progressStats.total > 0 && (
           <div className="fixed bottom-6 right-6 z-50 hidden lg:block">
-            <Card className="bg-white/95 backdrop-blur-lg dark:bg-gray-900/95 shadow-2xl border-0 w-72">
+            <Card className="bg-white/95 backdrop-blur-lg bg-gray-900/95 shadow-2xl border-0 w-72">
               <CardContent className="p-4">
                 <div className="flex items-center space-x-3 mb-4">
                   <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                     <Trophy className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg text-gray-900 dark:text-white">
+                    <h3 className="font-bold text-lg text-gray-900 text-white">
                       Progress
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                    <p className="text-sm text-gray-600 text-gray-400 flex items-center">
                       <TrendingUp className="h-3 w-3 mr-1" />
                       {progressStats.accuracy}% accuracy
                     </p>
@@ -378,48 +378,48 @@ const QuestionsPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <div className="flex items-center justify-between p-2 bg-purple-50 bg-purple-900/20 rounded-lg">
+                    <span className="text-sm font-medium text-gray-700 text-gray-300">
                       Answered
                     </span>
-                    <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900/30 dark:text-purple-300 font-bold">
+                    <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-300 bg-purple-900/30 text-purple-300 font-bold">
                       {progressStats.total}
                     </Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <span className="text-sm font-medium text-green-700 dark:text-green-300 flex items-center">
+                  <div className="flex items-center justify-between p-2 bg-green-50 bg-green-900/20 rounded-lg">
+                    <span className="text-sm font-medium text-green-700 text-green-300 flex items-center">
                       <CheckCircle className="h-4 w-4 mr-1" />
                       Correct
                     </span>
-                    <Badge className="bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 font-bold">
+                    <Badge className="bg-green-100 text-green-800 border-green-300 bg-green-900/30 text-green-300 font-bold">
                       {progressStats.correct}
                     </Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                    <span className="text-sm font-medium text-red-700 dark:text-red-300 flex items-center">
+                  <div className="flex items-center justify-between p-2 bg-red-50 bg-red-900/20 rounded-lg">
+                    <span className="text-sm font-medium text-red-700 text-red-300 flex items-center">
                       <XCircle className="h-4 w-4 mr-1" />
                       Incorrect
                     </span>
-                    <Badge className="bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 font-bold">
+                    <Badge className="bg-red-100 text-red-800 border-red-300 bg-red-900/30 text-red-300 font-bold">
                       {progressStats.incorrect}
                     </Badge>
                   </div>
 
                   <div className="mt-4">
-                    <div className="flex justify-between text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+                    <div className="flex justify-between text-xs font-medium text-gray-600 text-gray-400 mb-2">
                       <span>Accuracy Rate</span>
                       <span>{progressStats.accuracy}%</span>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                    <div className="w-full bg-gray-200 bg-gray-700 rounded-full h-2 overflow-hidden">
                       <div
                         className="bg-gradient-to-r from-green-500 to-emerald-500 h-full rounded-full transition-all duration-500 ease-out"
                         style={{ width: `${progressStats.accuracy}%` }}
                       />
                     </div>
                     {progressStats.accuracy >= 80 && (
-                      <p className="text-xs text-green-600 dark:text-green-400 mt-2 font-medium">
+                      <p className="text-xs text-green-600 text-green-400 mt-2 font-medium">
                         🎉 Excellent performance!
                       </p>
                     )}

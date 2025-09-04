@@ -4,10 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build --mode production",
-    "build:dev": "vite build --mode development",
-    "deploy": "npm run build && aws s3 sync dist/ s3://tuitionwave.com --delete",
+    "dev": "node server",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

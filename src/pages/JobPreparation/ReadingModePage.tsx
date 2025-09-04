@@ -86,13 +86,13 @@ const ReadingModePage: React.FC = () => {
   const LoadingSkeleton = () => (
     <div className="space-y-4 px-1 sm:px-0">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-white dark:bg-gray-800 rounded-lg p-4 animate-pulse">
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-3"></div>
+        <div key={i} className="bg-gray-800 rounded-lg p-4 animate-pulse">
+          <div className="h-4 bg-gray-700 rounded w-3/4 mb-3"></div>
           <div className="space-y-2">
-            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+            <div className="h-3 bg-gray-700 rounded w-full"></div>
             <div className="grid grid-cols-1 gap-2">
               {[1, 2, 3, 4].map((j) => (
-                <div key={j} className="h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                <div key={j} className="h-8 bg-gray-700 rounded"></div>
               ))}
             </div>
           </div>
@@ -102,14 +102,14 @@ const ReadingModePage: React.FC = () => {
   );
 
   return (
-    <div className="flex-1 overflow-auto dark:bg-gray-900 h-screen bg-gray-50 w-full">
+    <div className="flex-1 overflow-auto bg-gray-900 h-screen bg-gray-50 w-full">
       {userProfile ? <DashboardHeader userName="BCS Candidate" /> : <Header />}
 
       <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(109vh - 160px)' }}>
         <main className="flex-1 pb-6">
           <div className="p-2 sm:p-4 md:p-6 max-w-7xl mx-auto">
             {/* Breadcrumb */}
-            <div className="mb-4 sm:mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="mb-4 sm:mb-6 flex items-center space-x-2 text-sm text-gray-600 text-gray-400">
               <Link to="/job-preparation/questions">
                 <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
               </Link>
@@ -125,13 +125,13 @@ const ReadingModePage: React.FC = () => {
                     <Button
                       variant="outline"
                       onClick={handleBack}
-                      className="hover:bg-green-50 dark:hover:bg-green-900/20"
+                      className="hover:bg-green-900/20 border-0 text-white hover:text-white"
                     >
                       <ChevronLeft className="h-4 w-4 mr-1" />
                       <span className="hidden sm:inline">Back to Topic</span>
                     </Button>
                     <div>
-                      <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+                      <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 text-white flex items-center">
                         <GraduationCap className="h-5 w-5 sm:h-6 sm:w-6 mr-2 text-green-600" />
                         Reading Mode
                       </h1>
@@ -163,15 +163,15 @@ const ReadingModePage: React.FC = () => {
 
                 {/* Study Stats */}
                 {readingQuestionsData && (
-                  <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 border border-green-200 dark:border-green-800">
+                  <div className="bg-green-50 bg-green-900/20 rounded-lg p-3 border border-green-200 border-green-800">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
-                        <span className="text-sm font-medium text-green-800 dark:text-green-200">
+                        <span className="text-sm font-medium text-green-800 text-green-200">
                           Study Material
                         </span>
                       </div>
-                      <Badge className="bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">
+                      <Badge className="bg-green-100 text-green-800 bg-green-800 text-green-100">
                         {readingQuestionsData.count} Questions
                       </Badge>
                     </div>

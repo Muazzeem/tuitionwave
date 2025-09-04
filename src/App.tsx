@@ -117,7 +117,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { userProfile } = useAuth();
 
   return (
-    <div className="flex h-screen dark:bg-gray-900">
+    <div className="flex h-screen">
       {userProfile && <Sidebar />}
       <div className="flex-1">{children}</div>
     </div>

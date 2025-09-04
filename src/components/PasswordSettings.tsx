@@ -94,17 +94,17 @@ const PasswordSettings = () => {
     return (
         <div className="p-6 space-y-8 dark:bg-background dark:border-gray-700">
             <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Password</h2>
+                <h2 className="text-2xl font-bold mb-6 text-white">Password</h2>
                 <p className="text-gray-500 mt-1 dark:text-gray-300">Manage and change your password</p>
             </div>
 
             <div className="space-y-6">
                 <div>
-                    <h3 className="font-medium text-gray-900 mb-1 dark:text-gray-300">Current Password</h3>
+                    <h3 className="font-medium mb-1 text-gray-300">Current Password</h3>
                     <div className="relative">
                         <Input
                             type={showCurrentPassword ? "text" : "password"}
-                            className="pl-10 pr-10 dark:bg-gray-900 border-primary-200"
+                            className="pl-10 pr-10 border-primary-800"
                             placeholder="Current password "
                             value={currentPassword}
                             onChange={(e) => setCurrentPassword(e.target.value)}
@@ -125,12 +125,12 @@ const PasswordSettings = () => {
                 </div>
 
                 <div>
-                    <h3 className="font-medium text-gray-900 mb-1 dark:text-white">New Password</h3>
+                    <h3 className="font-medium mb-1 text-white">New Password</h3>
                     <p className="text-sm text-gray-500 mb-2 dark:text-gray-300">Type your new unique password.</p>
                     <div className="relative">
                         <Input
                             type={showNewPassword ? "text" : "password"}
-                            className="pl-10 pr-10 dark:bg-gray-900 border-primary-200"
+                            className="pl-10 pr-10 dark:bg-gray-900 border-primary-800"
                             placeholder="New password"
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
@@ -148,16 +148,16 @@ const PasswordSettings = () => {
                             )}
                         </button>
                     </div>
-                    <p className="text-sm text-gray-500 mt-2 dark:text-gray-300">Minimum of 8 characters or more.</p>
+                    <p className="text-sm mt-2 text-gray-300">Minimum of 8 characters or more.</p>
                 </div>
 
                 <div>
-                    <h3 className="font-medium text-gray-900 mb-1 dark:text-white">Confirm New Password</h3>
-                    <p className="text-sm text-gray-500 mb-2 dark:text-gray-300">Re-enter your new password.</p>
+                    <h3 className="font-medium mb-1 text-white">Confirm New Password</h3>
+                    <p className="text-sm mb-2 text-gray-300">Re-enter your new password.</p>
                     <div className="relative">
                         <Input
                             type={showConfirmPassword ? "text" : "password"}
-                            className="pl-10 pr-10 dark:bg-gray-900 border-primary-200"
+                            className="pl-10 pr-10 dark:bg-gray-900 border-primary-800"
                             placeholder="Confirm password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -179,8 +179,8 @@ const PasswordSettings = () => {
             </div>
 
             <div className="flex justify-end gap-3 pt-4">
-                <Button variant="outline" className="px-6 dark:border-primary">Cancel</Button>
-                <Button className="px-6 bg-primary hover:bg-primary-700 dark:text-white"
+                <Button variant="outline" className="px-6 border-primary text-white hover:bg-primary-700 hover:text-white">Cancel</Button>
+                <Button className="px-6 bg-primary hover:bg-primary-700 text-white"
                 disabled={isSaving}
                 onClick={handleChangePassword}>
                     Save Changes

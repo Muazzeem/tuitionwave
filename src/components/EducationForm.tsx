@@ -131,9 +131,9 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
       {isLoading && <div className="text-center text-gray-500">Loading education data...</div>}
 
       <div>
-        <Label className="text-gray-600 font-medium mb-2 block dark:text-white">Upload CV</Label>
+        <Label className="font-medium mb-2 block text-white">Upload CV</Label>
         <div
-          className="border border-gray-300 rounded-lg p-3 flex items-center cursor-pointer"
+          className="border border-primary-900 rounded-lg p-3 flex items-center cursor-pointer text-white"
           onClick={handleUploadClick}
         >
           {fileName ? (
@@ -143,7 +143,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="dark:bg-gray-900 border-primary-900 "
+                className="dark:bg-gray-900 border-0 "
                 onClick={(e) => {
                   e.stopPropagation();
                   removeCV();
@@ -153,7 +153,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
               </Button>
             </>
           ) : (
-            <span className="text-gray-500 dark:text-white">Select a file to upload</span>
+              <span className="text-gray-500 text-white border-0">Select a file to upload</span>
           )}
           <Input
             ref={fileInputRef}
@@ -201,17 +201,17 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
         </div>
 
         <div className="col-span-1 lg:col-span-2">
-          <Label htmlFor="currentStatus">Current Status</Label>
+          <Label htmlFor="currentStatus" className='text-white'>Current Status</Label>
           <Select
             value={formData.currentStatus}
             onValueChange={(value) => updateFormData({ currentStatus: value })}
           >
-            <SelectTrigger id="currentStatus" className="mt-1 dark:bg-gray-900 border-primary-900">
+            <SelectTrigger id="currentStatus" className="mt-1 bg-gray-900 border-primary-900 text-white">
               <SelectValue placeholder="Select Status" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="RUNNING">Running</SelectItem>
-              <SelectItem value="COMPLETED">Completed</SelectItem>
+            <SelectContent className="bg-gray-900 border-0 text-white">
+              <SelectItem className='hover:bg-gray-700' value="RUNNING">Running</SelectItem>
+              <SelectItem className='hover:bg-gray-700' value="COMPLETED">Completed</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -219,10 +219,10 @@ const EducationForm: React.FC<EducationFormProps> = ({ formData, updateFormData,
 
 
       <div className="flex justify-between pt-4">
-        <Button variant="outline" className="px-6 dark:bg-gray-900 hover:border-primary-900" onClick={onPrev} disabled={isLoading}>
+        <Button variant="outline" className="px-6 text-white hover:border-primary-900" onClick={onPrev} disabled={isLoading}>
           Previous
         </Button>
-        <Button type="button" onClick={handleSubmit} className="px-6 dark:bg-blue-600 dark:text-white" disabled={isLoading}>
+        <Button type="button" onClick={handleSubmit} className="px-6 bg-cyan-400 text-black hover:bg-cyan-500 font-semibold" disabled={isLoading}>
           {isLoading ? 'Saving...' : 'Save & Next'}
         </Button>
       </div>

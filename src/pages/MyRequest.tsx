@@ -191,26 +191,26 @@ const MyRequest: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900">
+    <div className="flex-1 overflow-auto bg-gray-900 min-h-screen">
       <DashboardHeader userName="John" />
 
       <div className="p-4 sm:p-6">
         <div className="mb-4 sm:mb-6">
-          <h1 className="text-xl sm:text-2xl font-bold dark:text-white">My Tuition Request</h1>
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
+          <h1 className="text-xl sm:text-2xl font-bold text-white">My Tuition Request</h1>
+          <p className="text-sm sm:text-base text-gray-300">
             Explore all the tuition request from guardian
           </p>
         </div>
 
-        {isLoading && <div className="text-center p-4 dark:text-gray-200">Loading...</div>}
+        {isLoading && <div className="text-center p-4 text-gray-200">Loading...</div>}
 
         <div
-          className="bg-white dark:bg-background rounded-lg shadow-sm border border-gray-200 shadow-md dark:border-gray-900"
+          className="bg-background rounded-lg shadow-sm border border-gray-800 shadow-md "
           hidden={isLoading}
         >
           <div className="p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-4">
-              <h2 className="text-base sm:text-lg font-semibold dark:text-white">All Tuition Request</h2>
+              <h2 className="text-base sm:text-lg font-semibold text-white">All Tuition Request</h2>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -220,18 +220,18 @@ const MyRequest: React.FC = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={handleKeyPress}
-                    className={`pl-10 w-full sm:w-[250px] lg:w-[300px] dark:bg-gray-900 border-primary-200 ${isTyping ? "border-blue-400 bg-blue-50 dark:bg-primary-900" : ""
+                    className={`pl-10 w-full sm:w-[250px] lg:w-[300px] bg-gray-900 border-primary-200 ${isTyping ? "border-blue-400 bg-blue-50 bg-primary-900" : ""
                     }`}
                   />
                   {isTyping && (
-                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-blue-600 dark:text-blue-400">
+                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-blue-400">
                       Typing...
                     </span>
                   )}
                 </div>
                 <Button
                   variant="outline"
-                  className="flex items-center gap-2 w-full sm:w-auto bg-primary shadow-lg hover:bg-primary-700"
+                  className="flex border-0 shadow-lg text-white items-center gap-2 w-full sm:w-auto bg-primary shadow-lg hover:bg-primary-700"
                   onClick={handleAdvancedSearch}
                 >
                   <Filter className="h-4 w-4" />
@@ -242,15 +242,15 @@ const MyRequest: React.FC = () => {
 
             {/* Active filters section - responsive */}
             {isSearching && (
-              <div className="mb-4 p-3 bg-blue-50 dark:bg-primary-900/20 border border-blue-200 dark:border-primary-800 rounded-md">
+              <div className="mb-4 p-3 bg-primary-900/20 border border-primary-800 rounded-md">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-medium dark:text-white text-sm">Filters:</span>
+                    <span className="font-medium text-white text-sm">Filters:</span>
                     {debouncedSearchQuery && (
-                      <span className="px-2 py-1 bg-blue-100 dark:bg-blue-800 dark:text-white rounded-md text-xs sm:text-sm flex items-center">
+                      <span className="px-2 py-1 bg-blue-800 text-white rounded-md text-xs sm:text-sm flex items-center">
                         Search: {debouncedSearchQuery}
                         <button
-                          className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+                          className="ml-2 text-gray-300 hover:text-white"
                           onClick={() => {
                             setSearchQuery("");
                             setDebouncedSearchQuery("");
@@ -262,10 +262,10 @@ const MyRequest: React.FC = () => {
                       </span>
                     )}
                     {advancedSearch.subject && (
-                      <span className="px-2 py-1 bg-primary-100 dark:bg-primary-600 dark:text-white rounded-md text-xs sm:text-sm flex items-center">
+                      <span className="px-2 py-1 bg-primary-100 bg-primary-600 text-white rounded-md text-xs sm:text-sm flex items-center">
                         Subject: {advancedSearch.subject}
                         <button
-                          className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+                          className="ml-2 text-gray-500 hover:text-gray-700 text-gray-300 hover:text-white"
                           onClick={() => {
                             setAdvancedSearch({ ...advancedSearch, subject: "" });
                             setCurrentPage(1);
@@ -276,10 +276,10 @@ const MyRequest: React.FC = () => {
                       </span>
                     )}
                     {advancedSearch.institution && (
-                      <span className="px-2 py-1 bg-blue-100 dark:bg-primary-600 dark:text-white rounded-md text-xs sm:text-sm flex items-center">
+                      <span className="px-2 py-1 bg-blue-100 bg-primary-600 text-white rounded-md text-xs sm:text-sm flex items-center">
                         Institution: {advancedSearch.institution}
                         <button
-                          className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+                          className="ml-2 text-gray-500 hover:text-gray-700 text-gray-300 hover:text-white"
                           onClick={() => {
                             setAdvancedSearch({
                               ...advancedSearch,
@@ -294,7 +294,7 @@ const MyRequest: React.FC = () => {
                     )}
                   </div>
                   <button
-                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-xs sm:text-sm font-medium"
+                    className="text-blue-600 hover:text-blue-800 text-blue-400 hover:text-blue-300 text-xs sm:text-sm font-medium"
                     onClick={() => {
                       setSearchQuery("");
                       setDebouncedSearchQuery("");
@@ -314,35 +314,35 @@ const MyRequest: React.FC = () => {
               <div className="min-w-[800px]">
                 <Table>
                   <TableHeader>
-                    <TableRow className="dark:border-primary-700">
-                      <TableHead className="dark:text-gray-300 text-xs sm:text-sm">Req. ID</TableHead>
-                      <TableHead className="dark:text-gray-300 text-xs sm:text-sm">Institution</TableHead>
-                      <TableHead className="dark:text-gray-300 text-xs sm:text-sm">Class</TableHead>
-                      <TableHead className="dark:text-gray-300 text-xs sm:text-sm">Subject</TableHead>
-                      <TableHead className="dark:text-gray-300 text-xs sm:text-sm">Area</TableHead>
-                      <TableHead className="dark:text-gray-300 text-xs sm:text-sm">Type</TableHead>
-                      <TableHead className="dark:text-gray-300 text-xs sm:text-sm">Status</TableHead>
-                      <TableHead className="text-right dark:text-gray-300 text-xs sm:text-sm">Actions</TableHead>
+                    <TableRow className="border-primary-700">
+                      <TableHead className="text-gray-300 text-xs sm:text-sm">Req. ID</TableHead>
+                      <TableHead className="text-gray-300 text-xs sm:text-sm">Institution</TableHead>
+                      <TableHead className="text-gray-300 text-xs sm:text-sm">Class</TableHead>
+                      <TableHead className="text-gray-300 text-xs sm:text-sm">Subject</TableHead>
+                      <TableHead className="text-gray-300 text-xs sm:text-sm">Area</TableHead>
+                      <TableHead className="text-gray-300 text-xs sm:text-sm">Type</TableHead>
+                      <TableHead className="text-gray-300 text-xs sm:text-sm">Status</TableHead>
+                      <TableHead className="text-right text-gray-300 text-xs sm:text-sm">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {data?.results.map((request, index) => (
-                      <TableRow key={index} className="dark:border-primary-700">
+                      <TableRow key={index} className="border-primary-700">
                         <TableCell
-                          className="font-medium cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 uppercase dark:text-white text-xs sm:text-sm"
+                          className="font-medium cursor-pointer hover:text-blue-600 hover:text-blue-400 uppercase text-white text-xs sm:text-sm"
                           onClick={() => handleRequestClick(request.uid)}
                         >
                           #{request.uid.slice(0, 8)}
                         </TableCell>
-                        <TableCell className="dark:text-gray-300 text-xs sm:text-sm">{request.student_institution}</TableCell>
-                        <TableCell className="dark:text-gray-300 text-xs sm:text-sm">{request.student_class}</TableCell>
-                        <TableCell className="dark:text-gray-300 text-xs sm:text-sm">
+                        <TableCell className="text-gray-300 text-xs sm:text-sm">{request.student_institution}</TableCell>
+                        <TableCell className="text-gray-300 text-xs sm:text-sm">{request.student_class}</TableCell>
+                        <TableCell className="text-gray-300 text-xs sm:text-sm">
                           {request.subjects.map((s) => s.subject).join(", ")}
                         </TableCell>
-                        <TableCell className="dark:text-gray-300 text-xs sm:text-sm">
+                        <TableCell className="text-gray-300 text-xs sm:text-sm">
                           {request.student_area?.name || "N/A"}
                         </TableCell>
-                        <TableCell className="dark:text-gray-300 text-xs sm:text-sm">{request.tuition_type}</TableCell>
+                        <TableCell className="text-gray-300 text-xs sm:text-sm">{request.tuition_type}</TableCell>
                         <TableCell>
                           <div className="flex items-center">
                             <span
@@ -367,7 +367,7 @@ const MyRequest: React.FC = () => {
                           >
                             <span className="sr-only">Open menu</span>
                             <svg
-                              className="h-3 w-3 sm:h-4 sm:w-4 dark:text-gray-300"
+                              className="h-3 w-3 sm:h-4 sm:w-4 text-gray-300"
                               fill="none"
                               viewBox="0 0 24 24"
                               strokeWidth="2"
@@ -396,7 +396,7 @@ const MyRequest: React.FC = () => {
                     <PaginationPrevious
                       onClick={handlePreviousPage}
                       className={
-                        data?.previous ? "" : "pointer-events-none opacity-50 bg-primary"
+                        data?.previous ? "" : "text-white pointer-events-none opacity-50 bg-primary"
                       }
                     />
                   </PaginationItem>
@@ -405,6 +405,7 @@ const MyRequest: React.FC = () => {
                     <PaginationItem key={i} className="hidden sm:block">
                       <PaginationLink
                         href="#"
+                        className="text-white border-primary-800 hover:bg-primary-800 hover:text-white"
                         isActive={currentPage === i + 1}
                         onClick={() => setCurrentPage(i + 1)}
                       >
@@ -417,7 +418,7 @@ const MyRequest: React.FC = () => {
                     <PaginationNext
                       onClick={handleNextPage}
                       className={
-                        data?.next ? "" : "pointer-events-none opacity-50 bg-primary"
+                        data?.next ? "" : "pointer-events-none opacity-50 bg-primary text-white"
                       }
                     />
                   </PaginationItem>
@@ -429,15 +430,15 @@ const MyRequest: React.FC = () => {
       </div>
 
       {/* Responsive Advanced Search Dialog */}
-      <dialog id="search-dialog" className="p-0 rounded-lg shadow-xl dark:bg-gray-800 max-w-[95vw] w-full sm:max-w-md">
+      <dialog id="search-dialog" className="p-0 rounded-lg shadow-xl bg-gray-800 max-w-[95vw] w-full sm:max-w-md">
         <div className="w-full p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-semibold mb-4 dark:text-white">Advanced Search</h3>
+          <h3 className="text-base sm:text-lg font-semibold mb-4 text-white">Advanced Search</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1 dark:text-gray-200">Subject</label>
+              <label className="block text-sm font-medium mb-1 text-gray-200">Subject</label>
               <Input
                 type="text"
-                className="dark:bg-gray-900 border-primary-200 text-white"
+                className="bg-gray-900 border-primary-200 text-white"
                 placeholder="Math, Science, etc."
                 value={advancedSearch.subject}
                 onChange={(e) =>
@@ -449,12 +450,12 @@ const MyRequest: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 dark:text-gray-200">
+              <label className="block text-sm font-medium mb-1 text-gray-200">
                 Institution
               </label>
               <Input
                 type="text"
-                className="dark:bg-gray-900 border-primary-200 text-white"
+                className="bg-gray-900 border-primary-200 text-white"
                 placeholder="School, College name"
                 value={advancedSearch.institution}
                 onChange={(e) =>
@@ -466,7 +467,7 @@ const MyRequest: React.FC = () => {
               />
             </div>
             <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
-              <Button className="dark:text-gray-300 hover:dark:bg-primary-700 w-full sm:w-auto text-white"
+              <Button className="text-gray-300 hover:bg-primary-700 w-full sm:w-auto text-white"
                 variant="outline"
                 onClick={() => {
                   const searchDialog = document.getElementById(
@@ -479,7 +480,7 @@ const MyRequest: React.FC = () => {
               >
                 Cancel
               </Button>
-              <Button className="dark:text-white w-full sm:w-auto text-gray-900"
+              <Button className="text-white w-full sm:w-auto text-gray-900"
                 onClick={() => {
                   setCurrentPage(1);
                   setIsSearching(true);

@@ -57,21 +57,23 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
 
   return (
     <AlertDialog open={isOpen}>
-      <AlertDialogContent>
+      <AlertDialogContent className='border-0 bg-background rounded-lg shadow-lg'>
         <AlertDialogHeader>
           <div className="flex items-center gap-3">
             {getIcon()}
-            <AlertDialogTitle className="text-xl font-bold text-center">{title}</AlertDialogTitle>
+            <AlertDialogTitle className="text-xl text-white font-bold text-center">{title}</AlertDialogTitle>
           </div>
           <AlertDialogDescription className="mt-4">
             {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onClose}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel
+            className='text-white border-primary-800 hover:bg-primary-800 hover:text-white'
+            onClick={onClose}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className={getActionClass()}
+            className='text-white bg-primary hover:bg-primary-700'
           >
             Confirm
           </AlertDialogAction>

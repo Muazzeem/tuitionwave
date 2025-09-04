@@ -121,7 +121,7 @@ const GoogleLoginButton: React.FC<CustomGoogleButtonProps> = ({
     <Button
       type="button"
       variant="outline"
-      className="w-full min-h-[55px] dark:bg-gray-900 shadow-xl border-gray-200 dark:border-gray-900 transition-all duration-300 hover:-translate-y-1"
+      className="w-full h-14 bg-cyan-500 border-0 hover:bg-cyan-500 text-black font-semibold py-3 rounded-xl text-lg"
       onClick={handleGoogleLogin}
       disabled={disabled || loading}
     >

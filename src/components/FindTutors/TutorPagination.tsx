@@ -92,7 +92,7 @@ const TutorPagination = ({
           <PaginationItem>
             <PaginationPrevious 
               onClick={() => handlePageChange(currentPage - 1)}
-              className={!canGoPrevious ? "pointer-events-none opacity-50" : "cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"}
+              className={!canGoPrevious ? "pointer-events-none opacity-50" : "cursor-pointer hover:bg-gray-800 transition-colors text-white hover:text-white"}
             />
           </PaginationItem>
           
@@ -110,7 +110,7 @@ const TutorPagination = ({
                 <PaginationLink 
                   onClick={() => handlePageChange(pageNumber as number)}
                   isActive={pageNumber === currentPage}
-                  className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="cursor-pointer text-white hover:text-white hover:bg-gray-800 transition-colors border-gray-600"
                 >
                   {pageNumber}
                 </PaginationLink>
@@ -121,7 +121,7 @@ const TutorPagination = ({
           <PaginationItem>
             <PaginationNext 
               onClick={() => handlePageChange(currentPage + 1)}
-              className={!canGoNext ? "pointer-events-none opacity-50" : "cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"}
+              className={!canGoNext ? "pointer-events-none opacity-50" : "cursor-pointer  hover:bg-gray-800 transition-colors text-white hover:text-white"}
             />
           </PaginationItem>
         </PaginationContent>

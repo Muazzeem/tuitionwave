@@ -8,12 +8,55 @@ import EducationForm from '@/components/EducationForm';
 import TuitionForm from '@/components/TuitionForm';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import ProfileCompletionAlert, { ProfileCompletionAlertRef } from '@/components/ProfileCompletionAlert';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from '@/components/ui/use-toast';
+import { getAccessToken } from '@/utils/auth';
 
 
 const ProfilePage: React.FC = () => {
+  const { userProfile, reloadProfile } = useAuth();
   const [currentStep, setCurrentStep] = useState<number>(1);
   const profileRef = useRef<ProfileCompletionAlertRef>(null);
-  
+  const accessToken = getAccessToken();
+
+  function requestAsTuror() {
+    const url = `${import.meta.env.VITE_API_URL}/api/users/become-a-tutor/`;
+
+    fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        is_tutor: true,
+      }),
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData?.detail || "Failed to become a tutor");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        toast({
+          title: "Success",
+          description: data.message,
+        });
+        reloadProfile();
+      })
+      .catch((error) => {
+        console.error("Error becoming tutor:", error.message);
+      });
+  }
+
+  useEffect(() => {
+    if (!userProfile.is_tutor) {
+      requestAsTuror();
+    }
+  }, []);
+
   const [formData, setFormData] = useState<ProfileFormData & {
     daysPerWeek: string;
     teachingType: string;
@@ -82,17 +125,19 @@ const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900">
+    <div className="flex-1 overflow-auto bg-gray-900">
       <DashboardHeader userName="Tutor" />
 
-       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
+      <ScrollArea type="always" style={{ height: 'calc(105vh - 100px)' }}>
         <div className="p-4 sm:p-6">
           <div className="flex justify-between items-center mb-4 sm:mb-6">
-            <h1 className="lg:text-3xl sm:text-2xl font-bold">Edit Profile</h1>
+            <h1 className="lg:text-3xl sm:text-2xl font-bold text-white">Edit Profile</h1>
           </div>
 
           <div className="mb-4 sm:mb-6">
-            <ProfileCompletionAlert ref={profileRef} />
+            {userProfile.is_tutor && (
+              <ProfileCompletionAlert ref={profileRef} />
+            )}
           </div> 
 
           <div className="flex justify-center w-full">
@@ -107,33 +152,35 @@ const ProfilePage: React.FC = () => {
                   />
                 </div>
 
-                <div className="mt-6 sm:mt-8 mb-6 sm:mb-10">
-                  {currentStep === 1 && (
-                    <PersonalInfoForm
-                      formData={formData}
-                      updateFormData={updateFormData}
-                      onNext={handleNext}
-                    />
-                  )}
+                {userProfile.is_tutor && (
+                  <div className="mt-6 sm:mt-8 mb-6 sm:mb-10">
+                    {currentStep === 1 && (
+                      <PersonalInfoForm
+                        formData={formData}
+                        updateFormData={updateFormData}
+                        onNext={handleNext}
+                      />
+                    )}
 
-                  {currentStep === 2 && (
-                    <EducationForm
-                      formData={formData}
-                      updateFormData={updateFormData}
-                      onNext={handleNext}
-                      onPrev={handleBack}
-                    />
-                  )}
+                    {currentStep === 2 && (
+                      <EducationForm
+                        formData={formData}
+                        updateFormData={updateFormData}
+                        onNext={handleNext}
+                        onPrev={handleBack}
+                      />
+                    )}
 
-                  {currentStep === 3 && (
-                    <TuitionForm
-                      formData={formData}
-                      updateFormData={updateFormData}
-                      onNext={handleNext}
-                      onPrev={handleBack}
-                    />
-                  )}
-                </div>
+                    {currentStep === 3 && (
+                      <TuitionForm
+                        formData={formData}
+                        updateFormData={updateFormData}
+                        onNext={handleNext}
+                        onPrev={handleBack}
+                      />
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>

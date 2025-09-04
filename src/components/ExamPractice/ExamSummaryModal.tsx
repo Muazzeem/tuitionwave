@@ -27,9 +27,9 @@ export default function ExamSummaryModal({
 }: ExamSummaryModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg border-0 bg-background rounded-lg shadow-lg">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-white">
             <Target className="h-5 w-5" />
             Exam Summary
           </DialogTitle>
@@ -49,7 +49,7 @@ export default function ExamSummaryModal({
 
           {selectedSubjects.length > 0 && (
             <div className="space-y-2">
-              <h4 className="font-medium flex items-center gap-2">
+              <h4 className="font-medium flex items-center gap-2 text-white">
                 <FileText className="h-4 w-4" />
                 Selected Subjects ({selectedSubjects.length})
               </h4>
@@ -68,14 +68,14 @@ export default function ExamSummaryModal({
 
           {selectedTopics.length > 0 && (
             <div className="space-y-2">
-              <h4 className="font-medium flex items-center gap-2">
+              <h4 className="font-medium flex items-center gap-2 text-white">
                 <Target className="h-4 w-4" />
                 Selected Topics ({selectedTopics.length})
               </h4>
               <div className="space-y-2 max-h-32 overflow-y-auto">
                 {selectedTopics.map(topic => (
                   <div key={topic.uid} className="flex justify-between items-center p-2 bg-muted/20 rounded">
-                    <span className="text-sm">{topic.topic_name}</span>
+                    <span className="text-sm font-medium text-white">{topic.topic_name}</span>
                     <Badge variant="secondary" className="text-xs">
                       {topic.total_questions} Q
                     </Badge>

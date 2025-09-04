@@ -51,16 +51,16 @@ const FriendsList: React.FC<FriendsListProps> = ({
   });
 
   return (
-    <Card className="w-full md:w-80 lg:w-96 h-full bg-background border-r flex flex-col shadow-sm dark:bg-gray-900">
+    <Card className="w-full md:w-80 lg:w-96 h-full border-r border-gray-800 flex flex-col shadow-sm bg-gray-900">
       {/* Header */}
-      <div className="p-4 border-b">
+      <div className="p-4 border-b border-gray-800">
         <div className="flex items-center justify-between mb-4 ">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-primary/10 rounded-full">
               <MessageCircle className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h1 className="text-lg font-semibold text-foreground">Messages</h1>
+              <h1 className="text-lg text-white font-semibold text-foreground">Messages</h1>
               <p className="text-xs text-muted-foreground">{friends.length} conversations</p>
             </div>
           </div>
@@ -78,10 +78,10 @@ const FriendsList: React.FC<FriendsListProps> = ({
       </div>
 
       {/* Friends List */}
-      <div className="flex-1 overflow-y-auto dark:bg-gray-900">
+      <div className="flex-1 overflow-y-auto">
         {isLoading ? (
           <div className="p-8 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800  mx-auto mb-4"></div>
             <p className="text-muted-foreground text-sm">Loading conversations...</p>
           </div>
         ) : sortedFriends.length === 0 ? (
@@ -89,7 +89,7 @@ const FriendsList: React.FC<FriendsListProps> = ({
             <div className="bg-muted/50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
               <Users className="h-8 w-8 text-muted-foreground" />
             </div>
-            <p className="text-foreground font-medium mb-1">No conversations found</p>
+              <p className="text-foreground text-white font-medium mb-1">No conversations found</p>
             <p className="text-muted-foreground text-sm">
               {searchQuery ? 'Try a different search term' : 'Start a new conversation to get started'}
             </p>

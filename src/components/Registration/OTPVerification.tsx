@@ -38,8 +38,8 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ onVerify }) => {
         />
       </div>
 
-      <h2 className="text-2xl font-bold mb-2">Enter Your Code</h2>
-      <p className="text-gray-500 mb-6">Please enter the verification code.</p>
+      <h2 className="text-2xl font-bold mb-2 text-white">Enter Your Code</h2>
+      <p className="text-gray-400 mb-6">Please enter the verification code.</p>
 
       <div className="flex justify-center mb-6">
         <InputOTP
@@ -53,14 +53,14 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ onVerify }) => {
             <InputOTPSlot
               key={index}
               index={index}
-              className="w-12 h-14 text-xl border-gray-300 rounded text-center"
+              className="w-12 h-14 text-xl border-gray-600 bg-gray-800 text-white rounded text-center focus:border-cyan-500 focus:ring-cyan-500 focus:ring-1"
             />
           ))}
         </InputOTP>
       </div>
 
       <Button
-        className="w-full min-h-[55px] bg-blue-600 hover:bg-blue-700 mb-4"
+        className="w-full min-h-[55px] bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-black font-semibold mb-4 transition-colors"
         onClick={handleVerify}
         disabled={loading || !otp || otp.length !== 6}
       >
@@ -69,7 +69,7 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ onVerify }) => {
 
       <Button
         variant="outline"
-        className="w-full"
+        className="w-full border-gray-600 bg-gray-800 text-gray-200 hover:bg-gray-700 hover:text-white hover:border-gray-500 transition-colors"
         onClick={() => window.history.back()}
       >
         Back

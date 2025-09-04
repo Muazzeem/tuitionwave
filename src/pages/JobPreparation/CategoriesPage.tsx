@@ -103,7 +103,7 @@ const CategoriesPage: React.FC = () => {
           <Card
             key={category.uid}
             className="group cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-primary
-            shadow-md bg-white dark:bg-background overflow-hidden"
+            shadow-md bg-white bg-background overflow-hidden border-0"
             onClick={() => handleCategoryClick(category)}
           >
             <CardHeader className="pb-3">
@@ -112,7 +112,7 @@ const CategoriesPage: React.FC = () => {
                   <IconComponent className="h-6 w-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors truncate">
+                  <h3 className="text-lg font-semibold text-gray-900 text-white group-hover:text-primary transition-colors truncate">
                     {category.category_name}
                   </h3>
                 </div>
@@ -120,8 +120,8 @@ const CategoriesPage: React.FC = () => {
             </CardHeader>
             <CardContent className="pt-0">
               {/* Category preview info */}
-              <div className="mt-0 pt-3 border-t border-gray-100 dark:border-gray-700">
-                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 space-x-4">
+              <div className="mt-0 pt-3 border-t border-gray-100 border-gray-700">
+                <div className="flex items-center text-xs text-gray-500 text-gray-400 space-x-4">
                   <div className="flex items-center space-x-1">
                     <BookOpen className="h-3 w-3" />
                     <span>Explore</span>
@@ -141,13 +141,13 @@ const CategoriesPage: React.FC = () => {
 
   const renderEmptyState = () => (
     <div className="text-center py-16">
-      <div className="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6">
+      <div className="mx-auto w-24 h-24 bg-gray-100 bg-gray-800 rounded-full flex items-center justify-center mb-6">
         <Search className="h-12 w-12 text-gray-400" />
       </div>
-      <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+      <h3 className="text-xl font-semibold text-gray-900 text-white mb-2">
         No categories found
       </h3>
-      <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+      <p className="text-gray-500 text-gray-400 max-w-md mx-auto">
         {searchTerm ?
           `No categories match your search "${searchTerm}". Try adjusting your search terms.` :
           "No categories are available at the moment."
@@ -167,14 +167,14 @@ const CategoriesPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex-1 overflow-auto dark:bg-gray-900 h-screen">
+      <div className="flex-1 overflow-auto bg-gray-900 h-screen">
         {userProfile ? <DashboardHeader userName="BCS Candidate" /> : <Header />}
-        <main className="flex-1 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <main className="flex-1 bg-gray-50 bg-gray-900 flex items-center justify-center">
           <div className="text-center">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-2xl font-semibold text-gray-900 text-white mb-2">
               Something went wrong
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
+            <p className="text-gray-600 text-gray-400 mb-4">
               Unable to load categories. Please try again later.
             </p>
             <Button
@@ -191,13 +191,13 @@ const CategoriesPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col dark:bg-gray-900">
+    <div className="min-h-screen flex flex-col bg-gray-900">
       {userProfile ? <DashboardHeader userName="BCS Candidate" /> : <Header />}
       <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(109vh - 160px)' }}>
-        <main className="flex-1 bg-gray-50 dark:bg-gray-900">
+        <main className="flex-1 bg-gray-50 bg-gray-900">
           <div className={userProfile ? "p-2 md:p-6 max-w-7xl mx-auto" : "p-2 md:p-6 container"}>
             {/* Header Section */}
-            <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 text-gray-400">
               <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
               <span>/</span>
               <span className="text-blue-600 font-medium">Categories</span>
@@ -207,10 +207,10 @@ const CategoriesPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div className="flex items-center space-x-4">
                   <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-white">
                       Categories
                     </h1>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">
+                    <p className="text-gray-600 text-gray-400 mt-1">
                       Choose a categories to start practicing
                     </p>
                   </div>
@@ -224,7 +224,7 @@ const CategoriesPage: React.FC = () => {
                   placeholder="Search Categories..."
                   value={searchTerm}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  className="pl-10 focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="pl-10 focus:ring-2 focus:ring-primary/20 transition-all border-primary-800 text-white"
                 />
               </div>
             </div>
@@ -233,7 +233,7 @@ const CategoriesPage: React.FC = () => {
               <div className="flex items-center justify-center py-16">
                 <div className="text-center">
                   <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                  <p className="text-gray-600 dark:text-gray-400">Loading categories...</p>
+                  <p className="text-gray-600 text-gray-400">Loading categories...</p>
                 </div>
               </div>
             ) : filteredCategories.length === 0 ? (

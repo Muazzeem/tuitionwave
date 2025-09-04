@@ -264,13 +264,13 @@ const RecentRequests: React.FC = () => {
 
 
   if (error) {
-    return <div className="dark:text-white">Error loading requests</div>;
+    return <div className="text-white">Error loading requests</div>;
   }
 
   return (
-    <div className="bg-white dark:bg-background p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-900">
+    <div className="bg-background p-4 rounded-lg shadow-sm border border-gray-800">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold dark:text-white">Recent Request</h2>
+        <h2 className="text-lg font-bold text-white">Recent Request</h2>
         <Link to={`/requests`}>
           <Button className="text-sm text-tuitionwave-blue hover:underline text-white">
             View All
@@ -282,17 +282,17 @@ const RecentRequests: React.FC = () => {
         <table className="min-w-full">
           <thead>
             <tr className="text-left text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
-              <th className="py-2 px-2">Req. ID</th>
+              <th className="py-2 px-2 text-white">Req. ID</th>
               {userTypeFromUrl === 'GUARDIAN' && (
-                <th className="py-2 px-2">Tutor</th>
+                <th className="py-2 px-2 text-white">Tutor</th>
               )}
               {userTypeFromUrl === 'TEACHER' && (
-                <th className="py-2 px-2">Guardian</th>
+                <th className="py-2 px-2 text-white">Guardian</th>
               )}
-              <th className="py-2 px-2">Subject</th>
-              <th className="py-2 px-2">Requested Amount</th>
-              <th className="py-2 px-2">Status</th>
-              <th className="py-2 px-2">Others</th>
+              <th className="py-2 px-2 text-white">Subject</th>
+              <th className="py-2 px-2 text-white">Requested Amount</th>
+              <th className="py-2 px-2 text-white">Status</th>
+              <th className="py-2 px-2 text-white">Others</th>
             </tr>
           </thead>
           <tbody>

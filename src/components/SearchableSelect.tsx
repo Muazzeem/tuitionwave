@@ -150,61 +150,73 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
 
   return (
     <div className="space-y-1">
-      <label htmlFor={label.toLowerCase()} className="text-sm font-medium">
+      <label htmlFor={label.toLowerCase()} className="text-sm font-medium text-white">
         {label}
       </label>
 
       <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger id={label.toLowerCase()} className="mt-1 dark:bg-gray-900 border-primary-900">
-          <SelectValue placeholder={placeholder} />
+        <SelectTrigger
+          id={label.toLowerCase()}
+          className="mt-1 bg-slate-800/50 border-slate-600 text-white hover:border-slate-500 transition-colors rounded-lg h-12"
+        >
+          <SelectValue placeholder={placeholder} className="text-gray-300" />
         </SelectTrigger>
 
-        <SelectContent className="max-h-80 overflow-y-auto">
-          <div className="p-2 border-b">
+        <SelectContent className="max-h-80 overflow-y-auto bg-slate-800 border-slate-600 rounded-lg shadow-xl">
+          <div className="p-2 border-b border-slate-700">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder={`Search ${label.toLowerCase()}...`}
-                className="pl-8"
+                className="pl-8 text-white bg-slate-700 border-slate-600 focus:border-slate-500 focus:ring-slate-500 rounded-lg"
               />
             </div>
           </div>
 
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option) => (
-              <SelectItem key={option.id} value={option.id.toString()}>
+              <SelectItem
+                key={option.id}
+                value={option.id.toString()}
+                className="text-white hover:bg-slate-700 focus:bg-slate-700 cursor-pointer"
+              >
                 {option[labelKey]}
               </SelectItem>
             ))
           ) : (
-            <div className="p-4 text-sm text-center text-muted-foreground">
+              <div className="p-4 text-sm text-center text-gray-400">
               <p className="mb-2">No {label.toLowerCase()} found.</p>
 
               {createEntityName && (
                 <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="mx-auto">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mx-auto bg-slate-700 border-slate-600 text-white hover:bg-slate-600 hover:border-slate-500"
+                      >
                       <Plus className="mr-1 h-4 w-4" />
                       Create New {createEntityName}
                     </Button>
                   </DialogTrigger>
 
-                  <DialogContent className="sm:max-w-md">
+                    <DialogContent className="sm:max-w-md bg-slate-800 border-slate-700 text-white">
                     <DialogHeader>
-                      <DialogTitle>Create {createEntityName}</DialogTitle>
-                      <DialogDescription>
+                        <DialogTitle className="text-white">Create {createEntityName}</DialogTitle>
+                        <DialogDescription className="text-gray-300">
                         Add a new {createEntityName.toLowerCase()} to the system.
                       </DialogDescription>
                     </DialogHeader>
 
                     <div className="mt-4">
-                      <label className="block text-sm mb-1">Name</label>
+                        <label className="block text-sm mb-1 text-gray-300">Name</label>
                       <Input
                         value={newEntityName}
                         onChange={(e) => setNewEntityName(e.target.value)}
                         placeholder={`Enter ${createEntityName.toLowerCase()} name`}
+                          className="bg-slate-700 border-slate-600 text-white focus:border-slate-500 focus:ring-slate-500"
                       />
                     </div>
 
@@ -215,10 +227,15 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
                           setIsModalOpen(false);
                           setNewEntityName('');
                         }}
+                          className="bg-slate-700 border-slate-600 text-white hover:bg-slate-600 hover:border-slate-500"
                       >
                         Cancel
                       </Button>
-                      <Button onClick={handleCreateEntity} disabled={isCreating}>
+                        <Button
+                          onClick={handleCreateEntity}
+                          disabled={isCreating}
+                          className="bg-cyan-500 hover:bg-cyan-600 text-black font-semibold"
+                        >
                         {isCreating ? 'Creating...' : 'Create'}
                       </Button>
                     </DialogFooter>
@@ -234,4 +251,3 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
 };
 
 export default SearchableSelect;
-

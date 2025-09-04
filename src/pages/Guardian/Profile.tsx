@@ -7,24 +7,24 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 const GuardianProfile = () => {
     return (
-        <div className="flex-1 dark:bg-gray-900">
+        <div className="flex-1 bg-gray-900">
             <DashboardHeader userName="Mamun" />
-            <ScrollArea type="always" style={{ height: 'calc(104vh - 100px)' }}>
+            <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
                 <div className="flex justify-center pt-10 pb-20">
-                    <div className="w-full max-w-7xl border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div className="w-full max-w-5xl bg-background border border-gray-700 rounded-lg">
                         <div className="rounded-lg">
-                            <Tabs defaultValue="general" className="w-full dark:bg-background">
+                            <Tabs defaultValue="general" className="w-full bg-background">
                                 <div className="px-4 pt-4">
-                                    <TabsList className="w-fit space-x-1 bg-gray-100 p-1 rounded-lg h-auto dark:bg-background">
+                                    <TabsList className="w-fit space-x-1 bg-gray-100 p-1 rounded-lg h-auto bg-background">
                                         <TabsTrigger
                                             value="general"
-                                            className="rounded-md px-6 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-primary-500"
+                                            className="rounded-md px-6 py-2 data-[state=active]:bg-white :shadow-sm data-[state=active]:bg-primary-500"
                                         >
                                             General
                                         </TabsTrigger>
                                         <TabsTrigger
                                             value="password"
-                                            className="rounded-md px-6 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-primary-500"
+                                            className="rounded-md px-6 py-2 data-[state=active]:bg-white :shadow-sm data-[state=active]:bg-primary-500"
                                         >
                                             Password
                                         </TabsTrigger>

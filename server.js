@@ -1,71 +1,69 @@
-import express from 'express';
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, resolve } from 'path';
-import compression from 'compression';
-import serveStatic from 'serve-static';
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import express from "express";
+import { createServer as createViteServer } from "vite";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const isProduction = process.env.NODE_ENV === 'production';
-const port = process.env.PORT || 3000;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const app = express();
+async function createServer() {
+  const app = express();
 
-// Enable gzip compression
-app.use(compression());
-
-let vite;
-if (!isProduction) {
-  const { createServer } = await import('vite');
-  vite = await createServer({
+  // Create Vite server in middleware mode and configure the app type as
+  // 'custom', disabling Vite's own HTML serving logic so parent server
+  // can take control
+  const vite = await createViteServer({
     server: { middlewareMode: true },
-    appType: 'custom'
+    appType: "custom",
   });
-  app.use(vite.ssrLoadModule);
-} else {
-  app.use(serveStatic(resolve(__dirname, 'dist/client'), {
-    index: false
-  }));
-}
 
-app.use('*', async (req, res, next) => {
-  try {
+  // Use vite's connect instance as middleware. If you use your own
+  // express router (express.Router()), you should use router.use
+  // When the server restarts (for example after the user modifies
+  // vite.config.js), `vite.middlewares` is still going to be the same
+  // reference (with a new internal stack of Vite and plugin-injected
+  // middlewares). The following is valid even after restarts.
+  app.use(vite.middlewares);
+
+  app.use(/.*/, async (req, res, next) => {
     const url = req.originalUrl;
 
-    let template, render;
-    if (!isProduction) {
-      // Development: always read template from file system
-      template = readFileSync(resolve(__dirname, 'index.html'), 'utf-8');
+    try {
+      // 1. Read index.html
+      let template = fs.readFileSync(
+        path.resolve(__dirname, "index.html"),
+        "utf-8"
+      );
+
+      // 2. Apply Vite HTML transforms. This injects the Vite HMR client,
+      //    and also applies HTML transforms from Vite plugins, e.g. global
+      //    preambles from @vitejs/plugin-react
       template = await vite.transformIndexHtml(url, template);
-      render = (await vite.ssrLoadModule('/src/entry-server.tsx')).render;
-    } else {
-      // Production: use built assets
-      template = readFileSync(resolve(__dirname, 'dist/client/index.html'), 'utf-8');
-      render = (await import('./dist/server/entry-server.js')).render;
-    }
 
-    const { html: appHtml, helmet } = render(url);
+      // 3. Load the server entry. ssrLoadModule automatically transforms
+      //    ESM source code to be usable in Node.js! There is no bundling
+      //    required, and provides efficient invalidation similar to HMR.
+      const { render } = await vite.ssrLoadModule("/src/entry-server.jsx");
 
-    // Replace template placeholders with SSR content
-    const html = template
-      .replace('<!--ssr-head-->', `
-        ${helmet.title.toString()}
-        ${helmet.meta.toString()}
-        ${helmet.link.toString()}
-        ${helmet.script.toString()}
-      `)
-      .replace('<!--ssr-outlet-->', appHtml);
+      // 4. render the app HTML. This assumes entry-server.js's exported
+      //     `render` function calls appropriate framework SSR APIs,
+      //    e.g. ReactDOMServer.renderToString()
+      const appHtml = await render(url);
 
-    res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
-  } catch (e) {
-    if (!isProduction) {
+      // 5. Inject the app-rendered HTML into the template.
+      const html = template.replace(`<!--ssr-outlet-->`, () => appHtml);
+
+      // 6. Send the rendered HTML back.
+      res.status(200).set({ "Content-Type": "text/html" }).end(html);
+    } catch (e) {
+      // If an error is caught, let Vite fix the stack trace so it maps back
+      // to your actual source code.
       vite.ssrFixStacktrace(e);
+      next(e);
     }
-    console.error(e);
-    res.status(500).end(e.message);
-  }
-});
+  });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+  app.listen(5173);
+}
+
+createServer();

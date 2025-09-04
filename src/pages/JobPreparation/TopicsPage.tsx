@@ -94,7 +94,7 @@ const TopicsPage: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-auto dark:bg-gray-900 h-screen bg-gray-50 w-full">
+    <div className="flex-1 overflow-auto bg-gray-900 h-screen bg-gray-50 w-full">
       {userProfile ? <DashboardHeader userName="BCS Candidate" /> :
         <Header />
       }
@@ -102,7 +102,7 @@ const TopicsPage: React.FC = () => {
         <main className="flex-1">
           <div className={userProfile ? "p-2 md:p-6 max-w-7xl mx-auto" : "p-2 md:p-6 container"}>
             {/* Breadcrumb */}
-            <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 text-gray-400">
               <Link to="/job-preparation/questions">
                 <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
               </Link>
@@ -117,16 +117,16 @@ const TopicsPage: React.FC = () => {
                   <Button
                     variant="outline"
                     onClick={handleBack}
-                    className="hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-colors"
+                    className="hover:bg-blue-100 hover:bg-blue-900/20 transition-colors text-white border-0"
                   >
                     <ChevronLeft className="h-4 w-4 mr-2" />
                     <span className="hidden sm:inline">Back to Subjects</span>
                   </Button>
                   <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-white">
                       Topics
                     </h1>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">
+                    <p className="text-gray-600 text-gray-400 mt-1">
                       Choose a topic to start practicing
                     </p>
                   </div>
@@ -140,7 +140,7 @@ const TopicsPage: React.FC = () => {
                   placeholder="Search topics..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="pl-10 focus:ring-2 focus:ring-primary/20 transition-all border-primary-800 text-white"
                 />
               </div>
             </div>
@@ -154,12 +154,12 @@ const TopicsPage: React.FC = () => {
               ) : filteredTopics.length === 0 ? (
                 <div className="text-center py-16">
                   <div className="mb-4">
-                    <Search className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto" />
+                      <Search className="h-16 w-16 text-gray-300 text-gray-600 mx-auto" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                    <h3 className="text-xl font-semibold text-gray-900 text-white mb-2">
                     {searchTerm ? 'No topics found' : 'No topics available'}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400">
+                    <p className="text-gray-600 text-gray-400">
                     {searchTerm
                       ? `Try searching for something else or clear your search.`
                       : 'Topics will appear here when available.'
@@ -181,7 +181,7 @@ const TopicsPage: React.FC = () => {
                     {filteredTopics.map((topic, index) => (
                       <Card
                         key={topic.uid}
-                        className={`cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all bg-background border shadow-md duration-300 dark:bg-background hover:border-primary`}
+                        className={`cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all bg-background border shadow-md duration-300 bg-background hover:border-primary border-0`}
                         onClick={() => handleTopicClick(topic)}
                       >
                         <CardHeader className="pb-3">
@@ -190,7 +190,7 @@ const TopicsPage: React.FC = () => {
                               {getTopicIcon(index)}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors truncate">
+                              <h3 className="text-lg font-semibold text-gray-900 text-white group-hover:text-primary transition-colors truncate">
                                 {topic.topic_name}
                               </h3>
                             </div>
@@ -217,8 +217,8 @@ const TopicsPage: React.FC = () => {
                           </div>
 
                           {/* Progress Indicator */}
-                          <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
-                            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                          <div className="pt-2 border-t border-gray-100 border-gray-700">
+                            <div className="flex items-center justify-between text-xs text-gray-500 text-gray-400">
                               <span>Click to start practicing</span>
                               <ChevronLeft className="h-3 w-3 rotate-180 group-hover:translate-x-1 transition-transform" />
                             </div>

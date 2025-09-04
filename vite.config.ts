@@ -25,7 +25,7 @@ export default defineConfig(({ command, mode }) => {
       ssr: true,
       outDir: 'dist/server',
       rollupOptions: {
-        input: 'src/entry-server.tsx',
+        input: 'src/entry-server.jsx',
         output: {
           format: 'es'
         }
@@ -34,7 +34,7 @@ export default defineConfig(({ command, mode }) => {
       // Client build configuration
       outDir: 'dist/client',
       rollupOptions: {
-        input: 'src/entry-client.tsx'
+        input: 'src/entry-client.jsx'
       }
     }
   };

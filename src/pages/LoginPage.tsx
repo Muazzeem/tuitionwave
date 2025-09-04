@@ -88,7 +88,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen w-full dark:bg-gray-900">
+    <div className="flex h-screen w-full bg-gray-900">
       {/* Left section with image */}
       <div className="hidden md:flex md:w-1/2 bg-gray-600 relative">
         <img
@@ -113,8 +113,8 @@ const LoginPage: React.FC = () => {
       {/* Right section with form */}
       <div className="w-full md:w-1/2 flex items-center justify-center">
         <div className="w-full max-w-2xl">
-          <div className="bg-white rounded-lg p-6 shadow-sm border dark:bg-background">
-            <h2 className="text-2xl font-bold mb-2">Log in to Dashboard</h2>
+          <div className="bg-background p-6 shadow-sm border-0 shadow-lg">
+            <h2 className="text-2xl font-bold mb-2 text-white">Log in to Dashboard</h2>
             <p className="text-gray-500 mb-6 dark:text-gray-400">
               Welcome! Please enter your credentials or continue with Google.
             </p>
@@ -133,7 +133,7 @@ const LoginPage: React.FC = () => {
                 <span className="w-full border-t border-gray-300 dark:border-gray-600" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500 dark:bg-background dark:text-gray-400">
+                <span className="px-2 bg-background text-gray-400">
                   Or continue with email
                 </span>
               </div>
@@ -143,7 +143,7 @@ const LoginPage: React.FC = () => {
             <form onSubmit={handleLogin}>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="email">Email Address</Label>
+                  <Label htmlFor="email" className="text-white">Email Address</Label>
                   <div className="mt-1 relative">
                     <Input
                       id="email"
@@ -152,14 +152,14 @@ const LoginPage: React.FC = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full dark:bg-gray-900"
+                      className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
                       disabled={loading}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password" className="text-white">Password</Label>
                   <div className="mt-1 relative">
                     <Input
                       id="password"
@@ -168,7 +168,7 @@ const LoginPage: React.FC = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="w-full pr-10 dark:bg-gray-900"
+                      className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
                       disabled={loading}
                     />
                     <button
@@ -187,15 +187,15 @@ const LoginPage: React.FC = () => {
 
                 <Button
                   type="submit"
-                  className="w-full min-h-[55px] bg-primary hover:bg-primary-700 mt-2 dark:text-white shadow-xl text-md"
+                  className="w-full h-14 bg-cyan-400 hover:bg-cyan-500 text-black font-semibold py-3 rounded-xl text-lg"
                   disabled={loading}
                 >
                   {loading ? 'Logging in...' : 'Log in'}
                 </Button>
 
-                <div className="text-center mt-4 text-md">
+                <div className="text-center mt-4 text-md text-gray-300">
                   Don't have an account?{" "}
-                  <Link to="/auth/registration" className="text-primary hover:underline font-medium">
+                  <Link to="/auth/registration" className="text-cyan-400 hover:underline font-medium">
                     Sign Up
                   </Link>
                 </div>

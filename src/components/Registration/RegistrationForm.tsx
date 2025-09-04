@@ -95,30 +95,30 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
 
   return (
     <>
-      <h2 className="text-2xl font-bold mb-2">Signup</h2>
-      <p className="text-gray-500 mb-6 dark:text-gray-400">Let's create your account!</p>
+      <h2 className="text-2xl font-bold mb-2 text-white">Signup</h2>
+      <p className="text-gray-400 mb-6">Let's create your account!</p>
 
       <div className="mb-6">
         <GoogleLoginButton
-                  onSuccess={handleGoogleLoginSuccess}
-                  disabled={loading}
-                />
-              </div>
-              
-              {/* Divider */}
-              <div className="relative mb-6">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-gray-300 dark:border-gray-600" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500 dark:bg-background dark:text-gray-400">Or continue with email</span>
-                </div>
-              </div>
-      
+          onSuccess={handleGoogleLoginSuccess}
+          disabled={loading}
+        />
+      </div>
+
+      {/* Divider */}
+      <div className="relative mb-6">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-gray-600" />
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-background text-gray-400">Or continue with email</span>
+        </div>
+      </div>
+
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
           <div>
-            <Label htmlFor="email">Email Address</Label>
+            <Label htmlFor="email" className="text-gray-200">Email Address</Label>
             <div className="mt-1 relative">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <Mail className="h-4 w-4 text-gray-400" />
@@ -127,7 +127,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
                 id="email"
                 type="email"
                 placeholder="example@gmail.com"
-                className="pl-10 bg-gray-900"
+                className="pl-10 bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-cyan-500"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
@@ -135,9 +135,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
               />
             </div>
           </div>
-          
+
           <div>
-            <Label htmlFor="phone">Phone Number</Label>
+            <Label htmlFor="phone" className="text-gray-200">Phone Number</Label>
             <div className="mt-1 relative">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <Phone className="h-4 w-4 text-gray-400" />
@@ -146,7 +146,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
                 id="phone"
                 type="tel"
                 placeholder="Phone Number"
-                className="pl-10 bg-gray-900"
+                className="pl-10 bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-cyan-500"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
@@ -154,9 +154,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
               />
             </div>
           </div>
-          
+
           <div>
-            <Label htmlFor="password1">Password</Label>
+            <Label htmlFor="password1" className="text-gray-200">Password</Label>
             <div className="mt-1 relative">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <Lock className="h-4 w-4 text-gray-400" />
@@ -169,11 +169,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
                 value={formData.password1}
                 onChange={handleChange}
                 required
-                className="pl-10 bg-gray-900"
+                className="pl-10 bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-cyan-500"
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-gray-300 transition-colors"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
@@ -184,9 +184,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
               </button>
             </div>
           </div>
-          
+
           <div>
-            <Label htmlFor="password2">Confirm Password</Label>
+            <Label htmlFor="password2" className="text-gray-200">Confirm Password</Label>
             <div className="mt-1 relative">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <Lock className="h-4 w-4 text-gray-400" />
@@ -199,11 +199,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
                 value={formData.password2}
                 onChange={handleChange}
                 required
-                className="pl-10 bg-gray-900"
+                className="pl-10 bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-cyan-500"
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-gray-300 transition-colors"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 {showConfirmPassword ? (
@@ -214,47 +214,47 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, initialDa
               </button>
             </div>
           </div>
-          
+
           <div className="flex items-start space-x-2">
             <input
               type="checkbox"
               id="terms"
-              className="mt-1"
+              className="mt-1 bg-gray-800 border-gray-600 text-cyan-500 focus:ring-cyan-500 rounded"
               checked={termsAccepted}
               onChange={() => setTermsAccepted(!termsAccepted)}
               required
             />
-            <Label htmlFor="terms" className="text-sm">
+            <Label htmlFor="terms" className="text-sm text-gray-300">
               By creating an account means you agree to the{' '}
-              <Link to="/terms" className="text-primary-600 hover:underline">
+              <Link to="/terms" className="text-cyan-400 hover:text-cyan-300 hover:underline">
                 Terms & Conditions
               </Link>{' '}
               and our{' '}
-              <Link to="/privacy" className="text-primary-600 hover:underline">
+              <Link to="/privacy" className="text-cyan-400 hover:text-cyan-300 hover:underline">
                 Privacy Policy
               </Link>
             </Label>
           </div>
-          
-          <Button 
-            type="submit" 
-            className="w-full min-h-[55px] bg-primary hover:bg-primary-700 dark:text-white shadow-xl text-md"
+
+          <Button
+            type="submit"
+            className="w-full h-14 bg-cyan-500 border-0 hover:bg-cyan-400 active:bg-cyan-600 text-black font-semibold py-3 rounded-xl text-lg transition-colors"
             disabled={loading}
           >
             {loading ? 'Creating account...' : 'Sign up'}
           </Button>
-        
-          <div className="text-center mt-4 text-md">
+
+          <div className="text-center mt-4 text-md text-gray-300">
             Already have an account?{' '}
-            <Link to="/login" className="text-primary hover:underline font-medium">
+            <Link to="/login" className="text-cyan-400 hover:text-cyan-300 hover:underline font-medium">
               Sign In
             </Link>
           </div>
         </div>
       </form>
-      
+
       <div className="mt-6 text-center">
-        <Link to="/" className="text-blue-600 hover:underline font-medium">
+        <Link to="/" className="text-cyan-400 hover:text-cyan-300 hover:underline font-medium">
           Back
         </Link>
       </div>

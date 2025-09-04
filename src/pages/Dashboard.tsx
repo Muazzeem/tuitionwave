@@ -6,13 +6,14 @@ import RecentRequests from "@/components/RecentRequests";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/contexts/AuthContext";
 import SocialMediaCards from "@/components/SocialMediaCard";
-import ErrorPage from "@/components/PermissionCard";
 import { ShieldX, RefreshCw, UserPlus } from "lucide-react";
 import { getAccessToken } from "@/utils/auth";
 import { useToast } from "@/hooks/use-toast";
 import PricingCards from "@/components/PricingCards";
 import { Tutor } from "@/types/tutor";
 import ProfileCompletionAlert from "@/components/ProfileCompletionAlert";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
   const { userProfile, reloadProfile } = useAuth();
@@ -23,38 +24,6 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     document.title = "Tuition Wave | Tutor Dashboard";
   }, []);
-
-  function requestAsTuror() {
-    const url = `${import.meta.env.VITE_API_URL}/api/users/become-a-tutor/`;
-
-    fetch(url, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({
-        is_tutor: true,
-      }),
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData?.detail || "Failed to become a tutor");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        toast({
-          title: "Success",
-          description: data.message,
-        });
-        reloadProfile();
-      })
-      .catch((error) => {
-        console.error("Error becoming tutor:", error.message);
-      });
-  }
 
   function fetchTutorInfo() {
     fetch(`${import.meta.env.VITE_API_URL}/api/tutors/my-profile`, {
@@ -77,13 +46,13 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex-1 overflow-auto dark:bg-gray-900">
+    <div className="flex-1 overflow-auto bg-gray-900">
       <DashboardHeader userName="John" />
 
       <ScrollArea type="always" style={{ height: "calc(100vh - 100px)" }}>
         {tutor && userProfile.is_tutor && (
-          <div className="p-6">
-            <h2 className="text-3xl font-bold text-foreground">Tutor Dashboard</h2>
+          <div className="p-4 sm:p-6">
+            <h2 className="text-3xl font-bold text-foreground text-white">Tutor Dashboard</h2>
             <p className="text-muted-foreground mb-6">
               Manage your tutor profile and requests
             </p>
@@ -112,27 +81,77 @@ const Dashboard: React.FC = () => {
           </div>
         )}
         {userProfile && !userProfile.is_tutor && (
-          <ErrorPage
-            icon={ShieldX}
-            title="Access Denied"
-            subtitle="Insufficient Permissions"
-            message="You don't have the necessary permissions to access this dashboard.
-            To continue, please register as a tutor or contact your administrator."
-            primaryAction={{
-              label: "Become a Tutor",
-              onClick: () => {
-                requestAsTuror();
-              },
-              icon: UserPlus,
-            }}
-            secondaryAction={{
-              label: "Try Again",
-              onClick: () => window.location.reload(),
-              icon: RefreshCw,
-            }}
-            supportEmail="support@company.com"
-          />
+          <div className="p-4 sm:p-6">
+            <h2 className="text-3xl font-bold text-foreground text-white">Tutor Dashboard</h2>
+            <p className="text-muted-foreground mb-6">
+              Manage your tutor profile and requests
+            </p>
+            <div
+              className={`bg-red-50 border-l-4 border-red-500 text-red p-3 md:p-4 mb-4 md:mb-6`}
+            >
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-3 gap-2">
+                <div className="flex items-center">
+                  <svg
+                    className="h-5 w-5 sm:h-6 sm:w-6 mr-2 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-2a6 6 0 100-12 6 6 0 000 12z"
+                      clipRule="evenodd"
+                    />
+                    <path
+                      fillRule="evenodd"
+                      d="M10 7a1 1 0 011 1v3a1 1 0 11-2 0V8a1 1 0 011-1z"
+                      clipRule="evenodd"
+                    />
+                    <path
+                      fillRule="evenodd"
+                      d="M10 14a1 1 0 100-2 1 1 0 000 2z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <h3 className="font-bold text-red text-base sm:text-lg md:text-xl leading-tight">
+                    Complete your tutor profile & unlock your potential!
+                  </h3>
+                </div>
+                <div className="text-left sm:text-right font-bold text-sm sm:text-base md:text-lg flex-shrink-0">
+                  10% Complete
+                </div>
+              </div>
+
+              <div className="w-full bg-gray-200 rounded-full h-2 sm:h-2.5 mb-3">
+                <div
+                  className={`bg-red-600 h-2 sm:h-2.5 rounded-full transition-all duration-300`}
+                  style={{ width: `10%` }}
+                ></div>
+              </div>
+
+              <div className="flex justify-between items-center text-sm text-gray-500 text-gray-400">
+                <div>
+                  <p className="mb-2 text-sm sm:text-base leading-relaxed">
+                    Showcase your expertise, attract more students, and stand out by finishing your profile setup!
+                  </p>
+                </div>
+                <div>
+                  <Link to="/teacher/profile">
+                    <Button
+                      className="bg-cyan-700 hover:bg-cyan-800 text-white px-6 py-2 rounded-full text-sm font-medium border-0"
+                    >
+                      Complete Profile
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+            <PricingCards />
+
+            <SocialMediaCards />
+          </div>
+
         )}
+        <div className="pb-20"></div>
       </ScrollArea>
     </div>
   );

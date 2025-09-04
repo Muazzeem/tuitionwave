@@ -90,13 +90,13 @@ const CountdownDisplay = ({ targetDate, className = "", hideForExpired = false, 
 
   const getUrgencyStyle = () => {
     if (timeLeft.expired) {
-      return "text-red-600 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800";
+      return "text-red-600 bg-red-50 bg-red-900/20 border-red-200 border-red-800";
     } else if (timeLeft.total < 2 * 60 * 60 * 1000) { // Less than 2 hours
-      return "text-orange-600 bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800";
+      return "text-orange-600 bg-orange-50 bg-orange-900/20 border-orange-200 border-orange-800";
     } else if (timeLeft.total < 24 * 60 * 60 * 1000) { // Less than 24 hours
-      return "text-green-600 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800";
+      return "text-green-600 bg-green-50 bg-green-900/20 border-green-200 border-green-800";
     } else {
-      return "text-green-600 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800";
+      return "text-green-600 bg-green-50 bg-green-900/20 border-green-200 border-green-800";
     }
   };
 
@@ -154,8 +154,8 @@ export default function CreateModelTest() {
       param: "today=true",
       icon: PlayCircle,
       color: "text-green-500",
-      bgColor: "bg-green-50 dark:bg-green-900/20",
-      borderColor: "border-green-200 dark:border-green-800"
+      bgColor: "bg-green-50 bg-green-900/20",
+      borderColor: "border-green-200 border-green-800"
     },
     {
       id: "upcoming",
@@ -163,8 +163,8 @@ export default function CreateModelTest() {
       param: "upcoming=true",
       icon: Clock,
       color: "text-blue-500",
-      bgColor: "bg-blue-50 dark:bg-blue-900/20",
-      borderColor: "border-blue-200 dark:border-blue-800"
+      bgColor: "bg-blue-50 bg-blue-900/20",
+      borderColor: "border-blue-200 border-blue-800"
     },
     {
       id: "expired",
@@ -172,8 +172,8 @@ export default function CreateModelTest() {
       param: "past=true",
       icon: CheckCircle,
       color: "text-red-500",
-      bgColor: "bg-red-50 dark:bg-red-900/20",
-      borderColor: "border-red-200 dark:border-red-800"
+      bgColor: "bg-red-50 bg-red-900/20",
+      borderColor: "border-red-200 border-red-800"
     }
   ];
 
@@ -265,15 +265,15 @@ export default function CreateModelTest() {
 
   if (error) {
     return (
-      <div className="flex-1 overflow-auto dark:bg-gray-900">
+      <div className="flex-1 overflow-auto bg-gray-900">
         <DashboardHeader userName="John" />
         <div className="flex items-center justify-center h-64">
-          <div className="text-center p-8 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800 max-w-md">
+          <div className="text-center p-8 bg-red-50 bg-red-900/20 rounded-lg border border-red-200 border-red-800 max-w-md">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-red-700 dark:text-red-300 mb-2">
+            <h3 className="text-lg font-semibold text-red-700 text-red-300 mb-2">
               Oops! Something went wrong
             </h3>
-            <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
+            <p className="text-red-600 text-red-400 mb-4">{error}</p>
             <Button
               onClick={() => window.location.reload()}
               className="bg-red-600 hover:bg-red-700 text-white"
@@ -374,8 +374,8 @@ export default function CreateModelTest() {
         icon: Clock,
         label: 'Processing...',
         color: 'text-orange-600',
-        bgColor: 'bg-orange-50 dark:bg-orange-900/20',
-        borderColor: 'border-orange-200 dark:border-orange-800',
+        bgColor: 'bg-orange-50 bg-orange-900/20',
+        borderColor: 'border-orange-200 border-orange-800',
         action: 'Processing...',
         disabled: true,
         buttonClass: 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed'
@@ -388,8 +388,8 @@ export default function CreateModelTest() {
         icon: Clock,
         label: 'Coming Soon',
         color: 'text-blue-600',
-        bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-        borderColor: 'border-blue-200 dark:border-blue-800',
+        bgColor: 'bg-blue-50 bg-blue-900/20',
+        borderColor: 'border-blue-200 border-blue-800',
         action: 'Coming Soon',
         disabled: true,
         buttonClass: 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed text-gray-600'
@@ -404,11 +404,11 @@ export default function CreateModelTest() {
           icon: CheckCircle,
           label: 'Expired',
           color: 'text-gray-600',
-          bgColor: 'bg-gray-50 dark:bg-gray-900/20',
-          borderColor: 'border-gray-200 dark:border-gray-800',
+          bgColor: 'bg-gray-50 bg-gray-900/20',
+          borderColor: 'border-gray-200 border-gray-800',
           action: 'View Result',
           disabled: false,
-          buttonClass: 'dark:bg-red-800/80 text-white'
+          buttonClass: 'bg-red-800/80 text-white'
         };
       }
 
@@ -416,11 +416,11 @@ export default function CreateModelTest() {
         icon: CheckCircle,
         label: 'Expired',
         color: 'text-gray-600',
-        bgColor: 'bg-gray-50 dark:bg-gray-900/20',
-        borderColor: 'border-gray-200 dark:border-gray-800',
+        bgColor: 'bg-gray-50 bg-gray-900/20',
+        borderColor: 'border-gray-200 border-gray-800',
         action: 'Start Exam',
         disabled: false,
-        buttonClass: 'dark:bg-red-800/80 text-white'
+        buttonClass: 'bg-red-800/80 text-white'
       };
     }
 
@@ -433,8 +433,8 @@ export default function CreateModelTest() {
             icon: CheckCircle,
             label: 'Completed',
             color: 'text-green-600',
-            bgColor: 'bg-green-50 dark:bg-green-900/20',
-            borderColor: 'border-green-200 dark:border-green-800',
+            bgColor: 'bg-green-50 bg-green-900/20',
+            borderColor: 'border-green-200 border-green-800',
             action: 'View Results',
             disabled: false,
             buttonClass: 'bg-gradient-to-r from-blue-500 to-primary-500 hover:from-blue-600 hover:to-primary-700 text-white'
@@ -444,8 +444,8 @@ export default function CreateModelTest() {
             icon: PlayCircle,
             label: 'In Progress',
             color: 'text-blue-600',
-            bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-            borderColor: 'border-blue-200 dark:border-blue-800',
+            bgColor: 'bg-blue-50 bg-blue-900/20',
+            borderColor: 'border-blue-200 border-blue-800',
             action: 'Continue Exam',
             disabled: false,
             buttonClass: 'bg-gradient-to-r from-blue-500 to-primary-500 hover:from-blue-600 hover:to-primary-700 text-white'
@@ -458,8 +458,8 @@ export default function CreateModelTest() {
       icon: PlayCircle,
       label: 'Available',
       color: 'text-blue-600',
-      bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-      borderColor: 'border-blue-200 dark:border-blue-800',
+      bgColor: 'bg-blue-50 bg-blue-900/20',
+      borderColor: 'border-blue-200 border-blue-800',
       action: 'Continue Exam',
       disabled: false,
       buttonClass: 'bg-gradient-to-r from-blue-500 to-primary-500 hover:from-blue-600 hover:to-primary-700 text-white'
@@ -469,7 +469,7 @@ export default function CreateModelTest() {
   const currentTabInfo = tabs.find(tab => tab.id === selectedTab);
 
   return (
-    <div className="flex-1 overflow-auto dark:bg-gray-900">
+    <div className="flex-1 overflow-auto bg-gray-900">
       <DashboardHeader userName="John" />
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
         <div className="p-4 md:p-6">
@@ -480,7 +480,7 @@ export default function CreateModelTest() {
                 <BookOpen className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-foreground">Model Tests</h1>
+                <h1 className="text-3xl font-bold text-foreground text-white">Model Tests</h1>
                 <p className="text-muted-foreground">Practice with real exam simulations and track your progress</p>
               </div>
             </div>
@@ -488,7 +488,7 @@ export default function CreateModelTest() {
 
           {/* Enhanced Tabs */}
           <div className="mb-8">
-            <div className="flex flex-wrap gap-2 p-1 bg-gray-100 dark:bg-gray-800 rounded-xl w-fit">
+            <div className="flex flex-wrap gap-2 p-1 bg-gray-100 bg-gray-800 rounded-xl w-fit">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = selectedTab === tab.id;
@@ -498,7 +498,7 @@ export default function CreateModelTest() {
                     onClick={() => setSelectedTab(tab.id)}
                     className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all ${isActive
                       ? `${tab.bgColor} ${tab.color} shadow-sm border ${tab.borderColor}`
-                      : "text-muted-foreground hover:text-foreground hover:bg-white/50 dark:hover:bg-gray-700"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/50 hover:bg-gray-700"
                       }`}
                   >
                     <Icon className={`w-4 h-4 ${isActive ? tab.color : ''}`} />
@@ -520,9 +520,9 @@ export default function CreateModelTest() {
                   <Card
                     key={exam.uid}
                     className={`${exam.is_active
-                      ? 'hover:border-primary-300 dark:hover:border-primary-600'
+                      ? 'hover:border-primary-300 hover:border-primary-600'
                       : 'opacity-75 cursor-not-allowed'
-                      } bg-white dark:bg-background border-gray-200 dark:border-gray-900 shadow-md`}
+                      } bg-white bg-background border-gray-200 border-gray-900 shadow-md`}
                   >
                     <CardContent className="p-3 sm:p-4 md:p-6">
                       <div className="space-y-3 sm:space-y-4">
@@ -530,7 +530,7 @@ export default function CreateModelTest() {
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
                           <div className="flex-1 min-w-0">
                             <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-                              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white line-clamp-2 sm:line-clamp-1">
+                              <h3 className="text-base sm:text-lg font-semibold text-gray-900 text-white line-clamp-2 sm:line-clamp-1">
                                 {exam.title}
                               </h3>
                               <Badge className={`${statusInfo.bgColor} ${statusInfo.color} border-0 text-xs self-start sm:self-center flex-shrink-0`}>
@@ -546,7 +546,7 @@ export default function CreateModelTest() {
 
                         {/* Category */}
                         <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2">
-                          <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 self-start">
+                          <Badge variant="outline" className="bg-blue-50 bg-blue-900/20 text-blue-700 text-blue-300 border-blue-200 border-blue-800 self-start">
                             <span className="truncate">{exam.category}</span>
                           </Badge>
                         </div>
@@ -604,7 +604,7 @@ export default function CreateModelTest() {
 
                         {/* Topics */}
                         {exam.configurations && exam.configurations.length > 0 && (
-                          <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+                          <div className="pt-2 border-t border-gray-200 border-gray-700">
                             <div className="text-xs text-muted-foreground">
                               <span className="font-medium">Topics: </span>
                               <span className="break-words">
@@ -658,19 +658,19 @@ export default function CreateModelTest() {
                 {selectedTab === 'expired' && "You haven't taken any exams yet. Start with a live exam to see your history here."}
               </p>
 
-              <div className="bg-background border border-gray-200 dark:border-primary-700 rounded-lg p-6 max-w-md mx-auto">
+              <div className="bg-background border border-gray-200 border-primary-700 rounded-lg p-6 max-w-md mx-auto">
                 <Trophy className="h-8 w-8 text-purple-500 mx-auto mb-3" />
-                <h4 className="font-semibold text-purple-800 dark:text-purple-300 mb-2">
+                <h4 className="font-semibold text-purple-800 text-purple-300 mb-2">
                   Ready to test your skills?
                 </h4>
-                <p className="text-sm text-purple-600 dark:text-white mb-4">
+                <p className="text-sm text-purple-600 text-white mb-4">
                   Challenge yourself with model tests and track your improvement over time
                 </p>
                 {selectedTab !== 'running' && (
                   <Button
                     onClick={() => setSelectedTab('running')}
                     variant="outline"
-                    className="border-primary-300 text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20"
+                    className="border-primary-300 text-primary-700 hover:bg-primary-50 hover:bg-primary-900/20"
                   >
                     View Running Exams
                   </Button>

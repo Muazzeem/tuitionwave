@@ -363,14 +363,14 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
 
   return (
     <div className="space-y-6">
-      {isLoading && 
-        <div className="text-center text-gray-500">Loading profile data...</div>
+      {isLoading &&
+        <div className="text-center text-gray-400">Loading profile data...</div>
       }
-      
 
+      {/* Profile Picture Section */}
       <div className="flex flex-col items-center space-y-4">
         <div className="relative">
-          <div className="w-32 h-32 rounded-full bg-primary-200 dark:bg-primary-800 flex items-center justify-center overflow-hidden border-4 border-gray-300 dark:border-primary-600">
+          <div className="w-32 h-32 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden border-4 border-slate-600">
             {previewUrl ? (
               <img
                 src={previewUrl}
@@ -397,7 +397,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             type="button"
             variant="outline"
             onClick={triggerFileInput}
-            className="flex items-center space-x-2 bg-primary hover:bg-primary-700 dark:text-white"
+            className="flex items-center space-x-2 bg-cyan-400 hover:bg-cyan-500 text-black border-0 font-semibold"
           >
             <Camera className="w-4 h-4" />
             <span>{previewUrl ? 'Change Picture' : 'Upload Picture'}</span>
@@ -412,161 +412,210 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
           className="hidden"
         />
 
-        <p className="text-sm text-gray-500 text-center">
+        <p className="text-sm text-gray-400 text-center">
           Supported formats: JPG, PNG, GIF<br />
           Maximum size: 5MB
         </p>
       </div>
 
+      {/* Basic Info Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="first_name dark:text-gray-400 tex-white">First Name</Label>
+          <Label htmlFor="first_name" className="text-white">First Name</Label>
           <Input
             id="first_name"
             name="first_name"
             value={formData.first_name || ''}
             onChange={handleChange}
-            className="mt-1 dark:bg-gray-900 border-primary-900"
+            className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
           />
         </div>
         <div>
-          <Label htmlFor="last_name">Last Name</Label>
+          <Label htmlFor="last_name" className="text-white">Last Name</Label>
           <Input
             id="last_name"
             name="last_name"
             value={formData.last_name || ''}
             onChange={handleChange}
-            className="mt-1 dark:bg-gray-900 border-primary-900"
+            className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
           />
         </div>
         <div>
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="text-white">Email</Label>
           <Input
             id="email"
             name="email"
             value={formData.email || ''}
             onChange={handleChange}
-            className="mt-1 dark:bg-gray-900 border-primary-900"
+            className="mt-1 text-white bg-slate-700 border-slate-600 opacity-60 cursor-not-allowed"
             disabled
           />
         </div>
         <div>
-          <Label htmlFor="phone">Phone <span className="text-red-500">*</span></Label>
+          <Label htmlFor="phone" className="text-white">Phone <span className="text-red-400">*</span></Label>
           <Input
             id="phone"
             name="phone"
             value={formData.phone || ''}
             onChange={handleChange}
-            placeholder='+880123456789'
-            className="mt-1 dark:bg-gray-900 border-primary-900"
+            placeholder="+880123456789"
+            className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
           />
         </div>
       </div>
 
+      {/* Gender and Birth Date */}
       <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="gender">Gender</Label>
+          <Label htmlFor="gender" className="text-white">Gender</Label>
           <Select
             value={formData.gender}
             onValueChange={(value) => updateFormData({ gender: value })}
           >
-            <SelectTrigger id="gender" className="mt-1 dark:bg-gray-900 border-primary-900">
+            <SelectTrigger id="gender" className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500">
               <SelectValue placeholder="Select Gender" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="MALE">Male</SelectItem>
-              <SelectItem value="FEMALE">Female</SelectItem>
-              <SelectItem value="OTHER">Other</SelectItem>
+            <SelectContent className="bg-slate-800 border-slate-600">
+              <SelectItem value="MALE" className="text-white hover:bg-slate-700">Male</SelectItem>
+              <SelectItem value="FEMALE" className="text-white hover:bg-slate-700">Female</SelectItem>
+              <SelectItem value="OTHER" className="text-white hover:bg-slate-700">Other</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div>
-          <Label htmlFor="birthDate">Birth Date</Label>
+          <Label htmlFor="birthDate" className="text-white">Birth Date</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 id="birthDate"
                 variant="outline"
                 className={cn(
-                  "w-full justify-start text-left font-normal mt-1 dark:bg-gray-900 border-primary-900",
-                  !formData.birthDate && "text-muted-foreground"
+                  "w-full justify-start text-left font-normal mt-1 text-white bg-slate-800/50 border-slate-600 hover:bg-slate-700",
+                  !formData.birthDate && "text-gray-400"
                 )}
               >
-                {formData.birthDate && format(formData.birthDate, "PPP")}
+                {formData.birthDate ? format(formData.birthDate, "PPP") : "Select birth date"}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 border-none shadow-md">
-              <Calendar 
+            <PopoverContent className="w-auto p-0 bg-slate-800 border-slate-600 shadow-xl">
+              <Calendar
                 mode="single"
                 selected={formData.birthDate}
                 onSelect={(date) => updateFormData({ birthDate: date })}
-                className="rounded-md border"
+                className="rounded-md bg-slate-800 text-white"
               />
             </PopoverContent>
           </Popover>
         </div>
       </div>
 
+      {/* Description */}
       <div>
-        <Label htmlFor="description">Description</Label>
-        <Editor containerProps={{ style: { resize: 'vertical' } }}
+        <Label htmlFor="description" className="text-white">Description</Label>
+        <Editor
+          containerProps={{ style: { resize: 'vertical' } }}
           value={formData.description}
           onChange={(e) => updateFormData({ description: e.target.value })}
-          className="mt-1"
-        >
-          </Editor>
+          className="mt-1 text-white bg-slate-800/50 border-slate-600"
+        />
       </div>
 
+      {/* LinkedIn */}
       <div>
-        <Label htmlFor="linkedin">LinkedIn Profile</Label>
+        <Label htmlFor="linkedin" className="text-white">LinkedIn Profile</Label>
         <div className="relative mt-1">
           <Input
             id="linkedin"
             placeholder="Enter LinkedIn url"
             value={formData.linkedinProfile}
             onChange={(e) => updateFormData({ linkedinProfile: e.target.value })}
-            className="pl-10 dark:bg-gray-900 border-primary-900"
+            className="pl-10 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
           />
-          <Linkedin className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+          <Linkedin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
         </div>
       </div>
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Division Selection */}
+
+      {/* Location Section */}
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Division Selection */}
+          <div className="relative">
+            <Label className="text-white">Division</Label>
+            <div className="relative mt-1">
+              <div
+                className="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded-md cursor-pointer flex items-center justify-between text-white hover:border-slate-500 transition-colors"
+                onClick={() => setShowDivisionDropdown(!showDivisionDropdown)}
+              >
+                <span className={getSelectedDivisionName() ? 'text-white' : 'text-gray-400'}>
+                  {getSelectedDivisionName() || 'Select Division'}
+                </span>
+                <ChevronDown className="w-4 h-4 text-gray-400" />
+              </div>
+              {showDivisionDropdown && (
+                <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-600 rounded-md shadow-xl">
+                  <div className="p-2 border-b border-slate-700">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Input
+                        placeholder="Search divisions..."
+                        value={divisionSearch}
+                        onChange={(e) => setDivisionSearch(e.target.value)}
+                        className="pl-10 bg-slate-700 border-slate-600 text-white focus:border-slate-500"
+                      />
+                    </div>
+                  </div>
+                  <div className="max-h-60 overflow-y-auto">
+                    {filteredDivisions.map((division) => (
+                      <div
+                        key={division.id}
+                        className="px-4 py-2 hover:bg-slate-700 cursor-pointer text-white"
+                        onClick={() => handleDivisionSelect(division)}
+                      >
+                        {division.name}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* District Selection */}
+          {formData.division_id && (
             <div className="relative">
-              <Label>Division</Label>
+              <Label className="text-white">District</Label>
               <div className="relative mt-1">
                 <div
-                className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between dark:bg-gray-900 border-primary-900"
-                  onClick={() => setShowDivisionDropdown(!showDivisionDropdown)}
+                  className="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded-md cursor-pointer flex items-center justify-between text-white hover:border-slate-500 transition-colors"
+                  onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
                 >
-                  <span className={getSelectedDivisionName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
-                    {getSelectedDivisionName() || 'Select Division'}
+                  <span className={getSelectedDistrictName() ? 'text-white' : 'text-gray-400'}>
+                    {getSelectedDistrictName() || 'Select District'}
                   </span>
                   <ChevronDown className="w-4 h-4 text-gray-400" />
                 </div>
-                {showDivisionDropdown && (
-                <div className="absolute z-10 w-full mt-1 dark:bg-gray-900 border-primary-900 rounded-md shadow-lg">
-                    <div className="p-2 border-b border-gray-200 dark:border-gray-600">
+                {showDistrictDropdown && (
+                  <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-600 rounded-md shadow-xl">
+                    <div className="p-2 border-b border-slate-700">
                       <div className="relative">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <Input
-                          placeholder="Search divisions..."
-                          value={divisionSearch}
-                          onChange={(e) => setDivisionSearch(e.target.value)}
-                          className="pl-10"
+                          placeholder="Search districts..."
+                          value={districtSearch}
+                          onChange={(e) => setDistrictSearch(e.target.value)}
+                          className="pl-10 bg-slate-700 border-slate-600 text-white focus:border-slate-500"
                         />
                       </div>
                     </div>
                     <div className="max-h-60 overflow-y-auto">
-                      {filteredDivisions.map((division) => (
+                      {filteredDistricts.map((district) => (
                         <div
-                          key={division.id}
-                          className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                          onClick={() => handleDivisionSelect(division)}
+                          key={district.id}
+                          className="px-4 py-2 hover:bg-slate-700 cursor-pointer text-white"
+                          onClick={() => handleDistrictSelect(district)}
                         >
-                          {division.name}
+                          {district.name}
                         </div>
                       ))}
                     </div>
@@ -574,116 +623,79 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
                 )}
               </div>
             </div>
+          )}
 
-            {/* District Selection */}
-            {formData.division_id && (
-              <div className="relative">
-                <Label>District</Label>
-                <div className="relative mt-1">
-                  <div
-                  className="w-full px-3 py-2 border rounded-md cursor-pointer flex items-center justify-between dark:bg-gray-900 border-primary-900"
-                    onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
-                  >
-                    <span className={getSelectedDistrictName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
-                      {getSelectedDistrictName() || 'Select District'}
-                    </span>
-                    <ChevronDown className="w-4 h-4 text-gray-400" />
-                  </div>
-                  {showDistrictDropdown && (
-                  <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
-                      <div className="p-2 border-b border-gray-200 dark:border-gray-600">
-                        <div className="relative">
-                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                          <Input
-                            placeholder="Search districts..."
-                            value={districtSearch}
-                            onChange={(e) => setDistrictSearch(e.target.value)}
-                            className="pl-10"
-                          />
-                        </div>
-                      </div>
-                      <div className="max-h-60 overflow-y-auto">
-                        {filteredDistricts.map((district) => (
-                          <div
-                            key={district.id}
-                            className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                            onClick={() => handleDistrictSelect(district)}
-                          >
-                            {district.name}
-                          </div>
-                        ))}
+          {/* Upazila Selection */}
+          {formData.preferred_district_id && (
+            <div className="relative">
+              <Label className="text-white">Upazila</Label>
+              <div className="relative mt-1">
+                <div
+                  className="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded-md cursor-pointer flex items-center justify-between text-white hover:border-slate-500 transition-colors"
+                  onClick={() => setShowUpazilaDropdown(!showUpazilaDropdown)}
+                >
+                  <span className={getSelectedUpazilaName() ? 'text-white' : 'text-gray-400'}>
+                    {getSelectedUpazilaName() || 'Select Upazila'}
+                  </span>
+                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                </div>
+                {showUpazilaDropdown && (
+                  <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-600 rounded-md shadow-xl">
+                    <div className="p-2 border-b border-slate-700">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Input
+                          placeholder="Search upazilas..."
+                          value={upazilaSearch}
+                          onChange={(e) => setUpazilaSearch(e.target.value)}
+                          className="pl-10 bg-slate-700 border-slate-600 text-white focus:border-slate-500"
+                        />
                       </div>
                     </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Upazila Selection */}
-            {formData.preferred_district_id && (
-              <div className="relative">
-                <Label>Upazila</Label>
-                <div className="relative mt-1">
-                  <div
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between dark:bg-gray-900 border-primary-900"
-                    onClick={() => setShowUpazilaDropdown(!showUpazilaDropdown)}
-                  >
-                    <span className={getSelectedUpazilaName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
-                      {getSelectedUpazilaName() || 'Select Upazila'}
-                    </span>
-                    <ChevronDown className="w-4 h-4 text-gray-400" />
-                  </div>
-                  {showUpazilaDropdown && (
-                  <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
-                      <div className="p-2 border-b border-gray-200 dark:border-gray-600">
-                        <div className="relative">
-                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                          <Input
-                            placeholder="Search upazilas..."
-                            value={upazilaSearch}
-                            onChange={(e) => setUpazilaSearch(e.target.value)}
-                            className="pl-10"
-                          />
+                    <div className="max-h-60 overflow-y-auto">
+                      {filteredUpazilas.map((upazila) => (
+                        <div
+                          key={upazila.id}
+                          className="px-4 py-2 hover:bg-slate-700 cursor-pointer text-white"
+                          onClick={() => handleUpazilaSelect(upazila)}
+                        >
+                          {upazila.name}
                         </div>
-                      </div>
-                      <div className="max-h-60 overflow-y-auto">
-                        {filteredUpazilas.map((upazila) => (
-                          <div
-                            key={upazila.id}
-                            className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer"
-                            onClick={() => handleUpazilaSelect(upazila)}
-                          >
-                            {upazila.name}
-                          </div>
-                        ))}
-                      </div>
+                      ))}
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          
-          <div>
-            <Label htmlFor="address">Address</Label>
-            <Input
-              id="address"
-              name="address"
-              value={formData.address || ''}
-              onChange={handleChange}
-            className="mt-1 dark:bg-gray-900 border-primary-900"
-            />
-          </div>
+            </div>
+          )}
         </div>
 
+        {/* Address */}
+        <div>
+          <Label className="text-white" htmlFor="address">Address</Label>
+          <Input
+            id="address"
+            name="address"
+            value={formData.address || ''}
+            onChange={handleChange}
+            className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
+          />
+        </div>
+      </div>
+
+      {/* Action Buttons */}
       <div className="flex justify-between pt-4">
-        <Button variant="outline" className="px-6 dark:bg-gray-900 hover:border-primary-900" disabled={isSaving}>
+        <Button
+          variant="outline"
+          className="px-6 text-white bg-slate-800 border-slate-600 hover:bg-slate-700 hover:border-slate-500"
+          disabled={isSaving}
+        >
           Cancel
         </Button>
         <Button
           type="button"
           onClick={handleSubmit}
-          className="px-6 dark:bg-primary dark:text-white"
+          className="px-6 bg-cyan-400 text-black hover:bg-cyan-500 font-semibold"
           disabled={isSaving}
         >
           {isSaving ? 'Saving...' : 'Save & Next'}

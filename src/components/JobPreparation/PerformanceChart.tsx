@@ -72,9 +72,9 @@ export default function PerformanceChart() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="dark:bg-background dark:border-gray-900 shadow-md">
+      <Card className="bg-background border-gray-900 shadow-md">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-white">
             <TrendingUp className="h-5 w-5 text-green-500" />
             Score Trend
           </CardTitle>
@@ -82,27 +82,27 @@ export default function PerformanceChart() {
         <CardContent>
           {performanceData.length === 0 ? (
             <div className="text-center py-12">
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 from-green-900/20 to-emerald-900/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <TrendingUp className="h-8 w-8 text-green-500" />
               </div>
               <h3 className="font-semibold text-lg mb-2">No trend data yet</h3>
               <p className="text-muted-foreground mb-4">
                 Complete a few exams to see your progress over time
               </p>
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 max-w-sm mx-auto">
-                <p className="text-sm text-blue-700 dark:text-blue-300">
+              <div className="bg-blue-50 bg-blue-900/20 border border-blue-200 border-blue-800 rounded-lg p-4 max-w-sm mx-auto">
+                <p className="text-sm text-blue-700 text-blue-300">
                   📈 Your performance graph will appear here as you take more exams
                 </p>
               </div>
             </div>
           ) : (
             <>
-              <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 from-green-900/20 to-emerald-900/20 rounded-lg border border-green-200 border-green-800">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-green-700 dark:text-green-300 font-medium">
+                    <span className="text-green-700 text-green-300 font-medium">
                     Latest Score: {performanceData[performanceData.length - 1]?.score || 0}
                   </span>
-                  <span className="text-green-600 dark:text-green-400">
+                    <span className="text-green-600 text-green-400">
                     {performanceData.length} data points
                   </span>
                 </div>
@@ -111,7 +111,7 @@ export default function PerformanceChart() {
                 <ChartContainer config={chartConfig}>
                   <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={performanceData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="stroke-gray-700" />
                       <XAxis
                         dataKey="month"
                         tick={{ fontSize: 12 }}
@@ -162,9 +162,9 @@ export default function PerformanceChart() {
         </CardContent>
       </Card>
 
-      <Card className="dark:bg-background dark:border-gray-900 shadow-md">
+      <Card className="bg-background border-gray-900 shadow-md">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-white">
             <BarChart3 className="h-5 w-5 text-purple-500" />
             Subject Performance
           </CardTitle>
@@ -172,27 +172,27 @@ export default function PerformanceChart() {
         <CardContent>
           {subjectPerformance.length === 0 ? (
             <div className="text-center py-12">
-              <div className="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+              <div className="bg-gradient-to-br from-purple-50 to-indigo-50 from-purple-900/20 to-indigo-900/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <BarChart3 className="h-8 w-8 text-purple-500" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">No subject data yet</h3>
+              <h3 className="font-semibold text-lg mb-2 text-white">No subject data yet</h3>
               <p className="text-muted-foreground mb-4">
                 Take exams in different subjects to see your performance breakdown
               </p>
-              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 max-w-sm mx-auto">
-                <p className="text-sm text-amber-700 dark:text-amber-300">
+              <div className="bg-amber-50 bg-amber-900/20 border border-amber-200 border-amber-800 rounded-lg p-4 max-w-sm mx-auto">
+                <p className="text-sm text-amber-700 text-amber-300">
                   📚 Your subject strengths will be displayed here
                 </p>
               </div>
             </div>
           ) : (
             <>
-              <div className="mb-4 p-3 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                <div className="mb-4 p-3 bg-gradient-to-r from-purple-50 to-indigo-50 from-purple-900/20 to-indigo-900/20 rounded-lg border border-purple-200 border-purple-800">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-purple-700 dark:text-purple-300 font-medium">
+                    <span className="text-purple-700 text-purple-300 font-medium">
                     Best Subject: {subjectPerformance.reduce((prev, current) => (prev.score > current.score) ? prev : current)?.subject || 'N/A'}
                   </span>
-                  <span className="text-purple-600 dark:text-purple-400">
+                    <span className="text-purple-600 text-purple-400">
                     {subjectPerformance.length} subjects
                   </span>
                 </div>
@@ -201,7 +201,7 @@ export default function PerformanceChart() {
                 <ChartContainer config={chartConfig}>
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={subjectPerformance} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="stroke-gray-700" />
                       <XAxis
                         dataKey="subject"
                         tick={{ fontSize: 11 }}
@@ -235,7 +235,7 @@ export default function PerformanceChart() {
                 </ChartContainer>
 
               <div className="mt-3 text-center">
-                <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground text-white">
                   📊 Identify your strongest and weakest subjects
                 </p>
               </div>

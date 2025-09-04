@@ -192,7 +192,7 @@ export default function ExamPractice() {
   const stats = getQuickStats();
 
   return (
-    <div className="flex-1 overflow-auto dark:bg-gray-900">
+    <div className="flex-1 overflow-auto bg-gray-900">
       <DashboardHeader userName="John" />
 
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
@@ -204,7 +204,7 @@ export default function ExamPractice() {
                 <Target className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h2 className="text-3xl font-bold text-foreground">Exam Practice</h2>
+                <h2 className="text-3xl font-bold text-foreground text-white">Job Preparation</h2>
                 <p className="text-muted-foreground">Create custom exams or review your performance history</p>
               </div>
             </div>
@@ -212,7 +212,7 @@ export default function ExamPractice() {
 
           {/* Enhanced Tabs */}
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-1 shadow-sm border border-gray-200 dark:border-gray-700 w-fit">
+            <div className="bg-gray-800 rounded-xl p-1 shadow-sm border border-gray-200 border-gray-700 w-fit">
               <TabsList className="grid grid-cols-2 bg-transparent gap-1 mb-3">
                 <TabsTrigger
                   value="create"

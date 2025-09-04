@@ -346,13 +346,13 @@ const GeneralSettings = () => {
   };
 
   return (
-    <div className="p-6 dark:bg-background">
-      <h2 className="text-2xl font-bold mb-6">General Settings</h2>
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-6 text-white">General Settings</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Profile Picture Section */}
         <div className="flex flex-col items-center space-y-4">
           <div className="relative">
-            <div className="w-32 h-32 rounded-full bg-primary-200 dark:bg-primary-800 flex items-center justify-center overflow-hidden border-4 border-gray-300 dark:border-primary-600">
+            <div className="w-32 h-32 rounded-full bg-primary-800 flex items-center justify-center overflow-hidden border-4 border-primary-600">
               {previewUrl ? (
                 <img
                   src={previewUrl}
@@ -379,7 +379,7 @@ const GeneralSettings = () => {
               type="button"
               variant="outline"
               onClick={triggerFileInput}
-              className="flex items-center space-x-2 bg-primary hover:bg-primary-700 dark:text-white"
+              className="flex items-center space-x-2 bg-primary hover:bg-primary-700 text-white border-primary-600"
             >
               <Camera className="w-4 h-4" />
               <span>{previewUrl ? 'Change Picture' : 'Upload Picture'}</span>
@@ -403,59 +403,59 @@ const GeneralSettings = () => {
         {/* Basic Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <Label htmlFor="first_name">First Name</Label>
+            <Label htmlFor="first_name" className="text-white">First Name</Label>
             <Input
               id="first_name"
               name="first_name"
               value={formData.first_name || ''}
               onChange={handleChange}
-              className="mt-1 dark:bg-gray-900 border-primary-200"
+              className="mt-1 border-primary-800 text-white"
             />
           </div>
           <div>
-            <Label htmlFor="last_name">Last Name</Label>
+            <Label htmlFor="last_name" className="text-white">Last Name</Label> 
             <Input
               id="last_name"
               name="last_name"
               value={formData.last_name || ''}
               onChange={handleChange}
-              className="mt-1 dark:bg-gray-900 border-primary-200"
+              className="mt-1 border-primary-800 text-white"
             />
           </div>
           <div>
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-white">Email</Label> 
             <Input
               id="email"
               name="email"
               value={formData.email || ''}
               onChange={handleChange}
-              className="mt-1 dark:bg-gray-900 border-primary-200"
+              className="mt-1 border-primary-800 text-white"
               disabled
             />
           </div>
           <div>
-            <Label htmlFor="phone">Phone <span className="text-red-500">*</span></Label>
+            <Label htmlFor="phone" className="text-white">Phone <span className="text-red-500">*</span></Label>
             <Input
               id="phone"
               name="phone"
               value={formData.phone || ''}
               onChange={handleChange}
               placeholder='+880123456789'
-              className="mt-1 dark:bg-gray-900 border-primary-200"
+              className="mt-1 border-primary-800 text-white"
             />
           </div>
         </div>
 
         {/* Location Fields */}
         <div className="space-y-6">
-          <h3 className="text-sm font-semibold">Location Preferences</h3>
+          <h3 className="text-md font-semibold text-white">Location Preferences</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Division Selection */}
             <div className="relative">
-              <Label>Division</Label>
+              <Label className="text-white">Division</Label>
               <div className="relative mt-1">
                 <div
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between bg-white dark:bg-gray-800 dark:border-gray-600"
+                  className="w-full px-3 py-2 border rounded-md cursor-pointer flex items-center justify-between bg-gray-900 border-gray-600"
                   onClick={() => setShowDivisionDropdown(!showDivisionDropdown)}
                 >
                   <span className={getSelectedDivisionName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
@@ -464,8 +464,8 @@ const GeneralSettings = () => {
                   <ChevronDown className="w-4 h-4 text-gray-400" />
                 </div>
                 {showDivisionDropdown && (
-                  <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
-                    <div className="p-2 border-b border-gray-200 dark:border-gray-600">
+                  <div className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-600 rounded-md shadow-lg">
+                    <div className="p-2 border-b border-gray-600">
                       <div className="relative">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <Input
@@ -495,10 +495,10 @@ const GeneralSettings = () => {
             {/* District Selection */}
             {formData.division_id && (
               <div className="relative">
-                <Label>District</Label>
+                <Label className="text-white">District</Label>
                 <div className="relative mt-1">
                   <div
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between bg-white dark:bg-gray-800 dark:border-gray-600"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between bg-gray-900 dark:border-gray-600"
                     onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
                   >
                     <span className={getSelectedDistrictName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
@@ -539,10 +539,10 @@ const GeneralSettings = () => {
             {/* Upazila Selection */}
             {formData.preferred_district_id && (
               <div className="relative">
-                <Label>Upazila</Label>
+                <Label className="text-white">Upazila</Label>
                 <div className="relative mt-1">
                   <div
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md cursor-pointer flex items-center justify-between bg-white dark:bg-gray-800 dark:border-gray-600"
+                    className="w-full px-3 py-2 border rounded-md cursor-pointer flex items-center justify-between bg-gray-800 border-gray-600"
                     onClick={() => setShowUpazilaDropdown(!showUpazilaDropdown)}
                   >
                     <span className={getSelectedUpazilaName() ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}>
@@ -582,13 +582,13 @@ const GeneralSettings = () => {
             )}
           </div>
           <div className="md:col-span-2">
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="address" className="text-white">Address</Label> 
             <Input
               id="address"
               name="address"
               value={formData.address || ''}
               onChange={handleChange}
-              className="mt-1 dark:bg-gray-900 border-primary-200"
+              className="mt-1 border-primary-800 text-white"
             />
           </div>
 

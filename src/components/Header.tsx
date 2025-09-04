@@ -18,14 +18,14 @@ const Header = () => {
   };
 
   return (
-    <header className="border-b py-4 bg-white dark:bg-gray-900 relative shadow-sm">
+    <header className="border-b border-gray-800 py-4 bg-background relative shadow-lg">
       <div className="container mx-auto px-4">
         {/* Desktop and Mobile Top Bar */}
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link to="/">
             <button 
-              className="text-xl sm:text-2xl font-bold text-primary-600 dark:text-primary-400 flex-shrink-0 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
+              className="text-xl sm:text-2xl font-bold text-cyan-500 dark:text-primary-400 flex-shrink-0 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
             >
               Tuition Wave
             </button>
@@ -35,14 +35,14 @@ const Header = () => {
           <nav className="hidden md:flex space-x-8">
             <Link to="/">
               <button
-                className="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition-colors py-2"
+                className="text-gray-300 hover:text-blue-400 font-medium transition-colors py-2"
               >
                 Home
               </button>
             </Link>
             <Link to="/job-preparation/questions">
               <button
-                className="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition-colors py-2"
+                className="text-gray-300 hover:text-blue-400 font-medium transition-colors py-2"
               >
                 Job Preparation
               </button>
@@ -56,7 +56,7 @@ const Header = () => {
             
             {userProfile ? (
               <button
-                className="bg-primary hover:bg-primary-700 text-white rounded-full px-6 py-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg border border-gray-900"
+                className="bg-cyan-400 hover:bg-cyan-500 text-white rounded-full px-6 py-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg"
                 onClick={goToDashboard}
               >
                 Go to Dashboard
@@ -64,7 +64,7 @@ const Header = () => {
             ) : (
                 <Link to="/login">
                   <button
-                    className="bg-primary hover:bg-primary-700 text-white rounded-full px-6 py-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="bg-cyan-400 hover:bg-cyan-500 text-white rounded-full px-6 py-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     onClick={() => {
                       localStorage.setItem("lastVisitedUrl", window.location.pathname);
                       console.log("Saved URL:", window.location.href);

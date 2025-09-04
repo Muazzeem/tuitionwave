@@ -41,12 +41,12 @@ const FindTutorsList = () => {
   };
 
   return (
-    <div className="flex-1 overflow-auto bg-white dark:bg-gray-900 min-h-screen">
+    <div className="flex-1 overflow-auto bg-gray-900 min-h-screen w-full">
       <DashboardHeader userName="John" />
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
-        <div className="p-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4 mt-5">
-          <h2 className="text-2xl font-semibold ml-5">Search Tutors</h2>
+        <div className="p-4 sm:p-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+            <h2 className="text-2xl font-semibold text-white">Find Tutors</h2>
           <div className="flex flex-col sm:flex-row gap-4">
             {/* <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />

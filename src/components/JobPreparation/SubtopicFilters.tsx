@@ -31,7 +31,7 @@ const SubtopicFilters: React.FC<SubtopicFiltersProps> = ({
         className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all ${
           selectedSubtopicId === null
             ? 'bg-blue-600 text-white shadow-md'
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+          : 'text-white hover:bg-gray-200 bg-gray-700 text-gray-300 hover:bg-gray-600'
         }`}
         onClick={onShowAll}
       >
@@ -49,7 +49,7 @@ const SubtopicFilters: React.FC<SubtopicFiltersProps> = ({
             className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all ${
               selectedSubtopicId === subtopic.uid
                 ? 'bg-blue-600 text-white shadow-md'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              : 'bg-gray-100 hover:bg-gray-200 bg-gray-700 text-gray-300 hover:bg-gray-600'
             }`}
             onClick={() => onSubtopicSelect(subtopic)}
           >
@@ -84,7 +84,7 @@ const SubtopicFilters: React.FC<SubtopicFiltersProps> = ({
 
       {/* Filters */}
       <div className={`${showMobileFilters ? 'block' : 'hidden'} sm:block`}>
-        <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-sm dark:bg-gray-800/80">
+        <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-sm bg-gray-800/80">
           <CardContent className="p-3 sm:p-4">
             <FilterButtons />
           </CardContent>

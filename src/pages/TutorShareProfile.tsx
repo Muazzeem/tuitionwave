@@ -6,9 +6,6 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Badge } from '@/components/ui/badge';
 
-import { Helmet } from 'react-helmet-async';
-
-
 
 const TutorShareProfile: React.FC = () => {
   const { uid } = useParams();
@@ -99,37 +96,9 @@ const TutorShareProfile: React.FC = () => {
       : `${window.location.origin}${tutor.profile_picture}`;
 
     return (
-      <Helmet>
-        {/* Basic Meta Tags */}
-        <title>{title}</title>
-        <meta name="description" content={description} />
-        <meta name="keywords" content={`tutor, ${tutorName}, ${instituteName}, ${location}, online tutoring, home tutoring, education, teaching`} />
+      <div>
         
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="profile" />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:image" content={imageUrl} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:site_name" content="Tuition Wave" />
-        
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={imageUrl} />
-        
-        {/* LinkedIn */}
-        <meta property="og:locale" content="en_US" />
-        
-        {/* WhatsApp */}
-        <meta property="og:image:alt" content={`${tutorName} - Professional Tutor Profile`} />
-        
-        {/* Canonical URL */}
-        <link rel="canonical" href={window.location.href} />
-      </Helmet>
+      </div>
     );
   };
 

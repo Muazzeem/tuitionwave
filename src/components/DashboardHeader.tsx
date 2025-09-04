@@ -56,13 +56,13 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
         )}
       </div>
 
-      <div className="absolute left-1/2 transform -translate-x-1/2 hidden xl:flex items-center gap-3 border p-2 rounded-3xl border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+      <div className="absolute left-1/2 transform -translate-x-1/2 hidden xl:flex items-center gap-3 border p-2 rounded-3xl border-gray-700">
         <Link
           to="/dashboard/guardian"
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+          className={`px-4 py-2 shadow-xl text-white rounded-full text-sm font-medium transition-all duration-200 ${  
             userTypeFromUrl === 'GUARDIAN'
-            ? 'bg-primary-600 text-white'
-            : 'bg-gray-900'
+            ? 'bg-cyan-400 hover:bg-cyan-500 text-white'
+            : 'bg-gray-900 hover:bg-cyan-500'
           }`}
         >
           Guardian
@@ -70,10 +70,10 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
 
         <Link
           to="/dashboard/teacher"
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+          className={`px-4 py-2 shadow-xl text-white rounded-full text-sm font-medium transition-all duration-200 ${
             userTypeFromUrl === 'TEACHER'
-            ? 'bg-primary-600 text-white'
-            : 'bg-gray-900'
+            ? 'bg-cyan-400 hover:bg-cyan-500 text-white'
+            : 'bg-gray-900 hover:bg-cyan-500'
           }`}
         >
           Tutor
@@ -81,10 +81,10 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
 
         <Link
           to="/job-preparation/dashboard"
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+          className={`px-4 py-2 shadow-xl text-white rounded-full text-sm font-medium transition-all duration-200 ${
             userTypeFromUrl === 'STUDENT'
-            ? 'bg-primary-600 text-white'
-            : 'bg-gray-900'
+            ? 'bg-cyan-400 hover:bg-cyan-500 text-white'
+            : 'bg-gray-900 hover:bg-cyan-500'
           }`}
         >
           Job Preparation
@@ -105,7 +105,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
 
         <div className="relative">
           <div
-            className="flex items-center gap-1 sm:gap-2 cursor-pointer rounded-lg hover:bg-gray-100 p-1 sm:p-2 dark:hover:bg-gray-700"
+            className="flex items-center gap-1 sm:gap-2 cursor-pointer rounded-lg p-1 sm:p-2 hover:bg-gray-900"
             onClick={toggleDropdown}
             aria-haspopup="true"
             aria-expanded={isDropdownOpen}
@@ -123,19 +123,19 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                 )}
               </div>
 
-            <span className="text-xs sm:text-sm font-medium hidden sm:inline text-gray-900 dark:text-white">
+            <span className="text-xs sm:text-sm font-medium hidden sm:inline text-gray-900 text-white">
               {userProfile?.first_name}
             </span>
             <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
           </div>
 
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-30 border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 z-30 border bg-gray-900 border-gray-700">
               { userTypeFromUrl === 'TEACHER' && (
                   <>
                   <Link
                       to="/teacher/settings/"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-white"
+                    className="flex items-center px-4 py-2 text-sm hover:bg-gray-700 text-white"
                       onClick={() => setIsDropdownOpen(false)}
                     >
                       <Settings className="h-4 w-4 mr-2 dark:text-white" />
@@ -143,7 +143,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                     </Link>
                     <Link
                       to="/package/teacher"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-white"
+                    className="flex items-center px-4 py-2 text-sm hover:bg-gray-700 text-white"
                       onClick={() => setIsDropdownOpen(false)}
                     >
                       <Package className="h-4 w-4 mr-2 dark:text-white" />

@@ -180,11 +180,11 @@ export default function ExamPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center w-full">
-        <div className="text-center bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center w-full">
+        <div className="text-center bg-gray-800 p-8 rounded-2xl shadow-lg">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mx-auto mb-6"></div>
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Loading Your Exam</h3>
-          <p className="text-gray-600 dark:text-gray-400">Please wait while we prepare your questions...</p>
+          <h3 className="text-lg font-semibold text-white mb-2">Loading Your Exam</h3>
+          <p className="text-gray-400">Please wait while we prepare your questions...</p>
         </div>
       </div>
     );
@@ -192,12 +192,12 @@ export default function ExamPage() {
 
   if (!examData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center w-full">
-        <div className="text-center bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
-          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Exam Not Found</h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">The requested exam could not be found.</p>
-          <Button onClick={() => navigate('/job-preparation/practice')} className="text-white">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center w-full">
+        <div className="text-center bg-gray-800 p-8 rounded-2xl shadow-lg">
+          <AlertCircle className="h-16 w-16 text-red-400 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-white mb-2">Exam Not Found</h3>
+          <p className="text-gray-400 mb-4">The requested exam could not be found.</p>
+          <Button onClick={() => navigate('/job-preparation/practice')} className="bg-blue-600 hover:bg-blue-700 text-white">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Practice
           </Button>
@@ -208,12 +208,12 @@ export default function ExamPage() {
 
   if (examData.status === 'completed') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center w-full">
-        <div className="text-center bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
-          <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Exam Completed</h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">This exam has already been completed.</p>
-          <Button onClick={() => handelBack()} className="text-white">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center w-full">
+        <div className="text-center bg-gray-800 p-8 rounded-2xl shadow-lg">
+          <CheckCircle className="h-16 w-16 text-green-400 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-white mb-2">Exam Completed</h3>
+          <p className="text-gray-400 mb-4">This exam has already been completed.</p>
+          <Button onClick={() => handelBack()} className="bg-blue-600 hover:bg-blue-700 text-white">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Practice
           </Button>
@@ -224,12 +224,12 @@ export default function ExamPage() {
 
   if (examData.status === 'expired') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center w-full">
-        <div className="text-center bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
-          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Exam Expired</h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">This exam has expired.</p>
-          <Button onClick={() => handelBack()} className="text-white">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center w-full">
+        <div className="text-center bg-gray-800 p-8 rounded-2xl shadow-lg">
+          <AlertCircle className="h-16 w-16 text-red-400 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-white mb-2">Exam Expired</h3>
+          <p className="text-gray-400 mb-4">This exam has expired.</p>
+          <Button onClick={() => handelBack()} className="bg-blue-600 hover:bg-blue-700 text-white">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Practice
           </Button>
@@ -239,30 +239,30 @@ export default function ExamPage() {
   }
 
   return (
-    <div className="min-h-screen dark:to-gray-900 w-full">
+    <div className="min-h-screen bg-gray-900 w-full">
       {/* Enhanced Header */}
-      <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-lg border-b sticky top-0 z-10">
+      <div className="bg-gray-800/90 backdrop-blur-sm shadow-lg border-b border-gray-700 sticky top-0 z-10">
         <div className="w-full p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <BookOpen className="h-5 w-5 text-blue-600" />
-                  <h1 className="text-xl font-bold text-gray-800 dark:text-white">
+                  <BookOpen className="h-5 w-5 text-blue-400" />
+                  <h1 className="text-xl font-bold text-white">
                     Practice Exam
                   </h1>
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge variant="secondary" className="text-xs bg-gray-700 text-gray-300">
                     {examData.question_limit} Questions
                   </Badge>
                 </div>
                 <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="flex items-center gap-2 text-sm text-gray-400">
                     <Target className="h-4 w-4" />
                     Progress: {getAnsweredCount()}/{examData.question_limit}
                   </div>
                   <div className="flex items-center gap-2">
                     <Progress value={getProgressPercentage()} className="w-40" />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <span className="text-sm font-medium text-gray-300">
                       {Math.round(getProgressPercentage())}%
                     </span>
                   </div>
@@ -283,7 +283,7 @@ export default function ExamPage() {
                   </Badge>
 
                   {timeRemaining < 300000 && (
-                    <div className="text-sm font-medium text-red-600 dark:text-red-400 animate-bounce">
+                    <div className="text-sm font-medium text-red-400 animate-bounce">
                       ⏳ Hurry up!
                     </div>
                   )}
@@ -299,23 +299,23 @@ export default function ExamPage() {
           <div className="max-w-4xl mx-auto space-y-8">
             {/* Questions */}
             {examData.exam_questions?.map((question, index) => (
-              <Card key={question.uid} className='bg-white bg-background border border-gray-200 dark:border-gray-900 rounded-lg'>
+              <Card key={question.uid} className='bg-gray-800 border-gray-700 rounded-lg'>
                 <CardHeader className="p-2 sm:p-4 rounded-lg">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-8 h-8 bg-primary-600 text-white rounded-full text-sm font-bold">
+                      <div className="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-full text-sm font-bold">
                         {index + 1}
                       </div>
                       <div>
-                        <CardTitle className="text-lg font-semibold text-gray-800 dark:text-white">
+                        <CardTitle className="text-lg font-semibold text-white">
                           {question.question_text}
                         </CardTitle>
                         {question.topic_name && (
                           <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="outline" className="text-xs bg-gray-900 border border-gray-700">
+                            <Badge variant="outline" className="text-xs bg-gray-700 text-gray-300 border-gray-600">
                               {question.topic_name}
                             </Badge>
-                            <Badge variant="outline" className="text-xs bg-gray-900 border border-gray-700">
+                            <Badge variant="outline" className="text-xs bg-gray-700 text-gray-300 border-gray-600">
                               {question.subject_title}
                             </Badge>
                           </div>
@@ -324,7 +324,7 @@ export default function ExamPage() {
                     </div>
                     <div className="flex items-center gap-3">
                       {submittedAnswers.has(question.question_uid) && (
-                        <div className="flex items-center gap-1 text-green-600">
+                        <div className="flex items-center gap-1 text-green-400">
                           <CheckCircle className="h-5 w-5" />
                           <span className="text-xs font-medium">Answered</span>
                         </div>
@@ -338,7 +338,7 @@ export default function ExamPage() {
                       <img
                         src={question.image}
                         alt="Question illustration"
-                        className="w-full max-h-48 sm:max-h-64 object-contain bg-gray-50 dark:bg-gray-700"
+                        className="w-full max-h-48 sm:max-h-64 object-contain bg-gray-700"
                       />
                     </div>
                   )}
@@ -353,9 +353,9 @@ export default function ExamPage() {
                           <Button
                             key={option.uid}
                             variant="outline"
-                            className={`w-full rounded-lg shadow-md justify-start p-2 text-left h-auto min-h-[60px] transition-all dark:bg-gray-900 duration-200 ${isSelected
-                              ? 'bg-blue-50 border-blue-500 text-blue-700 shadow-md dark:bg-gray-900 dark:border-blue-400 dark:text-blue-300'
-                              : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                            className={`w-full rounded-lg shadow-md justify-start p-2 text-left h-auto min-h-[60px] transition-all duration-200 bg-gray-700 border-gray-600 text-gray-200 ${isSelected
+                              ? 'bg-blue-900/50 border-blue-500 text-blue-300 shadow-md'
+                              : 'hover:bg-gray-600'
                               } ${isSubmitted
                                 ? 'opacity-75 cursor-not-allowed'
                                 : 'hover:shadow-md'
@@ -370,7 +370,7 @@ export default function ExamPage() {
                             <div className="flex items-center gap-3 w-full">
                               <div className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold p-2 ${isSelected
                                 ? 'bg-blue-500 text-white border-blue-500'
-                                : 'border-gray-300 text-white'
+                                : 'border-gray-400 text-gray-300'
                                 }`}>
                                 {option.option_label}
                               </div>
@@ -395,7 +395,7 @@ export default function ExamPage() {
               variant="default"
               onClick={() => setShowEndExamDialog(true)}
               disabled={isSubmitting}
-              className="min-w-48 text-white"
+              className="min-w-48 bg-blue-600 hover:bg-blue-700 text-white"
             >
               Submit Answers
             </Button>

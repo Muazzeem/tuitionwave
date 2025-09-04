@@ -103,7 +103,9 @@ function CustomMultiSelect({
         variant="outline"
         onClick={() => setIsOpen(!isOpen)}
         disabled={disabled || isLoading}
-        className="w-full justify-between h-10 px-3 bg-background hover:bg-accent/50 dark:bg-gray-900 dark:hover:bg-gray-800"
+        className="w-full justify-between border-primary-800 h-10 px-3 bg-background text-white
+        hover:bg-background
+        "
       >
         <span className="text-sm text-muted-foreground">
           {selectedItems.length > 0
@@ -115,15 +117,15 @@ function CustomMultiSelect({
       </Button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-background border rounded-md shadow-lg dark:bg-gray-900 dark:border-gray-700">
-          <div className="p-3 border-b dark:border-gray-700">
+        <div className="absolute top-full left-0 right-0 z-50 mt-1 border-0 rounded-md shadow-lg bg-gray-900">
+          <div className="p-3 border-b border-gray-700">
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search subjects..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 h-9"
+                className="pl-8 h-9 border-0 bg-background text-white"
                 autoFocus
               />
             </div>
@@ -143,7 +145,7 @@ function CustomMultiSelect({
               filteredOptions.map(option => (
                 <div
                   key={option.uid}
-                  className="flex items-center justify-between p-3 hover:bg-accent/50 cursor-pointer border-b last:border-b-0 dark:border-gray-700"
+                  className="flex items-center justify-between p-3 hover:bg-gray-700 cursor-pointer border-b last:border-b-0 border-gray-700 text-white"
                   onClick={() => {
                     onToggle(option);
                     setIsOpen(false);
@@ -194,7 +196,6 @@ export default function ExamConfiguration({
   onSubjectToggle,
   onTopicToggle,
   onSubjectRemove,
-  onTopicRemove,
   onCreateExam
 }: ExamConfigurationProps) {
   const [topicSearchQueries, setTopicSearchQueries] = useState<Record<string, string>>({});
@@ -274,9 +275,9 @@ export default function ExamConfiguration({
   return (
     <div className="space-y-6">
       {/* Main Configuration */}
-      <Card className="overflow-hidden dark:bg-background dark:border-gray-900 shadow-md">
+      <Card className="overflow-hidden bg-background border-gray-900 shadow-md">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-white">
             <Target className="h-5 w-5 text-primary" />
             Exam Configuration
           </CardTitle>
@@ -286,15 +287,15 @@ export default function ExamConfiguration({
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             {/* Category */}
             <div className="space-y-3">
-              <Label className="text-sm font-semibold flex items-center gap-2">
+              <Label className="text-sm font-semibold flex items-center gap-2 text-white">
                 <BookOpen className="h-4 w-4" />
                 Category
               </Label>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="h-11 bg-background dark:bg-gray-900 border-2 hover:border-primary/50 transition-colors">
+                <SelectTrigger className="h-11 bg-background border border-primary-800 transition-colors text-white">
                   <SelectValue placeholder="Choose category" />
                 </SelectTrigger>
-                <SelectContent className="dark:bg-gray-900">
+                <SelectContent className="bg-gray-900 border-0">
                   {categoriesLoading ? (
                     <SelectItem value="loading" disabled>
                       <div className="flex items-center gap-2">
@@ -304,7 +305,7 @@ export default function ExamConfiguration({
                     </SelectItem>
                   ) : (
                     categories.map(category => (
-                      <SelectItem key={category.uid} value={category.uid}>
+                      <SelectItem key={category.uid} value={category.uid} className="text-white">
                         {category.category_name}
                       </SelectItem>
                     ))
@@ -315,7 +316,7 @@ export default function ExamConfiguration({
 
             {/* Question Limit */}
             <div className="space-y-3">
-              <Label className="text-sm font-semibold flex items-center gap-2">
+              <Label className="text-sm font-semibold flex items-center gap-2 text-white">
                 <Hash className="h-4 w-4" />
                 Questions
               </Label>
@@ -327,7 +328,7 @@ export default function ExamConfiguration({
                   min="1"
                   max="200"
                   placeholder="Enter number"
-                  className="h-11 pr-12 bg-background dark:bg-gray-900 border-2 hover:border-primary/50 transition-colors"
+                  className="h-11 pr-12 bg-background border border-primary-800 transition-colors text-white"
                 />
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">
                   Max 200
@@ -337,7 +338,7 @@ export default function ExamConfiguration({
 
             {/* Duration */}
             <div className="space-y-3">
-              <Label className="text-sm font-semibold flex items-center gap-2">
+              <Label className="text-sm font-semibold flex items-center gap-2 text-white">
                 <Clock className="h-4 w-4" />
                 Duration
               </Label>
@@ -349,7 +350,7 @@ export default function ExamConfiguration({
                   min="1"
                   max="300"
                   placeholder="Minutes"
-                  className="h-11 pr-12 bg-background dark:bg-gray-900 border-2 hover:border-primary/50 transition-colors"
+                  className="h-11 pr-12 bg-background hover:border-primary/50 transition-colors text-white border-primary-800"
                 />
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">
                   min
@@ -359,7 +360,7 @@ export default function ExamConfiguration({
 
             {/* Subjects Selection */}
             <div className="space-y-3">
-              <Label className="text-sm font-semibold flex items-center gap-2">
+              <Label className="text-sm font-semibold flex items-center gap-2 text-white">
                 <Plus className="h-4 w-4" />
                 Subjects
               </Label>
@@ -377,28 +378,28 @@ export default function ExamConfiguration({
 
           {/* Summary Stats */}
           {selectedSubjects.length > 0 && (
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 from-blue-900/10 to-indigo-900/10 rounded-lg p-4 border border-blue-200 border-blue-800">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div>
-                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                  <div className="text-2xl font-bold text-blue-600 text-blue-400">
                     {selectedSubjects.length}
                   </div>
                   <div className="text-xs text-muted-foreground">Subject{selectedSubjects.length !== 1 ? 's' : ''}</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                  <div className="text-2xl font-bold text-indigo-600 text-indigo-400">
                     {selectedTopics.length}
                   </div>
                   <div className="text-xs text-muted-foreground">Topic{selectedTopics.length !== 1 ? 's' : ''}</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                  <div className="text-2xl font-bold text-purple-600 text-purple-400">
                     {getTotalSelectedQuestions()}
                   </div>
                   <div className="text-xs text-muted-foreground">Available Questions</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-pink-600 dark:text-pink-400">
+                  <div className="text-2xl font-bold text-pink-600 text-pink-400">
                     {durationMinutes || 0}
                   </div>
                   <div className="text-xs text-muted-foreground">Minutes</div>
@@ -411,7 +412,7 @@ export default function ExamConfiguration({
           {selectedSubjects.length > 0 && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label className="text-sm font-semibold">Selected Subjects & Topics</Label>
+                <Label className="text-md font-semibold text-white">Selected Subjects & Topics</Label>
                 <Badge variant="outline" className="text-xs">
                   {selectedSubjects.length} subject{selectedSubjects.length !== 1 ? 's' : ''}
                 </Badge>
@@ -419,17 +420,17 @@ export default function ExamConfiguration({
 
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 {selectedSubjects.map(subject => (
-                  <Card key={subject.uid} className="overflow-hidden hover:shadow-md transition-shadow dark:bg-gray-900/50">
+                  <Card key={subject.uid} className="overflow-hidden hover:shadow-md transition-shadow bg-gray-900/50 border-0">
                     <Accordion type="multiple" className="w-full">
                       <AccordionItem value={subject.uid} className="border-none">
-                        <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-accent/50 transition-colors">
+                        <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-gray-900 transition-colors">
                           <div className="flex items-center justify-between w-full mr-4">
                             <div className="flex items-center gap-3">
                               <div className="p-1.5 bg-primary/10 rounded-md">
                                 <FileText className="h-4 w-4 text-primary" />
                               </div>
                               <div className="text-left">
-                                <div className="font-medium text-sm">{subject.subject_title}</div>
+                                <div className="font-medium text-sm text-white">{subject.subject_title}</div>
                                 <div className="text-xs text-muted-foreground">
                                   {subject.total_questions} questions available
                                 </div>
@@ -442,9 +443,9 @@ export default function ExamConfiguration({
                                 e.stopPropagation();
                                 onSubjectRemove(subject.uid);
                               }}
-                              className="h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900/50 text-muted-foreground hover:text-red-600"
+                              className="h-8 w-8 p-0 hover:bg-red-100 hover:bg-red-900/50 text-muted-foreground hover:text-red-600"
                             >
-                              <X className="h-4 w-4" />
+                              <X className="h-4 w-4 text-white" />
                             </Button>
                           </div>
                         </AccordionTrigger>
@@ -452,7 +453,7 @@ export default function ExamConfiguration({
                         <AccordionContent className="px-4 pb-4">
                           <div className="space-y-4">
                             <div className="flex items-center justify-between">
-                              <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                              <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide text-white mt-4">
                                 Topics (Optional)
                               </Label>
                               {selectedTopics.filter(t =>
@@ -471,7 +472,7 @@ export default function ExamConfiguration({
                               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                               <Input
                                 placeholder="Search topics..."
-                                className="pl-10 h-9 bg-background"
+                                className="pl-10 h-9 bg-background border-0 text-white"
                                 value={topicSearchQueries[subject.uid] || ''}
                                 onChange={(e) => handleTopicSearch(subject.uid, e.target.value)}
                               />
@@ -504,9 +505,9 @@ export default function ExamConfiguration({
                                             <div className="w-1.5 h-1.5 bg-primary-foreground rounded-full" />
                                           )}
                                         </div>
-                                        <span className="text-sm font-medium">{topic.topic_name}</span>
+                                        <span className="text-sm font-medium text-white">{topic.topic_name}</span>
                                       </div>
-                                      <Badge variant="outline" className="text-xs">
+                                      <Badge variant="outline" className="text-xs border-0 bg-background text-white">
                                         {topic.total_questions}
                                       </Badge>
                                     </div>
@@ -531,9 +532,9 @@ export default function ExamConfiguration({
           )}
 
           {/* Action Area */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6 border-t dark:border-gray-700">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6 border-t border-gray-700">
             <div className="space-y-1">
-              <p className="text-sm font-medium">
+              <p className="text-sm font-medium text-white">
                 Ready to create your exam?
               </p>
               <p className="text-xs text-muted-foreground">

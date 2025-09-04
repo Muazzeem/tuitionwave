@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,20 +5,20 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  CheckCircle, 
-  XCircle, 
-  PlayCircle, 
-  Clock, 
-  FileText, 
-  Calendar, 
-  Filter, 
-  Loader2, 
-  AlertCircle, 
-  BookOpen, 
-  PlusCircle, 
-  Trophy, 
-  Target, 
+import {
+  CheckCircle,
+  XCircle,
+  PlayCircle,
+  Clock,
+  FileText,
+  Calendar,
+  Filter,
+  Loader2,
+  AlertCircle,
+  BookOpen,
+  PlusCircle,
+  Trophy,
+  Target,
   RefreshCw
 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -27,7 +26,7 @@ import { getAccessToken } from '@/utils/auth';
 import ConfirmationDialog from '../ConfirmationDialog';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
-import { 
+import {
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -119,7 +118,7 @@ export default function ExamHistory({
         params.append('status', status);
       }
       params.append('page', page.toString());
-      
+
       const url = `${import.meta.env.VITE_API_URL}/api/exams/?${params.toString()}`;
 
       const response = await fetch(url, {
@@ -227,34 +226,34 @@ export default function ExamHistory({
     const iconClass = "h-5 w-5";
     switch (status) {
       case 'completed':
-        return <CheckCircle className={`${iconClass} text-green-500`} />;
+        return <CheckCircle className={`${iconClass} text-green-400`} />;
       case 'failed':
-        return <XCircle className={`${iconClass} text-red-500`} />;
+        return <XCircle className={`${iconClass} text-red-400`} />;
       case 'in_progress':
-        return <PlayCircle className={`${iconClass} text-blue-500`} />;
+        return <PlayCircle className={`${iconClass} text-blue-400`} />;
       case 'not_started':
-        return <Clock className={`${iconClass} text-orange-500`} />;
+        return <Clock className={`${iconClass} text-orange-400`} />;
       case 'expired':
-        return <Clock className={`${iconClass} text-red-500`} />;
+        return <Clock className={`${iconClass} text-red-400`} />;
       default:
-        return <Clock className={`${iconClass} text-gray-500`} />;
+        return <Clock className={`${iconClass} text-gray-400`} />;
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800';
+        return 'bg-green-900/20 text-green-400 border-green-800';
       case 'failed':
-        return 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800';
+        return 'bg-red-900/20 text-red-400 border-red-800';
       case 'in_progress':
-        return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800';
+        return 'bg-blue-900/20 text-blue-400 border-blue-800';
       case 'not_started':
-        return 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800';
+        return 'bg-orange-900/20 text-orange-400 border-orange-800';
       case 'expired':
-        return 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-800';
+        return 'bg-gray-900/20 text-gray-400 border-gray-800';
       default:
-        return 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-800';
+        return 'bg-gray-900/20 text-gray-400 border-gray-800';
     }
   };
 
@@ -275,7 +274,7 @@ export default function ExamHistory({
         return (
           <Button
             size="sm"
-            className="w-full bg-gradient-to-r from-blue-500 to-primary-500 hover:from-blue-600 hover:to-primary-600 text-white shadow-md hover:shadow-lg transition-all duration-200"
+            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
             onClick={() => {
               handleStartExam();
               setSelectedExam(exam);
@@ -315,9 +314,9 @@ export default function ExamHistory({
   };
 
   const getScoreColor = (percentage: number) => {
-    if (percentage >= 80) return 'text-green-600 dark:text-green-400';
-    if (percentage >= 60) return 'text-yellow-600 dark:text-yellow-400';
-    return 'text-red-600 dark:text-red-400';
+    if (percentage >= 80) return 'text-green-400';
+    if (percentage >= 60) return 'text-yellow-400';
+    return 'text-red-400';
   };
 
   const renderPagination = () => {
@@ -325,24 +324,24 @@ export default function ExamHistory({
 
     const pages = [];
     const showEllipsis = totalPages > 7;
-    
+
     if (showEllipsis) {
       // Always show first page
       pages.push(1);
-      
+
       if (currentPage > 3) {
         pages.push('ellipsis1');
       }
-      
+
       // Show current page and surrounding pages
       for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
         pages.push(i);
       }
-      
+
       if (currentPage < totalPages - 2) {
         pages.push('ellipsis2');
       }
-      
+
       // Always show last page
       if (totalPages > 1) {
         pages.push(totalPages);
@@ -357,16 +356,16 @@ export default function ExamHistory({
       <Pagination>
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious 
-              href="#" 
+            <PaginationPrevious
+              href="#"
               onClick={(e) => {
                 e.preventDefault();
                 if (currentPage > 1) handlePageChange(currentPage - 1);
               }}
-              className={currentPage <= 1 ? 'pointer-events-none opacity-50' : ''}
+              className={currentPage <= 1 ? 'pointer-events-none opacity-50 text-white' : 'text-white'}
             />
           </PaginationItem>
-          
+
           {pages.map((page, index) => (
             <PaginationItem key={index}>
               {typeof page === 'string' ? (
@@ -374,6 +373,7 @@ export default function ExamHistory({
               ) : (
                 <PaginationLink
                   href="#"
+                    className='text-white border-primary-800 hover:bg-primary-800 hover:text-white'
                   onClick={(e) => {
                     e.preventDefault();
                     handlePageChange(page);
@@ -385,15 +385,15 @@ export default function ExamHistory({
               )}
             </PaginationItem>
           ))}
-          
+
           <PaginationItem>
-            <PaginationNext 
-              href="#" 
+            <PaginationNext
+              href="#"
               onClick={(e) => {
                 e.preventDefault();
                 if (currentPage < totalPages) handlePageChange(currentPage + 1);
               }}
-              className={currentPage >= totalPages ? 'pointer-events-none opacity-50' : ''}
+              className={currentPage >= totalPages ? 'pointer-events-none opacity-50 text-white' : 'text-white'}
             />
           </PaginationItem>
         </PaginationContent>
@@ -405,7 +405,7 @@ export default function ExamHistory({
     const completed = examRecords.filter(exam => exam.status === 'completed').length;
     const inProgress = examRecords.filter(exam => exam.status === 'in_progress').length;
     const notStarted = examRecords.filter(exam => exam.status === 'not_started').length;
-    
+
     return { completed, inProgress, notStarted, total: examRecords.length };
   };
 
@@ -413,15 +413,15 @@ export default function ExamHistory({
 
   if (error && useInternalApi) {
     return (
-      <div className="space-y-6 p-4">
-        <Alert variant="destructive" className="max-w-2xl mx-auto">
+      <div className="space-y-6 p-4 bg-gray-900 min-h-screen">
+        <Alert variant="destructive" className="max-w-2xl mx-auto bg-red-900/20 border-red-800">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
+          <AlertDescription className="text-red-300">
             {error}
           </AlertDescription>
         </Alert>
         <div className="text-center">
-          <Button onClick={() => fetchExams(examFilter, currentPage)} variant="outline">
+          <Button onClick={() => fetchExams(examFilter, currentPage)} variant="outline" className="bg-gray-800 border-gray-600 text-gray-200 hover:bg-gray-700">
             <RefreshCw className="h-4 w-4 mr-2" />
             Try Again
           </Button>
@@ -435,23 +435,23 @@ export default function ExamHistory({
       <div className="space-y-6">
 
         {/* Filter and Control Section */}
-        <Card className="bg-gray-900 border-0">
+        <Card className="bg-background border-0">
           <CardContent className="p-6">
             <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <Filter className="h-5 w-5 text-primary" />
-                  <Label className="text-sm font-medium whitespace-nowrap">Filter Status:</Label>
+                  <Filter className="h-5 w-5 text-blue-400" />
+                  <Label className="text-sm font-medium whitespace-nowrap text-gray-200">Filter Status:</Label>
                 </div>
                 <Select value={examFilter} onValueChange={handleFilterChange}>
-                  <SelectTrigger className="w-full sm:w-48 bg-background border-muted">
+                  <SelectTrigger className="w-full sm:w-48 bg-gray-700 border-gray-600 text-gray-200">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-900">
-                    <SelectItem value="all">All Exams</SelectItem>
-                    <SelectItem value="not_started">Not Started</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
+                  <SelectContent className="bg-gray-800 border-gray-700">
+                    <SelectItem value="all" className="text-gray-200 hover:bg-gray-700">All Exams</SelectItem>
+                    <SelectItem value="not_started" className="text-gray-200 hover:bg-gray-700">Not Started</SelectItem>
+                    <SelectItem value="in_progress" className="text-gray-200 hover:bg-gray-700">In Progress</SelectItem>
+                    <SelectItem value="completed" className="text-gray-200 hover:bg-gray-700">Completed</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -462,11 +462,11 @@ export default function ExamHistory({
         {/* Loading State */}
         {loading && useInternalApi && examRecords.length === 0 && (
           <div className="flex justify-center items-center py-16">
-            <Card className="p-8 text-center">
+            <Card className="p-8 text-center bg-gray-800 border-gray-700">
               <CardContent>
-                <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Loading Your Exams</h3>
-                <p className="text-muted-foreground">Please wait while we fetch your exam history...</p>
+                <Loader2 className="h-12 w-12 animate-spin text-blue-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2 text-gray-200">Loading Your Exams</h3>
+                <p className="text-gray-400">Please wait while we fetch your exam history...</p>
               </CardContent>
             </Card>
           </div>
@@ -476,15 +476,15 @@ export default function ExamHistory({
         {(!loading || !useInternalApi) && displayedExams.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
             {displayedExams.map((exam) => (
-              <Card key={exam.uid} className="dark:bg-background border border-muted hover:border-primary/50">
+              <Card key={exam.uid} className="bg-background border-primary-800 hover:border-blue-500/50 transition-colors">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-base font-semibold line-clamp-2 group-hover:text-primary transition-colors">
+                    <CardTitle className="text-base font-semibold line-clamp-2 text-gray-200 group-hover:text-blue-400 transition-colors">
                       {exam.exam_type_display}
                     </CardTitle>
                     {getStatusIcon(exam.status)}
                   </div>
-                  
+
                   <Badge
                     variant="outline"
                     className={`text-xs font-medium w-fit ${getStatusBadge(exam.status)}`}
@@ -496,11 +496,11 @@ export default function ExamHistory({
                 <CardContent className="space-y-4">
                   {/* Exam Metadata */}
                   <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div className="flex items-center gap-2 text-muted-foreground">
+                    <div className="flex items-center gap-2 text-gray-400">
                       <FileText className="h-4 w-4 flex-shrink-0" />
                       <span>{exam.question_limit} Questions</span>
                     </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
+                    <div className="flex items-center gap-2 text-gray-400">
                       <Clock className="h-4 w-4 flex-shrink-0" />
                       <span>{exam.duration_minutes} Min</span>
                     </div>
@@ -508,20 +508,19 @@ export default function ExamHistory({
 
                   {/* Score Display */}
                   {exam.status && (
-                    <div className="bg-muted/30 rounded-lg p-4 border border-gray-600">
+                    <div className="bg-gray-900 rounded-lg p-4 border border-0 shadow-md">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium">Final Score</span>
+                        <span className="text-sm font-medium text-gray-200">Final Score</span>
                         <span className={`font-bold text-lg ${getScoreColor(exam.percentage)}`}>
                           {exam.percentage.toFixed(1)}%
                         </span>
                       </div>
-                      <div className="w-full bg-muted rounded-full h-2.5">
+                      <div className="w-full bg-gray-600 rounded-full h-2.5">
                         <div
-                          className={`h-2.5 rounded-full transition-all duration-500 ${
-                            exam.percentage >= 80 ? 'bg-gradient-to-r from-green-400 to-green-500' :
-                            exam.percentage >= 60 ? 'bg-gradient-to-r from-yellow-400 to-yellow-500' : 
-                            'bg-gradient-to-r from-red-400 to-red-500'
-                          }`}
+                          className={`h-2.5 rounded-full transition-all duration-500 ${exam.percentage >= 80 ? 'bg-gradient-to-r from-green-400 to-green-500' :
+                            exam.percentage >= 60 ? 'bg-gradient-to-r from-yellow-400 to-yellow-500' :
+                              'bg-gradient-to-r from-red-400 to-red-500'
+                            }`}
                           style={{ width: `${Math.min(exam.percentage, 100)}%` }}
                         />
                       </div>
@@ -533,15 +532,15 @@ export default function ExamHistory({
                     <div className="space-y-2">
                       {exam.subject_names?.length > 0 && (
                         <div>
-                          <p className="text-xs text-muted-foreground mb-1">Subjects:</p>
+                          <p className="text-xs text-gray-400 mb-1">Subjects:</p>
                           <div className="flex flex-wrap gap-1">
                             {exam.subject_names.slice(0, 2).map((subject, index) => (
-                              <Badge key={index} variant="secondary" className="text-xs">
+                              <Badge key={index} variant="secondary" className="text-xs bg-gray-700 text-gray-300 border-gray-600">
                                 {subject}
                               </Badge>
                             ))}
                             {exam.subject_names.length > 2 && (
-                              <Badge variant="secondary" className="text-xs">
+                              <Badge variant="secondary" className="text-xs bg-gray-700 text-gray-300 border-gray-600">
                                 +{exam.subject_names.length - 2} more
                               </Badge>
                             )}
@@ -552,7 +551,7 @@ export default function ExamHistory({
                   )}
 
                   {/* Date Information */}
-                  <div className="text-xs text-muted-foreground border-t pt-3">
+                  <div className="text-xs text-gray-400 border-t border-gray-600 pt-3">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-3 w-3 flex-shrink-0" />
                       <span className="truncate">
@@ -579,13 +578,13 @@ export default function ExamHistory({
         {/* Empty State */}
         {(!loading || !useInternalApi) && displayedExams.length === 0 && (
           <div className="text-center py-16">
-            <Card className="max-w-md mx-auto shadow-lg border-2 border-dashed border-muted bg-card/50">
+            <Card className="max-w-md mx-auto shadow-lg border-2 border-dashed border-gray-600 bg-gray-800/50">
               <CardContent className="p-8">
-                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <BookOpen className="h-10 w-10 text-primary" />
+                <div className="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <BookOpen className="h-10 w-10 text-blue-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">No Exam History</h3>
-                <p className="text-muted-foreground mb-6 leading-relaxed">
+                <h3 className="text-xl font-semibold text-gray-200 mb-3">No Exam History</h3>
+                <p className="text-gray-400 mb-6 leading-relaxed">
                   {examFilter === 'all'
                     ? 'You haven\'t taken any exams yet. Start your preparation journey and track your progress!'
                     : `No ${examFilter.replace('_', ' ')} exams found. Try a different filter or create a new exam to get started.`
@@ -593,7 +592,7 @@ export default function ExamHistory({
                 </p>
                 <div className="space-y-3">
                   <Link to="/job-preparation/practice" className="block">
-                    <Button className="w-full bg-gradient-to-r from-primary to-blue-500 hover:from-primary/90 hover:to-blue-500/90 text-white shadow-lg hover:shadow-xl transition-all duration-200">
+                    <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200">
                       <PlusCircle className="h-4 w-4 mr-2" />
                       Create New Exam
                     </Button>
@@ -602,7 +601,7 @@ export default function ExamHistory({
                     <Button
                       variant="outline"
                       onClick={() => handleFilterChange('all')}
-                      className="w-full hover:bg-muted transition-colors"
+                      className="w-full bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600 transition-colors"
                     >
                       <Target className="h-4 w-4 mr-2" />
                       View All Exams
@@ -616,13 +615,9 @@ export default function ExamHistory({
 
         {/* Enhanced Pagination */}
         {displayedExams.length > 0 && totalPages > 1 && (
-          <Card className="border-0 bg-gray-900">
-            <CardContent className="p-4">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                {renderPagination()}
-              </div>
-            </CardContent>
-          </Card>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            {renderPagination()}
+          </div>
         )}
 
         {/* Confirmation Dialog */}

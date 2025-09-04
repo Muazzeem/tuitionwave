@@ -11,6 +11,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { X, Search } from "lucide-react";
+import { Badge } from "./ui/badge";
 
 const SearchSection: React.FC = () => {
   
@@ -255,69 +256,91 @@ const SearchSection: React.FC = () => {
   }
 
   return (
-    <div className="text-white relative py-10 dark:bg-gray-900">
+    <div className="text-white relative py-10">
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-4xl mx-auto text-center mb-12">
-          <h1 className="text-3xl font-bold mb-4 capitalize">
-            Find a right tutor in your area
-          </h1>
-        </div>
+        <div className="rounded-lg shadow-md p-8 bg-background border border-slate-700 backdrop-blur-md">
 
-        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-background backdrop-blur-sm bg-opacity-95">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-gray-800 font-medium text-lg dark:text-white flex items-center gap-2">
-              <Search className="h-5 w-5" />
-              SEARCH TUTOR
-            </h3>
-            {hasActiveFilters && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={clearAllFilters}
-                className="text-gray-600 hover:text-red-600 border-gray-300"
-              >
-                Clear All
-              </Button>
-            )}
+          {/* Header Section */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-white font-bold text-3xl flex items-center gap-3">
+                Find a Tutor — <span className="text-2xl">টিউটর খুঁজুন</span>
+              </h3>
+
+              {/* Top badges */}
+              <div className="flex gap-3">
+                <Badge className="bg-slate-700/80 text-gray-300 border border-slate-600 px-3 py-1 rounded-full">
+                  5,000+ tutors
+                </Badge>
+                <Badge className="bg-slate-700/80 text-gray-300 border border-slate-600 px-3 py-1 rounded-full">
+                  Fast matching
+                </Badge>
+                <Badge className="bg-slate-700/80 text-gray-300 border border-slate-600 px-3 py-1 rounded-full">
+                  Verified profiles
+                </Badge>
+              </div>
+            </div>
+
+            {/* Feature Points */}
+            <div className="space-y-3 mb-8">
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-white rounded-full mt-2 flex-shrink-0"></div>
+                <p className="text-gray-300">
+                  Reputed universities' students are here — <span className="text-sm">তারা যেকোনো বিষয়ই জন্য অভিজ্ঞ।</span>
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-white rounded-full mt-2 flex-shrink-0"></div>
+                <p className="text-gray-300">
+                  Online tuition = safety + time save.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-white rounded-full mt-2 flex-shrink-0"></div>
+                <p className="text-gray-300">
+                  Home & Online — <span className="text-sm">আপনার পছন্দমতো।</span>
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="space-y-1">
-              <label className="block text-xs font-medium text-gray-600 mb-2 dark:text-gray-300">
-                Institution
-              </label>
+          {/* Search Form */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="space-y-2">
               <Select
-                open={isOpen} 
+                open={isOpen}
                 onOpenChange={setIsOpen}
                 value={selectedInstitution}
                 onValueChange={handleInstitutionSelect}
               >
-                <SelectTrigger className="w-full text-black dark:text-white border-gray-300 hover:border-blue-400 transition-colors dark:border-primary-700 dark:bg-gray-900">
-                  <SelectValue placeholder="Select Institution" className="text-black dark:text-white" />
+                <SelectTrigger className="w-full h-12 text-white bg-slate-800/50 border border-slate-600 hover:border-slate-500 transition-colors rounded-lg">
+                  <SelectValue placeholder="DU / BUET / SUST / NSU / AIUB ..." className="text-gray-300" />
                 </SelectTrigger>
-                <SelectContent>
-                  <div className="p-2 sticky top-0 bg-white z-10 dark:bg-gray-900">
+                <SelectContent className="bg-slate-800 border-slate-600">
+                  <div className="p-2 sticky top-0 bg-slate-800 z-10">
                     <Input
                       placeholder="Search Institution..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="h-8 focus-visible:ring-1 focus-visible:ring-offset-0 text-black dark:text-white dark:bg-gray-900"
+                      className="h-8 focus-visible:ring-1 focus-visible:ring-offset-0 text-white bg-slate-700 border-slate-600"
                       onClick={(e) => e.stopPropagation()}
                     />
                   </div>
-                  <ScrollArea className="h-60 dark:bg-gray-900">
+                  <ScrollArea className="h-60">
                     {filteredInstitutions.length > 0 ? (
                       filteredInstitutions.map((institution) => (
                         <SelectItem
                           key={institution.id}
                           value={institution.id.toString()}
-                          className="text-black hover:bg-blue-50 dark:text-white"
+                          className="text-white hover:bg-slate-700"
                         >
                           {institution.name}
                         </SelectItem>
                       ))
                     ) : (
-                      <div className="p-2 text-sm text-gray-500 dark:text-white">
+                        <div className="p-2 text-sm text-gray-400">
                         No institutions found.
                       </div>
                     )}
@@ -326,42 +349,39 @@ const SearchSection: React.FC = () => {
               </Select>
             </div>
 
-            <div className="space-y-1">
-              <label className="block text-xs font-medium text-gray-600 mb-2 dark:text-gray-300">
-                Upazila
-              </label>
+            <div className="space-y-2">
               <Select
                 open={isCityOpen}
                 onOpenChange={setIsCityOpen}
                 value={selectedCity}
                 onValueChange={handleCitySelect}
               >
-                <SelectTrigger className="w-full h-10 text-black dark:text-white border-gray-300 hover:border-blue-400 transition-colors dark:border-primary-700 dark:bg-gray-900">
-                  <SelectValue placeholder="Select City" />
+                <SelectTrigger className="w-full h-12 text-white bg-slate-800/50 border border-slate-600 hover:border-slate-500 transition-colors rounded-lg">
+                  <SelectValue placeholder="Dhaka — Dhanmondi / Mirpur ..." />
                 </SelectTrigger>
-                <SelectContent>
-                  <div className="p-2 sticky top-0 bg-white z-10 dark:bg-gray-900">
+                <SelectContent className="bg-slate-800 border-slate-600">
+                  <div className="p-2 sticky top-0 bg-slate-800 z-10">
                     <Input
                       placeholder="Search City..."
                       value={citySearchQuery}
                       onChange={(e) => setCitySearchQuery(e.target.value)}
-                      className="h-8 focus-visible:ring-1 focus-visible:ring-offset-0 text-black dark:text-white"
+                      className="h-8 focus-visible:ring-1 focus-visible:ring-offset-0 text-white bg-slate-700 border-slate-600"
                       onClick={(e) => e.stopPropagation()}
                     />
                   </div>
-                  <ScrollArea className="h-60 dark:bg-gray-900">
+                  <ScrollArea className="h-60">
                     {filteredCities.length > 0 ? (
                       filteredCities.map((city) => (
-                        <SelectItem 
-                          key={city.id} 
+                        <SelectItem
+                          key={city.id}
                           value={city.id.toString()}
-                          className="text-black hover:bg-blue-50 dark:text-white"
+                          className="text-white hover:bg-slate-700"
                         >
                           {city.name}
                         </SelectItem>
                       ))
                     ) : (
-                      <div className="p-2 text-sm text-gray-500 dark:text-white">
+                        <div className="p-2 text-sm text-gray-400">
                         No cities found.
                       </div>
                     )}
@@ -370,24 +390,21 @@ const SearchSection: React.FC = () => {
               </Select>
             </div>
 
-            <div className="space-y-1">
-              <label className="block text-xs font-medium text-gray-600 mb-2 dark:text-gray-300">
-                Subject
-              </label>
+            <div className="space-y-2">
               <Select
                 value={selectedSubject}
                 onValueChange={handleSubjectSelect}
               >
-                <SelectTrigger className="w-full h-10 text-black dark:text-white border-gray-300 hover:border-blue-400 transition-colors dark:border-primary-700 dark:bg-gray-900">
-                  <SelectValue placeholder="Select Subject" />
+                <SelectTrigger className="w-full h-12 text-white bg-slate-800/50 border border-slate-600 hover:border-slate-500 transition-colors rounded-lg">
+                  <SelectValue placeholder="Physics, English, Math ..." />
                 </SelectTrigger>
-                <SelectContent>
-                  <ScrollArea className="h-60 dark:bg-gray-900">
+                <SelectContent className="bg-slate-800 border-slate-600">
+                  <ScrollArea className="h-60">
                     {subjects.map((subject) => (
-                      <SelectItem 
-                        key={subject.id} 
+                      <SelectItem
+                        key={subject.id}
                         value={subject.id.toString()}
-                        className="text-black hover:bg-blue-50 dark:text-white"
+                        className="text-white hover:bg-slate-700"
                       >
                         {subject.subject}
                       </SelectItem>
@@ -400,20 +417,20 @@ const SearchSection: React.FC = () => {
 
           {/* Active Filters Section */}
           {hasActiveFilters && (
-            <div className="bg-blue-50 dark:bg-gray-900 rounded-lg p-4 mb-6">
+            <div className="bg-slate-800/50 rounded-lg p-4 mb-6 border border-slate-700">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Active Filters:</h4>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
+                <h4 className="text-sm font-medium text-gray-300">Active Filters:</h4>
+                <span className="text-xs text-gray-400">
                   {[selectedInstitutionName, selectedCityName, selectedSubjectName, selectedGender].filter(Boolean).length} active
                 </span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {selectedInstitutionName && (
-                  <div className="flex items-center bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 px-3 py-2 rounded-full text-sm font-medium shadow-sm">
+                  <div className="flex items-center bg-blue-900/50 text-blue-200 px-3 py-2 rounded-full text-sm font-medium border border-blue-700">
                     <span>Institution: {selectedInstitutionName}</span>
-                    <button 
+                    <button
                       onClick={() => clearFilter('institution')}
-                      className="ml-2 hover:text-blue-900 dark:hover:text-blue-200 transition-colors"
+                      className="ml-2 hover:text-blue-100 transition-colors"
                       title="Remove filter"
                     >
                       <X size={16} />
@@ -421,11 +438,11 @@ const SearchSection: React.FC = () => {
                   </div>
                 )}
                 {selectedCityName && (
-                  <div className="flex items-center bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 px-3 py-2 rounded-full text-sm font-medium shadow-sm">
+                  <div className="flex items-center bg-green-900/50 text-green-200 px-3 py-2 rounded-full text-sm font-medium border border-green-700">
                     <span>City: {selectedCityName}</span>
-                    <button 
+                    <button
                       onClick={() => clearFilter('city')}
-                      className="ml-2 hover:text-green-900 dark:hover:text-green-200 transition-colors"
+                      className="ml-2 hover:text-green-100 transition-colors"
                       title="Remove filter"
                     >
                       <X size={16} />
@@ -433,11 +450,11 @@ const SearchSection: React.FC = () => {
                   </div>
                 )}
                 {selectedSubjectName && (
-                  <div className="flex items-center bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-100 px-3 py-2 rounded-full text-sm font-medium shadow-sm">
+                  <div className="flex items-center bg-purple-900/50 text-purple-200 px-3 py-2 rounded-full text-sm font-medium border border-purple-700">
                     <span>Subject: {selectedSubjectName}</span>
-                    <button 
+                    <button
                       onClick={() => clearFilter('subject')}
-                      className="ml-2 hover:text-purple-900 dark:hover:text-purple-200 transition-colors"
+                      className="ml-2 hover:text-purple-100 transition-colors"
                       title="Remove filter"
                     >
                       <X size={16} />
@@ -445,11 +462,11 @@ const SearchSection: React.FC = () => {
                   </div>
                 )}
                 {selectedGender && (
-                  <div className="flex items-center bg-pink-100 dark:bg-primary-800 text-pink-800 dark:text-pink-100 px-3 py-2 rounded-full text-sm font-medium shadow-sm">
+                  <div className="flex items-center bg-pink-900/50 text-pink-200 px-3 py-2 rounded-full text-sm font-medium border border-pink-700">
                     <span className="capitalize">Gender: {selectedGender}</span>
-                    <button 
+                    <button
                       onClick={() => clearFilter('gender')}
-                      className="ml-2 hover:text-pink-900 dark:hover:text-pink-200 transition-colors"
+                      className="ml-2 hover:text-pink-100 transition-colors"
                       title="Remove filter"
                     >
                       <X size={16} />
@@ -460,52 +477,66 @@ const SearchSection: React.FC = () => {
             </div>
           )}
 
+          {/* Bottom Section with Gender Selection and Search Button */}
           <div className="flex justify-between items-center">
-            <div className="flex space-x-6">
-              <label className="flex items-center space-x-2 cursor-pointer group">
-                <input 
-                  type="radio" 
-                  name="gender" 
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+            <div className="flex space-x-8">
+              <label className="flex items-center space-x-3 cursor-pointer group">
+                <input
+                  type="radio"
+                  name="gender"
+                  className="h-4 w-4 text-cyan-400 focus:ring-cyan-400 border-gray-500 bg-transparent"
                   checked={selectedGender === "MALE"}
                   onChange={() => handleGenderSelect("MALE")}
                 />
-                <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                <span className="text-white font-medium group-hover:text-cyan-400 transition-colors">
                   Male
                 </span>
               </label>
-              <label className="flex items-center space-x-2 cursor-pointer group">
-                <input 
-                  type="radio" 
-                  name="gender" 
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+              <label className="flex items-center space-x-3 cursor-pointer group">
+                <input
+                  type="radio"
+                  name="gender"
+                  className="h-4 w-4 text-cyan-400 focus:ring-cyan-400 border-gray-500 bg-transparent"
                   checked={selectedGender === "FEMALE"}
                   onChange={() => handleGenderSelect("FEMALE")}
                 />
-                <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                <span className="text-white font-medium group-hover:text-cyan-400 transition-colors">
                   Female
                 </span>
               </label>
             </div>
 
-            <Button 
-              className="bg-primary hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-700 dark:text-white font-medium px-6 py-2 transition-all duration-200 shadow-lg hover:shadow-xl"
+            <Button
+              className="bg-cyan-400 hover:bg-cyan-500 text-black font-semibold px-8 py-3 rounded-xl text-lg transition-all duration-200 shadow-lg hover:shadow-xl"
               onClick={handleSearch}
               disabled={isSearching}
             >
               {isSearching ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black mr-2"></div>
                   Searching...
                 </>
               ) : (
-                <>
-                  <Search className="h-4 w-4 mr-2" />
+                  <>
                   Search Tutor
                 </>
               )}
             </Button>
           </div>
+
+          {/* Clear All Button */}
+          {hasActiveFilters && (
+            <div className="mt-4 text-center">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={clearAllFilters}
+                className="hover:text-gray-700 border-gray-600 hover:border-gray-400 bg-transparent"
+              >
+                Clear All
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

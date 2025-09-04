@@ -319,31 +319,31 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
 
   return (
     <div className="space-y-6">
-      {isLoading && <div className="text-center text-gray-500">Loading data...</div>}
+      {isLoading && <div className="text-center text-gray-300">Loading data...</div>}
 
       <div>
-        <Label htmlFor="daysPerWeek">Days per Week</Label>
+        <Label htmlFor="daysPerWeek" className='text-white'>Days per Week</Label>
         {formData.activeDaysIds && formData.activeDaysIds.length > 0 && (
           <Input disabled
             id="daysPerWeek"
             placeholder="Enter days per week"
             value={formData.activeDaysIds.length} 
             onChange={(e) => updateFormData({ daysPerWeek: e.target.value })}
-            className="mt-1 dark:bg-gray-900 border-primary-900"
+            className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
           />
         )}
       </div>
 
       <div>
-        <Label htmlFor="teachingType">Teaching Type</Label>
+        <Label htmlFor="teachingType" className='text-white'>Teaching Type</Label>
         <Select
           value={formData.teachingType}
           onValueChange={(value) => updateFormData({ teachingType: value })}
         >
-          <SelectTrigger id="teachingType" className="mt-1 dark:bg-gray-900 border-primary-900">
+          <SelectTrigger id="teachingType" className="mt-1 border-primary-900 text-white">
             <SelectValue placeholder="Select Teaching Type" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-gray-900 border-0 text-white">
             <SelectItem value="ONLINE">Online</SelectItem>
             <SelectItem value="OFFLINE">Offline</SelectItem>
             <SelectItem value="BOTH">Both</SelectItem>
@@ -353,7 +353,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
 
       {/* Active Days Selection */}
       <div>
-        <Label>Active Days</Label>
+        <Label className='text-white'>Active Days</Label>
         <div className="flex flex-wrap gap-2 mt-2">
           {activeDays.map((day) => {
             const isSelected = formData.activeDaysIds?.includes(day.id) || false;
@@ -378,7 +378,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
 
       {/* Subjects Selection */}
       <div>
-        <Label>Subjects</Label>
+        <Label className='text-white'>Subjects</Label>
         
         {/* Search Box */}
         <div className="mt-2 space-y-2">
@@ -387,7 +387,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
               placeholder="Search or create subjects..."
               value={searchTerm}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="flex-1 dark:bg-gray-900 border-primary-900"
+              className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
             />
           </div>
 
@@ -396,7 +396,7 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
                 type="button"
                 onClick={handleCreateSubject}
                 disabled={isCreatingSubject || !searchTerm.trim()}
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white"
+              className="px-4 py-2 bg-cyan-400 text-white hover:bg-cyan-500"
               >
                 <Plus /> {isCreatingSubject ? 'Creating...' : 'Create'}
               </Button>
@@ -444,76 +444,76 @@ const TuitionForm: React.FC<TuitionFormProps> = ({ formData, updateFormData, onN
 
       {/* Preferred Time */}
       <div>
-        <Label>Preferred Time</Label>
+        <Label className='text-white'>Preferred Time</Label>
         <div className="flex flex-wrap gap-2 mt-2">
           <Textarea
             id="preferredTime"  
             placeholder='Sunday 10:00 AM to 12:00 PM'
             value={formData.preferredTime}
             onChange={(e) => updateFormData({ preferredTime: e.target.value })}
-            className="mt-1 dark:bg-gray-900 border-primary-900"
+            className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
           />
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="minSalary">Min Expected Salary</Label>
+          <Label htmlFor="minSalary" className='text-white'>Min Expected Salary</Label>
           <Input
             id="minSalary"
             type="number"
             placeholder="Min salary"
             value={formData.minSalary}
             onChange={(e) => updateFormData({ minSalary: e.target.value })}
-            className="mt-1 dark:bg-gray-900 border-primary-900"
+            className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
           />
         </div>
         <div>
-          <Label htmlFor="maxSalary">Max Expected Salary</Label>
+          <Label htmlFor="maxSalary" className='text-white'>Max Expected Salary</Label>
           <Input
             id="maxSalary"
             type="number"
             placeholder="Max salary"
             value={formData.maxSalary}
             onChange={(e) => updateFormData({ maxSalary: e.target.value })}
-            className="mt-1 dark:bg-gray-900 border-primary-900"
+            className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
           />
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="minHourlyCharge">Min Hourly Charge</Label>
+          <Label htmlFor="minHourlyCharge" className='text-white'>Min Hourly Charge</Label>
           <Input
             id="minHourlyCharge"
             type="number"
             placeholder="Min hourly charge"
             value={formData.minHourlyCharge}
             onChange={(e) => updateFormData({ minHourlyCharge: e.target.value })}
-            className="mt-1 dark:bg-gray-900 border-primary-900"
+            className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
           />
         </div>
         <div>
-          <Label htmlFor="maxHourlyCharge">Max Hourly Charge</Label>
+          <Label htmlFor="maxHourlyCharge" className='text-white'>Max Hourly Charge</Label>
           <Input
             id="maxHourlyCharge"
             type="number"
             placeholder="Max hourly charge"
             value={formData.maxHourlyCharge}
             onChange={(e) => updateFormData({ maxHourlyCharge: e.target.value })}
-            className="mt-1 dark:bg-gray-900 border-primary-900"
+            className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
           />
         </div>
       </div>
 
       <div className="flex justify-between pt-4">
-        <Button variant="outline" className="px-6 dark:bg-gray-900 hover:border-primary-900" onClick={onPrev} disabled={isLoading}>
+        <Button variant="outline" className="px-6 text-white hover:border-primary-900" onClick={onPrev} disabled={isLoading}>
           Previous
         </Button>
         <Button
           type="button"
           onClick={handleSubmit}
-          className="px-6 dark:bg-blue-600 dark:text-white"
+          className="px-6 bg-cyan-400 text-black hover:bg-cyan-500 font-semibold"
           disabled={isLoading}
         >
           {isLoading ? 'Saving...' : 'Save'}

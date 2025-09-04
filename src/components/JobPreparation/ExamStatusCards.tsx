@@ -89,15 +89,15 @@ export default function ExamStatusCards() {
   if (error) return <p className="text-red-600 text-center p-4">{error}</p>;
 
   return (
-    <Card className="w-full mx-auto dark:bg-background dark:border-gray-900 shadow-md">
+    <Card className="w-full mx-auto bg-background border-gray-900 shadow-md">
       <CardHeader className="px-4 sm:px-6">
         <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
           <div className="flex items-center gap-2">
             <FileText className="h-5 w-5 text-blue-500 flex-shrink-0" />
-            <span className="text-base sm:text-lg">Recent Exam Activities</span>
+            <span className="text-base sm:text-lg text-white">Recent Exam Activities</span>
           </div>
           {exams.length > 0 && (
-            <Badge variant="primary" className="text-xs self-start sm:self-center">
+            <Badge variant="primary" className="text-xs self-start sm:self-center border-0">
               {exams.length} total
             </Badge>
           )}
@@ -107,7 +107,7 @@ export default function ExamStatusCards() {
       <CardContent className="px-4 sm:px-6">
         {exams.length === 0 ? (
           <div className="text-center py-8 sm:py-12">
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 from-blue-900/20 to-indigo-900/20 rounded-full w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center mx-auto mb-4 sm:mb-6">
               <BookOpen className="h-8 w-8 sm:h-10 sm:w-10 text-blue-500" />
             </div>
             <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2 sm:mb-3 px-4">
@@ -122,8 +122,8 @@ export default function ExamStatusCards() {
                   🚀 Take Your First Exam
                 </Button>
               </Link>
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 sm:p-4 max-w-md mx-auto">
-                <p className="text-xs sm:text-sm text-green-700 dark:text-green-300">
+              <div className="bg-green-50 bg-green-900/20 border border-green-200 border-green-800 rounded-lg p-3 sm:p-4 max-w-md mx-auto">
+                <p className="text-xs sm:text-sm text-green-700 text-green-300">
                   💡 Tip: Start with easier topics to build confidence and momentum
                 </p>
               </div>
@@ -134,9 +134,9 @@ export default function ExamStatusCards() {
               {exams.slice(0, 5).map((exam, index) => (
                 <div
                   key={exam.uid}
-                  className={`group relative p-3 sm:p-4 border rounded-lg transition-all hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 ${index === 0
-                    ? 'bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10 border-blue-200 dark:border-blue-800'
-                    : 'dark:border-gray-700'
+                  className={`group relative p-3 sm:p-4 border rounded-lg transition-all hover:shadow-md hover:border-gray-300 hover:border-gray-600 ${index === 0
+                    ? 'bg-gradient-to-r from-blue-50/50 to-indigo-50/50 from-blue-900/10 to-indigo-900/10 border-blue-200 border-blue-800'
+                    : 'border-gray-700'
                     }`}
                 >
                   {index === 0 && (
@@ -153,7 +153,7 @@ export default function ExamStatusCards() {
                           {getStatusIcon(exam.status)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-sm mb-1 line-clamp-2">
+                          <h4 className="font-semibold text-sm mb-1 line-clamp-2 text-white">
                             {exam.subject_names?.length > 0
                               ? `${exam.subject_names.slice(0, 1).join('')}${exam.subject_names.length > 1 ? ` +${exam.subject_names.length - 1} more` : ''}`
                               : exam.topic_names?.length > 0
@@ -225,7 +225,7 @@ export default function ExamStatusCards() {
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-base mb-1 truncate">
+                        <h4 className="font-semibold text-base mb-1 truncate text-white">
                           {exam.subject_names?.length > 0
                             ? `${exam.subject_names.slice(0, 2).join(' • ')}${exam.subject_names.length > 2 ? ` +${exam.subject_names.length - 2} more` : ''}`
                             : exam.topic_names?.length > 0
@@ -294,13 +294,13 @@ export default function ExamStatusCards() {
               </div>
             ))}
 
-              <div className="mt-6 p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+              <div className="mt-6 p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-pink-50 from-purple-900/20 to-pink-900/20 rounded-lg border border-purple-200 border-purple-800">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
                   <div className="flex-1">
-                    <h4 className="font-semibold text-purple-800 dark:text-purple-300 mb-1 text-sm sm:text-base">
+                    <h4 className="font-semibold text-purple-800 text-purple-300 mb-1 text-sm sm:text-base">
                       Keep the momentum going! 🎯
                     </h4>
-                    <p className="text-xs sm:text-sm text-purple-600 dark:text-purple-400">
+                    <p className="text-xs sm:text-sm text-purple-600 text-purple-400">
                       Take another exam to improve your ranking
                     </p>
                   </div>
