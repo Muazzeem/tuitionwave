@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DashboardHeader from "@/components/DashboardHeader";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, Eye, MoreVertical, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuGroup,
+} from "@/components/ui/dropdown-menu";
 import {
   Pagination,
   PaginationContent,
@@ -22,7 +23,7 @@ import {
 } from "@/components/ui/pagination";
 import { useQuery } from "@tanstack/react-query";
 import { getAccessToken } from "@/utils/auth";
-import { ContractResponse } from "@/types/contract";
+import { ContractResponse, Contract } from "@/types/contract";
 import { useAuth } from "@/contexts/AuthContext";
 
 const MyRequest: React.FC = () => {
@@ -134,32 +135,47 @@ const MyRequest: React.FC = () => {
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Accepted":
-        return "text-green-500";
-      case "Rejected":
-        return "text-red-500";
-      case "Pending":
-        return "text-yellow-500";
-      case "Completed":
-        return "text-green-500";
+    switch (status.toLowerCase()) {
+      case "accepted":
+        return "text-emerald-400";
+      case "rejected":
+        return "text-red-400";
+      case "pending":
+        return "text-amber-400";
+      case "completed":
+        return "text-emerald-400";
       default:
-        return "";
+        return "text-gray-400";
     }
   };
 
   const getStatusDot = (status: string) => {
-    switch (status) {
-      case "Accepted":
-        return "bg-green-500";
-      case "Rejected":
-        return "bg-red-500";
-      case "Pending":
-        return "bg-yellow-500";
-      case "Completed":
-        return "bg-green-500";
+    switch (status.toLowerCase()) {
+      case "accepted":
+        return "bg-emerald-400";
+      case "rejected":
+        return "bg-red-400";
+      case "pending":
+        return "bg-amber-400";
+      case "completed":
+        return "bg-emerald-400";
       default:
-        return "";
+        return "bg-gray-400";
+    }
+  };
+
+  const getStatusBg = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "accepted":
+        return "bg-emerald-400/10 border-emerald-400/20";
+      case "rejected":
+        return "bg-red-400/10 border-red-400/20";
+      case "pending":
+        return "bg-amber-400/10 border-amber-400/20";
+      case "completed":
+        return "bg-emerald-400/10 border-emerald-400/20";
+      default:
+        return "bg-gray-400/10 border-gray-400/20";
     }
   };
 
@@ -190,6 +206,175 @@ const MyRequest: React.FC = () => {
     }
   };
 
+  // Request Row Component for better organization
+  const RequestRow = ({ request }: { request: Contract }) => {
+    const userTypeFromUrl = userProfile?.user_type?.toLowerCase() === 'teacher' ? 'TEACHER' : 'GUARDIAN';
+
+    // Mobile Card Layout
+    const MobileCard = () => (
+      <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 space-y-4 hover:bg-gray-800/70 transition-all duration-200">
+        {/* Header with ID and Actions */}
+        <div className="flex items-center justify-between">
+          <div
+            className="font-mono text-sm font-semibold text-blue-400 hover:text-blue-300 cursor-pointer transition-colors"
+            onClick={() => handleRequestClick(request.uid)}
+          >
+            #{request.uid.slice(0, 8)}
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 hover:bg-gray-700/50 text-gray-300"
+              >
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56 bg-gray-800 border-gray-700">
+              <DropdownMenuLabel className="text-gray-200">Quick Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-gray-700" />
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  className="cursor-pointer text-gray-200 hover:bg-gray-700 focus:bg-gray-700"
+                  onClick={() => handleRequestClick(request.uid)}
+                >
+                  <Eye className="mr-2 h-4 w-4" />
+                  <span>View Details</span>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Institution and Class */}
+        <div className="space-y-1">
+          <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Institution & Class</p>
+          <p className="text-sm font-medium text-white">{request.student_institution}</p>
+          <p className="text-xs text-gray-400">Class: {request.student_class}</p>
+        </div>
+
+        {/* Subjects */}
+        <div className="space-y-1">
+          <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Subjects</p>
+          <div className="flex flex-wrap gap-1">
+            {request.subjects.map((subject, index) => (
+              <span
+                key={index}
+                className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-500/10 text-blue-300 border border-blue-500/20"
+              >
+                {subject.subject}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Area and Status */}
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Area</p>
+            <p className="text-sm font-medium text-white">{request.student_area?.name || "N/A"}</p>
+          </div>
+          <div className={`px-3 py-2 rounded-lg border ${getStatusBg(request.status_display)}`}>
+            <div className="flex items-center space-x-2">
+              <span className={`h-2 w-2 rounded-full ${getStatusDot(request.status_display)}`} />
+              <span className={`text-sm font-medium ${getStatusColor(request.status_display)}`}>
+                {request.status_display}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+    return (
+      <>
+        {/* Mobile Card */}
+        <div className="lg:hidden">
+          <MobileCard />
+        </div>
+
+        {/* Desktop Row */}
+        <tr className="hidden lg:table-row border-b border-gray-700/50 hover:bg-gray-800/30 transition-colors duration-200">
+          <td className="py-4 px-3">
+            <span
+              className="font-mono text-sm font-semibold text-blue-400 hover:text-blue-300 cursor-pointer transition-colors uppercase"
+              onClick={() => handleRequestClick(request.uid)}
+            >
+              #{request.uid.slice(0, 8)}
+            </span>
+          </td>
+          <td className="py-4 px-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-white truncate">{request.student_institution}</p>
+              <p className="text-xs text-gray-400 truncate">Class: {request.student_class}</p>
+            </div>
+          </td>
+          <td className="py-4 px-3">
+            <span className="text-sm text-gray-300">{request.student_class}</span>
+          </td>
+          <td className="py-4 px-3">
+            <div className="flex flex-wrap gap-1 max-w-xs">
+              {request.subjects.slice(0, 2).map((subject, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-500/10 text-blue-300 border border-blue-500/20"
+                >
+                  {subject.subject}
+                </span>
+              ))}
+              {request.subjects.length > 2 && (
+                <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-500/10 text-gray-400 border border-gray-500/20">
+                  +{request.subjects.length - 2}
+                </span>
+              )}
+            </div>
+          </td>
+          <td className="py-4 px-3">
+            <span className="text-sm text-gray-300">{request.student_area?.name || "N/A"}</span>
+          </td>
+          <td className="py-4 px-3">
+            <span className="text-sm text-gray-300">{request.tuition_type}</span>
+          </td>
+          <td className="py-4 px-3">
+            <div className={`inline-flex items-center px-3 py-1 rounded-full border ${getStatusBg(request.status_display)}`}>
+              <span className={`h-2 w-2 rounded-full ${getStatusDot(request.status_display)} mr-2`} />
+              <span className={`text-xs font-medium ${getStatusColor(request.status_display)}`}>
+                {request.status_display}
+              </span>
+            </div>
+          </td>
+          <td className="py-4 px-3">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 hover:bg-gray-700/50 text-gray-300"
+                >
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56 bg-gray-800 border-gray-700">
+                <DropdownMenuLabel className="text-gray-200">Quick Actions</DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-gray-700" />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    className="cursor-pointer text-gray-200 hover:bg-gray-700 focus:bg-gray-700"
+                    onClick={() => handleRequestClick(request.uid)}
+                  >
+                    <Eye className="mr-2 h-4 w-4" />
+                    <span>View Details</span>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </td>
+        </tr>
+      </>
+    );
+  };
+
   return (
     <div className="flex-1 overflow-auto bg-gray-900 min-h-screen">
       <DashboardHeader userName="John" />
@@ -202,15 +387,11 @@ const MyRequest: React.FC = () => {
           </p>
         </div>
 
-        {isLoading && <div className="text-center p-4 text-gray-200">Loading...</div>}
-
-        <div
-          className="bg-background rounded-lg shadow-sm border border-gray-800 shadow-md "
-          hidden={isLoading}
-        >
-          <div className="p-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-4">
-              <h2 className="text-base sm:text-lg font-semibold text-white">All Tuition Request</h2>
+        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl shadow-xl">
+          {/* Header */}
+          <div className="p-4 sm:p-6 border-b border-gray-700/50">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+              <h2 className="text-xl font-bold text-white">All Tuition Request</h2>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -220,211 +401,139 @@ const MyRequest: React.FC = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={handleKeyPress}
-                    className={`pl-10 w-full sm:w-[250px] lg:w-[300px] bg-gray-900 border-primary-200 ${isTyping ? "border-blue-400 bg-blue-50 bg-primary-900" : ""
-                    }`}
+                    className="pl-10 w-full sm:w-[250px] lg:w-[300px] bg-gray-800 border-gray-600 text-white"
                   />
-                  {isTyping && (
-                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-blue-400">
-                      Typing...
-                    </span>
-                  )}
                 </div>
                 <Button
                   variant="outline"
-                  className="flex border-0 shadow-lg text-white items-center gap-2 w-full sm:w-auto bg-primary shadow-lg hover:bg-primary-700"
+                  className="bg-transparent border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 transition-colors"
                   onClick={handleAdvancedSearch}
                 >
-                  <Filter className="h-4 w-4" />
-                  <span className="sm:inline">Filters</span>
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filters
                 </Button>
               </div>
             </div>
+          </div>
 
-            {/* Active filters section - responsive */}
-            {isSearching && (
-              <div className="mb-4 p-3 bg-primary-900/20 border border-primary-800 rounded-md">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-medium text-white text-sm">Filters:</span>
-                    {debouncedSearchQuery && (
-                      <span className="px-2 py-1 bg-blue-800 text-white rounded-md text-xs sm:text-sm flex items-center">
-                        Search: {debouncedSearchQuery}
-                        <button
-                          className="ml-2 text-gray-300 hover:text-white"
-                          onClick={() => {
-                            setSearchQuery("");
-                            setDebouncedSearchQuery("");
-                            setCurrentPage(1);
-                          }}
-                        >
-                          ×
-                        </button>
-                      </span>
-                    )}
-                    {advancedSearch.subject && (
-                      <span className="px-2 py-1 bg-primary-100 bg-primary-600 text-white rounded-md text-xs sm:text-sm flex items-center">
-                        Subject: {advancedSearch.subject}
-                        <button
-                          className="ml-2 text-gray-500 hover:text-gray-700 text-gray-300 hover:text-white"
-                          onClick={() => {
-                            setAdvancedSearch({ ...advancedSearch, subject: "" });
-                            setCurrentPage(1);
-                          }}
-                        >
-                          ×
-                        </button>
-                      </span>
-                    )}
-                    {advancedSearch.institution && (
-                      <span className="px-2 py-1 bg-blue-100 bg-primary-600 text-white rounded-md text-xs sm:text-sm flex items-center">
-                        Institution: {advancedSearch.institution}
-                        <button
-                          className="ml-2 text-gray-500 hover:text-gray-700 text-gray-300 hover:text-white"
-                          onClick={() => {
-                            setAdvancedSearch({
-                              ...advancedSearch,
-                              institution: "",
-                            });
-                            setCurrentPage(1);
-                          }}
-                        >
-                          ×
-                        </button>
-                      </span>
-                    )}
+          {/* Content */}
+          <div className="p-4 sm:p-6">
+            {isLoading ? (
+              <div className="animate-pulse space-y-4">
+                <div className="flex justify-between items-center">
+                  <div className="h-6 bg-gray-700 rounded w-32"></div>
+                  <div className="h-8 bg-gray-700 rounded w-20"></div>
+                </div>
+                <div className="space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-16 bg-gray-800/50 rounded-lg"></div>
+                  ))}
+                </div>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <div className="mx-auto w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                  <span className="text-red-400">!</span>
+                </div>
+                <h3 className="text-lg font-medium text-gray-300 mb-2">Error loading requests</h3>
+              </div>
+            ) : !data?.results?.length ? (
+              <div className="text-center py-12">
+                <div className="mx-auto w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                  <Eye className="h-8 w-8 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-300 mb-2">No Requests Found</h3>
+                <p className="text-gray-500">You don't have any tuition requests yet.</p>
+              </div>
+            ) : (
+              <div className="space-y-4 lg:space-y-0">
+                {/* Desktop Layout */}
+                <div className="hidden lg:block">
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                      <thead>
+                        <tr className="border-b border-gray-700/30">
+                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Request ID
+                          </th>
+                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Institution
+                          </th>
+                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Class
+                          </th>
+                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Subjects
+                          </th>
+                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Area
+                          </th>
+                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Type
+                          </th>
+                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Status
+                          </th>
+                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.results.map((request) => (
+                          <RequestRow key={request.uid} request={request} />
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
-                  <button
-                    className="text-blue-600 hover:text-blue-800 text-blue-400 hover:text-blue-300 text-xs sm:text-sm font-medium"
-                    onClick={() => {
-                      setSearchQuery("");
-                      setDebouncedSearchQuery("");
-                      setAdvancedSearch({ subject: "", institution: "" });
-                      setIsSearching(false);
-                      setCurrentPage(1);
-                    }}
-                  >
-                    Clear all
-                  </button>
+                </div>
+                
+                {/* Mobile Layout */}
+                <div className="lg:hidden space-y-4">
+                  {data.results.map((request) => (
+                    <RequestRow key={request.uid} request={request} />
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                <div className="mt-6">
+                  <Pagination>
+                    <PaginationContent className="flex-wrap gap-1">
+                      <PaginationItem>
+                        <PaginationPrevious
+                          onClick={handlePreviousPage}
+                          className={
+                            data?.previous ? "" : "text-white pointer-events-none opacity-50"
+                          }
+                        />
+                      </PaginationItem>
+
+                      {Array.from({ length: Math.min(data?.total_pages || 1, 5) }, (_, i) => (
+                        <PaginationItem key={i} className="hidden sm:block">
+                          <PaginationLink
+                            href="#"
+                            className="text-white border-gray-700 hover:bg-gray-800 hover:text-white"
+                            isActive={currentPage === i + 1}
+                            onClick={() => setCurrentPage(i + 1)}
+                          >
+                            {i + 1}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+
+                      <PaginationItem>
+                        <PaginationNext
+                          onClick={handleNextPage}
+                          className={
+                            data?.next ? "" : "pointer-events-none opacity-50 text-white"
+                          }
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
                 </div>
               </div>
             )}
-
-            {/* Table with horizontal scroll on mobile */}
-            <div className="overflow-x-auto">
-              <div className="min-w-[800px]">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-primary-700">
-                      <TableHead className="text-gray-300 text-xs sm:text-sm">Req. ID</TableHead>
-                      <TableHead className="text-gray-300 text-xs sm:text-sm">Institution</TableHead>
-                      <TableHead className="text-gray-300 text-xs sm:text-sm">Class</TableHead>
-                      <TableHead className="text-gray-300 text-xs sm:text-sm">Subject</TableHead>
-                      <TableHead className="text-gray-300 text-xs sm:text-sm">Area</TableHead>
-                      <TableHead className="text-gray-300 text-xs sm:text-sm">Type</TableHead>
-                      <TableHead className="text-gray-300 text-xs sm:text-sm">Status</TableHead>
-                      <TableHead className="text-right text-gray-300 text-xs sm:text-sm">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data?.results.map((request, index) => (
-                      <TableRow key={index} className="border-primary-700">
-                        <TableCell
-                          className="font-medium cursor-pointer hover:text-blue-600 hover:text-blue-400 uppercase text-white text-xs sm:text-sm"
-                          onClick={() => handleRequestClick(request.uid)}
-                        >
-                          #{request.uid.slice(0, 8)}
-                        </TableCell>
-                        <TableCell className="text-gray-300 text-xs sm:text-sm">{request.student_institution}</TableCell>
-                        <TableCell className="text-gray-300 text-xs sm:text-sm">{request.student_class}</TableCell>
-                        <TableCell className="text-gray-300 text-xs sm:text-sm">
-                          {request.subjects.map((s) => s.subject).join(", ")}
-                        </TableCell>
-                        <TableCell className="text-gray-300 text-xs sm:text-sm">
-                          {request.student_area?.name || "N/A"}
-                        </TableCell>
-                        <TableCell className="text-gray-300 text-xs sm:text-sm">{request.tuition_type}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center">
-                            <span
-                              className={`h-2 w-2 rounded-full ${getStatusDot(
-                                request.status_display
-                              )} mr-2`}
-                            ></span>
-                            <span
-                              className={`text-xs sm:text-sm ${getStatusColor(
-                                request.status_display
-                              )}`}
-                            >
-                              {request.status_display}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 sm:h-8 sm:w-8 p-0"
-                          >
-                            <span className="sr-only">Open menu</span>
-                            <svg
-                              className="h-3 w-3 sm:h-4 sm:w-4 text-gray-300"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth="2"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-                              />
-                            </svg>
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-
-            {/* Responsive pagination */}
-            <div className="mt-4">
-              <Pagination>
-                <PaginationContent className="flex-wrap gap-1">
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={handlePreviousPage}
-                      className={
-                        data?.previous ? "" : "text-white pointer-events-none opacity-50 bg-primary"
-                      }
-                    />
-                  </PaginationItem>
-
-                  {Array.from({ length: Math.min(data?.total_pages || 1, 5) }, (_, i) => (
-                    <PaginationItem key={i} className="hidden sm:block">
-                      <PaginationLink
-                        href="#"
-                        className="text-white border-primary-800 hover:bg-primary-800 hover:text-white"
-                        isActive={currentPage === i + 1}
-                        onClick={() => setCurrentPage(i + 1)}
-                      >
-                        {i + 1}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={handleNextPage}
-                      className={
-                        data?.next ? "" : "pointer-events-none opacity-50 bg-primary text-white"
-                      }
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
           </div>
         </div>
       </div>
