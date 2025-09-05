@@ -42,11 +42,13 @@ export const isTokenExpired = (): boolean => {
 export const refreshAccessToken = async (): Promise<boolean> => {
   try {
     const refreshToken = getRefreshToken();
-    
+
     if (!refreshToken) {
+      localStorage.clear();
+      sessionStorage.clear();
       return false;
     }
-    
+
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/token/refresh/`, {
       method: 'POST',
       headers: {
@@ -54,20 +56,25 @@ export const refreshAccessToken = async (): Promise<boolean> => {
       },
       body: JSON.stringify({ refresh: refreshToken }),
     });
-    
+
     if (!response.ok) {
       throw new Error('Failed to refresh token');
     }
-    
+
     const data = await response.json();
-    
-    // Update only the access token
+
     localStorage.setItem('accessToken', data.access);
-    localStorage.setItem('tokenExpiry', String(Date.now() + 1000 * 60 * 14)); // 14 minutes
-    
+    localStorage.setItem('tokenExpiry', String(Date.now() + 1000 * 60 * 14));
+
     return true;
   } catch (error) {
     console.error('Error refreshing token:', error);
+
+    // Clear all storage on error
+    localStorage.clear();
+    sessionStorage.clear();
+
     return false;
   }
 };
+
