@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 const GuardianProfile = () => {
     return (
-        <div className="flex-1 bg-gray-900">
+        <div className="flex-1 bg-gray-900 min-h-screen">
             <DashboardHeader userName="Mamun" />
             <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
                 <div className="flex justify-center pt-10 pb-20">

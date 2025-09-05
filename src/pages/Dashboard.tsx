@@ -46,7 +46,7 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex-1 overflow-auto bg-gray-900">
+    <div className="flex-1 overflow-auto bg-gray-900 min-h-screen">
       <DashboardHeader userName="John" />
 
       <ScrollArea type="always" style={{ height: "calc(100vh - 100px)" }}>

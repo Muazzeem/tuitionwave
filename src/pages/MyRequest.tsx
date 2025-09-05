@@ -180,9 +180,11 @@ const MyRequest: React.FC = () => {
   };
 
   const handleRequestClick = (requestId: string) => {
-    // Navigate to the request details page
-    const userType = userProfile?.user_type?.toLowerCase() === 'teacher' ? 'teacher' : 'guardian';
-    navigate(`/${userType}/requests/${requestId}`);
+    if (window.location.pathname.includes('/teacher')) {
+      navigate(`/teacher/requests/${requestId}`);
+    } else {
+      navigate(`/guardian/requests/${requestId}`);
+    }
   };
 
   const handlePreviousPage = () => {
@@ -496,7 +498,8 @@ const MyRequest: React.FC = () => {
                 </div>
 
                 {/* Pagination */}
-                <div className="mt-6">
+                      <div className="pb-10"></div>
+                      <div className="mt-10">
                   <Pagination>
                     <PaginationContent className="flex-wrap gap-1">
                       <PaginationItem>

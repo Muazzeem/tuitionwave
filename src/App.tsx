@@ -286,7 +286,7 @@ const App = () => (
                     <MainLayout><MyRequest /></MainLayout>
                   </AuthGuard>
                 } />
-                <Route path="/requests/:id" element={
+              <Route path="/guardian/requests/:id" element={
                   <AuthGuard>
                     <MainLayout><TuitionRequestDetails /></MainLayout>
                   </AuthGuard>

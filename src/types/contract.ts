@@ -32,6 +32,7 @@ export interface ContractTutor {
 }
 
 export interface Contract {
+  created_at: any;
   student_upazila: any;
   student_address: string | number;
   version_bangla_english: string | number;
