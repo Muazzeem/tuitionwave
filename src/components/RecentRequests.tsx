@@ -260,7 +260,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
   const DesktopRow = () => (
     <>
       {/* Mobile Card */}
-      <div className="block lg:hidden">
+      <div className="lg:hidden">
         <MobileCard />
       </div>
 
@@ -379,18 +379,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
     </>
   )
 
-  return (
-    <>
-      {/* Mobile Layout */}
-      <div className="block lg:hidden">
-        <MobileCard />
-      </div>
-      {/* Desktop Layout */}
-      <div className="hidden lg:table-row">
-        <DesktopRow />
-      </div>
-    </>
-  );
+  return <DesktopRow />;
 };
 
 const RecentRequests: React.FC = () => {
@@ -478,9 +467,48 @@ const RecentRequests: React.FC = () => {
             <p className="text-gray-500">You don't have any tuition requests yet.</p>
           </div>
         ) : (
-          <>
+          <div className="space-y-4 lg:space-y-0">
+            {/* Desktop Layout */}
+            <div className="hidden lg:block">
+              <div className="overflow-x-auto">
+                <table className="min-w-full">
+                  <thead>
+                    <tr className="border-b border-gray-700/30">
+                      <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Request ID
+                      </th>
+                      <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        {userTypeFromUrl === 'GUARDIAN' ? 'Tutor' : 'Guardian'}
+                      </th>
+                      <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Subjects
+                      </th>
+                      <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Amount
+                      </th>
+                      <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.results.map((request) => (
+                      <RequestRow
+                        key={request.uid}
+                        request={request}
+                        showConfirmationDialog={showConfirmationDialog}
+                      />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
             {/* Mobile Layout */}
-            <div className="block lg:hidden space-y-4">
+            <div className="lg:hidden space-y-4">
               {data.results.map((request) => (
                 <RequestRow
                   key={request.uid}
@@ -489,46 +517,7 @@ const RecentRequests: React.FC = () => {
                 />
               ))}
             </div>
-
-              {/* Desktop Layout */}
-              <div className="hidden lg:block">
-                <div className="overflow-x-auto">
-                  <table className="min-w-full">
-                    <thead>
-                      <tr className="border-b border-gray-700/30">
-                        <th className="py-4 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                          Request ID
-                        </th>
-                        <th className="py-4 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                          {userTypeFromUrl === 'GUARDIAN' ? 'Tutor' : 'Guardian'}
-                        </th>
-                        <th className="py-4 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                          Subjects
-                        </th>
-                        <th className="py-4 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                          Amount
-                        </th>
-                        <th className="py-4 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                          Status
-                        </th>
-                        <th className="py-4 px-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.results.map((request) => (
-                        <RequestRow
-                          key={request.uid}
-                          request={request}
-                          showConfirmationDialog={showConfirmationDialog}
-                        />
-                      ))}
-                    </tbody>
-                  </table>
-              </div>
-            </div>
-          </>
+          </div>
         )}
       </div>
 
