@@ -11,11 +11,21 @@ Since package.json is read-only, manually add these scripts:
   "scripts": {
     "dev": "node scripts/dev.js",
     "build": "node scripts/build.js", 
+    "build:vercel": "node scripts/build-vercel.js",
     "start": "node server.js",
     "preview": "node server.js"
   }
 }
 ```
+
+## Vercel Deployment
+
+For Vercel deployment:
+
+1. The `vercel.json` configuration is already set up
+2. Use `npm run build:vercel` or the build script will be automatically used by Vercel
+3. The SSR is handled by the `/api/ssr.js` serverless function
+4. Static assets are served from the `dist/client` directory
 
 ## Development
 
