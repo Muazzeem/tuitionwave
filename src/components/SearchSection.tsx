@@ -451,254 +451,301 @@ const SearchSection: React.FC = () => {
   }
 
   return (
-    <div className="text-white relative py-10">
+    <div className="relative py-6 sm:py-10">
       <div className="container mx-auto px-4 relative z-10">
-        <div className="rounded-lg shadow-md p-8 bg-background border border-slate-700 backdrop-blur-md">
+        <div className="rounded-lg shadow-xl p-4 sm:p-6 lg:p-8 bg-background/95 border border-border backdrop-blur-md">
 
           {/* Header Section */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-white font-bold text-3xl flex items-center gap-3">
-                Find a Tutor — <span className="text-2xl">টিউটর খুঁজুন</span>
-              </h3>
-
-              {/* Top badges */}
-              <div className="flex gap-3">
-                <Badge className="bg-slate-700/80 text-gray-300 border border-slate-600 px-3 py-1 rounded-full">
-                  5,000+ tutors
-                </Badge>
-                <Badge className="bg-slate-700/80 text-gray-300 border border-slate-600 px-3 py-1 rounded-full">
-                  Fast matching
-                </Badge>
-                <Badge className="bg-slate-700/80 text-gray-300 border border-slate-600 px-3 py-1 rounded-full">
-                  Verified profiles
-                </Badge>
-              </div>
+          <div className="mb-6 sm:mb-8">
+            {/* Title - Mobile first approach */}
+            <div className="text-center sm:text-left mb-6">
+              <h1 className="text-foreground font-bold text-2xl sm:text-3xl lg:text-4xl mb-2">
+                Find a Tutor
+              </h1>
+              <p className="text-xl sm:text-2xl text-muted-foreground font-medium">
+                টিউটর খুঁজুন
+              </p>
             </div>
 
-            {/* Feature Points */}
-            <div className="space-y-3 mb-8">
+            {/* Top badges - Responsive */}
+            <div className="flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-3 mb-6">
+              <Badge variant="secondary" className="text-xs sm:text-sm px-2 sm:px-3 py-1">
+                5,000+ tutors
+              </Badge>
+              <Badge variant="secondary" className="text-xs sm:text-sm px-2 sm:px-3 py-1">
+                Fast matching
+              </Badge>
+              <Badge variant="secondary" className="text-xs sm:text-sm px-2 sm:px-3 py-1">
+                Verified profiles
+              </Badge>
+            </div>
+
+            {/* Feature Points - Improved mobile layout */}
+            <div className="space-y-3 mb-6 sm:mb-8">
               <div className="flex items-start gap-3">
-                <div className="w-2 h-2 bg-white rounded-full mt-2 flex-shrink-0"></div>
-                <p className="text-gray-300">
-                  Reputed universities' students are here — <span className="text-sm">তারা যেকোনো বিষয়ই জন্য অভিজ্ঞ।</span>
+                <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                <p className="text-muted-foreground text-sm sm:text-base">
+                  Reputed universities' students are here — <span className="text-xs sm:text-sm opacity-80">তারা যেকোনো বিষয়ই জন্য অভিজ্ঞ।</span>
                 </p>
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="w-2 h-2 bg-white rounded-full mt-2 flex-shrink-0"></div>
-                <p className="text-gray-300">
+                <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                <p className="text-muted-foreground text-sm sm:text-base">
                   Online tuition = safety + time save.
                 </p>
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="w-2 h-2 bg-white rounded-full mt-2 flex-shrink-0"></div>
-                <p className="text-gray-300">
-                  Home & Online — <span className="text-sm">আপনার পছন্দমতো।</span>
+                <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                <p className="text-muted-foreground text-sm sm:text-base">
+                  Home & Online — <span className="text-xs sm:text-sm opacity-80">আপনার পছন্দমতো।</span>
                 </p>
               </div>
             </div>
           </div>
 
-          <Button
-            variant="default"
-            className="bg-cyan-400 text-black font-semibold"
-            onClick={toggleFilters}
-          >
-            <Filter className="h-4 w-4 dark:text-white" />
-            {showFilters ? "Hide Filters" : "Show Filters"}
-          </Button>
-
-          {/* Main Search Form */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div className="space-y-2">
-              <Select
-                open={isOpen}
-                onOpenChange={setIsOpen}
-                value={selectedInstitution}
-                onValueChange={handleInstitutionSelect}
-              >
-                <SelectTrigger className="w-full h-12 text-white bg-slate-800/50 border border-slate-600 hover:border-slate-500 transition-colors rounded-lg">
-                  <SelectValue placeholder="DU / BUET / SUST / NSU / AIUB ..." className="text-gray-300" />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-600">
-                  <div className="p-2 sticky top-0 bg-slate-800 z-10">
-                    <Input
-                      placeholder="Search Institution..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="h-8 focus-visible:ring-1 focus-visible:ring-offset-0 text-white bg-slate-700 border-slate-600"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  </div>
-                  <ScrollArea className="h-60">
-                    {filteredInstitutions.length > 0 ? (
-                      filteredInstitutions.map((institution) => (
-                        <SelectItem
-                          key={institution.id}
-                          value={institution.id.toString()}
-                          className="text-white hover:bg-slate-700"
-                        >
-                          {institution.name}
-                        </SelectItem>
-                      ))
-                    ) : (
-                        <div className="p-2 text-sm text-gray-400">
-                        No institutions found.
-                      </div>
-                    )}
-                  </ScrollArea>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Select
-                value={selectedSubject}
-                onValueChange={handleSubjectSelect}
-              >
-                <SelectTrigger className="w-full h-12 text-white bg-slate-800/50 border border-slate-600 hover:border-slate-500 transition-colors rounded-lg">
-                  <SelectValue placeholder="Physics, English, Math ..." />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-600">
-                  <ScrollArea className="h-60">
-                    {subjects.map((subject) => (
-                      <SelectItem
-                        key={subject.id}
-                        value={subject.id.toString()}
-                        className="text-white hover:bg-slate-700"
-                      >
-                        {subject.subject}
-                      </SelectItem>
-                    ))}
-                  </ScrollArea>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Select value={selectedTeachingType} onValueChange={setSelectedTeachingType}>
-                <SelectTrigger className="w-full h-12 text-white bg-slate-800/50 border border-slate-600 hover:border-slate-500 transition-colors rounded-lg">
-                  <SelectValue placeholder="Teaching Type" />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-600">
-                  <SelectItem value="ONLINE" className="text-white hover:bg-slate-700">Online</SelectItem>
-                  <SelectItem value="OFFLINE" className="text-white hover:bg-slate-700">Offline</SelectItem>
-                  <SelectItem value="BOTH" className="text-white hover:bg-slate-700">Both</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          {/* Filter Toggle Button */}
+          <div className="flex justify-center sm:justify-start mb-6">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleFilters}
+              className="gap-2"
+            >
+              <Filter className="h-4 w-4" />
+              {showFilters ? "Hide Filters" : "Show Filters"}
+            </Button>
           </div>
 
-          {showFilters &&
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <Select value={selectedDivision} onValueChange={handleDivisionChange}>
-                  <SelectTrigger className="w-full h-12 text-white bg-slate-800/50 border border-slate-600 hover:border-slate-500 transition-colors rounded-lg">
-                    <SelectValue placeholder="Division" />
+          {/* Main Search Form */}
+          <div className="space-y-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Institution Search */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Institution</label>
+                <Select
+                  open={isOpen}
+                  onOpenChange={setIsOpen}
+                  value={selectedInstitution}
+                  onValueChange={handleInstitutionSelect}
+                >
+                  <SelectTrigger className="w-full h-11 bg-background border border-border hover:border-primary/50 transition-colors">
+                    <SelectValue placeholder="DU / BUET / SUST / NSU / AIUB ..." />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-600">
+                  <SelectContent className="bg-background border-border z-50">
+                    <div className="p-2 sticky top-0 bg-background z-10 border-b border-border">
+                      <Input
+                        placeholder="Search Institution..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="h-8 focus-visible:ring-1 focus-visible:ring-offset-0"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </div>
                     <ScrollArea className="h-60">
-                      {divisions.map((division) => (
-                        <SelectItem key={division.id} value={division.id.toString()} className="text-white hover:bg-slate-700">
-                          {division.name}
+                      {filteredInstitutions.length > 0 ? (
+                        filteredInstitutions.map((institution) => (
+                          <SelectItem
+                            key={institution.id}
+                            value={institution.id.toString()}
+                            className="hover:bg-accent"
+                          >
+                            {institution.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <div className="p-2 text-sm text-muted-foreground">
+                          No institutions found.
+                        </div>
+                      )}
+                    </ScrollArea>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Subject Search */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Subject</label>
+                <Select
+                  value={selectedSubject}
+                  onValueChange={handleSubjectSelect}
+                >
+                  <SelectTrigger className="w-full h-11 bg-background border border-border hover:border-primary/50 transition-colors">
+                    <SelectValue placeholder="Physics, English, Math ..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border-border z-50">
+                    <ScrollArea className="h-60">
+                      {subjects.map((subject) => (
+                        <SelectItem
+                          key={subject.id}
+                          value={subject.id.toString()}
+                          className="hover:bg-accent"
+                        >
+                          {subject.subject}
                         </SelectItem>
                       ))}
                     </ScrollArea>
                   </SelectContent>
                 </Select>
+              </div>
 
-              <Select
-                value={selectedDistrict}
-                onValueChange={handleDistrictChange}
-                disabled={!selectedDivision}
-              >
-                <SelectTrigger className="w-full h-12 text-white bg-slate-800/50 border border-slate-600 hover:border-slate-500 transition-colors rounded-lg disabled:opacity-50">
-                  <SelectValue placeholder="District" />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-600">
-                  <ScrollArea className="h-60">
-                    {districts.map((district) => (
-                      <SelectItem key={district.id} value={district.id.toString()} className="text-white hover:bg-slate-700">
-                        {district.name}
-                      </SelectItem>
-                    ))}
-                  </ScrollArea>
-                </SelectContent>
-              </Select>
-
-              <Select
-                value={selectedUpazila}
-                onValueChange={handleUpazilaChange}
-                disabled={!selectedDistrict}
-              >
-                <SelectTrigger className="w-full h-12 text-white bg-slate-800/50 border border-slate-600 hover:border-slate-500 transition-colors rounded-lg disabled:opacity-50">
-                  <SelectValue placeholder="Upazila" />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-600">
-                  <ScrollArea className="h-60">
-                    {upazilas.map((upazila) => (
-                      <SelectItem key={upazila.id} value={upazila.id.toString()} className="text-white hover:bg-slate-700">
-                        {upazila.name}
-                      </SelectItem>
-                    ))}
-                  </ScrollArea>
-                </SelectContent>
-              </Select>
-
-              <Select
-                value={selectedArea}
-                onValueChange={handleAreaSelect}
-                disabled={!selectedUpazila}
-              >
-                <SelectTrigger className="w-full h-12 text-white bg-slate-800/50 border border-slate-600 hover:border-slate-500 transition-colors rounded-lg disabled:opacity-50">
-                  <SelectValue placeholder="Area" />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-600">
-                  <ScrollArea className="h-60">
-                    {areas.map((area) => (
-                      <SelectItem key={area.id} value={area.id.toString()} className="text-white hover:bg-slate-700">
-                        {area.name}
-                      </SelectItem>
-                    ))}
-                  </ScrollArea>
-                </SelectContent>
-              </Select>
+              {/* Teaching Type */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Teaching Type</label>
+                <Select value={selectedTeachingType} onValueChange={setSelectedTeachingType}>
+                  <SelectTrigger className="w-full h-11 bg-background border border-border hover:border-primary/50 transition-colors">
+                    <SelectValue placeholder="Online / Offline / Both" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border-border z-50">
+                    <SelectItem value="ONLINE" className="hover:bg-accent">Online</SelectItem>
+                    <SelectItem value="OFFLINE" className="hover:bg-accent">Offline</SelectItem>
+                    <SelectItem value="BOTH" className="hover:bg-accent">Both</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-              <Select value={selectedSalaryRange} onValueChange={setSelectedSalaryRange}>
-                <SelectTrigger className="w-full h-12 text-white bg-slate-800/50 border border-slate-600 hover:border-slate-500 transition-colors rounded-lg">
-                  <SelectValue placeholder="Salary Range" />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-600">
-                  <SelectItem value="0-1000" className="text-white hover:bg-slate-700">৳0 - ৳1000</SelectItem>
-                  <SelectItem value="1000-2000" className="text-white hover:bg-slate-700">৳1000 - ৳2000</SelectItem>
-                  <SelectItem value="2000+" className="text-white hover:bg-slate-700">৳2000+</SelectItem>
-                </SelectContent>
-              </Select>
+          {showFilters && (
+            <div className="space-y-6 mb-6 p-4 sm:p-6 bg-card rounded-lg border border-border">
+              <div className="flex items-center gap-2 mb-4">
+                <Filter className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-semibold text-foreground">Advanced Filters</h3>
+              </div>
+              
+              {/* Location Filters */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium text-muted-foreground">Location</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground">Division</label>
+                    <Select value={selectedDivision} onValueChange={handleDivisionChange}>
+                      <SelectTrigger className="w-full h-10 bg-background border border-border hover:border-primary/50 transition-colors">
+                        <SelectValue placeholder="Select Division" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border-border z-50">
+                        <ScrollArea className="h-48">
+                          {divisions.map((division) => (
+                            <SelectItem key={division.id} value={division.id.toString()} className="hover:bg-accent">
+                              {division.name}
+                            </SelectItem>
+                          ))}
+                        </ScrollArea>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-              <Select value={selectedRating} onValueChange={setSelectedRating}>
-                <SelectTrigger className="w-full h-12 text-white bg-slate-800/50 border border-slate-600 hover:border-slate-500 transition-colors rounded-lg">
-                  <SelectValue placeholder="Rating" />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-600">
-                  <SelectItem value="4" className="text-white hover:bg-slate-700">4+ Stars</SelectItem>
-                  <SelectItem value="3" className="text-white hover:bg-slate-700">3+ Stars</SelectItem>
-                  <SelectItem value="2" className="text-white hover:bg-slate-700">2+ Stars</SelectItem>
-                </SelectContent>
-              </Select>
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground">District</label>
+                    <Select
+                      value={selectedDistrict}
+                      onValueChange={handleDistrictChange}
+                      disabled={!selectedDivision}
+                    >
+                      <SelectTrigger className="w-full h-10 bg-background border border-border hover:border-primary/50 transition-colors disabled:opacity-50">
+                        <SelectValue placeholder="Select District" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border-border z-50">
+                        <ScrollArea className="h-48">
+                          {districts.map((district) => (
+                            <SelectItem key={district.id} value={district.id.toString()} className="hover:bg-accent">
+                              {district.name}
+                            </SelectItem>
+                          ))}
+                        </ScrollArea>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground">Upazila</label>
+                    <Select
+                      value={selectedUpazila}
+                      onValueChange={handleUpazilaChange}
+                      disabled={!selectedDistrict}
+                    >
+                      <SelectTrigger className="w-full h-10 bg-background border border-border hover:border-primary/50 transition-colors disabled:opacity-50">
+                        <SelectValue placeholder="Select Upazila" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border-border z-50">
+                        <ScrollArea className="h-48">
+                          {upazilas.map((upazila) => (
+                            <SelectItem key={upazila.id} value={upazila.id.toString()} className="hover:bg-accent">
+                              {upazila.name}
+                            </SelectItem>
+                          ))}
+                        </ScrollArea>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground">Area</label>
+                    <Select
+                      value={selectedArea}
+                      onValueChange={handleAreaSelect}
+                      disabled={!selectedUpazila}
+                    >
+                      <SelectTrigger className="w-full h-10 bg-background border border-border hover:border-primary/50 transition-colors disabled:opacity-50">
+                        <SelectValue placeholder="Select Area" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border-border z-50">
+                        <ScrollArea className="h-48">
+                          {areas.map((area) => (
+                            <SelectItem key={area.id} value={area.id.toString()} className="hover:bg-accent">
+                              {area.name}
+                            </SelectItem>
+                          ))}
+                        </ScrollArea>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Other Filters */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium text-muted-foreground">Preferences</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground">Salary Range</label>
+                    <Select value={selectedSalaryRange} onValueChange={setSelectedSalaryRange}>
+                      <SelectTrigger className="w-full h-10 bg-background border border-border hover:border-primary/50 transition-colors">
+                        <SelectValue placeholder="Select Range" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border-border z-50">
+                        <SelectItem value="0-1000" className="hover:bg-accent">৳0 - ৳1000</SelectItem>
+                        <SelectItem value="1000-2000" className="hover:bg-accent">৳1000 - ৳2000</SelectItem>
+                        <SelectItem value="2000+" className="hover:bg-accent">৳2000+</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground">Rating</label>
+                    <Select value={selectedRating} onValueChange={setSelectedRating}>
+                      <SelectTrigger className="w-full h-10 bg-background border border-border hover:border-primary/50 transition-colors">
+                        <SelectValue placeholder="Minimum Rating" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border-border z-50">
+                        <SelectItem value="4" className="hover:bg-accent">4+ Stars</SelectItem>
+                        <SelectItem value="3" className="hover:bg-accent">3+ Stars</SelectItem>
+                        <SelectItem value="2" className="hover:bg-accent">2+ Stars</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
             </div>
-            </>
-          }
+          )}
 
           {/* Active Filters Section */}
           {hasActiveFilters && (
-            <div className="bg-slate-800/50 rounded-lg p-4 mb-6 border border-slate-700">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="text-sm font-medium text-gray-300">Active Filters:</h4>
-                <span className="text-xs text-gray-400">
+            <div className="bg-card rounded-lg p-4 mb-6 border border-border">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-medium text-foreground">Active Filters</h4>
+                <span className="text-xs text-muted-foreground">
                   {[selectedInstitutionName, selectedDivisionName, selectedDistrictName, selectedUpazilaName,
                     selectedAreaName, selectedSubjectName, selectedTeachingType, selectedSalaryRange,
                     selectedRating, selectedGender].filter(Boolean).length} active
@@ -706,130 +753,137 @@ const SearchSection: React.FC = () => {
               </div>
               <div className="flex flex-wrap gap-2">
                 {selectedInstitutionName && (
-                  <div className="flex items-center bg-blue-900/50 text-blue-200 px-3 py-2 rounded-full text-sm font-medium border border-blue-700">
-                    <span>Institution: {selectedInstitutionName}</span>
-                    <button onClick={() => clearFilter('institution')} className="ml-2 hover:text-blue-100 transition-colors" title="Remove filter">
-                      <X size={16} />
+                  <Badge variant="secondary" className="gap-1 pr-1">
+                    Institution: {selectedInstitutionName}
+                    <button onClick={() => clearFilter('institution')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
+                      <X size={12} />
                     </button>
-                  </div>
+                  </Badge>
                 )}
                 {selectedDivisionName && (
-                  <div className="flex items-center bg-green-900/50 text-green-200 px-3 py-2 rounded-full text-sm font-medium border border-green-700">
-                    <span>Division: {selectedDivisionName}</span>
-                    <button onClick={() => clearFilter('division')} className="ml-2 hover:text-green-100 transition-colors" title="Remove filter">
-                      <X size={16} />
+                  <Badge variant="secondary" className="gap-1 pr-1">
+                    Division: {selectedDivisionName}
+                    <button onClick={() => clearFilter('division')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
+                      <X size={12} />
                     </button>
-                  </div>
+                  </Badge>
                 )}
                 {selectedDistrictName && (
-                  <div className="flex items-center bg-purple-900/50 text-purple-200 px-3 py-2 rounded-full text-sm font-medium border border-purple-700">
-                    <span>District: {selectedDistrictName}</span>
-                    <button onClick={() => clearFilter('district')} className="ml-2 hover:text-purple-100 transition-colors" title="Remove filter">
-                      <X size={16} />
+                  <Badge variant="secondary" className="gap-1 pr-1">
+                    District: {selectedDistrictName}
+                    <button onClick={() => clearFilter('district')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
+                      <X size={12} />
                     </button>
-                  </div>
+                  </Badge>
                 )}
                 {selectedUpazilaName && (
-                  <div className="flex items-center bg-yellow-900/50 text-yellow-200 px-3 py-2 rounded-full text-sm font-medium border border-yellow-700">
-                    <span>Upazila: {selectedUpazilaName}</span>
-                    <button onClick={() => clearFilter('upazila')} className="ml-2 hover:text-yellow-100 transition-colors" title="Remove filter">
-                      <X size={16} />
+                  <Badge variant="secondary" className="gap-1 pr-1">
+                    Upazila: {selectedUpazilaName}
+                    <button onClick={() => clearFilter('upazila')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
+                      <X size={12} />
                     </button>
-                  </div>
+                  </Badge>
                 )}
                 {selectedAreaName && (
-                  <div className="flex items-center bg-orange-900/50 text-orange-200 px-3 py-2 rounded-full text-sm font-medium border border-orange-700">
-                    <span>Area: {selectedAreaName}</span>
-                    <button onClick={() => clearFilter('area')} className="ml-2 hover:text-orange-100 transition-colors" title="Remove filter">
-                      <X size={16} />
+                  <Badge variant="secondary" className="gap-1 pr-1">
+                    Area: {selectedAreaName}
+                    <button onClick={() => clearFilter('area')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
+                      <X size={12} />
                     </button>
-                  </div>
+                  </Badge>
                 )}
                 {selectedSubjectName && (
-                  <div className="flex items-center bg-pink-900/50 text-pink-200 px-3 py-2 rounded-full text-sm font-medium border border-pink-700">
-                    <span>Subject: {selectedSubjectName}</span>
-                    <button onClick={() => clearFilter('subject')} className="ml-2 hover:text-pink-100 transition-colors" title="Remove filter">
-                      <X size={16} />
+                  <Badge variant="secondary" className="gap-1 pr-1">
+                    Subject: {selectedSubjectName}
+                    <button onClick={() => clearFilter('subject')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
+                      <X size={12} />
                     </button>
-                  </div>
+                  </Badge>
                 )}
                 {selectedTeachingType && (
-                  <div className="flex items-center bg-indigo-900/50 text-indigo-200 px-3 py-2 rounded-full text-sm font-medium border border-indigo-700">
-                    <span>Teaching: {selectedTeachingType}</span>
-                    <button onClick={() => clearFilter('teaching_type')} className="ml-2 hover:text-indigo-100 transition-colors" title="Remove filter">
-                      <X size={16} />
+                  <Badge variant="secondary" className="gap-1 pr-1">
+                    Teaching: {selectedTeachingType}
+                    <button onClick={() => clearFilter('teaching_type')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
+                      <X size={12} />
                     </button>
-                  </div>
+                  </Badge>
                 )}
                 {selectedSalaryRange && (
-                  <div className="flex items-center bg-teal-900/50 text-teal-200 px-3 py-2 rounded-full text-sm font-medium border border-teal-700">
-                    <span>Salary: {selectedSalaryRange}</span>
-                    <button onClick={() => clearFilter('salary_range')} className="ml-2 hover:text-teal-100 transition-colors" title="Remove filter">
-                      <X size={16} />
+                  <Badge variant="secondary" className="gap-1 pr-1">
+                    Salary: {selectedSalaryRange}
+                    <button onClick={() => clearFilter('salary_range')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
+                      <X size={12} />
                     </button>
-                  </div>
+                  </Badge>
                 )}
                 {selectedRating && (
-                  <div className="flex items-center bg-red-900/50 text-red-200 px-3 py-2 rounded-full text-sm font-medium border border-red-700">
-                    <span>Rating: {selectedRating}+ Stars</span>
-                    <button onClick={() => clearFilter('rating')} className="ml-2 hover:text-red-100 transition-colors" title="Remove filter">
-                      <X size={16} />
+                  <Badge variant="secondary" className="gap-1 pr-1">
+                    Rating: {selectedRating}+ Stars
+                    <button onClick={() => clearFilter('rating')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
+                      <X size={12} />
                     </button>
-                  </div>
+                  </Badge>
                 )}
                 {selectedGender && (
-                  <div className="flex items-center bg-slate-900/50 text-slate-200 px-3 py-2 rounded-full text-sm font-medium border border-slate-700">
-                    <span className="capitalize">Gender: {selectedGender}</span>
-                    <button onClick={() => clearFilter('gender')} className="ml-2 hover:text-slate-100 transition-colors" title="Remove filter">
-                      <X size={16} />
+                  <Badge variant="secondary" className="gap-1 pr-1 capitalize">
+                    Gender: {selectedGender}
+                    <button onClick={() => clearFilter('gender')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
+                      <X size={12} />
                     </button>
-                  </div>
+                  </Badge>
                 )}
               </div>
             </div>
           )}
 
           {/* Bottom Section with Gender Selection and Search Button */}
-          <div className="flex justify-between items-center">
-            <div className="flex space-x-8">
-              <label className="flex items-center space-x-3 cursor-pointer group">
-                <input
-                  type="radio"
-                  name="gender"
-                  className="h-4 w-4 text-cyan-400 focus:ring-cyan-400 border-gray-500 bg-transparent"
-                  checked={selectedGender === "MALE"}
-                  onChange={() => handleGenderSelect("MALE")}
-                />
-                <span className="text-white font-medium group-hover:text-cyan-400 transition-colors">
-                  Male
-                </span>
-              </label>
-              <label className="flex items-center space-x-3 cursor-pointer group">
-                <input
-                  type="radio"
-                  name="gender"
-                  className="h-4 w-4 text-cyan-400 focus:ring-cyan-400 border-gray-500 bg-transparent"
-                  checked={selectedGender === "FEMALE"}
-                  onChange={() => handleGenderSelect("FEMALE")}
-                />
-                <span className="text-white font-medium group-hover:text-cyan-400 transition-colors">
-                  Female
-                </span>
-              </label>
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4">
+            {/* Gender Selection */}
+            <div className="flex justify-center sm:justify-start">
+              <div className="flex items-center gap-6 p-3 bg-card rounded-lg border border-border">
+                <span className="text-sm font-medium text-muted-foreground">Gender:</span>
+                <label className="flex items-center gap-2 cursor-pointer group">
+                  <input
+                    type="radio"
+                    name="gender"
+                    className="h-4 w-4 text-primary focus:ring-primary border-border"
+                    checked={selectedGender === "MALE"}
+                    onChange={() => handleGenderSelect("MALE")}
+                  />
+                  <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                    Male
+                  </span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer group">
+                  <input
+                    type="radio"
+                    name="gender"
+                    className="h-4 w-4 text-primary focus:ring-primary border-border"
+                    checked={selectedGender === "FEMALE"}
+                    onChange={() => handleGenderSelect("FEMALE")}
+                  />
+                  <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                    Female
+                  </span>
+                </label>
+              </div>
             </div>
 
+            {/* Search Button */}
             <Button
-              className="bg-cyan-400 hover:bg-cyan-500 text-black font-semibold px-8 py-3 rounded-xl text-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+              size="lg"
               onClick={handleSearch}
               disabled={isSearching}
+              className="w-full sm:w-auto px-8 py-3 gap-2"
             >
               {isSearching ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black mr-2"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
                   Searching...
                 </>
               ) : (
-                  <>
+                <>
+                  <Search className="h-4 w-4" />
                   Search Tutor
                 </>
               )}
@@ -838,13 +892,14 @@ const SearchSection: React.FC = () => {
 
           {/* Clear All Button */}
           {hasActiveFilters && (
-            <div className="mt-4 text-center">
+            <div className="mt-6 text-center">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={clearAllFilters}
-                className="hover:text-gray-700 border-gray-600 hover:border-gray-400 bg-transparent"
+                className="gap-2"
               >
+                <X className="h-4 w-4" />
                 Clear All Filters
               </Button>
             </div>
