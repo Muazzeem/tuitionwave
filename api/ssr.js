@@ -1,49 +1,47 @@
-import { renderToString } from "react-dom/server";
-import { StaticRouter } from "react-router-dom/server";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+// api/ssr.js
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
+// Vercel bundles only the function's folder by default,
+// so we explicitly include the dist files via vercel.json (includeFiles).
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.join(__dirname, ".."); // project root at deploy
+const distClient = path.join(root, "dist", "client");
+const distServer = path.join(root, "dist", "server");
 
-// Import the server entry point
+// Preload template and SSR module once per lambda instance
+let template;
 let render;
 
+// Optional: pin runtime + bundle files
+export const config = {
+  runtime: "nodejs",
+};
+
+async function ensureLoaded() {
+  if (!template) {
+    template = await fs.readFile(path.join(distClient, "index.html"), "utf-8");
+  }
+  if (!render) {
+    // Dynamic import of the server bundle
+    const mod = await import(path.join(distServer, "entry-server.js"));
+    render = mod.render;
+  }
+}
+
 export default async function handler(req, res) {
-  const url = req.url;
-
   try {
-    // Load the server bundle
-    if (!render) {
-      const serverEntry = await import("../dist/server/entry-server.js");
-      render = serverEntry.render;
-    }
+    await ensureLoaded();
 
-    // Read the client HTML template
-    const template = fs.readFileSync(
-      path.resolve(__dirname, "../dist/client/index.html"),
-      "utf-8"
-    );
-
-    // Render the app
+    const url = req.url || "/";
     const appHtml = await render(url);
-
-    // Inject the app HTML into the template
     const html = template.replace("<!--ssr-outlet-->", appHtml);
 
-    // Set proper headers
-    res.setHeader("Content-Type", "text/html");
-    res.status(200).send(html);
-  } catch (error) {
-    console.error("SSR Error:", error);
-    
-    // Fallback to client-side rendering
-    const template = fs.readFileSync(
-      path.resolve(__dirname, "../dist/client/index.html"),
-      "utf-8"
-    );
-    
-    res.setHeader("Content-Type", "text/html");
-    res.status(200).send(template);
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.status(200).end(html);
+  } catch (e) {
+    console.error(e);
+    res.status(500).end("Internal Server Error");
   }
 }

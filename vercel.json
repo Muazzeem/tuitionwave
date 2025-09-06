@@ -1,28 +1,12 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist/client"
-      }
-    }
-  ],
+  "buildCommand": "npm ci && npm run build",
+  "outputDirectory": "dist/client",
   "functions": {
     "api/ssr.js": {
-      "runtime": "nodejs18.x"
+      "includeFiles": "dist/**"
     }
   },
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/api/ssr"
-    }
-  ],
-  "outputDirectory": "dist/client"
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api/ssr" }
+  ]
 }

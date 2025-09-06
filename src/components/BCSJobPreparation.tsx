@@ -33,17 +33,16 @@ const BCSJobPreparation: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* Become a Tutor Card */}
-
-          <Card className="bg-background border border-gray-700 text-white backdrop-blur-md shadow-xl rounded-2xl overflow-hidden">
+          <Card className="bg-background border border-gray-700 text-white backdrop-blur-md shadow-xl rounded-2xl overflow-hidden flex flex-col">
             <CardHeader className="pb-6">
               <CardTitle className="text-3xl font-bold mb-2">
                 Become a Tutor — <span className="text-2xl">টিউটর হয়ে উঠুন</span>
               </CardTitle>
             </CardHeader>
 
-            <CardContent className="space-y-6">
-              <div className='grid grid-cols-1 lg:grid-cols-2 gap-3'>
-                <div>
+            <CardContent className="flex flex-col flex-1">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1">
+                <div className="flex flex-col">
                   <div className="bbg-background border border-gray-700 rounded-xl p-4">
                     <div className="text-4xl font-bold mb-2">5,000+ Tutors</div>
                     <p className="text-gray-300 text-sm">From top universities</p>
@@ -51,25 +50,18 @@ const BCSJobPreparation: React.FC = () => {
 
                   <div className="flex gap-3 justify-center mt-4 mb-4">
                     {[1, 2, 3, 4, 5, 6].map((i) => (
-                      <div key={i} className="w-12 h-12 bg-slate-700 rounded-lg flex items-center justify-center">
+                      <div
+                        key={i}
+                        className="w-12 h-12 bg-slate-700 rounded-lg flex items-center justify-center"
+                      >
                         <div className="w-6 h-6 bg-slate-600 rounded"></div>
                       </div>
                     ))}
                   </div>
-                  <Button
-                    className="w-full bg-cyan-400 hover:bg-cyan-500 text-black font-semibold py-3 rounded-xl text-lg"
-                    onClick={() => navigate('/auth/registration')}
-                  >
-                    Start Teaching
-                  </Button>
-                  <div className="text-center mt-2">
-                    <button className="text-cyan-400 hover:text-cyan-300 underline">
-                      How it works
-                    </button>
-                  </div>
                 </div>
+
                 <div>
-                  <div className="space-y-4 text-right">
+                  <div className="space-y-4 text-left ml-2">
                     <p className="text-gray-300">
                       Don't be unemployed — <span className="text-sm">নিজেকে সাহায্য করুন।</span>
                     </p>
@@ -77,75 +69,76 @@ const BCSJobPreparation: React.FC = () => {
                       বাবা-মার কাছে থেকে টাকা না নিয়ে নিজের আয়ে গর্বাশীল হন।
                     </p>
                     <p className="text-gray-300">
-                      Girls' safety first: <span className="text-sm">রাতে বাইরে না গেলেও Online Tuition is perfect & time-saving.</span>
+                      Girls' safety first:{" "}
+                      <span className="text-sm">
+                        রাতে বাইরে না গেলেও Online Tuition is perfect & time-saving.
+                      </span>
                     </p>
                   </div>
                 </div>
               </div>
+              <Button
+                className="w-full bg-cyan-400 hover:bg-cyan-500 text-black font-semibold py-3 rounded-xl text-lg mt-auto"
+                onClick={() => navigate('/auth/registration')}
+              >
+                Start Teaching
+              </Button>
             </CardContent>
           </Card>
 
           {/* Job Preparation Card */}
-          <Card className="bg-background border border-gray-700 text-white backdrop-blur-md shadow-xl rounded-2xl overflow-hidden">
+          <Card className="bg-background border border-gray-700 text-white backdrop-blur-md shadow-xl rounded-2xl overflow-hidden flex flex-col">
             <CardHeader className="pb-8">
-              <CardTitle className="text-3xl font-bold mb-6">
+              <CardTitle className="text-3xl font-bold mb-0">
                 Job Preparation — <span className="text-2xl">চাকরির প্রস্তুতি</span>
               </CardTitle>
-
-              {/* Exam Type Badges */}
-              <div className="flex gap-3 flex-wrap">
-                <Badge className="bg-cyan-400 hover:bg-cyan-500 text-white px-4 py-2 rounded-full text-sm font-medium">
-                  BCS
-                </Badge>
-                <Badge className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full text-sm font-medium border border-slate-600">
-                  Bank
-                </Badge>
-                <Badge className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full text-sm font-medium border border-slate-600">
-                  Primary
-                </Badge>
-                <Badge className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full text-sm font-medium border border-slate-600">
-                  NTRCA শিক্ষক নিয়োগ
-                </Badge>
-              </div>
             </CardHeader>
 
-            <CardContent className="space-y-6">
-              {/* Main Statistics */}
-              <div className="mb-6">
-                <div className="text-5xl font-bold text-white mb-3">130,000+ Questions</div>
-                <p className="text-gray-300 text-lg">
-                  Daily model test • Topic-wise • Free exams • Create your own tests
-                </p>
+            <CardContent className="flex flex-col flex-1">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1">
+                <div className="flex flex-col">
+                  <div className="bbg-background border border-gray-700 rounded-xl p-4">
+                    <div className="text-4xl font-bold mb-2">
+                      130,000+
+                    </div>
+                    <p className="text-gray-300 text-sm">Questions</p>
+                  </div>
+
+                  <div className="flex justify-center mt-4 mb-4">
+                    <div className="flex gap-3 overflow-x-auto whitespace-nowrap pb-2">
+                      <Badge className="bg-cyan-400 hover:bg-cyan-500 text-white px-4 py-2 rounded-full text-sm font-medium cursor-pointer">
+                        BCS
+                      </Badge>
+                      <Badge className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full text-sm font-medium border border-slate-600 cursor-pointer">
+                        Job Preparation
+                      </Badge>
+                      <Badge className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full text-sm font-medium border border-slate-600 cursor-pointer">
+                        Bank & MBA
+                      </Badge>
+                      <Badge className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full text-sm font-medium border border-slate-600 cursor-pointer">
+                        Others
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="space-y-4 text-left ml-2">
+                    <p className="text-gray-300">
+                      Daily Model Test — প্রতিদিন প্র্যাকটিস।
+                    </p>
+                    <p className="text-gray-300 text-sm">
+                      Self Model Test: subject/topic অনুযায়ী নিজের মতো তৈরি করুন।
+                    </p>
+                    <p className="text-gray-300">
+                      Free Exams & Detailed Explanations.
+                    </p>
+                  </div>
+                </div>
               </div>
-
-              {/* Feature List */}
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
-                  <p className="text-gray-200">
-                    Daily Model Test — <span className="text-base">প্রতিদিন প্র্যাকটিস।</span>
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
-                  <p className="text-gray-200">
-                    Self Model Test: subject/topic <span className="text-base">অনুযায়ী নিজের মতো তৈরি করুন।</span>
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-white rounded-full mt-3 flex-shrink-0"></div>
-                  <p className="text-gray-200">
-                    Free Exams & Detailed Explanations.
-                  </p>
-                </div>
-              </div>
-
-              {/* CTA Button */}
               <Button
-                className="w-full bg-cyan-400 hover:bg-cyan-500 text-black font-semibold py-3 rounded-xl text-lg mt-8"
-                onClick={() => navigate('/job-preparation/dashboard')}
+                className="w-full bg-cyan-400 hover:bg-cyan-500 text-black font-semibold py-3 rounded-xl text-lg mt-auto"
+                onClick={() => navigate('/auth/registration')}
               >
                 Start Preparation
               </Button>
