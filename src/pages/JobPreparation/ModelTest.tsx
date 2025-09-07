@@ -9,6 +9,9 @@ import { getAccessToken } from "@/utils/auth";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import TutorPagination from "@/components/FindTutors/TutorPagination";
+import { useAuth } from "@/contexts/AuthContext";
+import PricingCards from '@/components/PricingCards';
+
 
 // Custom hook for countdown timer
 const useCountdown = (targetDate) => {
@@ -131,6 +134,7 @@ const CountdownDisplay = ({ targetDate, className = "", hideForExpired = false, 
 };
 
 export default function CreateModelTest() {
+  const { userProfile, clearProfile } = useAuth();
   const [examData, setExamData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const tabFromUrl = searchParams.get("tab") || "running";
@@ -469,7 +473,7 @@ export default function CreateModelTest() {
   const currentTabInfo = tabs.find(tab => tab.id === selectedTab);
 
   return (
-    <div className="flex-1 overflow-auto bg-gray-900">
+    <div className="flex-1 overflow-auto bg-gray-900 min-h-screen">
       <DashboardHeader userName="John" />
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
         <div className="p-4 md:p-6">
@@ -679,6 +683,18 @@ export default function CreateModelTest() {
             </div>
           )}
         </div>
+        {!userProfile.is_student && (
+          <>
+            <hr className="border-gray-700" />
+            <div className="p-4 md:p-6">
+              <h2 className="text-muted-foreground text-xl">Practice with real exam simulations and track your progress</h2>
+
+              <div className="mt-2">
+                <PricingCards category="STUDENT" />
+              </div>
+            </div>
+          </>
+        )}
         <div className="h-20 md:h-8"></div>
       </ScrollArea>
     </div>

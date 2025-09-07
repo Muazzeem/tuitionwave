@@ -74,7 +74,7 @@ const Dashboard: React.FC = () => {
                 </div>
               </>
             ) : (
-              <PricingCards />
+                <PricingCards category="TUTOR" />
             )}
 
             <SocialMediaCards />

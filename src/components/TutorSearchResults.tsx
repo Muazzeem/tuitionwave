@@ -10,12 +10,11 @@ import TutorCard from './FindTutors/TutorCard';
 const TutorSearchResults: React.FC = () => {
   const [tutors, setTutors] = useState<Tutor[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
   const [searchFilters, setSearchFilters] = useState({
     institute: searchParams.get('institute') || '',
     upazila: searchParams.get('upazila') || '',
-    subject: searchParams.get('subject') || '', // Note: Changed from 'subjects' to 'subject'
+    subject: searchParams.get('subject') || '',
     gender: searchParams.get('gender') || ''
   });
 
@@ -58,10 +57,7 @@ const TutorSearchResults: React.FC = () => {
 
       const data: TutorListResponse = await response.json();
       setTutors(data.results.slice(0, 4));
-      setError(null);
     } catch (err) {
-      console.error('Error fetching tutors:', err);
-      setError('Failed to load tutors. Please try again later.');
       toast.error("Failed to load tutors");
     } finally {
       setLoading(false);
@@ -114,12 +110,6 @@ const TutorSearchResults: React.FC = () => {
           View all Tutors <ArrowRight size={16} className="ml-1" />
         </Link>
       </div>
-
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-          {error}
-        </div>
-      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-10">
         {loading ? (

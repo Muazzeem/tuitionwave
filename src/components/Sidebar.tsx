@@ -4,7 +4,6 @@ import { Home, Search, MessageSquare, User, LogOut, ChevronLeft, ChevronRight, S
 import { useAuth } from '@/contexts/AuthContext';
 
 const getUserTypeFromUrl = (pathname: string): string | undefined => {
-  const { userProfile } = useAuth();
   const segments = pathname.toLowerCase().split('/');
   if (segments.includes('job-preparation')) {
     return 'STUDENT';
@@ -46,10 +45,6 @@ const Sidebar = () => {
   // Check user permissions and determine available menu items
   const getAvailableMenuItems = () => {
     if (userTypeFromUrl === 'STUDENT') {
-      // Check if user has student permissions
-      if (userProfile?.is_student === false) {
-        return []; // Return empty array if no student permissions
-      }
       return studentMenuItems;
     } else if (userTypeFromUrl === 'TEACHER') {
       return tutorMenuItems;

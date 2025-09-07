@@ -110,7 +110,7 @@ export default function ExamStatusCards() {
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 from-blue-900/20 to-indigo-900/20 rounded-full w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center mx-auto mb-4 sm:mb-6">
               <BookOpen className="h-8 w-8 sm:h-10 sm:w-10 text-blue-500" />
             </div>
-            <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2 sm:mb-3 px-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3 px-4">
               Ready to start your journey?
             </h3>
             <p className="text-muted-foreground mb-6 max-w-sm mx-auto text-sm sm:text-base px-4">
@@ -118,7 +118,7 @@ export default function ExamStatusCards() {
             </p>
             <div className="space-y-3 px-4">
               <Link to="/job-preparation/practice">
-                <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-primary-500 hover:from-blue-600 hover:to-primary-600 text-white px-6 py-2 text-sm sm:text-base font-medium">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-6 py-2 text-sm sm:text-base font-medium">
                   🚀 Take Your First Exam
                 </Button>
               </Link>

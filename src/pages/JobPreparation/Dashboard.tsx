@@ -13,7 +13,6 @@ import StudyProgress from '@/components/JobPreparation/StudyProgress';
 import QuickStats from '@/components/JobPreparation/QuickStats';
 import SocialMediaCards from '@/components/SocialMediaCard';
 import { useAuth } from '@/contexts/AuthContext';
-import { ShieldX, RefreshCw, UserPlus } from "lucide-react";
 
 
 export default function JobPreparationDashboard() {
@@ -32,10 +31,10 @@ export default function JobPreparationDashboard() {
   };
 
   return (
-    <div className="flex-1 overflow-auto bg-gray-900">
+    <div className="flex-1 overflow-auto bg-gray-900 min-h-screen">
       <DashboardHeader userName="BCS Candidate" />
       
-      {userProfile.is_student ? (
+      {/* {userProfile.is_student ? ( */}
         <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
           <div className="p-6">
             <div className="flex items-center justify-between">
@@ -115,11 +114,12 @@ export default function JobPreparationDashboard() {
             <SocialMediaCards />
           </div>
         </ScrollArea>
-      ) : (
-          <div className="p-6">
-
-          </div>
-      )}
+      {/* // ) : (
+      //     <div className="p-6">
+      //       <PricingCards category="STUDENT" />
+      //       <SocialMediaCards />
+      //     </div>
+      // )} */}
     </div>
   );
 }

@@ -59,7 +59,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
       <div className="absolute left-1/2 transform -translate-x-1/2 hidden xl:flex items-center gap-3 border p-2 rounded-3xl border-gray-700">
         <Link
           to="/dashboard/guardian"
-          className={`px-4 py-2 shadow-xl text-white rounded-full text-sm font-medium transition-all duration-200 ${  
+          className={`px-4 py-2 shadow-xl text-white rounded-full font-bold text-md transition-all duration-200 ${  
             userTypeFromUrl === 'GUARDIAN'
             ? 'bg-cyan-400 hover:bg-cyan-500 text-white'
             : 'bg-gray-900 hover:bg-cyan-500'
@@ -70,7 +70,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
 
         <Link
           to="/dashboard/teacher"
-          className={`px-4 py-2 shadow-xl text-white rounded-full text-sm font-medium transition-all duration-200 ${
+          className={`px-4 py-2 shadow-xl text-white rounded-full font-bold text-md transition-all duration-200 ${
             userTypeFromUrl === 'TEACHER'
             ? 'bg-cyan-400 hover:bg-cyan-500 text-white'
             : 'bg-gray-900 hover:bg-cyan-500'
@@ -81,7 +81,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
 
         <Link
           to="/job-preparation/dashboard"
-          className={`px-4 py-2 shadow-xl text-white rounded-full text-sm font-medium transition-all duration-200 ${
+          className={`px-4 py-2 shadow-xl text-white rounded-full font-bold text-md transition-all duration-200 ${
             userTypeFromUrl === 'STUDENT'
             ? 'bg-cyan-400 hover:bg-cyan-500 text-white'
             : 'bg-gray-900 hover:bg-cyan-500'

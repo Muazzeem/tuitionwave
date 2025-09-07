@@ -10,8 +10,11 @@ import { useToast } from '@/hooks/use-toast';
 import { getAccessToken } from '@/utils/auth';
 import { Package, PromoCodeResponse } from '@/types/tutor';
 
+type PricingCardsProps = {
+  category?: "STUDENT" | "TUTOR"
+}
 
-const PricingCards: React.FC = () => {
+const PricingCards: React.FC<PricingCardsProps> = ({ category = "STUDENT" }) => {
   const { userProfile } = useAuth();
   const { toast } = useToast();
   const [packages, setPackages] = useState<Package[]>([]);
@@ -24,7 +27,6 @@ const PricingCards: React.FC = () => {
   const [isApplyingPromo, setIsApplyingPromo] = useState(false);
   const [appliedPromo, setAppliedPromo] = useState<PromoCodeResponse | null>(null);
 
-  const bkashNumber = "01712345678";
   const baseUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -34,7 +36,7 @@ const PricingCards: React.FC = () => {
   const fetchPackages = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${baseUrl}/api/packages`);
+      const response = await fetch(`${baseUrl}/api/packages?category=${category}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -119,7 +121,6 @@ const PricingCards: React.FC = () => {
       });
 
       const data: PromoCodeResponse = await response.json();
-
       if (response.ok && data.success) {
         setAppliedPromo(data);
         toast({
@@ -127,11 +128,13 @@ const PricingCards: React.FC = () => {
           description: data.message,
         });
       } else {
-        toast({
-          title: "Failed to Apply Promo Code",
-          description: data.error[0] || "Please check your promo code and try again.",
-          variant: "destructive",
-        });
+        for (const error of data['error']) {
+          toast({
+            title: "Error",
+            description: error,
+            variant: "destructive",
+          });
+        }
       }
     } catch (error) {
       toast({
@@ -164,6 +167,33 @@ const PricingCards: React.FC = () => {
     setPromoCode('');
     setAppliedPromo(null);
   };
+
+  const handlePayNow = () => {
+    if (!selectedTier) {
+      toast({
+        title: "No package selected",
+        description: "Please select a package first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const payload = {
+      package_uid: selectedTier.uid,
+      promo_code: appliedPromo?.pricing_details?.promo_code ?? null,
+    };
+
+    // Show it to the user
+    toast({
+      title: "Proceeding to payment",
+      description: "Please wait while we process your payment.",
+      duration: 2000,
+    });
+
+    // And log for devs / pass to your payment API later
+    console.log("Pay now payload:", payload);
+  };
+
 
   const isCurrentPlan = (packageName: string) => {
     return userProfile?.package?.name === packageName;
@@ -265,10 +295,10 @@ const PricingCards: React.FC = () => {
       {/* Modal */}
       {isModalOpen && selectedTier && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-900 rounded-lg max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-900 rounded-lg max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-xl font-bold text-white">
                 Subscribe to {selectedTier.name} Plan
               </h2>
               <button
@@ -282,16 +312,16 @@ const PricingCards: React.FC = () => {
             {/* Modal Content */}
             <div className="p-6 shadow-xl">
               {/* Promo Code Section */}
-              <Card className="border-blue-200 dark:border-gray-700 mb-6">
+              <Card className="border-gray-700 mb-6 bg-background">
                 <CardHeader className="pb-3">
-                  <h4 className="flex items-center gap-2 font-semibold text-gray-900 dark:text-white">
+                  <h4 className="flex items-center gap-2 font-semibold text-white">
                     <Tag className="h-4 w-4" />
                     Have a Promo Code?
                   </h4>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="space-y-2">
-                    <Label htmlFor="promo-code" className="text-sm font-medium">
+                    <Label htmlFor="promo-code" className="text-sm font-medium text-white">
                       Promo Code
                     </Label>
                     <div className="flex gap-2">
@@ -301,13 +331,12 @@ const PricingCards: React.FC = () => {
                         placeholder="Enter promo code"
                         value={promoCode}
                         onChange={(e) => setPromoCode(e.target.value)}
-                        className="flex-1"
+                        className="text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
                       />
                       <Button 
                         onClick={handleApplyPromoCode}
                         disabled={isApplyingPromo || !promoCode.trim()}
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
-                        size="sm"
+                        className="bg-cyan-400 hover:bg-cyan-500 text-white"
                       >
                         {isApplyingPromo ? (
                           <>
@@ -322,7 +351,7 @@ const PricingCards: React.FC = () => {
                   </div>
 
                   {appliedPromo && (
-                    <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="mt-3 p-3 bg-transparent border border-green-200 rounded-lg">
                       <div className="flex items-center justify-between mb-2">
                         <h5 className="font-semibold text-green-800 text-sm">
                           Promo Code Applied!
@@ -363,22 +392,22 @@ const PricingCards: React.FC = () => {
               </Card>
 
               {/* Plan Summary */}
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg dark:bg-gray-200">
-                <h3 className="font-semibold text-gray-900 mb-2">{selectedTier.name} Plan</h3>
+              <div className="mb-6 p-4 rounded-lg bg-gray-700">
+                <h3 className="font-semibold text-gray-300 mb-2">{selectedTier.name} Plan</h3>
                 <div className="flex items-baseline mb-2">
                   {appliedPromo ? (
                     <div className="flex items-center gap-2">
-                      <span className="text-lg line-through text-gray-500">
+                      <span className="text-lg line-through text-white">
                         {formatPrice(selectedTier.price)}
                       </span>
-                      <span className="text-2xl font-bold text-green-600">
+                      <span className="text-2xl font-bold text-white">
                         ৳{appliedPromo.pricing_details.discounted_price}
                       </span>
                     </div>
                   ) : (
-                    <span className="text-2xl font-bold text-gray-900">{formatPrice(selectedTier.price)}</span>
+                      <span className="text-2xl font-bold text-white">{formatPrice(selectedTier.price)}</span>
                   )}
-                  <span className="text-gray-600 ml-1">{formatPeriod(selectedTier.period)}</span>
+                  <span className="text-gray-300 ml-1">{formatPeriod(selectedTier.period)}</span>
                 </div>
                 <div className="space-y-2">
                   {selectedTier.descriptions.map((description, index) => (
@@ -406,12 +435,12 @@ const PricingCards: React.FC = () => {
                 <Button
                   onClick={closeModal}
                   variant="outline"
-                  className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white border-0 hover:text-white"
                 >
                   Close
                 </Button>
                 <Button
-                  onClick={closeModal}
+                  onClick={handlePayNow}
                   className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                 >
                   Pay Now

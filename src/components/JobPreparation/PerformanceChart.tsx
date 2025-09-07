@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   ChartContainer,
@@ -85,7 +85,7 @@ export default function PerformanceChart() {
               <div className="bg-gradient-to-br from-green-50 to-emerald-50 from-green-900/20 to-emerald-900/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <TrendingUp className="h-8 w-8 text-green-500" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">No trend data yet</h3>
+              <h3 className="font-semibold text-lg text-white mb-2">No trend data yet</h3>
               <p className="text-muted-foreground mb-4">
                 Complete a few exams to see your progress over time
               </p>

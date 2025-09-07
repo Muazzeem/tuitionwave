@@ -12,6 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { X, Search, Filter } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 
 const SearchSection: React.FC = () => {
   // All filter states
@@ -437,14 +438,6 @@ const SearchSection: React.FC = () => {
       <div className="p-8 text-center">
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
           <p className="text-red-600 font-medium">Error loading data</p>
-          <p className="text-red-500 text-sm mt-1">{error}</p>
-          <Button
-            onClick={() => window.location.reload()}
-            variant="outline"
-            className="mt-3 text-red-600 border-red-200"
-          >
-            Retry
-          </Button>
         </div>
       </div>
     );
@@ -453,93 +446,78 @@ const SearchSection: React.FC = () => {
   return (
     <div className="relative py-6 sm:py-10">
       <div className="container mx-auto px-4 relative z-10">
-        <div className="rounded-lg shadow-xl p-4 sm:p-6 lg:p-8 bg-background/95 border border-border backdrop-blur-md">
+        <div className="bg-background p-6 border border-gray-700 text-white backdrop-blur-md shadow-xl rounded-2xl">
 
           {/* Header Section */}
           <div className="mb-6 sm:mb-8">
-            {/* Title - Mobile first approach */}
-            <div className="text-center sm:text-left mb-6">
-              <h1 className="text-foreground font-bold text-2xl sm:text-3xl lg:text-4xl mb-2">
+            {/* Title + Badges in one row */}
+            <div className="flex flex-col sm:flex-row items-center justify-between mb-6">
+              <h1 className="text-foreground text-white font-bold text-2xl sm:text-3xl lg:text-4xl mb-2 sm:mb-0">
                 Find a Tutor
               </h1>
-              <p className="text-xl sm:text-2xl text-muted-foreground font-medium">
-                টিউটর খুঁজুন
-              </p>
-            </div>
 
-            {/* Top badges - Responsive */}
-            <div className="flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-3 mb-6">
-              <Badge variant="secondary" className="text-xs sm:text-sm px-2 sm:px-3 py-1">
-                5,000+ tutors
-              </Badge>
-              <Badge variant="secondary" className="text-xs sm:text-sm px-2 sm:px-3 py-1">
-                Fast matching
-              </Badge>
-              <Badge variant="secondary" className="text-xs sm:text-sm px-2 sm:px-3 py-1">
-                Verified profiles
-              </Badge>
+              {/* Badges */}
+              <div className="flex flex-wrap justify-center sm:justify-end gap-2 sm:gap-3">
+                <Badge variant="secondary" className="text-xs sm:text-sm px-2 sm:px-3 py-1">
+                  5,000+ tutors
+                </Badge>
+                <Badge variant="secondary" className="text-xs sm:text-sm px-2 sm:px-3 py-1">
+                  Fast matching
+                </Badge>
+                <Badge variant="secondary" className="text-xs sm:text-sm px-2 sm:px-3 py-1">
+                  Verified profiles
+                </Badge>
+              </div>
             </div>
 
             {/* Feature Points - Improved mobile layout */}
             <div className="space-y-3 mb-6 sm:mb-8">
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                <p className="text-muted-foreground text-sm sm:text-base">
+                <p className="text-sm sm:text-base text-gray-300">
                   Reputed universities' students are here — <span className="text-xs sm:text-sm opacity-80">তারা যেকোনো বিষয়ই জন্য অভিজ্ঞ।</span>
                 </p>
               </div>
 
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                <p className="text-muted-foreground text-sm sm:text-base">
+                <p className="text-gray-300 text-sm sm:text-base">
                   Online tuition = safety + time save.
                 </p>
               </div>
 
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                <p className="text-muted-foreground text-sm sm:text-base">
+                <p className="text-gray-300 text-sm sm:text-base">
                   Home & Online — <span className="text-xs sm:text-sm opacity-80">আপনার পছন্দমতো।</span>
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Filter Toggle Button */}
-          <div className="flex justify-center sm:justify-start mb-6">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleFilters}
-              className="gap-2"
-            >
-              <Filter className="h-4 w-4" />
-              {showFilters ? "Hide Filters" : "Show Filters"}
-            </Button>
-          </div>
-
           {/* Main Search Form */}
+
           <div className="space-y-4 mb-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Institution Search */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Institution</label>
+                <label className="text-sm font-medium text-gray-200">Institution</label>
                 <Select
                   open={isOpen}
                   onOpenChange={setIsOpen}
                   value={selectedInstitution}
                   onValueChange={handleInstitutionSelect}
                 >
-                  <SelectTrigger className="w-full h-11 bg-background border border-border hover:border-primary/50 transition-colors">
+                  <SelectTrigger className="mt-1 text-white bg-gray-800 border-gray-600 hover:border-gray-500 focus:border-blue-400 focus:ring-blue-400/20">
                     <SelectValue placeholder="DU / BUET / SUST / NSU / AIUB ..." />
                   </SelectTrigger>
-                  <SelectContent className="bg-background border-border z-50">
-                    <div className="p-2 sticky top-0 bg-background z-10 border-b border-border">
+                  <SelectContent className="bg-gray-800 border-gray-600 z-50">
+                    <div className="p-2 sticky top-0 bg-gray-800 z-10 border-b border-gray-600">
                       <Input
                         placeholder="Search Institution..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="h-8 focus-visible:ring-1 focus-visible:ring-offset-0"
+                        className="h-8 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-blue-400/20 focus-visible:ring-1 focus-visible:ring-offset-0"
                         onClick={(e) => e.stopPropagation()}
                       />
                     </div>
@@ -549,13 +527,13 @@ const SearchSection: React.FC = () => {
                           <SelectItem
                             key={institution.id}
                             value={institution.id.toString()}
-                            className="hover:bg-accent"
+                            className="text-gray-200 hover:bg-gray-700 focus:bg-gray-700"
                           >
                             {institution.name}
                           </SelectItem>
                         ))
                       ) : (
-                        <div className="p-2 text-sm text-muted-foreground">
+                          <div className="p-2 text-sm text-gray-400">
                           No institutions found.
                         </div>
                       )}
@@ -566,21 +544,21 @@ const SearchSection: React.FC = () => {
 
               {/* Subject Search */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Subject</label>
+                <label className="text-sm font-medium text-gray-200">Subject</label>
                 <Select
                   value={selectedSubject}
                   onValueChange={handleSubjectSelect}
                 >
-                  <SelectTrigger className="w-full h-11 bg-background border border-border hover:border-primary/50 transition-colors">
+                  <SelectTrigger className="w-full h-11 bg-gray-800 border border-gray-600 hover:border-gray-500 focus:border-blue-400 focus:ring-blue-400/20 text-white transition-colors">
                     <SelectValue placeholder="Physics, English, Math ..." />
                   </SelectTrigger>
-                  <SelectContent className="bg-background border-border z-50">
+                  <SelectContent className="bg-gray-800 border-gray-600 z-50">
                     <ScrollArea className="h-60">
                       {subjects.map((subject) => (
                         <SelectItem
                           key={subject.id}
                           value={subject.id.toString()}
-                          className="hover:bg-accent"
+                          className="text-gray-200 hover:bg-gray-700 focus:bg-gray-700"
                         >
                           {subject.subject}
                         </SelectItem>
@@ -592,153 +570,158 @@ const SearchSection: React.FC = () => {
 
               {/* Teaching Type */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Teaching Type</label>
+                <label className="text-sm font-medium text-gray-200">Teaching Type</label>
                 <Select value={selectedTeachingType} onValueChange={setSelectedTeachingType}>
-                  <SelectTrigger className="w-full h-11 bg-background border border-border hover:border-primary/50 transition-colors">
+                  <SelectTrigger className="w-full h-11 bg-gray-800 border border-gray-600 hover:border-gray-500 focus:border-blue-400 focus:ring-blue-400/20 text-white transition-colors">
                     <SelectValue placeholder="Online / Offline / Both" />
                   </SelectTrigger>
-                  <SelectContent className="bg-background border-border z-50">
-                    <SelectItem value="ONLINE" className="hover:bg-accent">Online</SelectItem>
-                    <SelectItem value="OFFLINE" className="hover:bg-accent">Offline</SelectItem>
-                    <SelectItem value="BOTH" className="hover:bg-accent">Both</SelectItem>
+                  <SelectContent className="bg-gray-800 border-gray-600 z-50">
+                    <SelectItem value="ONLINE" className="text-gray-200 hover:bg-gray-700 focus:bg-gray-700">Online</SelectItem>
+                    <SelectItem value="OFFLINE" className="text-gray-200 hover:bg-gray-700 focus:bg-gray-700">Offline</SelectItem>
+                    <SelectItem value="BOTH" className="text-gray-200 hover:bg-gray-700 focus:bg-gray-700">Both</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
           </div>
 
-          {showFilters && (
-            <div className="space-y-6 mb-6 p-4 sm:p-6 bg-card rounded-lg border border-border">
-              <div className="flex items-center gap-2 mb-4">
-                <Filter className="h-4 w-4 text-primary" />
-                <h3 className="text-sm font-semibold text-foreground">Advanced Filters</h3>
-              </div>
-              
-              {/* Location Filters */}
-              <div className="space-y-4">
-                <h4 className="text-sm font-medium text-muted-foreground">Location</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-xs font-medium text-muted-foreground">Division</label>
-                    <Select value={selectedDivision} onValueChange={handleDivisionChange}>
-                      <SelectTrigger className="w-full h-10 bg-background border border-border hover:border-primary/50 transition-colors">
-                        <SelectValue placeholder="Select Division" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-background border-border z-50">
-                        <ScrollArea className="h-48">
-                          {divisions.map((division) => (
-                            <SelectItem key={division.id} value={division.id.toString()} className="hover:bg-accent">
-                              {division.name}
-                            </SelectItem>
-                          ))}
-                        </ScrollArea>
-                      </SelectContent>
-                    </Select>
+          <Dialog open={showFilters} onOpenChange={setShowFilters}>
+            <DialogContent className="w-full max-w-4xl border-0 shadow-xl">
+              {showFilters && (
+                <div className="space-y-6 mb-6 p-0">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Filter className="h-4 w-4 text-blue-400" />
+                    <h3 className="text-sm font-semibold text-gray-100">Advanced Filters</h3>
                   </div>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-xs font-medium text-gray-400">Division</label>
+                        <Select value={selectedDivision} onValueChange={handleDivisionChange}>
+                          <SelectTrigger className="w-full h-10 bg-gray-800 border border-gray-600 hover:border-blue-500/50 transition-colors text-gray-100">
+                            <SelectValue placeholder="Select Division" className="text-gray-400" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-800 border-gray-600 z-50">
+                            <ScrollArea className="h-48">
+                              {divisions.map((division) => (
+                                <SelectItem key={division.id} value={division.id.toString()} className="hover:bg-gray-700 text-gray-100">
+                                  {division.name}
+                                </SelectItem>
+                              ))}
+                            </ScrollArea>
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                  <div className="space-y-2">
-                    <label className="text-xs font-medium text-muted-foreground">District</label>
-                    <Select
-                      value={selectedDistrict}
-                      onValueChange={handleDistrictChange}
-                      disabled={!selectedDivision}
-                    >
-                      <SelectTrigger className="w-full h-10 bg-background border border-border hover:border-primary/50 transition-colors disabled:opacity-50">
-                        <SelectValue placeholder="Select District" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-background border-border z-50">
-                        <ScrollArea className="h-48">
-                          {districts.map((district) => (
-                            <SelectItem key={district.id} value={district.id.toString()} className="hover:bg-accent">
-                              {district.name}
-                            </SelectItem>
-                          ))}
-                        </ScrollArea>
-                      </SelectContent>
-                    </Select>
+                      <div className="space-y-2">
+                        <label className="text-xs font-medium text-gray-400">District</label>
+                        <Select
+                          value={selectedDistrict}
+                          onValueChange={handleDistrictChange}
+                          disabled={!selectedDivision}
+                        >
+                          <SelectTrigger className="w-full h-10 bg-gray-800 border border-gray-600 hover:border-blue-500/50 transition-colors disabled:opacity-50 text-gray-100">
+                            <SelectValue placeholder="Select District" className="text-gray-400" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-800 border-gray-600 z-50">
+                            <ScrollArea className="h-48">
+                              {districts.map((district) => (
+                                <SelectItem key={district.id} value={district.id.toString()} className="hover:bg-gray-700 text-gray-100">
+                                  {district.name}
+                                </SelectItem>
+                              ))}
+                            </ScrollArea>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-xs font-medium text-gray-400">Upazila</label>
+                        <Select
+                          value={selectedUpazila}
+                          onValueChange={handleUpazilaChange}
+                          disabled={!selectedDistrict}
+                        >
+                          <SelectTrigger className="w-full h-10 bg-gray-800 border border-gray-600 hover:border-blue-500/50 transition-colors disabled:opacity-50 text-gray-100">
+                            <SelectValue placeholder="Select Upazila" className="text-gray-400" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-800 border-gray-600 z-50">
+                            <ScrollArea className="h-48">
+                              {upazilas.map((upazila) => (
+                                <SelectItem key={upazila.id} value={upazila.id.toString()} className="hover:bg-gray-700 text-gray-100">
+                                  {upazila.name}
+                                </SelectItem>
+                              ))}
+                            </ScrollArea>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-xs font-medium text-gray-400">Area</label>
+                        <Select
+                          value={selectedArea}
+                          onValueChange={handleAreaSelect}
+                          disabled={!selectedUpazila}
+                        >
+                          <SelectTrigger className="w-full h-10 bg-gray-800 border border-gray-600 hover:border-blue-500/50 transition-colors disabled:opacity-50 text-gray-100">
+                            <SelectValue placeholder="Select Area" className="text-gray-400" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-800 border-gray-600 z-50">
+                            <ScrollArea className="h-48">
+                              {areas.map((area) => (
+                                <SelectItem key={area.id} value={area.id.toString()} className="hover:bg-gray-700 text-gray-100">
+                                  {area.name}
+                                </SelectItem>
+                              ))}
+                            </ScrollArea>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
                   </div>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-xs font-medium text-gray-400">Salary Range</label>
+                        <Select value={selectedSalaryRange} onValueChange={setSelectedSalaryRange}>
+                          <SelectTrigger className="w-full h-10 bg-gray-800 border border-gray-600 hover:border-blue-500/50 transition-colors text-gray-100">
+                            <SelectValue placeholder="Select Range" className="text-gray-400" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-800 border-gray-600 z-50">
+                            <SelectItem value="0-1000" className="hover:bg-gray-700 text-gray-100">৳0 - ৳1000</SelectItem>
+                            <SelectItem value="1000-2000" className="hover:bg-gray-700 text-gray-100">৳1000 - ৳2000</SelectItem>
+                            <SelectItem value="2000+" className="hover:bg-gray-700 text-gray-100">৳2000+</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                  <div className="space-y-2">
-                    <label className="text-xs font-medium text-muted-foreground">Upazila</label>
-                    <Select
-                      value={selectedUpazila}
-                      onValueChange={handleUpazilaChange}
-                      disabled={!selectedDistrict}
-                    >
-                      <SelectTrigger className="w-full h-10 bg-background border border-border hover:border-primary/50 transition-colors disabled:opacity-50">
-                        <SelectValue placeholder="Select Upazila" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-background border-border z-50">
-                        <ScrollArea className="h-48">
-                          {upazilas.map((upazila) => (
-                            <SelectItem key={upazila.id} value={upazila.id.toString()} className="hover:bg-accent">
-                              {upazila.name}
-                            </SelectItem>
-                          ))}
-                        </ScrollArea>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs font-medium text-muted-foreground">Area</label>
-                    <Select
-                      value={selectedArea}
-                      onValueChange={handleAreaSelect}
-                      disabled={!selectedUpazila}
-                    >
-                      <SelectTrigger className="w-full h-10 bg-background border border-border hover:border-primary/50 transition-colors disabled:opacity-50">
-                        <SelectValue placeholder="Select Area" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-background border-border z-50">
-                        <ScrollArea className="h-48">
-                          {areas.map((area) => (
-                            <SelectItem key={area.id} value={area.id.toString()} className="hover:bg-accent">
-                              {area.name}
-                            </SelectItem>
-                          ))}
-                        </ScrollArea>
-                      </SelectContent>
-                    </Select>
+                      <div className="space-y-2">
+                        <label className="text-xs font-medium text-gray-400">Rating</label>
+                        <Select value={selectedRating} onValueChange={setSelectedRating}>
+                          <SelectTrigger className="w-full h-10 bg-gray-800 border border-gray-600 hover:border-blue-500/50 transition-colors text-gray-100">
+                            <SelectValue placeholder="Minimum Rating" className="text-gray-400" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-800 border-gray-600 z-50">
+                            <SelectItem value="4" className="hover:bg-gray-700 text-gray-100">4+ Stars</SelectItem>
+                            <SelectItem value="3" className="hover:bg-gray-700 text-gray-100">3+ Stars</SelectItem>
+                            <SelectItem value="2" className="hover:bg-gray-700 text-gray-100">2+ Stars</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
-              {/* Other Filters */}
-              <div className="space-y-4">
-                <h4 className="text-sm font-medium text-muted-foreground">Preferences</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-xs font-medium text-muted-foreground">Salary Range</label>
-                    <Select value={selectedSalaryRange} onValueChange={setSelectedSalaryRange}>
-                      <SelectTrigger className="w-full h-10 bg-background border border-border hover:border-primary/50 transition-colors">
-                        <SelectValue placeholder="Select Range" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-background border-border z-50">
-                        <SelectItem value="0-1000" className="hover:bg-accent">৳0 - ৳1000</SelectItem>
-                        <SelectItem value="1000-2000" className="hover:bg-accent">৳1000 - ৳2000</SelectItem>
-                        <SelectItem value="2000+" className="hover:bg-accent">৳2000+</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs font-medium text-muted-foreground">Rating</label>
-                    <Select value={selectedRating} onValueChange={setSelectedRating}>
-                      <SelectTrigger className="w-full h-10 bg-background border border-border hover:border-primary/50 transition-colors">
-                        <SelectValue placeholder="Minimum Rating" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-background border-border z-50">
-                        <SelectItem value="4" className="hover:bg-accent">4+ Stars</SelectItem>
-                        <SelectItem value="3" className="hover:bg-accent">3+ Stars</SelectItem>
-                        <SelectItem value="2" className="hover:bg-accent">2+ Stars</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+              <DialogFooter className="gap-2">
+                <Button className="text-red-500 hover:text-red-600 hover:bg-red-100" variant="ghost" onClick={() => setShowFilters(false)}>Cancel</Button>
+                <Button
+                  className="bg-cyan-400 hover:bg-cyan-500 text-white"
+                  onClick={() => setShowFilters(false)}>Apply filters</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
 
           {/* Active Filters Section */}
           {hasActiveFilters && (
@@ -840,7 +823,7 @@ const SearchSection: React.FC = () => {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4">
             {/* Gender Selection */}
             <div className="flex justify-center sm:justify-start">
-              <div className="flex items-center gap-6 p-3 bg-card rounded-lg border border-border">
+              <div className="flex items-center gap-6 p-3 bg-transparent border-0">
                 <span className="text-sm font-medium text-muted-foreground">Gender:</span>
                 <label className="flex items-center gap-2 cursor-pointer group">
                   <input
@@ -850,7 +833,7 @@ const SearchSection: React.FC = () => {
                     checked={selectedGender === "MALE"}
                     onChange={() => handleGenderSelect("MALE")}
                   />
-                  <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                  <span className="text-white text-sm font-medium text-foreground group-hover:text-white transition-colors">
                     Male
                   </span>
                 </label>
@@ -862,32 +845,23 @@ const SearchSection: React.FC = () => {
                     checked={selectedGender === "FEMALE"}
                     onChange={() => handleGenderSelect("FEMALE")}
                   />
-                  <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                  <span className="text-white text-sm font-medium text-foreground group-hover:text-white transition-colors">
                     Female
                   </span>
                 </label>
               </div>
             </div>
-
-            {/* Search Button */}
-            <Button
-              size="lg"
-              onClick={handleSearch}
-              disabled={isSearching}
-              className="w-full sm:w-auto px-8 py-3 gap-2"
-            >
-              {isSearching ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
-                  Searching...
-                </>
-              ) : (
-                <>
-                  <Search className="h-4 w-4" />
-                  Search Tutor
-                </>
-              )}
-            </Button>
+            <div className="flex justify-center sm:justify-start mb-6">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleFilters}
+                className="hover:bg-primary-100"
+              >
+                <Filter className="h-4 w-4" />
+                {showFilters ? "Hide Filters" : "Advanced Filters"}
+              </Button>
+            </div>
           </div>
 
           {/* Clear All Button */}
@@ -897,7 +871,7 @@ const SearchSection: React.FC = () => {
                 variant="ghost"
                 size="sm"
                 onClick={clearAllFilters}
-                className="gap-2"
+                className="gap-2 text-red-500 hover:text-red-600 hover:bg-red-100" 
               >
                 <X className="h-4 w-4" />
                 Clear All Filters
