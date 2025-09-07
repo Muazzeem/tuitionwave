@@ -48,20 +48,18 @@ const PackageSettings = () => {
   const totalDays = hasActivePackage ? differenceInDays(expiryDate, createdDate) : 0;
 
   return (
-    <div className="flex-1 bg-white dark:bg-gray-900">
+    <div className="flex-1 bg-gray-900 min-h-screen">
       <DashboardHeader userName="Settings" />
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
-        <div className="p-4 sm:p-6 max-w-full lg:max-w-[1211px] mx-auto">
-          <Card className="bg-white dark:bg-background">
+        <div className="p-6">
+          <h1 className="lg:text-3xl sm:text-2xl font-bold text-white mb-6">Settings</h1>
+          <div className="w-full max-w-7xl mx-auto">
+            <Card className="bg-background border-0 shadow-lg rounded-lg">
             <CardContent className="p-0">
-              <div className="p-6 space-y-6 dark:bg-background">
-                <div>
-                  <h2 className="text-3xl font-semibold text-gray-900 dark:text-white">Package Information</h2>
-                  <p className="text-gray-500 mt-1 dark:text-gray-300">View your current package details and subscription status</p>
-                </div>
+                <div className="p-6 space-y-6 bg-background">
                 
                 {!hasActivePackage ? (
-                  <Card className="dark:bg-gray-900 dark:border-gray-700 border-orange-200 dark:border-red-800 shadow-md">
+                    <Card className="border-0 shadow-md">
                     <CardContent className="p-6">
                       <div className="text-center py-8">
                         <div className="flex justify-center mb-4">
@@ -183,6 +181,7 @@ const PackageSettings = () => {
               </div>
             </CardContent>
           </Card>
+        </div>
         </div>
       </ScrollArea>
     </div>

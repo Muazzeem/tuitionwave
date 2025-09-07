@@ -586,7 +586,7 @@ const SearchSection: React.FC = () => {
           </div>
 
           <Dialog open={showFilters} onOpenChange={setShowFilters}>
-            <DialogContent className="w-full max-w-4xl border-0 shadow-xl">
+            <DialogContent className="w-full text-white max-w-4xl border-0 shadow-xl">  
               {showFilters && (
                 <div className="space-y-6 mb-6 p-0">
                   <div className="flex items-center gap-2 mb-4">

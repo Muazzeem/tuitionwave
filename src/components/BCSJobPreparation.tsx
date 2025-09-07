@@ -1,13 +1,29 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
+import JobPreparationService from '@/services/JobPreparationService';
 import SearchSection from './SearchSection';
+import { useQuery } from '@tanstack/react-query';
+import { Category } from '@/types/jobPreparation';
 
 const BCSJobPreparation: React.FC = () => {
   const navigate = useNavigate();
+  const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
+
+  const { data: categoriesData, isLoading: categoriesLoading, error } = useQuery({
+    queryKey: ['categories', 1],
+    queryFn: () => JobPreparationService.getCategories(1),
+  });
+
+  useEffect(() => {
+    if (categoriesData?.results) {
+      setFilteredCategories(categoriesData.results);
+      console.log("Filtered categories:", filteredCategories);
+    }
+  });
 
   return (
     <div className="bg-gradient-to-br from-gray-900 via-green-900 to-gray-800 py-16 relative overflow-hidden">
@@ -106,18 +122,18 @@ const BCSJobPreparation: React.FC = () => {
 
                   <div className="flex justify-center mt-4 mb-4">
                     <div className="flex gap-3 overflow-x-auto whitespace-nowrap pb-2">
-                      <Badge className="bg-cyan-400 hover:bg-cyan-500 text-white px-4 py-2 rounded-full text-sm font-medium cursor-pointer">
-                        BCS
-                      </Badge>
-                      <Badge className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full text-sm font-medium border border-slate-600 cursor-pointer">
-                        Job Preparation
-                      </Badge>
-                      <Badge className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full text-sm font-medium border border-slate-600 cursor-pointer">
-                        Bank & MBA
-                      </Badge>
-                      <Badge className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full text-sm font-medium border border-slate-600 cursor-pointer">
-                        Others
-                      </Badge>
+                      {filteredCategories.map((category, index) => {
+                        return (
+                          <Badge
+                            key={category.uid}
+                            className={`${index === 0 ? "bg-cyan-500 hover:bg-cyan-500" : "bg-slate-700 hover:bg-cyan-500"
+                              } text-white px-4 py-2 rounded-full text-sm font-medium border border-slate-600 cursor-pointer`}
+                            onClick={() => navigate(`job-preparation/category/${category.uid}`)}
+                          >
+                            {category.category_name}
+                          </Badge>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -138,7 +154,7 @@ const BCSJobPreparation: React.FC = () => {
               </div>
               <Button
                 className="w-full bg-cyan-400 hover:bg-cyan-500 text-black font-semibold py-3 rounded-xl text-lg mt-auto"
-                onClick={() => navigate('/auth/registration')}
+                onClick={() => navigate('job-preparation/questions')}
               >
                 Start Preparation
               </Button>
