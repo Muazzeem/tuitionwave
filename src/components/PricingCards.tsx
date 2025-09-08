@@ -80,15 +80,6 @@ const PricingCards: React.FC<PricingCardsProps> = ({ category = "STUDENT" }) => 
     return `৳ ${numPrice.toLocaleString()}`;
   };
 
-  const formatPeriod = (period: string) => {
-    // Convert "1 Months" to "/month", "12 Months" to "/year", etc.
-    const months = parseInt(period.split(' ')[0]);
-    if (months === 1) return '/month';
-    if (months === 12) return '/year';
-    if (months === 36) return '/3 years';
-    return `/${period.toLowerCase()}`;
-  };
-
   const getFeatureIcon = (index: number) => {
     const icons = ['✔'];
     return icons[index % icons.length];
@@ -253,7 +244,7 @@ const PricingCards: React.FC<PricingCardsProps> = ({ category = "STUDENT" }) => 
                 <h3 className="text-2xl font-bold text-gray-900">{pkg.name}</h3>              
                 <div className="mb-4">
                   <span className="text-4xl font-bold text-gray-900">{formatPrice(pkg.price)}</span>
-                  <span className="text-gray-600">{formatPeriod(pkg.period)}</span>
+                  <span className="text-gray-600">{pkg.duration_months} Months</span>
                 </div>
                 
                 <p className="text-sm text-gray-500">bKash Payment Method</p>
@@ -407,7 +398,7 @@ const PricingCards: React.FC<PricingCardsProps> = ({ category = "STUDENT" }) => 
                   ) : (
                       <span className="text-2xl font-bold text-white">{formatPrice(selectedTier.price)}</span>
                   )}
-                  <span className="text-gray-300 ml-1">{formatPeriod(selectedTier.period)}</span>
+                  <span className="text-gray-300 ml-1">{selectedTier.duration_months} Months</span>
                 </div>
                 <div className="space-y-2">
                   {selectedTier.descriptions.map((description, index) => (

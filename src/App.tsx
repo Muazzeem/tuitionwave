@@ -33,7 +33,7 @@ import SubjectsPage from "./pages/JobPreparation/SubjectsPage";
 import TopicsPage from "./pages/JobPreparation/TopicsPage";
 import QuestionsPage from "./pages/JobPreparation/QuestionsPage";
 import ReadingModePage from "./pages/JobPreparation/ReadingModePage";
-import PackageSettings from "./components/PackageSettings";
+import PackageSettings from "./pages/PackageSettings";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import FAQPage from "./pages/FAQPage";
 import TermsPage from "./pages/TermsPage";
@@ -45,6 +45,7 @@ import ExamPage from "./pages/JobPreparation/ExamPage";
 import ExamResultsPage from "./pages/JobPreparation/ExamResultsPage";
 
 import { Loader2 } from "lucide-react";
+import StudentPackageSettings from "./pages/StudentPackageSettings";
 
 const queryClient = new QueryClient();
 
@@ -251,7 +252,7 @@ const App = () => (
 
                 <Route path="teacher/message" element={
                   <AuthGuard>
-                    <div className="flex h-screen bg-gray-50">
+                  <div className="flex h-screen bg-background">
                       <Sidebar />
                       <MessagePage />
                     </div>
@@ -260,7 +261,7 @@ const App = () => (
 
                 <Route path="guardian/message" element={
                   <AuthGuard>
-                    <div className="flex h-screen bg-gray-50">
+                  <div className="flex h-screen bg-background">
                       <Sidebar />
                       <MessagePage />
                     </div>
@@ -308,6 +309,12 @@ const App = () => (
                     <MainLayout><PackageSettings /></MainLayout>
                   </AuthGuard>
                 } />
+
+              <Route path="/job-preparation/package" element={
+                <AuthGuard>
+                  <MainLayout><StudentPackageSettings /></MainLayout>
+                </AuthGuard>
+              } />
 
                 <Route path="/dashboard/guardian" element={
                   <AuthGuard>

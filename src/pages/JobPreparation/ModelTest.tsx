@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import DashboardHeader from "@/components/DashboardHeader";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,7 +10,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import TutorPagination from "@/components/FindTutors/TutorPagination";
 import { useAuth } from "@/contexts/AuthContext";
-import PricingCards from '@/components/PricingCards';
 
 
 // Custom hook for countdown timer
@@ -264,6 +263,21 @@ export default function CreateModelTest() {
   useEffect(() => {
     fetchModelTests();
   }, [selectedTab, currentPage]);
+
+  const hasStudentExamAccess = useMemo(() => {
+    const pkgs = userProfile?.packages;
+    if (!Array.isArray(pkgs) || pkgs.length === 0) return false;
+
+    return pkgs.some((p) => {
+      const status = p?.status?.toUpperCase?.();
+      const role = p?.role_applied?.toUpperCase?.();
+      const target = p?.package?.target?.toUpperCase?.();
+      const isActive = status === 'ACTIVE';
+      const matchesRole = role === 'STUDENT' || role === 'BOTH';
+      const matchesTarget = target === 'STUDENT' || target === 'BOTH';
+      return isActive && (matchesRole || matchesTarget);
+    });
+  }, [userProfile?.packages]);
 
   const filteredExams = examData;
 
@@ -619,17 +633,30 @@ export default function CreateModelTest() {
                           </div>
                         )}
 
-                        {/* Action Button */}
-                        {exam.is_active && exam.totalQuestions > 0 && (
-                          <Button
-                            className={`w-full mt-3 sm:mt-4 group-hover:shadow-md transition-all text-xs sm:text-sm ${statusInfo.buttonClass} ${statusInfo.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            size="sm"
-                            onClick={() => handleStartExam(exam)}
-                            disabled={statusInfo.disabled}
-                          >
-                            <StatusIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
-                            <span className="truncate">{statusInfo.action}</span>
-                          </Button>
+                        {exam.is_active && exam.totalQuestions > 0 && exam.status !== 'upcoming' && (
+                          <>
+                            {hasStudentExamAccess ? (
+                              <Button
+                                className={`w-full mt-3 sm:mt-4 group-hover:shadow-md transition-all text-xs sm:text-sm ${statusInfo.buttonClass} ${statusInfo.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                size="sm"
+                                onClick={() => handleStartExam(exam)}
+                                disabled={statusInfo.disabled}
+                              >
+                                <StatusIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
+                                <span className="truncate">{statusInfo.action}</span>
+                              </Button>
+                            ) : (
+                              <Button
+                                className="w-full mt-3 sm:mt-4 group-hover:shadow-md transition-all text-xs sm:text-sm bg-red-700/50 hover:bg-red-600 text-white"
+                                size="sm"
+                                onClick={() => {
+                                  navigate(`/job-preparation/package`);
+                                }}
+                              >
+                                <span className="truncate">Upgrade Package</span>
+                              </Button>
+                            )}
+                          </>
                         )}
                       </div>
                     </CardContent>
@@ -683,16 +710,9 @@ export default function CreateModelTest() {
             </div>
           )}
         </div>
-        {!userProfile.is_student && (
+        {!userProfile.contract_packages && (
           <>
-            <hr className="border-gray-700" />
-            <div className="p-4 md:p-6">
-              <h2 className="text-muted-foreground text-xl">Practice with real exam simulations and track your progress</h2>
 
-              <div className="mt-2">
-                <PricingCards category="STUDENT" />
-              </div>
-            </div>
           </>
         )}
         <div className="h-20 md:h-8"></div>

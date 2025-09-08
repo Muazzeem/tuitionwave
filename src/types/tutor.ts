@@ -199,6 +199,7 @@ export interface Description {
 }
 
 export interface Package {
+  duration_months: any;
   uid: string;
   name: string;
   price: string;

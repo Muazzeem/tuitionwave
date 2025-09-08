@@ -31,6 +31,8 @@ export interface PackageData {
 }
 
 export interface ProfileData {
+  packages: any;
+  contract_packages: any;
   is_tutor: boolean;
   is_student: boolean;
   has_document: any;

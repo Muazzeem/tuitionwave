@@ -152,6 +152,20 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                   </>
               )}
 
+              {userTypeFromUrl === 'STUDENT' && (
+                <>
+                  <Link
+                    to="/job-preparation/package"
+                    className="flex items-center px-4 py-2 text-sm hover:bg-gray-700 text-white"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    <Package className="h-4 w-4 mr-2 dark:text-white" />
+                    <span>Package</span>
+                  </Link>
+                </>
+
+              )}
+
               <Link
                 to="#"
                 onClick={handleLogout}
