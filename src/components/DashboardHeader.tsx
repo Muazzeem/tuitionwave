@@ -44,6 +44,14 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
       className="flex justify-between items-center py-2 px-4 sm:px-6 dark:bg-background relative z-20 shadow-md"
       style={{ backgroundColor: "#192642" }}
     >
+      <button
+        onClick={toggleMobileMenu}
+        className="lg:hidden p-2 rounded-md hover:bg-gray-700 text-gray-300"
+        aria-label="Toggle mobile menu"
+      >
+        {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+      </button>
+
       <div className="flex-1 min-w-0">
         {isDashboard && (
           <Link to="/">
@@ -56,10 +64,10 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
         )}
       </div>
 
-      <div className="absolute left-1/2 transform -translate-x-1/2 hidden xl:flex items-center gap-3 border p-2 rounded-3xl border-gray-700">
+      <div className="absolute left-1/2 transform -translate-x-1/2 hidden lg:flex items-center gap-3 border p-2 rounded-3xl border-gray-700">
         <Link
           to="/dashboard/guardian"
-          className={`px-4 py-2 shadow-xl text-white rounded-full font-bold text-md transition-all duration-200 ${  
+          className={`px-4 py-2 shadow-xl text-white rounded-full font-bold text-xs transition-all duration-200 ${  
             userTypeFromUrl === 'GUARDIAN'
             ? 'bg-cyan-400 hover:bg-cyan-500 text-white'
             : 'bg-gray-900 hover:bg-cyan-500'
@@ -70,7 +78,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
 
         <Link
           to="/dashboard/teacher"
-          className={`px-4 py-2 shadow-xl text-white rounded-full font-bold text-md transition-all duration-200 ${
+          className={`px-4 py-2 shadow-xl text-white rounded-full font-bold text-xs transition-all duration-200 ${
             userTypeFromUrl === 'TEACHER'
             ? 'bg-cyan-400 hover:bg-cyan-500 text-white'
             : 'bg-gray-900 hover:bg-cyan-500'
@@ -81,7 +89,7 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
 
         <Link
           to="/job-preparation/dashboard"
-          className={`px-4 py-2 shadow-xl text-white rounded-full font-bold text-md transition-all duration-200 ${
+          className={`px-4 py-2 shadow-xl text-white rounded-full font-bold text-xs transition-all duration-200 ${
             userTypeFromUrl === 'STUDENT'
             ? 'bg-cyan-400 hover:bg-cyan-500 text-white'
             : 'bg-gray-900 hover:bg-cyan-500'
@@ -94,14 +102,6 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
       <div className="flex items-center gap-2 sm:gap-4">
         {/* <ThemeToggle /> */}
         <NotificationDropdown />
-
-        <button
-          onClick={toggleMobileMenu}
-          className="xl:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
-          aria-label="Toggle mobile menu"
-        >
-          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
 
         <div className="relative">
           <div
@@ -141,27 +141,13 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
                       <Settings className="h-4 w-4 mr-2 dark:text-white" />
                       <span>Settings</span>
                     </Link>
-                    <Link
-                      to="/package/teacher"
-                    className="flex items-center px-4 py-2 text-sm hover:bg-gray-700 text-white"
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      <Package className="h-4 w-4 mr-2 dark:text-white" />
-                      <span>Package</span>
-                    </Link>
+
                   </>
               )}
 
               {userTypeFromUrl === 'STUDENT' && (
                 <>
-                  <Link
-                    to="/job-preparation/package"
-                    className="flex items-center px-4 py-2 text-sm hover:bg-gray-700 text-white"
-                    onClick={() => setIsDropdownOpen(false)}
-                  >
-                    <Package className="h-4 w-4 mr-2 dark:text-white" />
-                    <span>Package</span>
-                  </Link>
+
                 </>
 
               )}

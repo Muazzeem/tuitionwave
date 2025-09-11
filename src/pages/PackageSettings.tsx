@@ -24,7 +24,7 @@ const formatMoney = (amount?: string | number | null, currency?: string | null) 
     // You can tweak the locale if you want user-specific formatting
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: (currency || 'USD').toUpperCase(),
+      currency: (currency || 'BDT').toUpperCase(),
       maximumFractionDigits: 2,
     }).format(value);
   } catch {
@@ -49,7 +49,7 @@ const PackageSettings: React.FC = () => {
     ? {
       // Flatten a few fields we use a lot
       name: activeEntry.package?.name ?? '—',
-      currency: activeEntry.package?.currency ?? 'USD',
+      currency: 'BDT',
       price: activeEntry.package?.price ?? '0',
       duration_days: activeEntry.package?.duration_days ?? null,
       activated_at: activeEntry.activated_at ?? null,

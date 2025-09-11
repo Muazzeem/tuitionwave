@@ -19,7 +19,6 @@ interface SubtopicFiltersProps {
 const SubtopicFilters: React.FC<SubtopicFiltersProps> = ({
   subtopics,
   selectedSubtopicId,
-  totalQuestions,
   onSubtopicSelect,
   onShowAll,
   showMobileFilters,
@@ -28,33 +27,30 @@ const SubtopicFilters: React.FC<SubtopicFiltersProps> = ({
   const FilterButtons = () => (
     <div className="flex flex-wrap gap-2">
       <button
-        className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+        className={`inline-flex text-white items-center px-3 p-1 rounded-lg text-sm font-medium transition-all ${
           selectedSubtopicId === null
             ? 'bg-blue-600 text-white shadow-md'
-          : 'text-white hover:bg-gray-200 bg-gray-700 text-gray-300 hover:bg-gray-600'
+          : 'text-white hover:bg-gray-200 bg-gray-700 text-white hover:bg-gray-600'
         }`}
         onClick={onShowAll}
       >
-        <Star className="h-4 w-4 mr-2" />
+        <Star className="h-4 w-4 mr-2 hidden sm:block" />
         <span>All Questions</span>
-        {/* <Badge className="ml-2 bg-white/20 text-current border-none text-xs">
-          {totalQuestions}
-        </Badge> */}
       </button>
       
       {subtopics.map((subtopic) => (
         subtopic.total_questions > 0 && (
           <button
             key={subtopic.uid}
-            className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`inline-flex items-center px-3 p-1 rounded-lg text-sm font-medium transition-all ${
               selectedSubtopicId === subtopic.uid
                 ? 'bg-blue-600 text-white shadow-md'
               : 'bg-gray-100 hover:bg-gray-200 bg-gray-700 text-gray-300 hover:bg-gray-600'
             }`}
             onClick={() => onSubtopicSelect(subtopic)}
           >
-            <HelpCircle className="h-4 w-4 mr-2" />
-            <span className="truncate max-w-32">{subtopic.subtopic_name}</span>
+            <HelpCircle className="h-4 w-4 mr-2 hidden sm:block" />
+            <span className="truncate max-w-32 text-xs">{subtopic.subtopic_name}</span>
             <Badge className="ml-2 bg-white/20 text-current border-none text-xs">
               {subtopic.total_questions}
             </Badge>
@@ -75,9 +71,11 @@ const SubtopicFilters: React.FC<SubtopicFiltersProps> = ({
         <Button
           variant="outline"
           onClick={onToggleMobileFilters}
-          className="w-full justify-between"
+          className="w-full justify-between text-white border-0 hover:bg-background hover:text-white"
         >
-          <span>Filter by Subtopic</span>
+          <span>
+            {showMobileFilters ? 'Hide Filters' : 'Show Filters'}
+          </span>
           {showMobileFilters ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
         </Button>
       </div>

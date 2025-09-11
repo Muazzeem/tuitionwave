@@ -159,24 +159,7 @@ const ReadingModePage: React.FC = () => {
                       <span className="hidden sm:inline ml-2">Practice Mode</span>
                     </Button>
                   </div>
-                </div>
-
-                {/* Study Stats */}
-                {readingQuestionsData && (
-                  <div className="bg-green-50 bg-green-900/20 rounded-lg p-3 border border-green-200 border-green-800">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
-                        <span className="text-sm font-medium text-green-800 text-green-200">
-                          Study Material
-                        </span>
-                      </div>
-                      <Badge className="bg-green-100 text-green-800 bg-green-800 text-green-100">
-                        {readingQuestionsData.count} Questions
-                      </Badge>
-                    </div>
-                  </div>
-                )}
+                </div>                
               </div>
             </div>
 

@@ -176,22 +176,22 @@ export default function ExamResultsPage() {
         <DashboardHeader userName="John" />
 
         <ScrollArea type="always" style={{ height: 'calc(110vh - 180px)' }}>
-          <div className="container mx-auto px-4 py-6">
-            <div className="max-w-4xl mx-auto space-y-6">
+          <div className="mx-auto px-4 py-6">
+            <div className="max-w-5xl mx-auto space-y-6">
               {examResults.questions.map((question, index) => (
                 <Card key={question.uid} className='bg-background border-0 rounded-lg'>
                   <CardHeader className="p-3 sm:p-4">
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                        <div className="w-6 h-6 md:bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                           {index + 1}
                         </div>
                         <div>
-                          <CardTitle className="text-lg font-semibold text-white">
+                          <CardTitle className="text-sm md:text-md font-semibold text-white">
                             {question.question_text}
                           </CardTitle>
                           {question.topic_name && (
-                            <div className="flex items-center gap-2 mt-1">
+                            <div className="flex items-center gap-2 hidden sm:block">
                               <Badge variant="outline" className="text-xs bg-gray-700 text-gray-300 border-gray-600">
                                 {question.topic_name}
                               </Badge>
@@ -214,13 +214,13 @@ export default function ExamResultsPage() {
                         />
                       </div>
                     )}
-                    <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-2 sm:gap-3 mb-4">
+                    <div className="grid md:grid-cols-2 sm:grid-cols-2 grid-cols-2  gap-2 sm:gap-3 mb-4">
                       {question.options.map((option) => {
                         const isUserSelected = option.uid === question.selected_option?.uid;
                         const isCorrect = option.is_correct;
                         const isWrongSelected = isUserSelected && !isCorrect;
 
-                        let optionClass = 'p-2 rounded-xl border-2 transition-all duration-200';
+                        let optionClass = 'p-1 rounded-xl border-2 transition-all duration-200 text-sm';
                         let badgeElement = null;
 
                         if (isCorrect) {
@@ -259,7 +259,7 @@ export default function ExamResultsPage() {
                       })}
                     </div>
                     {question.explanation && (
-                      <div className="lg:col-span-2 mt-6 p-5 bg-blue-900/20 border-l-4 border-blue-400 rounded-r-xl">
+                      <div className="lg:col-span-2 mt-3 p-2 md:p-5 bg-blue-900/20 border-l-4 border-blue-400 rounded-r-xl">
                         <div className="flex items-start space-x-3">
                           <div className="flex-1">
                             <h4 className="font-semibold text-blue-200 mb-2">Explanation</h4>
@@ -283,7 +283,7 @@ export default function ExamResultsPage() {
                 <Button
                   onClick={() => setShowReviewMode(false)}
                   variant="outline"
-                  className="flex-1 sm:flex-none bg-background border-gray-600 text-gray-200 hover:bg-gray-700"
+                  className="flex-1 sm:flex-none bg-background border-gray-600 text-gray-200 hover:bg-gray-700 hover:text-white"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Results
@@ -291,14 +291,14 @@ export default function ExamResultsPage() {
                 <Button
                   onClick={() => navigate('/job-preparation/practice?tab=create')}
                   variant="outline"
-                  className="flex-1 sm:flex-none bg-background border-gray-600 text-gray-200 hover:bg-gray-700"
+                  className="flex-1 sm:flex-none bg-background border-gray-600 text-gray-200 hover:bg-gray-700 hover:text-white"
                 >
                   <Target className="h-4 w-4 mr-2" />
                   Practice More
                 </Button>
                 <Button
                   onClick={() => navigate('/job-preparation/dashboard')}
-                  className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white"
+                  className="flex-1 sm:flex-none bg-cyan-500 hover:bg-cyan-600 text-white"
                 >
                   <Trophy className="h-4 w-4 mr-2" />
                   Go to Dashboard
@@ -316,8 +316,8 @@ export default function ExamResultsPage() {
       <DashboardHeader userName="John" />
 
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
-        <div className="container mx-auto px-4 py-6 w-full bg-gray-900 text-gray-100 min-h-screen">
-          <div className="max-w-6xl mx-auto space-y-6">
+        <div className="mx-auto px-4 py-6 max-w-5xl bg-gray-900 text-gray-100 min-h-screen">
+          <div className="space-y-6">
 
             {/* Hero Section with Main Score */}
             <div className="relative">
@@ -359,7 +359,7 @@ export default function ExamResultsPage() {
             </div>
 
             {/* Quick Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-4 md:grid-cols-4 gap-2">
               <Card className="bg-green-900/30 border-green-700 shadow-md hover:shadow-lg transition-all duration-200">
                 <CardContent className="p-3 text-center">
                   <div className="bg-green-800 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -403,10 +403,14 @@ export default function ExamResultsPage() {
 
             {/* Performance Breakdown */}
             <Card className="bg-background shadow-sm border-0">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-xl text-white">
-                  <Trophy className="h-6 w-6 text-yellow-500" />
-                  <span>Performance Breakdown</span>
+              <CardHeader className="px-4 sm:px-6">
+                <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
+                  <div className="flex items-center gap-2">
+                    <Trophy className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                    <span className="text-base sm:text-lg text-white">
+                      Performance Breakdown
+                    </span>
+                  </div>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -477,10 +481,14 @@ export default function ExamResultsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Exam Information */}
               <Card className="bg-background shadow-sm border-0">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2 text-white">
-                    <BookOpen className="h-5 w-5 text-blue-400" />
-                    <span>Exam Information</span>
+                <CardHeader className="px-4 sm:px-6">
+                  <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                      <span className="text-base sm:text-lg text-white">
+                        Exam Information
+                      </span>
+                    </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -565,10 +573,14 @@ export default function ExamResultsPage() {
 
               {/* Performance Insights */}
               <Card className="bg-background shadow-sm border-0">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2 text-white">
-                    <TrendingUp className="h-5 w-5 text-green-400" />
-                    <span>Performance Insights</span>
+                <CardHeader className="px-4 sm:px-6">
+                  <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                      <span className="text-base sm:text-lg text-white">
+                        Performance Insights
+                      </span>
+                    </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -635,23 +647,6 @@ export default function ExamResultsPage() {
                       )}
                     </div>
                   </div>
-
-                  {/* Motivational Message */}
-                  <div className="p-4 bg-indigo-900/30 rounded-xl border border-indigo-700">
-                    <div className="text-center">
-                      <div className="text-2xl mb-2">
-                        {examResults.percentage >= 80 ? '🌟' : examResults.percentage >= 60 ? '💪' : '🚀'}
-                      </div>
-                      <p className="text-sm font-medium text-indigo-300">
-                        {examResults.percentage >= 80
-                          ? "Outstanding performance! Keep it up!"
-                          : examResults.percentage >= 60
-                            ? "Good job! A few more practice sessions will perfect your skills."
-                            : "Every expert was once a beginner. Keep practicing and you'll improve!"
-                        }
-                      </p>
-                    </div>
-                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -660,21 +655,21 @@ export default function ExamResultsPage() {
             <Card className="bg-background text-white border-0 shadow-sm">
               <CardContent className="p-8">
                 <div className="text-center mb-6">
-                  <h2 className="text-2xl font-bold mb-2">What's Next?</h2>
-                  <p className="text-gray-400">Continue your learning journey with these options</p>
+                  <h2 className="text-lg md:text-2xl font-bold mb-2">What's Next?</h2>
+                  <p className="text-gray-400 hidden md:block">Continue your learning journey with these options</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <Button
                     onClick={() => setShowReviewMode(true)}
                     variant="secondary"
-                    size="lg"
-                    className="h-16 bg-primary-700 hover:bg-primary-800 text-white border-white/30 backdrop-blur-sm transition-all duration-200"
+                    size="sm"
+                    className="h-20 bg-primary-700 hover:bg-primary-800 text-white border-white/30 backdrop-blur-sm transition-all duration-200"
                   >
                     <div className="flex flex-col items-center space-y-1">
                       <Eye className="h-5 w-5" />
                       <span className="font-medium">Review Answers</span>
-                      <span className="text-xs opacity-80">See detailed solutions</span>
+                      <span className="text-xs opacity-80 hidden md:block">See detailed solutions</span>
                     </div>
                   </Button>
 
@@ -682,12 +677,12 @@ export default function ExamResultsPage() {
                     onClick={() => navigate('/job-preparation/practice?tab=create')}
                     variant="secondary"
                     size="lg"
-                    className="h-16 bg-primary-700 hover:bg-primary-800 text-white border-white/30 backdrop-blur-sm transition-all duration-200"
+                    className="h-20 bg-primary-700 hover:bg-primary-800 text-white border-white/30 backdrop-blur-sm transition-all duration-200"
                   >
                     <div className="flex flex-col items-center space-y-1">
                       <Target className="h-5 w-5" />
                       <span className="font-medium">Practice More</span>
-                      <span className="text-xs opacity-80">Take another exam</span>
+                      <span className="text-xs opacity-80 hidden md:block">Take another exam</span>
                     </div>
                   </Button>
 
@@ -695,12 +690,12 @@ export default function ExamResultsPage() {
                     onClick={() => navigate('/job-preparation/dashboard')}
                     variant="secondary"
                     size="lg"
-                    className="h-16 bg-primary-700 hover:bg-primary-800 text-white border-white/30 backdrop-blur-sm transition-all duration-200"
+                    className="h-20 bg-primary-700 hover:bg-primary-800 text-white border-white/30 backdrop-blur-sm transition-all duration-200"
                   >
                     <div className="flex flex-col items-center space-y-1">
                       <Trophy className="h-5 w-5" />
                       <span className="font-medium">Dashboard</span>
-                      <span className="text-xs opacity-80">Track progress</span>
+                      <span className="text-xs opacity-80 hidden md:block">Track progress</span>
                     </div>
                   </Button>
                 </div>

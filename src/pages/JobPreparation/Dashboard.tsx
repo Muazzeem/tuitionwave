@@ -4,7 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Target, } from 'lucide-react';
+import { BookOpen, Target, } from 'lucide-react';
 import DashboardHeader from '@/components/DashboardHeader';
 import ExamStatusCards from '@/components/JobPreparation/ExamStatusCards';
 import PerformanceChart from '@/components/JobPreparation/PerformanceChart';
@@ -37,10 +37,19 @@ export default function JobPreparationDashboard() {
       {/* {userProfile.is_student ? ( */}
         <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
           <div className="p-6">
-            <div className="flex items-center justify-between">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg p-2 hidden md:block">
+                <Target className="h-6 w-6 text-white" />
+              </div>
               <div>
-                <h1 className="text-3xl font-bold text-foreground text-white">BCS Preparation Dashboard</h1>
-                <p className="text-muted-foreground mt-1">Track your progress and improve your performance</p>
+                <h2 className="text-xl md:text-3xl font-bold text-foreground text-white">
+                  Dashboard
+                </h2>
+                <p className="text-muted-foreground hidden md:block">
+                  Track your progress and improve your performance
+                </p>
+              </div>
               </div>
             </div>
 
@@ -113,13 +122,7 @@ export default function JobPreparationDashboard() {
             </Tabs>
             <SocialMediaCards />
           </div>
-        </ScrollArea>
-      {/* // ) : (
-      //     <div className="p-6">
-      //       <PricingCards category="STUDENT" />
-      //       <SocialMediaCards />
-      //     </div>
-      // )} */}
+      </ScrollArea>
     </div>
   );
 }

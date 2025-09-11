@@ -31,13 +31,21 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
     }
   };
 
+  const isLongOptionText = (options) => {
+    const averageLength = options.reduce((sum, option) => sum + option.option_text.length, 0) / options.length;
+    const hasLongOption = options.some(option => option.option_text.length > 100); // Adjust threshold as needed
+    return averageLength > 50 || hasLongOption; // Adjust thresholds as needed
+  };
+
+  const gridCols = isLongOptionText(question.options) ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2 sm:grid-cols-4';
+
+
   return (
     <Card className="border-0 shadow-md bg-gray-800 overflow-hidden transition-all duration-300 hover:shadow-lg">
       <CardHeader className="bg-background border-b p-3 sm:p-4 border-gray-700">
         <CardTitle className="flex items-start justify-between gap-3">  
           <div className="flex items-start space-x-3 min-w-0 flex-1">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0 ${mode === 'reading' ? 'bg-gradient-to-r from-green-600 to-emerald-600' : 'bg-blue-600'
-              }`}>
+            <div className="w-6 h-6 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
               {questionNumber}
             </div>
             <span className="text-sm sm:text-base leading-relaxed text-white">
@@ -47,7 +55,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
 
           {mode === 'reading' ? (
             <Badge className="bg-green-800 text-green-100 flex-shrink-0">
-              Study
+              Reading
             </Badge>
           ) : (
             isAnswered && (
@@ -88,9 +96,9 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           </div>
         )}
 
-        <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-2 sm:gap-3 mb-4">
+        <div className={`grid ${gridCols} gap-2 sm:gap-3 mb-4`}>
           {question.options.map((option) => {
-            let optionClassName = 'p-2 sm:p-3 border-2 rounded-lg transition-all duration-200';
+            let optionClassName = 'p-1 lg:p-2 border-2 rounded-lg transition-all duration-200';
 
             if (mode === 'reading') {
               if (option.is_correct) {
@@ -127,8 +135,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-start space-x-2 sm:space-x-3 min-w-0 flex-1">
-                    <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold shadow-sm text-xs sm:text-sm flex-shrink-0 ${mode === 'reading' && option.is_correct
-                        ? 'bg-green-600 text-white'
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-sm text-xs sm:text-sm flex-shrink-0 ${mode === 'reading' && option.is_correct
+                      ? 'bg-green-600 text-white'
                       : 'bg-gray-600 text-white'
                       }`}>
                       {option.option_label}

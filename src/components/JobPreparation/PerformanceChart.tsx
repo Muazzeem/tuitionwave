@@ -73,10 +73,14 @@ export default function PerformanceChart() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card className="bg-background border-gray-900 shadow-md">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <TrendingUp className="h-5 w-5 text-green-500" />
-            Score Trend
+        <CardHeader className="px-4 sm:px-6">
+          <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-blue-500 flex-shrink-0" />
+              <span className="text-base sm:text-lg text-white">
+                Score Trend
+              </span>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -89,9 +93,9 @@ export default function PerformanceChart() {
               <p className="text-muted-foreground mb-4">
                 Complete a few exams to see your progress over time
               </p>
-              <div className="bg-blue-50 bg-blue-900/20 border border-blue-200 border-blue-800 rounded-lg p-4 max-w-sm mx-auto">
+              <div className="hidden sm:block bg-blue-50 bg-blue-900/20 border border-blue-200 border-blue-800 rounded-lg p-4 max-w-sm mx-auto">
                 <p className="text-sm text-blue-700 text-blue-300">
-                  📈 Your performance graph will appear here as you take more exams
+                  Your performance graph will appear here as you take more exams
                 </p>
               </div>
             </div>
@@ -163,10 +167,14 @@ export default function PerformanceChart() {
       </Card>
 
       <Card className="bg-background border-gray-900 shadow-md">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <BarChart3 className="h-5 w-5 text-purple-500" />
-            Subject Performance
+        <CardHeader className="px-4 sm:px-6">
+          <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-blue-500 flex-shrink-0" />
+              <span className="text-base sm:text-lg text-white">
+                Subjects Performance
+              </span>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -179,9 +187,9 @@ export default function PerformanceChart() {
               <p className="text-muted-foreground mb-4">
                 Take exams in different subjects to see your performance breakdown
               </p>
-              <div className="bg-amber-50 bg-amber-900/20 border border-amber-200 border-amber-800 rounded-lg p-4 max-w-sm mx-auto">
+              <div className="hidden sm:block bg-amber-50 bg-amber-900/20 border border-amber-200 border-amber-800 rounded-lg p-4 max-w-sm mx-auto">
                 <p className="text-sm text-amber-700 text-amber-300">
-                  📚 Your subject strengths will be displayed here
+                  Your subject strengths will be displayed here
                 </p>
               </div>
             </div>

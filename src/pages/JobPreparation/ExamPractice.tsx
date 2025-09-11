@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import DashboardHeader from "@/components/DashboardHeader";
 import ExamConfiguration from "@/components/ExamPractice/ExamConfiguration";
 import ExamSummaryModal from "@/components/ExamPractice/ExamSummaryModal";
@@ -192,7 +190,7 @@ export default function ExamPractice() {
   const stats = getQuickStats();
 
   return (
-    <div className="flex-1 overflow-auto bg-gray-900">
+    <div className="flex-1 overflow-auto bg-gray-900 min-h-screen">
       <DashboardHeader userName="John" />
 
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
@@ -200,12 +198,12 @@ export default function ExamPractice() {
           {/* Enhanced Header */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="bg-primary-500 rounded-xl p-3">
+              <div className="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg p-2 hidden md:block">
                 <Target className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h2 className="text-3xl font-bold text-foreground text-white">Job Preparation</h2>
-                <p className="text-muted-foreground">Create custom exams or review your performance history</p>
+                <h2 className="text-xl md:text-3xl font-bold text-foreground text-white">Job Preparation</h2>
+                <p className="text-muted-foreground hidden md:block">Create custom exams or review your performance history</p>
               </div>
             </div>
           </div>
@@ -213,10 +211,10 @@ export default function ExamPractice() {
           {/* Enhanced Tabs */}
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
             <div className="bg-gray-800 rounded-xl p-1 shadow-sm border border-gray-200 border-gray-700 w-fit">
-              <TabsList className="grid grid-cols-2 bg-transparent gap-1 mb-3">
+              <TabsList className="grid grid-cols-2 bg-transparent gap-1 mb-0 md:mb-1 p-0">
                 <TabsTrigger
                   value="create"
-                  className="flex gap-2 pt-3 pb-3 items-center data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-primary-500 data-[state=active]:text-white data-[state=active]:shadow-sm rounded-lg transition-all"
+                  className="flex p-1 md:p-3 gap-2 items-center data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-primary-500 data-[state=active]:text-white data-[state=active]:shadow-sm rounded-lg transition-all"
                 >
                   <PlusCircle className="h-4 w-4" />
                   <span className="font-medium">Create New Exam</span>
@@ -227,7 +225,7 @@ export default function ExamPractice() {
 
                 <TabsTrigger
                   value="history"
-                  className="flex items-center gap-2 pt-3 pb-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-primary-500 data-[state=active]:text-white data-[state=active]:shadow-sm rounded-lg transition-all"
+                  className="flex items-center gap-2 p-1 md:p-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-primary-500 data-[state=active]:text-white data-[state=active]:shadow-sm rounded-lg transition-all"
                 >
                   <History className="h-4 w-4" />
                   <span className="font-medium">Exam History</span>

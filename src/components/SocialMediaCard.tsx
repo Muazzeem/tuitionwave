@@ -47,7 +47,7 @@ const SocialMediaCards = () => {
     return (
         <div className="z-10">
             <div className="w-full mx-auto pt-8">
-                <h2 className="text-xl font-bold text-white mb-2">Follow Us On Social Media</h2>
+                <h2 className="text-md md:text-lg font-bold text-white mb-2">Follow Us On Social Media</h2>
 
                 <div className="flex gap-4 overflow-x-auto pb-4">
                     {socialLinks.map((social) => (

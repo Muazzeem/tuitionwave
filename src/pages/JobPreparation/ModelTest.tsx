@@ -4,7 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, Calendar, PlayCircle, CheckCircle, Eye, Timer, BookOpen, Trophy, AlertCircle, AlertTriangle } from "lucide-react";
+import { Clock, Calendar, PlayCircle, CheckCircle, Eye, Timer, BookOpen, Trophy, AlertCircle } from "lucide-react";
 import { getAccessToken } from "@/utils/auth";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -133,7 +133,7 @@ const CountdownDisplay = ({ targetDate, className = "", hideForExpired = false, 
 };
 
 export default function CreateModelTest() {
-  const { userProfile, clearProfile } = useAuth();
+  const { userProfile } = useAuth();
   const [examData, setExamData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const tabFromUrl = searchParams.get("tab") || "running";
@@ -162,7 +162,7 @@ export default function CreateModelTest() {
     },
     {
       id: "upcoming",
-      label: "Coming Soon",
+      label: "Upcoming",
       param: "upcoming=true",
       icon: Clock,
       color: "text-blue-500",
@@ -421,8 +421,8 @@ export default function CreateModelTest() {
         return {
           icon: CheckCircle,
           label: 'Expired',
-          color: 'text-gray-600',
-          bgColor: 'bg-gray-50 bg-gray-900/20',
+          color: 'text-gray-white',
+          bgColor: 'bg-red-50',
           borderColor: 'border-gray-200 border-gray-800',
           action: 'View Result',
           disabled: false,
@@ -433,8 +433,8 @@ export default function CreateModelTest() {
       return {
         icon: CheckCircle,
         label: 'Expired',
-        color: 'text-gray-600',
-        bgColor: 'bg-gray-50 bg-gray-900/20',
+        color: 'text-gray-white',
+        bgColor: 'bg-red-50',
         borderColor: 'border-gray-200 border-gray-800',
         action: 'Start Exam',
         disabled: false,
@@ -494,12 +494,12 @@ export default function CreateModelTest() {
           {/* Header Section */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-3">
-              <div className="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg p-2">
+              <div className="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg p-2 hidden md:block">
                 <BookOpen className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-foreground text-white">Model Tests</h1>
-                <p className="text-muted-foreground">Practice with real exam simulations and track your progress</p>
+                <h1 className="text-xl md:text-3xl font-bold text-foreground text-white">Model Tests</h1>
+                <p className="text-muted-foreground hidden md:block">Practice with real exam simulations and track your progress</p>
               </div>
             </div>
           </div>
@@ -514,7 +514,7 @@ export default function CreateModelTest() {
                   <button
                     key={tab.id}
                     onClick={() => setSelectedTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all ${isActive
+                    className={`flex items-center md:mb-1 md:mt-1 p-1 md:p-3 gap-2 rounded-lg text-sm font-medium transition-all ${isActive
                       ? `${tab.bgColor} ${tab.color} shadow-sm border ${tab.borderColor}`
                       : "text-muted-foreground hover:text-foreground hover:bg-white/50 hover:bg-gray-700"
                       }`}
@@ -680,7 +680,7 @@ export default function CreateModelTest() {
               <div className={`${currentTabInfo?.bgColor} rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6`}>
                 <currentTabInfo.icon className={`h-10 w-10 ${currentTabInfo?.color}`} />
               </div>
-              <h3 className="text-xl font-semibold mb-3">
+              <h3 className="text-xl font-semibold mb-3 text-white">
                 No {currentTabInfo?.label.toLowerCase()} available
               </h3>
               <p className="text-muted-foreground mb-6 max-w-md mx-auto">
@@ -689,7 +689,7 @@ export default function CreateModelTest() {
                 {selectedTab === 'expired' && "You haven't taken any exams yet. Start with a live exam to see your history here."}
               </p>
 
-              <div className="bg-background border border-gray-200 border-primary-700 rounded-lg p-6 max-w-md mx-auto">
+              <div className="bg-background border border-gray-200 border-primary-700 rounded-lg p-6 max-w-md mx-auto hidden md:block">
                 <Trophy className="h-8 w-8 text-purple-500 mx-auto mb-3" />
                 <h4 className="font-semibold text-purple-800 text-purple-300 mb-2">
                   Ready to test your skills?

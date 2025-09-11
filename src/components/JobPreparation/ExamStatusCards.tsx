@@ -119,12 +119,12 @@ export default function ExamStatusCards() {
             <div className="space-y-3 px-4">
               <Link to="/job-preparation/practice">
                 <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-6 py-2 text-sm sm:text-base font-medium">
-                  🚀 Take Your First Exam
+                  Take Your First Exam
                 </Button>
               </Link>
-              <div className="bg-green-50 bg-green-900/20 border border-green-200 border-green-800 rounded-lg p-3 sm:p-4 max-w-md mx-auto">
+              <div className="hidden md:block bg-green-50 bg-green-900/20 border border-green-200 border-green-800 rounded-lg p-3 sm:p-4 max-w-md mx-auto">
                 <p className="text-xs sm:text-sm text-green-700 text-green-300">
-                  💡 Tip: Start with easier topics to build confidence and momentum
+                  Tip: Start with easier topics to build confidence and momentum
                 </p>
               </div>
             </div>

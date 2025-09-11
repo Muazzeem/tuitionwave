@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, MessageSquare, User, LogOut, ChevronLeft, ChevronRight, ScrollText, Landmark, BookOpenCheck, NotebookPen } from 'lucide-react';
+import { Home, Search, MessageSquare, User, LogOut, ChevronLeft, ChevronRight, ScrollText, Landmark, BookOpenCheck, NotebookPen, Package } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const getUserTypeFromUrl = (pathname: string): string | undefined => {
@@ -32,7 +32,8 @@ const Sidebar = () => {
     { icon: Home, text: 'Dashboard', path: `/job-preparation/dashboard` },
     { icon: BookOpenCheck, text: 'Model Test', path: '/job-preparation/create-model-test' },
     { icon: Landmark, text: 'Question Bank', path: '/job-preparation/questions' },
-    { icon: NotebookPen, text: 'Self Test', path: '/job-preparation/practice' }
+    { icon: NotebookPen, text: 'Self Test', path: '/job-preparation/practice' },
+    { icon: Package, text: 'Packages', path: '/job-preparation/packages' },
   ];
 
   const tutorMenuItems = [
@@ -40,6 +41,7 @@ const Sidebar = () => {
     { icon: ScrollText, text: 'Contracts', path: `/teacher/requests` },
     { icon: MessageSquare, text: 'Message', path: '/teacher/message' },
     { icon: User, text: 'Profile', path: `/teacher/profile/` },
+    { icon: Package, text: 'Packages', path: '/teacher/packages' },
   ];
 
   // Check user permissions and determine available menu items

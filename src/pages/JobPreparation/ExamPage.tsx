@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ export default function ExamPage() {
   const { examId } = useParams<{ examId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const hasEndedRef = useRef(false);
 
   const [examData, setExamData] = useState({} as ExamData);
   const [selectedOptions, setSelectedOptions] = useState<{ [key: string]: string }>({});
@@ -110,7 +111,6 @@ export default function ExamPage() {
     try {
       const response = await JobPreparationService.submitExam(examId);
       if (response.status === 200) {
-        navigate(`/job-preparation/exam/${examId}/results`);
         toast({
           title: "Exam Completed!",
           description: "Your exam has been submitted successfully. Redirecting to results...",
@@ -119,6 +119,7 @@ export default function ExamPage() {
       }
       setLoading(false);
       setIsSubmitting(false);
+      navigate(`/job-preparation/exam/${examId}/results`);
     } catch (error) {
       toast({
         title: "Submission Failed",
@@ -142,12 +143,13 @@ export default function ExamPage() {
   const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining());
 
   useEffect(() => {
+
     const intervalId = setInterval(() => {
       const remaining = calculateTimeRemaining();
       setTimeRemaining(remaining);
 
-      // Auto-submit when time runs out
-      if (remaining <= 2 && examData.status === 'in_progress') {
+      if (remaining <= 2 && examData.status === "in_progress" && !hasEndedRef.current) {
+        hasEndedRef.current = true;
         handleEndExam();
       }
     }, 1000);
@@ -241,22 +243,22 @@ export default function ExamPage() {
   return (
     <div className="min-h-screen bg-gray-900 w-full">
       {/* Enhanced Header */}
-      <div className="bg-gray-800/90 backdrop-blur-sm shadow-lg border-b border-gray-700 sticky top-0 z-10">
+      <div className="bg-background backdrop-blur-sm shadow-lg border-b border-gray-700 sticky top-0 z-10">
         <div className="w-full p-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <BookOpen className="h-5 w-5 text-blue-400" />
-                  <h1 className="text-xl font-bold text-white">
+                  <BookOpen className="h-5 w-5 text-blue-400 hidden sm:block" />
+                  <h1 className="text-sm md:text-xl font-bold text-white">
                     Practice Exam
                   </h1>
-                  <Badge variant="secondary" className="text-xs bg-gray-700 text-gray-300">
+                  <Badge variant="secondary" className="text-xs bg-gray-700 text-gray-300 hidden sm:block">
                     {examData.question_limit} Questions
                   </Badge>
                 </div>
                 <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-2 text-sm text-gray-400">
+                  <div className="flex items-center gap-2 text-sm text-gray-400 hidden sm:block">
                     <Target className="h-4 w-4" />
                     Progress: {getAnsweredCount()}/{examData.question_limit}
                   </div>
@@ -299,15 +301,15 @@ export default function ExamPage() {
           <div className="max-w-4xl mx-auto space-y-8">
             {/* Questions */}
             {examData.exam_questions?.map((question, index) => (
-              <Card key={question.uid} className='bg-gray-800 border-gray-700 rounded-lg'>
+              <Card key={question.uid} className='bg-background border-gray-700 rounded-lg'>
                 <CardHeader className="p-2 sm:p-4 rounded-lg">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-full text-sm font-bold">
+                      <div className="flex items-center justify-center w-8 h-8 text-white rounded-full text-md font-bold">
                         {index + 1}
                       </div>
                       <div>
-                        <CardTitle className="text-lg font-semibold text-white">
+                        <CardTitle className="text-sm font-semibold text-white">
                           {question.question_text}
                         </CardTitle>
                         {question.topic_name && (
@@ -350,38 +352,32 @@ export default function ExamPage() {
                         const isSubmitting = submittingQuestion === question.question_uid;
 
                         return (
-                          <Button
-                            key={option.uid}
-                            variant="outline"
-                            className={`w-full rounded-lg shadow-md justify-start p-2 text-left h-auto min-h-[60px] transition-all duration-200 bg-gray-700 border-gray-600 text-gray-200 ${isSelected
-                              ? 'bg-blue-900/50 border-blue-500 text-blue-300 shadow-md'
-                              : 'hover:bg-gray-600'
-                              } ${isSubmitted
-                                ? 'opacity-75 cursor-not-allowed'
-                                : 'hover:shadow-md'
-                              }`}
-                            onClick={() => {
-                              if (!isSubmitted) {
-                                handleSelectAndSubmit(question.question_uid, option.uid);
-                              }
-                            }}
-                            disabled={isSubmitted || isSubmitting}
-                          >
-                            <div className="flex items-center gap-3 w-full">
-                              <div className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold p-2 ${isSelected
-                                ? 'bg-blue-500 text-white border-blue-500'
-                                : 'border-gray-400 text-gray-300'
-                                }`}>
-                                {option.option_label}
+                          <div>
+                            <Button
+                              key={option.uid}
+                              size='sm'
+                              variant="outline"
+                              className={`w-full rounded-lg justify-start p-2 text-left min-h-[60px] transition-all duration-200 bg-gray-700 border-gray-600 text-gray-200 ${isSelected ? 'bg-blue-900/50 border-blue-500 text-blue-300' : 'hover:bg-gray-600'} ${isSubmitted ? 'opacity-75 cursor-not-allowed' : ''}`}
+                              onClick={() => {
+                                if (!isSubmitted) {
+                                  handleSelectAndSubmit(question.question_uid, option.uid);
+                                }
+                              }}
+                              disabled={isSubmitted || isSubmitting}
+                            >
+                              <div className="flex items-center gap-3 w-full">
+                                <div className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${isSelected ? 'bg-blue-500 text-white border-blue-500' : 'border-gray-400 text-gray-300'}`}>
+                                  {option.option_label}
+                                </div>
+                                <span className="text-left flex-1">
+                                  {option.option_text}
+                                </span>
+                                {isSubmitting && isSelected && (
+                                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent" />
+                                )}
                               </div>
-                              <span className="text-left flex-1">
-                                {option.option_text}
-                              </span>
-                              {isSubmitting && isSelected && (
-                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent" />
-                              )}
-                            </div>
-                          </Button>
+                            </Button>
+                          </div>
                         );
                       })}
                     </div>

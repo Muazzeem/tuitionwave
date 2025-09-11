@@ -304,13 +304,13 @@ const App = () => (
                   </AuthGuard>
                 } />
 
-                <Route path="/package/teacher" element={
+              <Route path="/teacher/packages" element={
                   <AuthGuard>
                     <MainLayout><PackageSettings /></MainLayout>
                   </AuthGuard>
                 } />
 
-              <Route path="/job-preparation/package" element={
+              <Route path="/job-preparation/packages" element={
                 <AuthGuard>
                   <MainLayout><StudentPackageSettings /></MainLayout>
                 </AuthGuard>

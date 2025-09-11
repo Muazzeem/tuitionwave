@@ -307,7 +307,7 @@ const QuestionsPage: React.FC = () => {
               <LoadingSkeleton />
             ) : (
               <>
-                <div className="space-y-3 sm:space-y-4 px-1 sm:px-0">
+                  <div className="space-y-3 sm:space-y-4 px-1 sm:px-0 max-w-7xl mx-auto">
                     {questionsData?.results.map((question, index) => {
                     const questionState = questionStates[question.uid];
                     const isAnswered = questionState?.isAnswered;

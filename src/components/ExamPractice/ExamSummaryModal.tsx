@@ -27,7 +27,7 @@ export default function ExamSummaryModal({
 }: ExamSummaryModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg border-0 bg-background rounded-lg shadow-lg">
+      <DialogContent className="max-w-lg sm:p-3 md:p-5 border-0 bg-background rounded-lg shadow-lg text-white">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-white">
             <Target className="h-5 w-5" />
@@ -87,12 +87,11 @@ export default function ExamSummaryModal({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} className='border-primary text-primary-foreground text-white
-          hover:bg-primary-700
-          '>
+          <Button variant="outline" onClick={onClose} className='border-primary text-cyan-foreground text-white
+          hover:bg-cyan-600 hover:text-white mt-2 md:mt-0'>
             Cancel
           </Button>
-          <Button onClick={onConfirm} className='text-white bg-primary hover:bg-primary-700'>
+          <Button onClick={onConfirm} className='text-white bg-cyan-500 hover:bg-cyan-600'>
             Start Exam
           </Button>
         </DialogFooter>

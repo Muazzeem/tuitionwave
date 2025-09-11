@@ -4,7 +4,7 @@ import StatsCards from '@/components/StatsCards';
 import RecentRequests from '@/components/RecentRequests';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect } from 'react';
-import { ScrollArea } from '@radix-ui/react-scroll-area';
+import { ScrollArea } from "@/components/ui/scroll-area";
 import SocialMediaCards from '@/components/SocialMediaCard';
 
 export default function GuardianDashboard() {

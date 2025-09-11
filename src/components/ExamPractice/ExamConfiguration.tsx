@@ -84,7 +84,6 @@ function CustomMultiSelect({
   options,
   selectedItems,
   onToggle,
-  onRemove,
   isLoading,
   disabled
 }: CustomMultiSelectProps) {
@@ -103,7 +102,7 @@ function CustomMultiSelect({
         variant="outline"
         onClick={() => setIsOpen(!isOpen)}
         disabled={disabled || isLoading}
-        className="w-full justify-between border-primary-800 h-10 px-3 bg-background text-white
+        className="w-full justify-between border-primary-800 h-10 px-3 bg-background text-white hover:text-white
         hover:bg-background
         "
       >
@@ -118,19 +117,6 @@ function CustomMultiSelect({
 
       {isOpen && (
         <div className="absolute top-full left-0 right-0 z-50 mt-1 border-0 rounded-md shadow-lg bg-gray-900">
-          <div className="p-3 border-b border-gray-700">
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search subjects..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 h-9 border-0 bg-background text-white"
-                autoFocus
-              />
-            </div>
-          </div>
-
           <div className="max-h-48 overflow-y-auto">
             {isLoading ? (
               <div className="flex items-center justify-center p-4">
@@ -327,12 +313,9 @@ export default function ExamConfiguration({
                   onChange={(e) => setQuestionLimit(parseInt(e.target.value) || 0)}
                   min="1"
                   max="200"
-                  placeholder="Enter number"
+                  placeholder="Enter number (max 200)"
                   className="h-11 pr-12 bg-background border border-primary-800 transition-colors text-white"
                 />
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">
-                  Max 200
-                </div>
               </div>
             </div>
 
@@ -352,9 +335,6 @@ export default function ExamConfiguration({
                   placeholder="Minutes"
                   className="h-11 pr-12 bg-background hover:border-primary/50 transition-colors text-white border-primary-800"
                 />
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">
-                  min
-                </div>
               </div>
             </div>
 
@@ -378,8 +358,8 @@ export default function ExamConfiguration({
 
           {/* Summary Stats */}
           {selectedSubjects.length > 0 && (
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 from-blue-900/10 to-indigo-900/10 rounded-lg p-4 border border-blue-200 border-blue-800">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 from-blue-900/10 to-indigo-900/10 rounded-lg p-1 border border-blue-200 border-blue-800">
+              <div className="grid grid-cols-4 md:grid-cols-4 gap-4 text-center">
                 <div>
                   <div className="text-2xl font-bold text-blue-600 text-blue-400">
                     {selectedSubjects.length}
@@ -413,7 +393,7 @@ export default function ExamConfiguration({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label className="text-md font-semibold text-white">Selected Subjects & Topics</Label>
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="text-xs text-white">
                   {selectedSubjects.length} subject{selectedSubjects.length !== 1 ? 's' : ''}
                 </Badge>
               </div>
@@ -421,7 +401,7 @@ export default function ExamConfiguration({
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 {selectedSubjects.map(subject => (
                   <Card key={subject.uid} className="overflow-hidden hover:shadow-md transition-shadow bg-gray-900/50 border-0">
-                    <Accordion type="multiple" className="w-full">
+                    <Accordion type="multiple" className="w-full hover:text-white text-white">
                       <AccordionItem value={subject.uid} className="border-none">
                         <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-gray-900 transition-colors">
                           <div className="flex items-center justify-between w-full mr-4">

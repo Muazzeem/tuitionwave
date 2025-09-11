@@ -431,33 +431,35 @@ export default function ExamHistory({
   }
 
   return (
-    <div className="w-full bg-gray-900 min-h-screen">
+    <div className="">
       <div className="space-y-6">
 
         {/* Filter and Control Section */}
-        <Card className="bg-background border-0">
-          <CardContent className="p-6">
-            <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Filter className="h-5 w-5 text-blue-400" />
-                  <Label className="text-sm font-medium whitespace-nowrap text-gray-200">Filter Status:</Label>
+        {(!loading || !useInternalApi) && displayedExams.length > 0 && (
+          <Card className="bg-background border-0">
+            <CardContent className="p-6">
+              <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Filter className="h-5 w-5 text-blue-400" />
+                    <Label className="text-sm font-medium whitespace-nowrap text-gray-200">Filter Status:</Label>
+                  </div>
+                  <Select value={examFilter} onValueChange={handleFilterChange}>
+                    <SelectTrigger className="w-full sm:w-48 bg-gray-700 border-gray-600 text-gray-200">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-700">
+                      <SelectItem value="all" className="text-gray-200 hover:bg-gray-700">All Exams</SelectItem>
+                      <SelectItem value="not_started" className="text-gray-200 hover:bg-gray-700">Not Started</SelectItem>
+                      <SelectItem value="in_progress" className="text-gray-200 hover:bg-gray-700">In Progress</SelectItem>
+                      <SelectItem value="completed" className="text-gray-200 hover:bg-gray-700">Completed</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                <Select value={examFilter} onValueChange={handleFilterChange}>
-                  <SelectTrigger className="w-full sm:w-48 bg-gray-700 border-gray-600 text-gray-200">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-700">
-                    <SelectItem value="all" className="text-gray-200 hover:bg-gray-700">All Exams</SelectItem>
-                    <SelectItem value="not_started" className="text-gray-200 hover:bg-gray-700">Not Started</SelectItem>
-                    <SelectItem value="in_progress" className="text-gray-200 hover:bg-gray-700">In Progress</SelectItem>
-                    <SelectItem value="completed" className="text-gray-200 hover:bg-gray-700">Completed</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Loading State */}
         {loading && useInternalApi && examRecords.length === 0 && (

@@ -119,23 +119,6 @@ const BCSJobPreparation: React.FC = () => {
                     </div>
                     <p className="text-gray-300 text-sm">Questions</p>
                   </div>
-
-                  <div className="flex justify-center mt-4 mb-4">
-                    <div className="flex gap-3 overflow-x-auto whitespace-nowrap pb-2">
-                      {filteredCategories.map((category, index) => {
-                        return (
-                          <Badge
-                            key={category.uid}
-                            className={`${index === 0 ? "bg-cyan-500 hover:bg-cyan-500" : "bg-slate-700 hover:bg-cyan-500"
-                              } text-white px-4 py-2 rounded-full text-sm font-medium border border-slate-600 cursor-pointer`}
-                            onClick={() => navigate(`job-preparation/category/${category.uid}`)}
-                          >
-                            {category.category_name}
-                          </Badge>
-                        );
-                      })}
-                    </div>
-                  </div>
                 </div>
 
                 <div>
@@ -150,6 +133,22 @@ const BCSJobPreparation: React.FC = () => {
                       Free Exams & Detailed Explanations.
                     </p>
                   </div>
+                </div>
+              </div>
+              <div className="flex mt-4 mb-4">
+                <div className="flex gap-3 whitespace-nowrap pb-0">
+                  {filteredCategories.map((category, index) => {
+                    return (
+                      <Badge
+                        key={category.uid}
+                        className={`${index === 0 ? "bg-cyan-500 hover:bg-cyan-500" : "bg-slate-700 hover:bg-cyan-500"
+                          } text-white px-4 p-1 rounded-full text-sm font-medium border border-slate-600 cursor-pointer`}
+                        onClick={() => navigate(`job-preparation/category/${category.uid}`)}
+                      >
+                        {category.category_name}
+                      </Badge>
+                    );
+                  })}
                 </div>
               </div>
               <Button

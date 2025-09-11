@@ -64,10 +64,14 @@ export default function RankingSystem() {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
       <Card className="lg:col-span-2 bg-background border-gray-900 shadow-md">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <Trophy className="h-5 w-5 text-yellow-500" />
-            Top Performers
+        <CardHeader className="px-4 sm:px-6">
+          <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-blue-500 flex-shrink-0" />
+              <span className="text-base sm:text-lg text-white">
+                Top Rankers
+              </span>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -80,9 +84,9 @@ export default function RankingSystem() {
               <p className="text-muted-foreground mb-4">
                 Be the first to complete an exam and claim the top spot
               </p>
-              <div className="bg-blue-50 bg-blue-900/20 border border-blue-200 border-blue-800 rounded-lg p-4 max-w-sm mx-auto">
+              <div className="hidden sm:block bg-blue-50 bg-blue-900/20 border border-blue-200 border-blue-800 rounded-lg p-4 max-w-sm mx-auto">
                 <p className="text-sm text-blue-700 text-blue-300">
-                  💡 Complete exams to earn points and see your ranking here
+                  Complete exams to earn points and see your ranking here
                 </p>
               </div>
             </div>
@@ -150,10 +154,14 @@ export default function RankingSystem() {
 
 
       <Card className="bg-background border-gray-900 shadow-md">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <Award className="h-5 w-5 text-blue-500" />
-            Your Ranking
+        <CardHeader className="px-4 sm:px-6">
+          <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
+            <div className="flex items-center gap-2">
+              <Award className="h-5 w-5 text-blue-500 flex-shrink-0" />
+              <span className="text-base sm:text-lg text-white">
+                Your Ranking
+              </span>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -214,9 +222,9 @@ export default function RankingSystem() {
                 </div>
               )}
 
-              <div className="pt-2 border-t border-gray-800">
+              <div className="pt-2 border-t border-gray-800 hidden sm:block">
                 <p className="text-xs text-center text-muted-foreground">
-                  💪 Keep taking exams to climb higher!
+                  Keep taking exams to climb higher!
                 </p>
               </div>
             </>
@@ -229,7 +237,7 @@ export default function RankingSystem() {
                 <p className="text-muted-foreground text-sm mb-4">
                   Complete your first exam to get ranked
                 </p>
-                <div className="bg-amber-50 bg-amber-900/20 border border-amber-200 border-amber-800 rounded-lg p-3">
+                <div className="hidden sm:block bg-amber-50 bg-amber-900/20 border border-amber-200 border-amber-800 rounded-lg p-3">
                   <p className="text-sm text-amber-700 text-amber-300">
                     🚀 Start your journey to the top!
                   </p>

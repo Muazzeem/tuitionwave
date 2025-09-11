@@ -81,7 +81,7 @@ export default function QuickStatsSection() {
         <Card key={index} className='bg-background border-gray-900 shadow-md'>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${stat.bgColor}`}>
+              <div className={`p-2 hidden md:block rounded-lg ${stat.bgColor}`}>
                 <stat.icon className={`h-5 w-5 ${stat.color}`} />
               </div>
               <div>

@@ -66,7 +66,7 @@ export default function StudyProgress() {
             </p>
               <div className="bg-blue-50 bg-blue-900/20 border border-blue-200 border-blue-800 rounded-lg p-4 max-w-sm mx-auto">
                 <p className="text-sm text-blue-700 text-blue-300">
-                📚 Your study progress across subjects will appear here
+                  Your study progress across subjects will appear here
               </p>
             </div>
           </div>
@@ -120,25 +120,6 @@ export default function StudyProgress() {
                                 '[&>div]:bg-gray-400'
                             }`}
                         />
-
-                        <div className="flex justify-between items-center text-xs">
-                          <span className={`font-medium ${isCompleted ? 'text-green-700 text-green-300' :
-                            isHighProgress ? 'text-blue-700 text-blue-300' :
-                              isMediumProgress ? 'text-yellow-700 text-yellow-300' :
-                                'text-gray-600 text-gray-400'
-                            }`}>
-                            {isCompleted ? '🎉 Well done!' :
-                              isHighProgress ? '🔥 Almost there!' :
-                                isMediumProgress ? '💪 Keep going!' :
-                                  '🚀 Just started'}
-                          </span>
-
-                          {!isCompleted && (
-                            <span className="text-muted-foreground">
-                              {subject.total - subject.completed} remaining
-                            </span>
-                          )}
-                        </div>
                       </div>
                     </div>
                   );
@@ -149,7 +130,7 @@ export default function StudyProgress() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-semibold text-purple-800 text-purple-300 mb-1">
-                        Overall Progress 📊
+                        Overall Progress
                       </h4>
                       <p className="text-sm text-purple-600 text-purple-400">
                         {(() => {
