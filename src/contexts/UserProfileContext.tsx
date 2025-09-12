@@ -3,6 +3,7 @@ import axios from 'axios';
 import { getAccessToken } from '@/utils/auth';
 
 export interface ProfileData {
+  preferred_area: any;
   uid: string;
   username: string | null;
   email: string;
