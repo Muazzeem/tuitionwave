@@ -1,887 +1,643 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import * as React from "react";
 import {
   Select,
-  SelectContent,
-  SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@/components/ui/select";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { toast } from "sonner";
-import { X, Search, Filter } from "lucide-react";
-import { Badge } from "./ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Loader2, Search } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useSearchParams } from "react-router-dom";
 
-const SearchSection: React.FC = () => {
-  // All filter states
-  const [institutions, setInstitutions] = useState<{ id: number; name: string }[]>([]);
-  const [divisions, setDivisions] = useState<{ id: number; name: string }[]>([]);
-  const [districts, setDistricts] = useState<{ id: number; name: string }[]>([]);
-  const [upazilas, setUpazilas] = useState<{ id: number; name: string }[]>([]);
-  const [areas, setAreas] = useState<{ id: number; name: string }[]>([]);
-  const [subjects, setSubjects] = useState<{ id: number; subject: string }[]>([]);
+type Paged<T> = { results: T[]; next?: string | null; previous?: string | null };
 
-  // Search queries
-  const [searchQuery, setSearchQuery] = useState("");
-  const [citySearchQuery, setCitySearchQuery] = useState("");
+const BASE = import.meta.env.VITE_API_URL;
 
-  // Dropdown states
-  const [isOpen, setIsOpen] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
+function useDebounced<T>(value: T, ms = 100) {
+  const [debounced, setDebounced] = React.useState(value);
+  React.useEffect(() => {
+    const id = setTimeout(() => setDebounced(value), ms);
+    return () => clearTimeout(id);
+  }, [value, ms]);
+  return debounced;
+}
 
-  // Selected filter states
-  const [selectedInstitution, setSelectedInstitution] = useState<string>("");
-  const [selectedInstitutionName, setSelectedInstitutionName] = useState<string>("");
-  const [selectedDivision, setSelectedDivision] = useState<string>("");
-  const [selectedDivisionName, setSelectedDivisionName] = useState<string>("");
-  const [selectedDistrict, setSelectedDistrict] = useState<string>("");
-  const [selectedDistrictName, setSelectedDistrictName] = useState<string>("");
-  const [selectedUpazila, setSelectedUpazila] = useState<string>("");
-  const [selectedUpazilaName, setSelectedUpazilaName] = useState<string>("");
-  const [selectedArea, setSelectedArea] = useState<string>("");
-  const [selectedAreaName, setSelectedAreaName] = useState<string>("");
-  const [selectedSubject, setSelectedSubject] = useState<string>("");
-  const [selectedSubjectName, setSelectedSubjectName] = useState<string>("");
-  const [selectedTeachingType, setSelectedTeachingType] = useState<string>("");
-  const [selectedSalaryRange, setSelectedSalaryRange] = useState<string>("");
-  const [selectedRating, setSelectedRating] = useState<string>("");
-  const [selectedGender, setSelectedGender] = useState<string>("");
+async function fetchPaged<T>({
+  path,
+  page,
+  searchParam = "name",
+  q = "",
+  extraParams,
+}: {
+  path: string;
+  page: number;
+  searchParam?: string;
+  q?: string;
+  extraParams?: Record<string, string | number | undefined>;
+}) {
+  const url = new URL(`${BASE}${path}`);
+  url.searchParams.set("page", String(page));
+  if (q?.trim()) url.searchParams.set(searchParam, q.trim());
+  if (extraParams) {
+    Object.entries(extraParams).forEach(([k, v]) => {
+      if (v !== undefined && v !== "") url.searchParams.set(k, String(v));
+    });
+  }
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error(`Failed to load ${path}`);
+  return (await res.json()) as Paged<any>;
+}
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isSearching, setIsSearching] = useState(false);
+const Section: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <section className="w-full rounded-xl bg-transparent backdrop-blur-xl border-0 p-3">
+    {children}
+  </section>
+);
 
-  // Fetch functions
-  const fetchInstitutions = useCallback(async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/institutes/`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch institutions: ${response.status}`);
-      }
-      const data = await response.json();
-      setInstitutions(data.results || []);
-    } catch (err: any) {
-      setError(err.message || "An error occurred while fetching institutions.");
-      toast.error("Failed to load institutions");
-    }
-  }, []);
+export default function FilterBar() {
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const fetchDivisions = useCallback(async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/divisions/`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch divisions: ${response.status}`);
-      }
-      const data = await response.json();
-      setDivisions(data.results || []);
-    } catch (err: any) {
-      setError(err.message || "An error occurred while fetching divisions.");
-      toast.error("Failed to load divisions");
-    }
-  }, []);
-
-  const fetchDistricts = useCallback(async (divisionId: string) => {
-    if (!divisionId) {
-      setDistricts([]);
-      return;
-    }
-
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/districts/?division=${divisionId}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch districts: ${response.status}`);
-      }
-      const data = await response.json();
-      setDistricts(data.results || []);
-    } catch (err: any) {
-      setError(err.message || "An error occurred while fetching districts.");
-      toast.error("Failed to load districts");
-    }
-  }, []);
-
-  const fetchUpazilas = useCallback(async (districtId: string) => {
-    if (!districtId) {
-      setUpazilas([]);
-      return;
-    }
-
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upazilas/?district=${districtId}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch upazilas: ${response.status}`);
-      }
-      const data = await response.json();
-      setUpazilas(data.results || []);
-    } catch (err: any) {
-      setError(err.message || "An error occurred while fetching upazilas.");
-      toast.error("Failed to load upazilas");
-    }
-  }, []);
-
-  const fetchAreas = useCallback(async (upazilaId: string) => {
-    if (!upazilaId) {
-      setAreas([]);
-      return;
-    }
-
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/areas/?upazila=${upazilaId}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch areas: ${response.status}`);
-      }
-      const data = await response.json();
-      setAreas(data.results || []);
-    } catch (err: any) {
-      setError(err.message || "An error occurred while fetching areas.");
-      toast.error("Failed to load areas");
-    }
-  }, []);
-
-  const fetchSubjects = useCallback(async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/subjects/`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch subjects: ${response.status}`);
-      }
-      const data = await response.json();
-      setSubjects(data.results || []);
-    } catch (err: any) {
-      console.error("Error fetching subjects:", err);
-      toast.error("Failed to load subjects");
-    }
-  }, []);
-
-  // Handle cascading location changes
-  const handleDivisionChange = useCallback((value: string) => {
-    setSelectedDivision(value);
-    const division = divisions.find(d => d.id.toString() === value);
-    setSelectedDivisionName(division?.name || "");
-
-    // Reset dependent fields
-    setSelectedDistrict("");
-    setSelectedDistrictName("");
-    setSelectedUpazila("");
-    setSelectedUpazilaName("");
-    setSelectedArea("");
-    setSelectedAreaName("");
-    setDistricts([]);
-    setUpazilas([]);
-    setAreas([]);
-
-    if (value) {
-      fetchDistricts(value);
-    }
-  }, [divisions, fetchDistricts]);
-
-  const handleDistrictChange = useCallback((value: string) => {
-    setSelectedDistrict(value);
-    const district = districts.find(d => d.id.toString() === value);
-    setSelectedDistrictName(district?.name || "");
-
-    // Reset dependent fields
-    setSelectedUpazila("");
-    setSelectedUpazilaName("");
-    setSelectedArea("");
-    setSelectedAreaName("");
-    setUpazilas([]);
-    setAreas([]);
-
-    if (value) {
-      fetchUpazilas(value);
-    }
-  }, [districts, fetchUpazilas]);
-
-  const handleUpazilaChange = useCallback((value: string) => {
-    setSelectedUpazila(value);
-    const upazila = upazilas.find(u => u.id.toString() === value);
-    setSelectedUpazilaName(upazila?.name || "");
-
-    // Reset dependent fields
-    setSelectedArea("");
-    setSelectedAreaName("");
-    setAreas([]);
-
-    if (value) {
-      fetchAreas(value);
-    }
-  }, [upazilas, fetchAreas]);
-
-  // Initialize data
-  useEffect(() => {
-    const initializeData = async () => {
-      setLoading(true);
-      await Promise.all([
-        fetchInstitutions(),
-        fetchDivisions(),
-        fetchSubjects()
-      ]);
-      setLoading(false);
-    };
-
-    initializeData();
-  }, [fetchInstitutions, fetchDivisions, fetchSubjects]);
-
-  // Filter functions
-  const filteredInstitutions = institutions.filter((institution) =>
-    institution.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const updateQuery = React.useCallback(
+    (patch: Record<string, string | undefined>) => {
+      const sp = new URLSearchParams(searchParams);
+      Object.entries(patch).forEach(([k, v]) => {
+        if (v === undefined || v === "") sp.delete(k);
+        else sp.set(k, v);
+      });
+      setSearchParams(sp, { replace: true });
+    },
+    [searchParams, setSearchParams]
   );
 
-  // Handle search
-  const handleSearch = useCallback(() => {
-    setIsSearching(true);
+  const [institution, setInstitution] = React.useState("");
+  const [institutionLabel, setInstitutionLabel] = React.useState("");
+  const [subject, setSubject] = React.useState("");
+  const [subjectLabel, setSubjectLabel] = React.useState("");
 
-    // Build URL params
-    const params = new URLSearchParams();
+  const [teaching, setTeaching] = React.useState("");
+  const [gender, setGender] = React.useState("");
 
-    if (selectedInstitutionName) {
-      params.append("institute", selectedInstitutionName);
-    }
-    if (selectedDivision) {
-      params.append("division", selectedDivision);
-    }
-    if (selectedDistrict) {
-      params.append("districts", selectedDistrict);
-    }
-    if (selectedUpazila) {
-      params.append("upazila", selectedUpazila);
-    }
-    if (selectedArea) {
-      params.append("area", selectedArea);
-    }
-    if (selectedSubject) {
-      params.append("subjects", selectedSubject);
-    }
-    if (selectedTeachingType) {
-      params.append("teaching_type", selectedTeachingType);
-    }
-    if (selectedSalaryRange) {
-      params.append("salary_range", selectedSalaryRange);
-    }
-    if (selectedRating) {
-      params.append("rating", selectedRating);
-    }
-    if (selectedGender) {
-      params.append("gender", selectedGender);
-    }
-
-    window.history.replaceState(null, '', `?${params.toString()}`);
-
-    // Dispatch the custom event for components that listen to it
-    window.dispatchEvent(
-      new CustomEvent("tutor-search", {
-        detail: {
-          institute: selectedInstitutionName,
-          division: selectedDivision,
-          districts: selectedDistrict,
-          upazila: selectedUpazila,
-          area: selectedArea,
-          subjects: selectedSubject,
-          teaching_type: selectedTeachingType,
-          salary_range: selectedSalaryRange,
-          rating: selectedRating,
-          gender: selectedGender,
-        },
-      })
-    );
-
-    // Reset searching state after a short delay
-    setTimeout(() => setIsSearching(false), 1000);
-  }, [
-    selectedInstitutionName, selectedDivision, selectedDistrict, selectedUpazila,
-    selectedArea, selectedSubject, selectedTeachingType, selectedSalaryRange,
-    selectedRating, selectedGender
-  ]);
-
-  // Auto-trigger search when any filter changes
-  useEffect(() => {
-    handleSearch();
-  }, [
-    selectedInstitutionName, selectedDivision, selectedDistrict, selectedUpazila,
-    selectedArea, selectedSubject, selectedTeachingType, selectedSalaryRange,
-    selectedRating, selectedGender, handleSearch
-  ]);
-
-  // Handle selections
-  const handleInstitutionSelect = (value: string) => {
-    setSelectedInstitution(value);
-    const institution = institutions.find(inst => inst.id.toString() === value);
-    if (institution) {
-      setSelectedInstitutionName(institution.name);
-    }
-    setSearchQuery("");
-    setIsOpen(false);
-  };
-
-  const handleAreaSelect = (value: string) => {
-    setSelectedArea(value);
-    const area = areas.find(a => a.id.toString() === value);
-    if (area) {
-      setSelectedAreaName(area.name);
-    }
-  };
-
-  const handleSubjectSelect = (value: string) => {
-    setSelectedSubject(value);
-    const subject = subjects.find(s => s.id.toString() === value);
-    if (subject) {
-      setSelectedSubjectName(subject.subject);
-    }
-  };
-
-  const handleGenderSelect = (gender: string) => {
-    setSelectedGender(selectedGender === gender ? "" : gender);
-  };
-
-  // Clear filter functions
-  const clearFilter = (filterType: string) => {
-    switch (filterType) {
-      case 'institution':
-        setSelectedInstitution("");
-        setSelectedInstitutionName("");
-        break;
-      case 'division':
-        setSelectedDivision("");
-        setSelectedDivisionName("");
-        setSelectedDistrict("");
-        setSelectedDistrictName("");
-        setSelectedUpazila("");
-        setSelectedUpazilaName("");
-        setSelectedArea("");
-        setSelectedAreaName("");
-        setDistricts([]);
-        setUpazilas([]);
-        setAreas([]);
-        break;
-      case 'district':
-        setSelectedDistrict("");
-        setSelectedDistrictName("");
-        setSelectedUpazila("");
-        setSelectedUpazilaName("");
-        setSelectedArea("");
-        setSelectedAreaName("");
-        setUpazilas([]);
-        setAreas([]);
-        break;
-      case 'upazila':
-        setSelectedUpazila("");
-        setSelectedUpazilaName("");
-        setSelectedArea("");
-        setSelectedAreaName("");
-        setAreas([]);
-        break;
-      case 'area':
-        setSelectedArea("");
-        setSelectedAreaName("");
-        break;
-      case 'subject':
-        setSelectedSubject("");
-        setSelectedSubjectName("");
-        break;
-      case 'teaching_type':
-        setSelectedTeachingType("");
-        break;
-      case 'salary_range':
-        setSelectedSalaryRange("");
-        break;
-      case 'rating':
-        setSelectedRating("");
-        break;
-      case 'gender':
-        setSelectedGender("");
-        break;
-    }
-  };
-
-  const clearAllFilters = () => {
-    setSelectedInstitution("");
-    setSelectedInstitutionName("");
-    setSelectedDivision("");
-    setSelectedDivisionName("");
-    setSelectedDistrict("");
-    setSelectedDistrictName("");
-    setSelectedUpazila("");
-    setSelectedUpazilaName("");
-    setSelectedArea("");
-    setSelectedAreaName("");
-    setSelectedSubject("");
-    setSelectedSubjectName("");
-    setSelectedTeachingType("");
-    setSelectedSalaryRange("");
-    setSelectedRating("");
-    setSelectedGender("");
-    setDistricts([]);
-    setUpazilas([]);
-    setAreas([]);
-  };
-
-  const toggleFilters = () => {
-    setShowFilters(!showFilters);
-  };
-
-  const hasActiveFilters = selectedInstitutionName || selectedDivisionName || selectedDistrictName ||
-    selectedUpazilaName || selectedAreaName || selectedSubjectName || selectedTeachingType ||
-    selectedSalaryRange || selectedRating || selectedGender;
-
-  if (loading) {
-    return (
-      <div className="p-8 text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-2 text-gray-600">Loading Filters...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-8 text-center">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
-          <p className="text-red-600 font-medium">Error loading data</p>
-        </div>
-      </div>
-    );
-  }
+  const [division, setDivision] = React.useState("");
+  const [divisionLabel, setDivisionLabel] = React.useState("");
+  const [district, setDistrict] = React.useState("");
+  const [districtLabel, setDistrictLabel] = React.useState("");
+  const [upazila, setUpazila] = React.useState("");
+  const [upazilaLabel, setUpazilaLabel] = React.useState("");
+  const [area, setArea] = React.useState("");
+  const [areaLabel, setAreaLabel] = React.useState("");
 
   return (
-    <div className="relative py-6 sm:py-10">
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="bg-background p-6 border border-gray-700 text-white backdrop-blur-md shadow-xl rounded-2xl">
+    <Section>
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-12 gap-x-6 gap-y-6">
+        <InfiniteSelect
+          className="col-span-1 sm:col-span-1 xl:col-span-3"
+          label="Institution"
+          placeholder="Select Institution"
+          value={institution}
+          valueLabel={institutionLabel}
+          onChange={(val, lbl) => {
+            setInstitution(val);
+            setInstitutionLabel(lbl);
+            updateQuery({ institution: val });
+          }}
+          fetchConfig={{ path: "/api/institutes/", searchParam: "name" }}
+          valueKey="id"
+          labelKey="name"
+          withDivider
+        />
 
-          {/* Header Section */}
-          <div className="mb-6 sm:mb-8">
-            {/* Title + Badges in one row */}
-            <div className="flex flex-col sm:flex-row items-center justify-between mb-6">
-              <h1 className="text-foreground text-white font-bold text-2xl sm:text-3xl lg:text-4xl mb-2 sm:mb-0">
-                Find a Tutor
-              </h1>
+        <InfiniteSelect
+          className="col-span-1 sm:col-span-1 xl:col-span-3"
+          label="Subject"
+          placeholder="Select Subject"
+          value={subject}
+          valueLabel={subjectLabel}
+          onChange={(val, lbl) => {
+            setSubject(val);
+            setSubjectLabel(lbl);
+            updateQuery({ subject: val });
+          }}
+          fetchConfig={{ path: "/api/subjects/", searchParam: "subject" }}
+          valueKey="id"
+          labelKey="subject"
+          withDivider
+        />
 
-              {/* Badges */}
-              <div className="flex flex-wrap justify-center sm:justify-end gap-2 sm:gap-3">
-                <Badge variant="secondary" className="text-xs sm:text-sm px-2 sm:px-3 py-1">
-                  5,000+ tutors
-                </Badge>
-                <Badge variant="secondary" className="text-xs sm:text-sm px-2 sm:px-3 py-1">
-                  Fast matching
-                </Badge>
-                <Badge variant="secondary" className="text-xs sm:text-sm px-2 sm:px-3 py-1">
-                  Verified profiles
-                </Badge>
-              </div>
-            </div>
+        <InlineSelect
+          className="col-span-1 sm:col-span-1 xl:col-span-3 text-white"
+          label="Teaching Type"
+          placeholder="Select Teaching Type"
+          value={teaching}
+          onValueChange={setTeaching}
+          options={[
+            { label: "Online", value: "ONLINE" },
+            { label: "Offline", value: "OFFLINE" },
+            { label: "Online & Home", value: "BOTH" },
+          ]}
+          withDivider
+        />
 
-            {/* Feature Points - Improved mobile layout */}
-            <div className="space-y-3 mb-6 sm:mb-8">
-              <div className="flex items-start gap-3">
-                <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                <p className="text-sm sm:text-base text-gray-300">
-                  Reputed universities' students are here — <span className="text-xs sm:text-sm opacity-80">তারা যেকোনো বিষয়ই জন্য অভিজ্ঞ।</span>
-                </p>
-              </div>
+        <InlineSelect
+          className="col-span-1 sm:col-span-1 xl:col-span-3 text-white"
+          label="Gender"
+          placeholder="Select Gender"
+          value={gender}
+          onValueChange={setGender}
+          options={[
+            { label: "Male", value: "MALE" },
+            { label: "Female", value: "FEMALE" },
+          ]}
+        />
+      </div>
 
-              <div className="flex items-start gap-3">
-                <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                <p className="text-gray-300 text-sm sm:text-base">
-                  Online tuition = safety + time save.
-                </p>
-              </div>
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-12 gap-x-6 gap-y-6">
+        <InfiniteSelect
+          className="col-span-1 sm:col-span-1 xl:col-span-3"
+          label="Division"
+          placeholder="Select Division"
+          value={division}
+          valueLabel={divisionLabel}
+          onChange={(val, lbl) => {
+            setDivision(val);
+            setDivisionLabel(lbl);
+            setDistrict(""); setDistrictLabel("");
+            setUpazila(""); setUpazilaLabel("");
+            setArea(""); setAreaLabel("");
+            updateQuery({ division: val });
+          }}
+          fetchConfig={{ path: "/api/divisions/", searchParam: "name" }}
+          valueKey="id"
+          labelKey="name"
+          withDivider
+        />
 
-              <div className="flex items-start gap-3">
-                <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                <p className="text-gray-300 text-sm sm:text-base">
-                  Home & Online — <span className="text-xs sm:text-sm opacity-80">আপনার পছন্দমতো।</span>
-                </p>
-              </div>
-            </div>
-          </div>
+        <CascadingSelect
+          className="col-span-1 sm:col-span-1 xl:col-span-3"
+          label="District"
+          placeholder="Select District"
+          value={district}
+          valueLabel={districtLabel}
+          onChange={(val, lbl) => {
+            setDistrict(val);
+            setDistrictLabel(lbl);
+            setUpazila(""); setUpazilaLabel("");
+            setArea(""); setAreaLabel("");
+            updateQuery({ districts: val });
+          }}
+          fetchConfig={{
+            path: "/api/districts/",
+            searchParam: "name",
+            parentParam: "division",
+            parentValue: division,
+          }}
+          valueKey="id"
+          labelKey="name"
+          disabled={!division}
+          withDivider
+        />
 
-          {/* Main Search Form */}
+        <CascadingSelect
+          className="col-span-1 sm:col-span-1 xl:col-span-3"
+          label="Upazila"
+          placeholder="Select Upazila"
+          value={upazila}
+          valueLabel={upazilaLabel}
+          onChange={(val, lbl) => {
+            setUpazila(val);
+            setUpazilaLabel(lbl);
+            setArea(""); setAreaLabel("");
+            updateQuery({ upazila: val });
+          }}
+          fetchConfig={{
+            path: "/api/upazilas/",
+            searchParam: "name",
+            parentParam: "district",
+            parentValue: district,
+          }}
+          valueKey="id"
+          labelKey="name"
+          disabled={!district}
+          withDivider
+        />
+        <CascadingSelect
+          className="col-span-1 sm:col-span-1 xl:col-span-3"
+          label="Area"
+          placeholder="Select Area"
+          value={area}
+          valueLabel={areaLabel}
+          onChange={(val, lbl) => {
+            setArea(val);
+            setAreaLabel(lbl);
+            updateQuery({ areas: val });
+          }}
+          fetchConfig={{
+            path: "/api/areas/",
+            searchParam: "name",
+            parentParam: "upazila",
+            parentValue: upazila,
+          }}
+          valueKey="id"
+          labelKey="name"
+          disabled={!upazila}
+        />
+      </div>
+    </Section>
+  );
+}
 
-          <div className="space-y-4 mb-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Institution Search */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-200">Institution</label>
-                <Select
-                  open={isOpen}
-                  onOpenChange={setIsOpen}
-                  value={selectedInstitution}
-                  onValueChange={handleInstitutionSelect}
-                >
-                  <SelectTrigger className="mt-1 text-white bg-gray-800 border-gray-600 hover:border-gray-500 focus:border-blue-400 focus:ring-blue-400/20">
-                    <SelectValue placeholder="DU / BUET / SUST / NSU / AIUB ..." />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-600 z-50">
-                    <div className="p-2 sticky top-0 bg-gray-800 z-10 border-b border-gray-600">
-                      <Input
-                        placeholder="Search Institution..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="h-8 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-blue-400/20 focus-visible:ring-1 focus-visible:ring-offset-0"
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    </div>
-                    <ScrollArea className="h-60">
-                      {filteredInstitutions.length > 0 ? (
-                        filteredInstitutions.map((institution) => (
-                          <SelectItem
-                            key={institution.id}
-                            value={institution.id.toString()}
-                            className="text-gray-200 hover:bg-gray-700 focus:bg-gray-700"
-                          >
-                            {institution.name}
-                          </SelectItem>
-                        ))
-                      ) : (
-                          <div className="p-2 text-sm text-gray-400">
-                          No institutions found.
-                        </div>
-                      )}
-                    </ScrollArea>
-                  </SelectContent>
-                </Select>
-              </div>
+function InfiniteSelect({
+  className = "",
+  label,
+  placeholder,
+  value,
+  valueLabel,
+  onChange,
+  withDivider,
+  fetchConfig,
+  valueKey,
+  labelKey,
+  disabled,
+}: {
+  className?: string;
+  label: string;
+  placeholder: string;
+  value: string;
+  valueLabel?: string;
+  onChange: (val: string, lbl: string) => void;
+  withDivider?: boolean;
+  fetchConfig: { path: string; searchParam?: string };
+  valueKey: string;
+  labelKey: string;
+  disabled?: boolean;
+}) {
+  const [open, setOpen] = React.useState(false);
+  const [query, setQuery] = React.useState("");
+  const debounced = useDebounced(query, 300);
 
-              {/* Subject Search */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-200">Subject</label>
-                <Select
-                  value={selectedSubject}
-                  onValueChange={handleSubjectSelect}
-                >
-                  <SelectTrigger className="w-full h-11 bg-gray-800 border border-gray-600 hover:border-gray-500 focus:border-blue-400 focus:ring-blue-400/20 text-white transition-colors">
-                    <SelectValue placeholder="Physics, English, Math ..." />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-600 z-50">
-                    <ScrollArea className="h-60">
-                      {subjects.map((subject) => (
-                        <SelectItem
-                          key={subject.id}
-                          value={subject.id.toString()}
-                          className="text-gray-200 hover:bg-gray-700 focus:bg-gray-700"
-                        >
-                          {subject.subject}
-                        </SelectItem>
-                      ))}
-                    </ScrollArea>
-                  </SelectContent>
-                </Select>
-              </div>
+  const [items, setItems] = React.useState<any[]>([]);
+  const [page, setPage] = React.useState(1);
+  const [hasMore, setHasMore] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
 
-              {/* Teaching Type */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-200">Teaching Type</label>
-                <Select value={selectedTeachingType} onValueChange={setSelectedTeachingType}>
-                  <SelectTrigger className="w-full h-11 bg-gray-800 border border-gray-600 hover:border-gray-500 focus:border-blue-400 focus:ring-blue-400/20 text-white transition-colors">
-                    <SelectValue placeholder="Online / Offline / Both" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-600 z-50">
-                    <SelectItem value="ONLINE" className="text-gray-200 hover:bg-gray-700 focus:bg-gray-700">Online</SelectItem>
-                    <SelectItem value="OFFLINE" className="text-gray-200 hover:bg-gray-700 focus:bg-gray-700">Offline</SelectItem>
-                    <SelectItem value="BOTH" className="text-gray-200 hover:bg-gray-700 focus:bg-gray-700">Both</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
+  const load = React.useCallback(
+    async (reset = false) => {
+      if (loading) return;
+      setLoading(true);
+      try {
+        const nextPage = reset ? 1 : page;
+        const data = await fetchPaged<any>({
+          path: fetchConfig.path,
+          page: nextPage,
+          searchParam: fetchConfig.searchParam || "name",
+          q: debounced,
+        });
+        const list = data.results || [];
+        setItems((prev) => (reset ? list : [...prev, ...list]));
+        setHasMore(Boolean(data.next));
+        setPage(nextPage + 1);
+      } catch {
+        // swallow error or add toast
+      } finally {
+        setLoading(false);
+      }
+    },
+    [page, debounced, loading, fetchConfig]
+  );
 
-          <Dialog open={showFilters} onOpenChange={setShowFilters}>
-            <DialogContent className="w-full text-white max-w-4xl border-0 shadow-xl">  
-              {showFilters && (
-                <div className="space-y-6 mb-6 p-0">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Filter className="h-4 w-4 text-blue-400" />
-                    <h3 className="text-sm font-semibold text-gray-100">Advanced Filters</h3>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-xs font-medium text-gray-400">Division</label>
-                        <Select value={selectedDivision} onValueChange={handleDivisionChange}>
-                          <SelectTrigger className="w-full h-10 bg-gray-800 border border-gray-600 hover:border-blue-500/50 transition-colors text-gray-100">
-                            <SelectValue placeholder="Select Division" className="text-gray-400" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-800 border-gray-600 z-50">
-                            <ScrollArea className="h-48">
-                              {divisions.map((division) => (
-                                <SelectItem key={division.id} value={division.id.toString()} className="hover:bg-gray-700 text-gray-100">
-                                  {division.name}
-                                </SelectItem>
-                              ))}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      </div>
+  React.useEffect(() => {
+    if (open) load(true);
+  }, [open]);
 
-                      <div className="space-y-2">
-                        <label className="text-xs font-medium text-gray-400">District</label>
-                        <Select
-                          value={selectedDistrict}
-                          onValueChange={handleDistrictChange}
-                          disabled={!selectedDivision}
-                        >
-                          <SelectTrigger className="w-full h-10 bg-gray-800 border border-gray-600 hover:border-blue-500/50 transition-colors disabled:opacity-50 text-gray-100">
-                            <SelectValue placeholder="Select District" className="text-gray-400" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-800 border-gray-600 z-50">
-                            <ScrollArea className="h-48">
-                              {districts.map((district) => (
-                                <SelectItem key={district.id} value={district.id.toString()} className="hover:bg-gray-700 text-gray-100">
-                                  {district.name}
-                                </SelectItem>
-                              ))}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      </div>
+  React.useEffect(() => {
+    if (open) load(true);
+  }, [debounced]);
 
-                      <div className="space-y-2">
-                        <label className="text-xs font-medium text-gray-400">Upazila</label>
-                        <Select
-                          value={selectedUpazila}
-                          onValueChange={handleUpazilaChange}
-                          disabled={!selectedDistrict}
-                        >
-                          <SelectTrigger className="w-full h-10 bg-gray-800 border border-gray-600 hover:border-blue-500/50 transition-colors disabled:opacity-50 text-gray-100">
-                            <SelectValue placeholder="Select Upazila" className="text-gray-400" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-800 border-gray-600 z-50">
-                            <ScrollArea className="h-48">
-                              {upazilas.map((upazila) => (
-                                <SelectItem key={upazila.id} value={upazila.id.toString()} className="hover:bg-gray-700 text-gray-100">
-                                  {upazila.name}
-                                </SelectItem>
-                              ))}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      </div>
+  const sentinelRef = React.useRef<HTMLDivElement | null>(null);
+  React.useEffect(() => {
+    if (!open) return;
+    const el = sentinelRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore && !loading) {
+        load();
+      }
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [open, hasMore, loading, load]);
 
-                      <div className="space-y-2">
-                        <label className="text-xs font-medium text-gray-400">Area</label>
-                        <Select
-                          value={selectedArea}
-                          onValueChange={handleAreaSelect}
-                          disabled={!selectedUpazila}
-                        >
-                          <SelectTrigger className="w-full h-10 bg-gray-800 border border-gray-600 hover:border-blue-500/50 transition-colors disabled:opacity-50 text-gray-100">
-                            <SelectValue placeholder="Select Area" className="text-gray-400" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-800 border-gray-600 z-50">
-                            <ScrollArea className="h-48">
-                              {areas.map((area) => (
-                                <SelectItem key={area.id} value={area.id.toString()} className="hover:bg-gray-700 text-gray-100">
-                                  {area.name}
-                                </SelectItem>
-                              ))}
-                            </ScrollArea>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-xs font-medium text-gray-400">Salary Range</label>
-                        <Select value={selectedSalaryRange} onValueChange={setSelectedSalaryRange}>
-                          <SelectTrigger className="w-full h-10 bg-gray-800 border border-gray-600 hover:border-blue-500/50 transition-colors text-gray-100">
-                            <SelectValue placeholder="Select Range" className="text-gray-400" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-800 border-gray-600 z-50">
-                            <SelectItem value="0-1000" className="hover:bg-gray-700 text-gray-100">৳0 - ৳1000</SelectItem>
-                            <SelectItem value="1000-2000" className="hover:bg-gray-700 text-gray-100">৳1000 - ৳2000</SelectItem>
-                            <SelectItem value="2000+" className="hover:bg-gray-700 text-gray-100">৳2000+</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+  const currentLabel =
+    value && valueLabel
+      ? valueLabel
+      : value
+        ? items.find((i) => String(i[valueKey]) === value)?.[labelKey] || placeholder
+        : placeholder;
 
-                      <div className="space-y-2">
-                        <label className="text-xs font-medium text-gray-400">Rating</label>
-                        <Select value={selectedRating} onValueChange={setSelectedRating}>
-                          <SelectTrigger className="w-full h-10 bg-gray-800 border border-gray-600 hover:border-blue-500/50 transition-colors text-gray-100">
-                            <SelectValue placeholder="Minimum Rating" className="text-gray-400" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-800 border-gray-600 z-50">
-                            <SelectItem value="4" className="hover:bg-gray-700 text-gray-100">4+ Stars</SelectItem>
-                            <SelectItem value="3" className="hover:bg-gray-700 text-gray-100">3+ Stars</SelectItem>
-                            <SelectItem value="2" className="hover:bg-gray-700 text-gray-100">2+ Stars</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <DialogFooter className="gap-2">
-                <Button className="text-red-500 hover:text-red-600 hover:bg-red-100" variant="ghost" onClick={() => setShowFilters(false)}>Cancel</Button>
-                <Button
-                  className="bg-cyan-400 hover:bg-cyan-500 text-white"
-                  onClick={() => setShowFilters(false)}>Apply filters</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-
-          {/* Active Filters Section */}
-          {hasActiveFilters && (
-            <div className="bg-card rounded-lg p-4 mb-6 border border-border">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-medium text-foreground">Active Filters</h4>
-                <span className="text-xs text-muted-foreground">
-                  {[selectedInstitutionName, selectedDivisionName, selectedDistrictName, selectedUpazilaName,
-                    selectedAreaName, selectedSubjectName, selectedTeachingType, selectedSalaryRange,
-                    selectedRating, selectedGender].filter(Boolean).length} active
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {selectedInstitutionName && (
-                  <Badge variant="secondary" className="gap-1 pr-1">
-                    Institution: {selectedInstitutionName}
-                    <button onClick={() => clearFilter('institution')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
-                      <X size={12} />
-                    </button>
-                  </Badge>
-                )}
-                {selectedDivisionName && (
-                  <Badge variant="secondary" className="gap-1 pr-1">
-                    Division: {selectedDivisionName}
-                    <button onClick={() => clearFilter('division')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
-                      <X size={12} />
-                    </button>
-                  </Badge>
-                )}
-                {selectedDistrictName && (
-                  <Badge variant="secondary" className="gap-1 pr-1">
-                    District: {selectedDistrictName}
-                    <button onClick={() => clearFilter('district')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
-                      <X size={12} />
-                    </button>
-                  </Badge>
-                )}
-                {selectedUpazilaName && (
-                  <Badge variant="secondary" className="gap-1 pr-1">
-                    Upazila: {selectedUpazilaName}
-                    <button onClick={() => clearFilter('upazila')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
-                      <X size={12} />
-                    </button>
-                  </Badge>
-                )}
-                {selectedAreaName && (
-                  <Badge variant="secondary" className="gap-1 pr-1">
-                    Area: {selectedAreaName}
-                    <button onClick={() => clearFilter('area')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
-                      <X size={12} />
-                    </button>
-                  </Badge>
-                )}
-                {selectedSubjectName && (
-                  <Badge variant="secondary" className="gap-1 pr-1">
-                    Subject: {selectedSubjectName}
-                    <button onClick={() => clearFilter('subject')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
-                      <X size={12} />
-                    </button>
-                  </Badge>
-                )}
-                {selectedTeachingType && (
-                  <Badge variant="secondary" className="gap-1 pr-1">
-                    Teaching: {selectedTeachingType}
-                    <button onClick={() => clearFilter('teaching_type')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
-                      <X size={12} />
-                    </button>
-                  </Badge>
-                )}
-                {selectedSalaryRange && (
-                  <Badge variant="secondary" className="gap-1 pr-1">
-                    Salary: {selectedSalaryRange}
-                    <button onClick={() => clearFilter('salary_range')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
-                      <X size={12} />
-                    </button>
-                  </Badge>
-                )}
-                {selectedRating && (
-                  <Badge variant="secondary" className="gap-1 pr-1">
-                    Rating: {selectedRating}+ Stars
-                    <button onClick={() => clearFilter('rating')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
-                      <X size={12} />
-                    </button>
-                  </Badge>
-                )}
-                {selectedGender && (
-                  <Badge variant="secondary" className="gap-1 pr-1 capitalize">
-                    Gender: {selectedGender}
-                    <button onClick={() => clearFilter('gender')} className="ml-1 hover:bg-destructive/20 rounded-full p-0.5" title="Remove filter">
-                      <X size={12} />
-                    </button>
-                  </Badge>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Bottom Section with Gender Selection and Search Button */}
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4">
-            {/* Gender Selection */}
-            <div className="flex justify-center sm:justify-start">
-              <div className="flex items-center gap-6 p-3 bg-transparent border-0">
-                <span className="text-sm font-medium text-muted-foreground">Gender:</span>
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input
-                    type="radio"
-                    name="gender"
-                    className="h-4 w-4 text-primary focus:ring-primary border-border"
-                    checked={selectedGender === "MALE"}
-                    onChange={() => handleGenderSelect("MALE")}
-                  />
-                  <span className="text-white text-sm font-medium text-foreground group-hover:text-white transition-colors">
-                    Male
-                  </span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input
-                    type="radio"
-                    name="gender"
-                    className="h-4 w-4 text-primary focus:ring-primary border-border"
-                    checked={selectedGender === "FEMALE"}
-                    onChange={() => handleGenderSelect("FEMALE")}
-                  />
-                  <span className="text-white text-sm font-medium text-foreground group-hover:text-white transition-colors">
-                    Female
-                  </span>
-                </label>
-              </div>
-            </div>
-            <div className="flex justify-center sm:justify-start mb-6">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggleFilters}
-                className="hover:bg-primary-100"
-              >
-                <Filter className="h-4 w-4" />
-                {showFilters ? "Hide Filters" : "Advanced Filters"}
-              </Button>
-            </div>
-          </div>
-
-          {/* Clear All Button */}
-          {hasActiveFilters && (
-            <div className="mt-6 text-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearAllFilters}
-                className="gap-2 text-red-500 hover:text-red-600 hover:bg-red-100" 
-              >
-                <X className="h-4 w-4" />
-                Clear All Filters
-              </Button>
-            </div>
-          )}
+  return (
+    <div className={cn("relative w-full", className)}>
+      {withDivider && (
+        <span className="pointer-events-none hidden xl:block absolute right-[-12px] top-1/2 -translate-y-1/2 h-10 w-px bg-white/20" />
+      )}
+      <div className="min-w-0 w-full">
+        <div className="h-5 text-white text-[15px] font-semibold leading-none mb-2">
+          {label}
         </div>
+
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              disabled={disabled}
+              className={cn(
+                "w-full text-left text-slate-300/85 text-[13px] leading-6 truncate bg-transparent border-0 outline-none",
+                disabled && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              {currentLabel}
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            align="start"
+            className="w-[min(24rem,calc(100vw-2rem))] p-0 bg-slate-900/95 text-white border border-white/10 backdrop-blur-xl"
+          >
+            {/* Search */}
+            <div className="p-2 border-b border-white/10 flex items-center gap-2">
+              <Search className="h-4 w-4 opacity-60" />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={`Search ${label.toLowerCase()}…`}
+                className="h-8 bg-white/5 border-white/10 text-white placeholder:text-white/60"
+              />
+            </div>
+            {/* List + sentinel */}
+            <ScrollArea className="h-64">
+              <ul className="py-1">
+                {items.map((item) => (
+                  <li key={item[valueKey]}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onChange(String(item[valueKey]), item[labelKey]);
+                        setOpen(false);
+                      }}
+                      className={cn(
+                        "w-full text-left px-3 py-2 text-sm hover:bg-white/10",
+                        value === String(item[valueKey]) && "bg-white/10"
+                      )}
+                    >
+                      {item[labelKey]}
+                    </button>
+                  </li>
+                ))}
+                {!items.length && !loading && (
+                  <li className="px-3 py-4 text-sm text-white/70">No results</li>
+                )}
+                <div ref={sentinelRef} />
+                {loading && (
+                  <div className="flex items-center justify-center py-3 text-white/80">
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Loading…
+                  </div>
+                )}
+              </ul>
+            </ScrollArea>
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );
-};
+}
 
-export default SearchSection;
+function CascadingSelect({
+  className = "",
+  label,
+  placeholder,
+  value,
+  valueLabel,
+  onChange,
+  withDivider,
+  fetchConfig,
+  valueKey,
+  labelKey,
+  disabled,
+}: {
+  className?: string;
+  label: string;
+  placeholder: string;
+  value: string;
+  valueLabel?: string;
+  onChange: (val: string, lbl: string) => void;
+  withDivider?: boolean;
+  fetchConfig: {
+    path: string;
+    searchParam?: string;
+    parentParam: string; // e.g., "division" | "district" | "upazila"
+    parentValue: string; // selected parent id
+  };
+  valueKey: string;
+  labelKey: string;
+  disabled?: boolean;
+}) {
+  const [open, setOpen] = React.useState(false);
+  const [query, setQuery] = React.useState("");
+  const debounced = useDebounced(query, 300);
+
+  const [items, setItems] = React.useState<any[]>([]);
+  const [page, setPage] = React.useState(1);
+  const [hasMore, setHasMore] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    setItems([]);
+    setPage(1);
+    setHasMore(true);
+  }, [fetchConfig.parentValue]);
+
+  const load = React.useCallback(
+    async (reset = false) => {
+      if (loading || !fetchConfig.parentValue) return;
+      setLoading(true);
+      try {
+        const nextPage = reset ? 1 : page;
+        const data = await fetchPaged<any>({
+          path: fetchConfig.path,
+          page: nextPage,
+          searchParam: fetchConfig.searchParam || "name",
+          q: debounced,
+          extraParams: {
+            [fetchConfig.parentParam]: fetchConfig.parentValue,
+          },
+        });
+        const list = data.results || [];
+        setItems((prev) => (reset ? list : [...prev, ...list]));
+        setHasMore(Boolean(data.next));
+        setPage(nextPage + 1);
+      } catch {
+      } finally {
+        setLoading(false);
+      }
+    },
+    [page, debounced, loading, fetchConfig]
+  );
+
+  React.useEffect(() => {
+    if (open && fetchConfig.parentValue) load(true);
+  }, [open, fetchConfig.parentValue]);
+
+  React.useEffect(() => {
+    if (open && fetchConfig.parentValue) load(true);
+  }, [debounced]);
+
+  const sentinelRef = React.useRef<HTMLDivElement | null>(null);
+  React.useEffect(() => {
+    if (!open || !fetchConfig.parentValue) return;
+    const el = sentinelRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore && !loading) {
+        load();
+      }
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [open, hasMore, loading, load, fetchConfig.parentValue]);
+
+  const currentLabel =
+    value && valueLabel
+      ? valueLabel
+      : value
+        ? items.find((i) => String(i[valueKey]) === value)?.[labelKey] || placeholder
+        : placeholder;
+
+  return (
+    <div className={cn("relative w-full", className)}>
+      {withDivider && (
+        <span className="pointer-events-none hidden xl:block absolute right-[-12px] top-1/2 -translate-y-1/2 h-10 w-px bg-white/20" />
+      )}
+      <div className="min-w-0 w-full">
+        <div className="h-5 text-white text-[15px] font-semibold leading-none mb-2">
+          {label}
+        </div>
+
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              disabled={disabled}
+              className={cn(
+                "w-full text-left text-slate-300/85 text-[13px] leading-6 truncate bg-transparent border-0 outline-none",
+                (disabled || !fetchConfig.parentValue) && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              {currentLabel}
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            align="start"
+            className="w-[min(24rem,calc(100vw-2rem))] p-0 bg-slate-900/95 text-white border border-white/10 backdrop-blur-xl"
+          >
+            {/* Search */}
+            <div className="p-2 border-b border-white/10 flex items-center gap-2">
+              <Search className="h-4 w-4 opacity-60" />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={`Search ${label.toLowerCase()}…`}
+                className="h-8 bg-white/5 border-white/10 text-white placeholder:text-white/60"
+              />
+            </div>
+            <ScrollArea className="h-64">
+              <ul className="py-1">
+                {items.map((item) => (
+                  <li key={item[valueKey]}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onChange(String(item[valueKey]), item[labelKey]);
+                        setOpen(false);
+                      }}
+                      className={cn(
+                        "w-full text-left px-3 py-2 text-sm hover:bg-white/10",
+                        value === String(item[valueKey]) && "bg-white/10"
+                      )}
+                    >
+                      {item[labelKey]}
+                    </button>
+                  </li>
+                ))}
+                {!items.length && !loading && (
+                  <li className="px-3 py-4 text-sm text-white/70">No results</li>
+                )}
+                <div ref={sentinelRef} />
+                {loading && (
+                  <div className="flex items-center justify-center py-3 text-white/80">
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Loading…
+                  </div>
+                )}
+              </ul>
+            </ScrollArea>
+          </PopoverContent>
+        </Popover>
+      </div>
+    </div>
+  );
+}
+
+function InlineSelect({
+  className = "",
+  label,
+  placeholder,
+  value,
+  onValueChange,
+  options,
+  disabled,
+  withDivider = false,
+}: {
+  className?: string;
+  label: string;
+  placeholder: string;
+  value: string;
+  onValueChange: (v: string) => void;
+  options: { label: string; value: string }[];
+  disabled?: boolean;
+  withDivider?: boolean;
+}) {
+  return (
+    <div className={cn("relative w-full text-white", className)}>
+      {withDivider && (
+        <span className="pointer-events-none hidden xl:block absolute right-[-12px] top-1/2 -translate-y-1/2 h-10 w-px bg-white/20" />
+      )}
+      <div className="min-w-0 w-full">
+        <div className="h-5 text-white text-[15px] font-semibold leading-none mb-2">
+          {label}
+        </div>
+        <Select value={value} onValueChange={onValueChange} disabled={disabled}>
+          <SelectTrigger className="h-auto px-0 py-0 bg-transparent border-0 shadow-none focus:ring-0 focus:ring-offset-0 justify-between w-full">
+            <SelectValue
+              placeholder={placeholder}
+              className="text-slate-300/85 text-[13px] leading-6 truncate"
+            />
+          </SelectTrigger>
+          <SelectContent
+            align="start"
+            className="bg-slate-900/95 text-white border border-white/10 backdrop-blur-xl"
+          >
+            {options.map((o) => (
+              <SelectItem
+                key={o.value}
+                value={o.value}
+                className="focus:bg-white/10 data-[highlighted]:bg-white/10 text-white"
+              >
+                {o.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+}

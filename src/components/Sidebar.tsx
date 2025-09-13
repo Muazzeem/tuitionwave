@@ -69,7 +69,7 @@ const Sidebar = () => {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className={`${isExpanded ? 'w-60' : 'w-13'}bg-background border-r border-gray-900 flex-col h-screen transition-all duration-500 relative z-10 hidden md:flex shadow-lg`}>
+      <div className={`${isExpanded ? 'w-60' : 'w-13'} border-0 flex-col h-screen transition-all duration-500 relative z-10 hidden md:flex shadow-lg`} style={{ backgroundColor: "#182641" }}>
         <div className="p-3 flex justify-between items-center align-middle">
           {isExpanded && (
             <h1 className="text-xl font-bold mt-2 text-white">
@@ -101,9 +101,9 @@ const Sidebar = () => {
                   <li key={index}>
                     <Link
                       to={item.path}
-                      className={`flex items-center px-1 lg:px-4 md:px-4 py-2 text-sm ${isActive
-                        ? 'bg-cyan-400 text-white'
-                        : 'text-gray-200 hover:bg-cyan-700'
+                      className={`flex items-center h-12 rounded-lg px-1 lg:px-4 md:px-4 py-2 text-sm ${isActive
+                        ? 'bg-primary-500 text-white'
+                        : 'text-gray-200 hover:bg-primary-600'
                         } ${!isExpanded && 'justify-center'}`}
                       title={!isExpanded ? item.text : ""}
                     >

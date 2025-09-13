@@ -14,7 +14,7 @@ type ThemeProviderState = {
 };
 
 const initialState: ThemeProviderState = {
-  theme: "dark", // Always default to dark
+  theme: "light", // Always default to dark
   setTheme: () => null,
 };
 
@@ -22,23 +22,23 @@ export const ThemeProviderContext = React.createContext<ThemeProviderState>(init
 
 export function ThemeProvider({
   children,
-  defaultTheme = "dark",
+  defaultTheme = "light",
   storageKey = "tuition-wave-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = React.useState<Theme>("dark");
+  const [theme, setTheme] = React.useState<Theme>("light");
 
   React.useEffect(() => {
     const root = window.document.documentElement;
 
     // Always remove light and system classes, only add dark
     root.classList.remove("light", "dark", "system");
-    root.classList.add("dark");
+    root.classList.add("light");
   }, []); // Empty dependency array since theme never changes
 
   const value = React.useMemo(
     () => ({
-      theme: "dark" as Theme, // Always return dark
+      theme: "light" as Theme, // Always return dark
       setTheme: (requestedTheme: Theme) => {
         // Ignore the requested theme, always stay dark
         console.log(`Theme change to "${requestedTheme}" requested, but staying dark`);

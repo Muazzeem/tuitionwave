@@ -18,14 +18,14 @@ const Header = () => {
   };
 
   return (
-    <header className="border-b border-gray-800 py-4 bg-background relative shadow-lg">
+    <header className="border-0 py-4 bg-transparent sticky top-0 z-50 pt-5 pb-20">
       <div className="container mx-auto px-4">
         {/* Desktop and Mobile Top Bar */}
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link to="/">
-            <button 
-              className="text-xl sm:text-2xl font-bold text-cyan-500 dark:text-primary-400 flex-shrink-0 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
+            <button
+              className="text-xl sm:text-2xl font-bold text-blue-500 dark:text-primary-400 flex-shrink-0 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
             >
               Tuition Wave
             </button>
@@ -33,18 +33,25 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
-            <Link to="/">
+            <Link to="/job-preparation/questions">
               <button
-                className="text-gray-300 hover:text-blue-400 font-medium transition-colors py-2"
+                className="text-gray-300 hover:text-blue-400 text-sm transition-colors py-2"
               >
-                Home
+                Job Preparation
               </button>
             </Link>
             <Link to="/job-preparation/questions">
               <button
-                className="text-gray-300 hover:text-blue-400 font-medium transition-colors py-2"
+                className="text-gray-300 hover:text-blue-400 text-sm transition-colors py-2"
               >
-                Job Preparation
+                Become a Tutor
+              </button>
+            </Link>
+            <Link to="/job-preparation/questions">
+              <button
+                className="text-gray-300 hover:text-blue-400 text-sm transition-colors py-2"
+              >
+                Find Tutor
               </button>
             </Link>
           </nav>
@@ -53,10 +60,10 @@ const Header = () => {
           <div className="hidden md:flex items-center gap-4">
             {/* Theme Toggle Placeholder */}
             {/* <ThemeToggle /> */}
-            
+
             {userProfile ? (
               <button
-                className="bg-cyan-400 hover:bg-cyan-500 text-white rounded-full px-6 py-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg"
+                className="bg-blue-600 text-white rounded-full px-6 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg"
                 onClick={goToDashboard}
               >
                 Go to Dashboard
@@ -64,10 +71,9 @@ const Header = () => {
             ) : (
                 <Link to="/login">
                   <button
-                    className="bg-cyan-400 hover:bg-cyan-500 text-white rounded-full px-6 py-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     onClick={() => {
                       localStorage.setItem("lastVisitedUrl", window.location.pathname);
-                      console.log("Saved URL:", window.location.href);
                     }}
                   >
                     Login
@@ -80,7 +86,7 @@ const Header = () => {
           <div className="md:hidden flex items-center gap-2">
             {/* Mobile Theme Toggle */}
             {/* <ThemeToggle /> */}
-            
+
             {/* Mobile Menu Button */}
             <button
               onClick={toggleMobileMenu}
@@ -94,31 +100,29 @@ const Header = () => {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`md:hidden transition-all duration-300 ease-in-out ${
-          isMobileMenuOpen 
-            ? 'max-h-96 opacity-100 mt-4 pb-4' 
+        <div className={`md:hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen
+          ? 'max-h-96 opacity-100 mt-4 pb-4'
             : 'max-h-0 opacity-0 overflow-hidden'
-        }`}>
-          <div className="border-t dark:border-gray-700 pt-4">
-            <nav className="flex flex-col space-y-2">
+          }`}>
+          <div className="bg-white/10 dark:bg-gray-900/20 backdrop-blur-md rounded-lg border border-white/20 dark:border-gray-700/30 pt-4 mt-4">
+            <nav className="flex flex-col space-y-2 px-4">
               <Link to="/">
                 <button
-                  
-                  className="text-left text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition-colors py-3 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
+                  className="text-left text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition-colors py-3 px-4 rounded-lg hover:bg-white/10 dark:hover:bg-gray-800/50"
                 >
                   Home
                 </button>
               </Link>
               <Link to="/job-preparation/questions">
                 <button
-                  className="text-left text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition-colors py-3 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
+                  className="text-left text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition-colors py-3 px-4 rounded-lg hover:bg-white/10 dark:hover:bg-gray-800/50"
                 >
                   Job Preparation
                 </button>
               </Link>
-              
+
               {/* Mobile Auth Button */}
-              <div className="pt-4">
+              <div className="pt-4 pb-4">
                 {userProfile ? (
                   <button
                     className="w-full bg-primary-600 hover:bg-blue-700 text-white rounded-full px-6 py-3 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -129,7 +133,7 @@ const Header = () => {
                 ) : (
                   <Link to="/login">
                     <button
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-3 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-3 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
                       Login
                     </button>

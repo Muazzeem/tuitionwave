@@ -24,7 +24,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { UserProfileProvider } from '@/contexts/UserProfileContext';
 import AuthGuard from "./components/AuthGuard";
 import AuthService from "./services/AuthService";
-import FindTutorsList from "./components/FindTutors/FindTutors";
+import FindTutorsList from "./pages/Guardian/FindTutors";
 import NotificationPage from "./pages/Notification";
 import RegistrationPage from "./pages/RegistrationPage";
 import GuardianProfile from "./pages/Guardian/Profile";

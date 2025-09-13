@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { MapPin, Star, GraduationCap, DollarSign } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import TutorDetailsDrawer from "@/components/TutorDetailsDrawer";
-import { Badge } from "../ui/badge";
+import { MapPin, Star, GraduationCap } from "lucide-react";
+import TutorDetailsModal from "./TutorDetailsModal";
 
 interface TutorCardProps {
   name: string;
@@ -10,7 +8,7 @@ interface TutorCardProps {
   division: string;
   upazila: string;
   district: string;
-  monthlyRate: number;
+  monthlyRate: string;
   teaching_type: string;
   rating: number;
   reviewCount: number;
@@ -31,141 +29,114 @@ const TutorCard: React.FC<TutorCardProps> = ({
   image,
   uid,
 }) => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const isOnline =
+    teaching_type?.toLowerCase().includes("online") ||
+    teaching_type === "ONLINE" ||
+    teaching_type === "BOTH";
 
-  // Handle escape key to close drawer
-  useEffect(() => {
-    const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && isDrawerOpen) {
-        closeDrawer();
-      }
-    };
-
-    window.addEventListener("keydown", handleEscKey);
-    return () => window.removeEventListener("keydown", handleEscKey);
-  }, [isDrawerOpen]);
-
-  const openDrawer = (e: React.MouseEvent) => {
-    // Don't open drawer if clicking on the button
-    if (!(e.target as HTMLElement).closest("button")) {
-      setIsDrawerOpen(true);
-      // Add class to prevent scrolling
-      document.body.classList.add("overflow-hidden");
-    }
-  };
-
-  const closeDrawer = () => {
-    setIsDrawerOpen(false);
-    // Remove class to allow scrolling again
-    document.body.classList.remove("overflow-hidden");
-  };
-
-
-  const getTeachingTypeBadge = () => {
-    switch (teaching_type) {
-      case "ONLINE":
-        return (
-          <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-full text-xs font-medium border-0">
-            🌐 Online
-          </Badge>
-        );
-      case "OFFLINE":
-        return (
-          <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-200 rounded-full text-xs font-medium border-0">
-            🏠 Home Visit
-          </Badge>
-        );
-      case "BOTH":
-        return (
-          <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-full text-xs font-medium border-0">
-            🌐 Online & Home
-          </Badge>
-        );
-      default:
-        return null;
-    }
-  };
+  const locationText = [upazila, district, division].filter(Boolean).join(", ");
+  const subjectsFallback = "English · Bangla · Math";
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   return (
     <>
       <div
-        className="bg-white rounded-xl overflow-hidden cursor-pointer dark:bg-gray-800 border dark:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group"
-        onClick={openDrawer}
+        onClick={() => setShowDetailsModal(true)}
+        className={[
+          "relative overflow-hidden rounded-3xl cursor-pointer",
+          "bg-slate-800/40 backdrop-blur-md",
+          "border border-white/10",
+          "shadow-lg hover:shadow-2xl",
+          "transition-all duration-300 hover:-translate-y-0.5",
+        ].join(" ")}
       >
-        {/* Image Section */}
-        <div className="relative overflow-hidden" style={{ paddingBottom: "50%" }}>
+        {/* Image */}
+        <div className="relative">
           <img
             src={image}
             alt={name}
-            className="absolute top-0 left-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-48 w-full object-cover"
+            loading="lazy"
           />
-          <div className="absolute top-3 right-3">
-            {getTeachingTypeBadge()}
-          </div>
-          {/* Rating Badge */}
-          <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1 shadow-sm">
-            <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-            <span className="text-xs font-semibold text-gray-800">{rating}</span>
-          </div>
+
+          {isOnline && (
+            <span
+              className={[
+                "absolute left-4 top-4 z-10",
+                "rounded-full px-5 py-2",
+                "text-white text-xs",
+                "bg-gradient-to-b from-blue-500 to-blue-600",
+              ].join(" ")}
+            >
+              Online
+            </span>
+          )}
+
+          {/* Bottom gradient overlay */}
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-28
+                       bg-gradient-to-t from-slate-900/90 via-slate-900/60 to-transparent"
+          />
         </div>
 
-        {/* Content Section */}
-        <div className="p-5">
+        {/* Body */}
+        <div className="relative -mt-6 px-5 pb-5">
           {/* University */}
-          <div className="flex items-center gap-2 mb-2">
-            <GraduationCap className="w-4 h-4 text-blue-500" />
-            <p className="text-blue-600 text-sm font-medium dark:text-blue-400 truncate">
-              {university}
-            </p>
+          <div className="flex items-center text-slate-300/85 text-sm mb-1">
+            <GraduationCap className="mr-2 h-4 w-4 opacity-80" />
+            <span className="truncate">{university}</span>
           </div>
 
           {/* Name */}
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white capitalize mb-3 line-clamp-1">
+          <h3 className="text-white text-2xl font-semibold leading-tight mb-2 line-clamp-1">
             {name}
           </h3>
 
-          {/* Location Information */}
-          <div className="space-y-2 mb-4">
-            <div className="flex items-start gap-2">
-              <MapPin className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0 dark:text-white" />
-              <div className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                <div className="font-medium text-gray-800 dark:text-gray-200">
-                  {district}
-                </div>
-                <div className="text-gray-500 dark:text-gray-400">
-                  {upazila} • {division}
-                </div>
-              </div>
-            </div>
+          {/* Location */}
+          <div className="flex items-center text-slate-300/90 text-sm mb-2">
+            <MapPin className="mr-2 h-4 w-4 opacity-90" />
+            <span className="truncate">{locationText || "Address not specified"}</span>
           </div>
 
-          {/* Rating and Reviews */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                <span className="font-semibold text-gray-800 dark:text-white">{rating}</span>
-              </div>
-              <span className="text-gray-500 text-sm dark:text-gray-400">
-                ({reviewCount} reviews)
+          {/* Subjects (fallback) */}
+          <p className="text-slate-300/90 text-sm mb-5">{subjectsFallback}</p>
+
+          {/* Footer row */}
+          <div className="flex items-center justify-between">
+            {/* Rating */}
+            <div className="flex items-center text-slate-200">
+              <Star className="h-5 w-5 mr-2 fill-yellow-400 text-yellow-400" />
+              <span className="text-lg font-medium">
+                {Number.isFinite(rating) ? rating.toFixed(1) : "—"}
+              </span>
+              <span className="ml-1 text-slate-400 text-base">
+                ({reviewCount ?? 0})
               </span>
             </div>
-          </div>
-          <div className="flex items-center gap-1 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-lg">
-            <span className="font-bold text-green-700 dark:text-green-400 text-sm">
-              {monthlyRate.toLocaleString()}/mo
+
+            {/* Price pill */}
+            <span
+              className={[
+                "rounded-full px-6 py-3",
+                "text-white text-xs",
+                "bg-blue-600",
+                "whitespace-nowrap",
+              ].join(" ")}
+            >
+              {monthlyRate}
             </span>
           </div>
         </div>
+
+        {/* subtle outer ring */}
+        <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-white/10" />
       </div>
 
-      {/* Tutor Details Drawer */}
-      <TutorDetailsDrawer
-        isOpen={isDrawerOpen}
-        onClose={closeDrawer}
+      <TutorDetailsModal
+        isOpen={showDetailsModal}
+        onClose={() => setShowDetailsModal(false)}
+        onConfirm={() => setShowDetailsModal(false)}
         uid={uid}
-        image={image}
-        teaching_type={teaching_type}
       />
     </>
   );

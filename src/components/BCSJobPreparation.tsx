@@ -1,168 +1,164 @@
-
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useNavigate } from 'react-router-dom';
-import JobPreparationService from '@/services/JobPreparationService';
-import SearchSection from './SearchSection';
-import { useQuery } from '@tanstack/react-query';
-import { Category } from '@/types/jobPreparation';
+// src/components/BCSJobPreparation.tsx
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import JobPreparationService from "@/services/JobPreparationService";
+import { useQuery } from "@tanstack/react-query";
+import { Category } from "@/types/jobPreparation";
+import Header from "./Header";
+import TutorSearchResults from "./TutorSearchResults";
 
 const BCSJobPreparation: React.FC = () => {
   const navigate = useNavigate();
   const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
 
-  const { data: categoriesData, isLoading: categoriesLoading, error } = useQuery({
-    queryKey: ['categories', 1],
+  const {
+    data: categoriesData,
+    isLoading: categoriesLoading,
+    error,
+  } = useQuery({
+    queryKey: ["categories", 1],
     queryFn: () => JobPreparationService.getCategories(1),
   });
 
   useEffect(() => {
     if (categoriesData?.results) {
       setFilteredCategories(categoriesData.results);
-      console.log("Filtered categories:", filteredCategories);
     }
-  });
+  }, [categoriesData]);
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 via-green-900 to-gray-800 py-16 relative overflow-hidden">
-      <div className="absolute inset-0 bg-blue-900 z-0">
-        <img
-          src="/lovable-uploads/cover-image.jpg"
-          alt="Tutor helping student"
-          className="w-full h-full object-cover opacity-40 mix-blend-overlay"
-        />
-      </div>
-      {/* Background overlay */}
-      <div className="absolute inset-0 bg-black/40"></div>
-      
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Exam • Preparation • Succeed
-          </h2>
-          <p className="text-xl text-gray-200">
-            Bangladesh's hub for learning & earning
-          </p>
+    <>
+      {/* Page background (no image here) */}
+      <div className="relative min-h-screen bg-gradient-to-br from-[#0b1220] via-[#0e1b2c] to-[#0b1220] overflow-hidden">
+        <Header />
+        <div className="absolute inset-0">
+          <img
+            src="/lovable-uploads/cover-image.jpg"
+            alt="Tutor search background"
+            className="w-full h-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-[#0b1220]/70" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* Become a Tutor Card */}
-          <Card className="bg-background border border-gray-700 text-white backdrop-blur-md shadow-xl rounded-2xl overflow-hidden flex flex-col">
-            <CardHeader className="pb-6">
-              <CardTitle className="text-3xl font-bold mb-2">
-                Become a Tutor — <span className="text-2xl">টিউটর হয়ে উঠুন</span>
-              </CardTitle>
-            </CardHeader>
+        <div className="container mx-auto px-4 relative z-10" style={{ marginBottom: "21rem" }}>
+          <div className="text-center mb-12 pt-8">
+            <h2 className="text-2xl md:text-6xl font-bold text-white mb-4 font-unbounded">
+              Exam • Preparation • Succeed
+            </h2>
+            <p className="text-xl text-gray-200">
+              Bangladesh&apos;s hub for learning &amp; earning
+            </p>
+          </div>
 
-            <CardContent className="flex flex-col flex-1">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1">
-                <div className="flex flex-col">
-                  <div className="bbg-background border border-gray-700 rounded-xl p-4">
-                    <div className="text-4xl font-bold mb-2">5,000+ Tutors</div>
-                    <p className="text-gray-300 text-sm">From top universities</p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            {/* Become a Tutor */}
+            <div className="bg-white/10 border border-white/15 backdrop-blur-lg shadow-[0_10px_30px_rgba(0,0,0,0.35)] hover:shadow-[0_16px_40px_rgba(0,0,0,0.45)] transition rounded-3xl overflow-hidden flex flex-col p-4">
+              <div className="pb-2">
+                <h2 className="text-2xl font-bold mb-2 text-white font-unbounded">
+                  Become a Tutor
+                </h2>
+              </div>
+
+              <div className="flex flex-col lg:flex-row gap-8 flex-1">
+                {/* Left */}
+                <div className="flex flex-col lg:w-1/2">
+                  <div className="bg-white/10 border border-white/15 rounded-2xl p-6 mb-6 backdrop-blur-sm">
+                    <div className="text-2xl font-bold mb-2 text-white">
+                      5,000+ Tutors
+                    </div>
+                    <p className="text-gray-300 text-sm">From Top University</p>
                   </div>
 
-                  <div className="flex gap-3 justify-center mt-4 mb-4">
+                  <div className="flex gap-3 justify-center">
                     {[1, 2, 3, 4, 5, 6].map((i) => (
                       <div
                         key={i}
-                        className="w-12 h-12 bg-slate-700 rounded-lg flex items-center justify-center"
-                      >
-                        <div className="w-6 h-6 bg-slate-600 rounded"></div>
+                        >
+                          <div className="w-8 h-8 bg-gray-400/60 rounded-lg" />
+                        </div>
+                      ))}
+                  </div>
+                </div>
+
+                <div className="lg:w-1/2 flex flex-col justify-between">
+                  <div className="space-y-4 text-left">
+                    {[
+                      "Don't be unemployed - help yourself",
+                      "Be proud of your own income without taking money from your parents.",
+                      "Girls' safety first: Online Tuition is perfect & time-saving even if you don't go out at night.",
+                    ].map((t, idx) => (
+                      <div key={idx} className="flex items-start">
+                        <div className="w-2 h-2 bg-white rounded-full mr-4 mt-2" />
+                        <p className="text-gray-300 text-sm leading-relaxed">{t}</p>
                       </div>
                     ))}
                   </div>
-                </div>
 
-                <div>
-                  <div className="space-y-4 text-left ml-2">
-                    <p className="text-gray-300">
-                      Don't be unemployed — <span className="text-sm">নিজেকে সাহায্য করুন।</span>
-                    </p>
-                    <p className="text-gray-300 text-sm">
-                      বাবা-মার কাছে থেকে টাকা না নিয়ে নিজের আয়ে গর্বাশীল হন।
-                    </p>
-                    <p className="text-gray-300">
-                      Girls' safety first:{" "}
-                      <span className="text-sm">
-                        রাতে বাইরে না গেলেও Online Tuition is perfect & time-saving.
-                      </span>
-                    </p>
-                  </div>
+                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-8 rounded-2xl text-sm mt-8 transition-all duration-300 transform hover:scale-[1.02]">
+                    Start Teaching
+                  </button>
                 </div>
               </div>
-              <Button
-                className="w-full bg-cyan-400 hover:bg-cyan-500 text-black font-semibold py-3 rounded-xl text-lg mt-auto"
-                onClick={() => navigate('/auth/registration')}
-              >
-                Start Teaching
-              </Button>
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Job Preparation Card */}
-          <Card className="bg-background border border-gray-700 text-white backdrop-blur-md shadow-xl rounded-2xl overflow-hidden flex flex-col">
-            <CardHeader className="pb-8">
-              <CardTitle className="text-3xl font-bold mb-0">
-                Job Preparation — <span className="text-2xl">চাকরির প্রস্তুতি</span>
-              </CardTitle>
-            </CardHeader>
+            <div className="bg-white/10 border border-white/15 backdrop-blur-lg shadow-[0_10px_30px_rgba(0,0,0,0.35)] hover:shadow-[0_16px_40px_rgba(0,0,0,0.45)] transition rounded-3xl overflow-hidden flex flex-col p-4">
+              <div className="pb-2">
+                <h1 className="text-2xl font-bold mb-2 text-white font-unbounded">
+                  Job Preparation
+                </h1>
+              </div>
 
-            <CardContent className="flex flex-col flex-1">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1">
-                <div className="flex flex-col">
-                  <div className="bbg-background border border-gray-700 rounded-xl p-4">
-                    <div className="text-4xl font-bold mb-2">
-                      130,000+
+              <div className="flex flex-col lg:flex-row gap-8 flex-1">
+                {/* Left */}
+                <div className="flex flex-col lg:w-1/2">
+                  <div className="bg-white/10 border border-white/15 rounded-2xl p-6 mb-6 backdrop-blur-sm">
+                    <div className="text-2xl font-bold mb-2 text-white">
+                      130k+ Questions
                     </div>
-                    <p className="text-gray-300 text-sm">Questions</p>
+                    <p className="text-gray-300 text-sm">From Top University</p>
+                  </div>
+
+                  <div className="flex gap-3 justify-center">
+                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                      <div
+                        key={i}
+                      >
+                        <div className="w-8 h-8 bg-gray-400/60 rounded-lg" />
+                      </div>
+                      ))}
                   </div>
                 </div>
 
-                <div>
-                  <div className="space-y-4 text-left ml-2">
-                    <p className="text-gray-300">
-                      Daily Model Test — প্রতিদিন প্র্যাকটিস।
-                    </p>
-                    <p className="text-gray-300 text-sm">
-                      Self Model Test: subject/topic অনুযায়ী নিজের মতো তৈরি করুন।
-                    </p>
-                    <p className="text-gray-300">
-                      Free Exams & Detailed Explanations.
-                    </p>
+                {/* Right */}
+                <div className="lg:w-1/2 flex flex-col justify-between">
+                  <div className="space-y-4 text-left">
+                    {[
+                      "Don't be unemployed - help yourself",
+                      "Be proud of your own income without taking money from your parents.",
+                      "Girls' safety first: Online Tuition is perfect & time-saving even if you don't go out at night.",
+                    ].map((t, idx) => (
+                      <div key={idx} className="flex items-start">
+                        <div className="w-2 h-2 bg-white rounded-full mr-4 mt-2" />
+                        <p className="text-gray-300 text-sm leading-relaxed">{t}</p>
+                      </div>
+                      ))}
                   </div>
+
+                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-8 rounded-2xl text-sm mt-8 transition-all duration-300 transform hover:scale-[1.02]">
+                    Start Preparation
+                  </button>
                 </div>
               </div>
-              <div className="flex mt-4 mb-4">
-                <div className="flex gap-3 whitespace-nowrap pb-0">
-                  {filteredCategories.map((category, index) => {
-                    return (
-                      <Badge
-                        key={category.uid}
-                        className={`${index === 0 ? "bg-cyan-500 hover:bg-cyan-500" : "bg-slate-700 hover:bg-cyan-500"
-                          } text-white px-4 p-1 rounded-full text-sm font-medium border border-slate-600 cursor-pointer`}
-                        onClick={() => navigate(`job-preparation/category/${category.uid}`)}
-                      >
-                        {category.category_name}
-                      </Badge>
-                    );
-                  })}
-                </div>
-              </div>
-              <Button
-                className="w-full bg-cyan-400 hover:bg-cyan-500 text-black font-semibold py-3 rounded-xl text-lg mt-auto"
-                onClick={() => navigate('job-preparation/questions')}
-              >
-                Start Preparation
-              </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
-        <SearchSection />
       </div>
-    </div>
+      <section className="relative" style={{ marginTop: "-18rem" }}>
+        <div className="relative z-10 container mx-auto p-0">
+          <TutorSearchResults />
+        </div>
+      </section>
+    </>
   );
 };
 

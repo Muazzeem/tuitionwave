@@ -41,8 +41,8 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
 
   return (
     <div
-      className="flex justify-between items-center py-2 px-4 sm:px-6 dark:bg-background relative z-20 shadow-md"
-      style={{ backgroundColor: "#192642" }}
+      className="flex justify-between items-center py-2 px-4 sm:px-6 relative z-20 shadow-md"
+      style={{ backgroundColor: "#182641" }}
     >
       <button
         onClick={toggleMobileMenu}
@@ -69,8 +69,8 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
           to="/dashboard/guardian"
           className={`px-4 py-2 shadow-xl text-white rounded-full font-bold text-xs transition-all duration-200 ${  
             userTypeFromUrl === 'GUARDIAN'
-            ? 'bg-cyan-400 hover:bg-cyan-500 text-white'
-            : 'bg-gray-900 hover:bg-cyan-500'
+            ? 'bg-blue-500 hover:bg-primary-600 text-white'
+            : 'bg-gray-900 hover:bg-primary-600'
           }`}
         >
           Guardian
@@ -80,8 +80,8 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
           to="/dashboard/teacher"
           className={`px-4 py-2 shadow-xl text-white rounded-full font-bold text-xs transition-all duration-200 ${
             userTypeFromUrl === 'TEACHER'
-            ? 'bg-cyan-400 hover:bg-cyan-500 text-white'
-            : 'bg-gray-900 hover:bg-cyan-500'
+            ? 'bg-primary-500 hover:bg-primary-600 text-white'
+            : 'bg-gray-900 hover:bg-primary-600'
           }`}
         >
           Tutor
@@ -91,8 +91,8 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
           to="/job-preparation/dashboard"
           className={`px-4 py-2 shadow-xl text-white rounded-full font-bold text-xs transition-all duration-200 ${
             userTypeFromUrl === 'STUDENT'
-            ? 'bg-cyan-400 hover:bg-cyan-500 text-white'
-            : 'bg-gray-900 hover:bg-cyan-500'
+            ? 'bg-primary-500 hover:bg-primary-600 text-white'
+            : 'bg-gray-900 hover:bg-primary-600'
           }`}
         >
           Job Preparation

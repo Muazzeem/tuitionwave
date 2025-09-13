@@ -11,7 +11,7 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ title, value }) => {
   return (
-    <div className="shadow-sm p-5 rounded-lg shadow-none border border-gray-100 bg-background border-gray-900">
+    <div className="shadow-sm p-5 rounded-xl shadow-none border-0 bg-background-900 shadow-lg">
       <h3 className="text-sm font-medium mb-1 text-white">{title}</h3>
       <p className="text-3xl font-bold text-white">{value}</p>  
     </div>
@@ -39,10 +39,13 @@ const StatsCards: React.FC = () => {
   const pendingCount = data?.results.filter(r => r.status_display.toLowerCase() === 'pending').length || 0;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <StatCard title="All Requests" value={data?.count || 0} />
-      <StatCard title="Accepted Requests" value={acceptedCount} />
-      <StatCard title="Pending Requests" value={pendingCount} />
+    <div className="bg-background-800 border-0 rounded-xl p-4 space-y-4">
+      <p className='text-white'>Summary</p>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pb-6">
+        <StatCard title="All Requests" value={data?.count || 0} />
+        <StatCard title="Accepted Requests" value={acceptedCount} />
+        <StatCard title="Pending Requests" value={pendingCount} />
+      </div>
     </div>
   );
 };
