@@ -11,7 +11,7 @@ const GuardianProfile = () => {
             <DashboardHeader userName="Mamun" />
             <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
                 <div className="flex justify-center pt-10 pb-20">
-                    <div className="w-full max-w-5xl bg-background border border-gray-700 rounded-lg">
+                    <div className="w-full max-w-5xl bg-background border border-gray-700 rounded-lg pl-8 pr-8 pb-3">
                         <div className="rounded-lg">
                             <Tabs defaultValue="general" className="w-full bg-background">
                                 <div className="px-4 pt-4">

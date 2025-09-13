@@ -1,7 +1,4 @@
-
 import React, { useState, useRef, useEffect } from 'react';
-import Editor, { } from 'react-simple-wysiwyg';
-
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
@@ -9,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format, parseISO } from 'date-fns';
-import { X, Linkedin, Camera, User, Search, ChevronDown } from 'lucide-react';
+import { Linkedin, Search, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import axios from 'axios';
 import { useToast } from './ui/use-toast';
@@ -18,7 +15,12 @@ import { getAccessToken } from '@/utils/auth';
 import { Tutor } from '@/types/tutor';
 import { ProfileFormData, Division, District, Upazila } from '@/types/common';
 import { ProfileCompletionAlertRef } from './ProfileCompletionAlert';
+import { ProfilePictureSection } from './ProfilePicture/ProfilePictureSection';
 
+export interface Area {
+  id: number;
+  name: string;
+}
 
 interface PersonalInfoFormProps {
   formData: ProfileFormData;
@@ -32,7 +34,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState(false);
   const accessToken = getAccessToken();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -41,44 +42,21 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
   const [divisions, setDivisions] = useState<Division[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
   const [upazilas, setUpazilas] = useState<Upazila[]>([]);
+  const [areas, setAreas] = useState<Area[]>([]);
 
   // Search states
   const [divisionSearch, setDivisionSearch] = useState('');
   const [districtSearch, setDistrictSearch] = useState('');
   const [upazilaSearch, setUpazilaSearch] = useState('');
+  const [areaSearch, setAreaSearch] = useState('');
 
   // Dropdown states
   const [showDivisionDropdown, setShowDivisionDropdown] = useState(false);
   const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
   const [showUpazilaDropdown, setShowUpazilaDropdown] = useState(false);
+  const [showAreaDropdown, setShowAreaDropdown] = useState(false);
 
-
-  // Fetch divisions on component mount for teachers
-  useEffect(() => {
-    fetchDivisions();
-  }, []);
-
-  // Fetch districts when division changes
-  useEffect(() => {
-    if (formData.division_id) {
-      fetchDistricts(formData.division_id);
-    } else {
-      setDistricts([]);
-      setUpazilas([]);
-      updateFormData({ preferred_district_id: null, preferred_upazila_id: null });
-    }
-  }, [formData.division_id]);
-
-  // Fetch upazilas when preferred district changes
-  useEffect(() => {
-    if (formData.preferred_district_id) {
-      fetchUpazilas(formData.preferred_district_id);
-    } else {
-      setUpazilas([]);
-      updateFormData({ preferred_upazila_id: null });
-    }
-  }, [formData.preferred_district_id]);
-
+  // Fetch data functions
   const fetchDivisions = async () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/divisions/`);
@@ -111,40 +89,100 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
     }
   };
 
-  // Handle search with debouncing
+  const fetchAreas = async (upazilaId: number, search = '') => {
+    try {
+      const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
+      const response = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/areas/?upazila=${upazilaId}${searchParam}`);
+      const data = await response.json();
+      setAreas(data.results || []);
+    } catch (error) {
+      console.error('Error fetching areas:', error);
+    }
+  };
+
+  // Effects
+  useEffect(() => {
+    fetchDivisions();
+  }, []);
+
+  useEffect(() => {
+    if (formData.division_id) {
+      fetchDistricts(formData.division_id);
+    } else {
+      setDistricts([]);
+      setUpazilas([]);
+      setAreas([]);
+      updateFormData({
+        preferred_district_id: null,
+        preferred_upazila_id: null,
+        preferred_area_id: null
+      });
+    }
+  }, [formData.division_id]);
+
+  useEffect(() => {
+    if (formData.preferred_district_id) {
+      fetchUpazilas(formData.preferred_district_id);
+    } else {
+      setUpazilas([]);
+      setAreas([]);
+      updateFormData({
+        preferred_upazila_id: null,
+        preferred_area_id: null
+      });
+    }
+  }, [formData.preferred_district_id]);
+
+  useEffect(() => {
+    if (formData.preferred_upazila_id) {
+      fetchAreas(formData.preferred_upazila_id);
+    } else {
+      setAreas([]);
+      updateFormData({ preferred_area_id: null });
+    }
+  }, [formData.preferred_upazila_id]);
+
+  // Search debouncing effects
   useEffect(() => {
     const timer = setTimeout(() => {
-        if (formData.division_id && districtSearch !== '') {
-          fetchDistricts(formData.division_id, districtSearch);
-        }
-      }, 300);
-      return () => clearTimeout(timer);
+      if (formData.division_id && districtSearch !== '') {
+        fetchDistricts(formData.division_id, districtSearch);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
   }, [districtSearch, formData.division_id]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-        if (formData.preferred_district_id && upazilaSearch !== '') {
-          fetchUpazilas(formData.preferred_district_id, upazilaSearch);
-        }
-      }, 300);
-      return () => clearTimeout(timer);
+      if (formData.preferred_district_id && upazilaSearch !== '') {
+        fetchUpazilas(formData.preferred_district_id, upazilaSearch);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
   }, [upazilaSearch, formData.preferred_district_id]);
 
-  // Fetch profile data on component mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (formData.preferred_upazila_id && areaSearch !== '') {
+        fetchAreas(formData.preferred_upazila_id, areaSearch);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [areaSearch, formData.preferred_upazila_id]);
+
+  // Fetch profile data on mount
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/tutors/my-profile`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-          }
-        );
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/tutors/my-profile`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
+
         const profileData: Tutor = response.data;
         updateFormData({
           uid: profileData.uid,
@@ -160,13 +198,13 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
           description: profileData.description || '',
           division_id: profileData.user.division?.id || null,
           preferred_district_id: profileData.user.preferred_districts?.[0]?.id || null,
-          preferred_upazila_id: profileData.user.preferred_upazila?.[0]?.id || null
+          preferred_upazila_id: profileData.user.preferred_upazila?.[0]?.id || null,
+          preferred_area_id: profileData.user.preferred_area?.[0]?.id || null,
         });
 
         if (profileData.profile_picture_url && typeof profileData.profile_picture_url === 'string') {
           setPreviewUrl(profileData.profile_picture_url);
         }
-
       } catch (error) {
         console.error('Error fetching profile data:', error);
         toast({
@@ -182,55 +220,29 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
     fetchProfileData();
   }, []);
 
+  // Event handlers
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     updateFormData({ [name]: value });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (!file.type.startsWith('image/')) {
-        toast({
-          title: 'Error',
-          description: 'Please select a valid image file.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: 'Error',
-          description: 'File size must be less than 5MB.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      setPreviewUrl(URL.createObjectURL(file));
-      setSelectedFile(file);
-    }
+  const handleFileSelect = (file: File) => {
+    setPreviewUrl(URL.createObjectURL(file));
+    setSelectedFile(file);
   };
 
   const handleRemoveImage = () => {
     setPreviewUrl(null);
     setSelectedFile(null);
     updateFormData({ profile_picture: null });
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  const triggerFileInput = () => {
-    fileInputRef.current?.click();
   };
 
   const handleDivisionSelect = (division: Division) => {
     updateFormData({
       division_id: division.id,
       preferred_district_id: null,
-      preferred_upazila_id: null
+      preferred_upazila_id: null,
+      preferred_area_id: null,
     });
     setDivisionSearch(division.name);
     setShowDivisionDropdown(false);
@@ -239,44 +251,39 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
   const handleDistrictSelect = (district: District) => {
     updateFormData({
       preferred_district_id: district.id,
-      preferred_upazila_id: null
+      preferred_upazila_id: null,
+      preferred_area_id: null,
     });
     setDistrictSearch(district.name);
     setShowDistrictDropdown(false);
   };
 
   const handleUpazilaSelect = (upazila: Upazila) => {
-    updateFormData({ preferred_upazila_id: upazila.id });
+    updateFormData({
+      preferred_upazila_id: upazila.id,
+      preferred_area_id: null
+    });
     setUpazilaSearch(upazila.name);
     setShowUpazilaDropdown(false);
   };
 
-  const getSelectedDivisionName = () => {
-    const selectedDivision = divisions.find(d => d.id === formData.division_id);
-    return selectedDivision ? selectedDivision.name : divisionSearch;
+  const handleAreaSelect = (area: Area) => {
+    updateFormData({ preferred_area_id: area.id });
+    setAreaSearch(area.name);
+    setShowAreaDropdown(false);
   };
 
-  const getSelectedDistrictName = () => {
-    const selectedDistrict = districts.find(d => d.id === formData.preferred_district_id);
-    return selectedDistrict ? selectedDistrict.name : districtSearch;
+  // Utility functions
+  const getSelectedName = (id: number | null, items: any[], searchValue: string) => {
+    const selected = items.find(item => item.id === id);
+    return selected ? selected.name : searchValue;
   };
 
-  const getSelectedUpazilaName = () => {
-    const selectedUpazila = upazilas.find(u => u.id === formData.preferred_upazila_id);
-    return selectedUpazila ? selectedUpazila.name : upazilaSearch;
+  const filterItems = (items: any[], searchValue: string) => {
+    return items.filter(item =>
+      item.name.toLowerCase().includes(searchValue.toLowerCase())
+    );
   };
-
-  const filteredDivisions = divisions.filter(division =>
-    division.name.toLowerCase().includes(divisionSearch.toLowerCase())
-  );
-
-  const filteredDistricts = districts.filter(district =>
-    district.name.toLowerCase().includes(districtSearch.toLowerCase())
-  );
-
-  const filteredUpazilas = upazilas.filter(upazila =>
-    upazila.name.toLowerCase().includes(upazilaSearch.toLowerCase())
-  );
 
   const handleSubmit = async () => {
     try {
@@ -291,62 +298,66 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
 
       setIsSaving(true);
 
-        // For teachers, update both profile and tutor-specific data
-        const submitData = new FormData();
+      const submitData = new FormData();
 
-        // Basic info
-        submitData.append('first_name', formData.first_name || '');
-        submitData.append('last_name', formData.last_name || '');
-        submitData.append('phone', formData.phone || '');
-        submitData.append('address', formData.address || '');
+      // Basic info
+      submitData.append('first_name', formData.first_name || '');
+      submitData.append('last_name', formData.last_name || '');
+      submitData.append('phone', formData.phone || '');
+      submitData.append('address', formData.address || '');
 
-        // Location fields
-        if (formData.division_id) {
-          submitData.append('division', formData.division_id.toString());
-        }
-        if (formData.preferred_district_id) {
-          submitData.append('preferred_districts', formData.preferred_district_id.toString());
-        }
-        if (formData.preferred_upazila_id) {
-          submitData.append('preferred_upazila', formData.preferred_upazila_id.toString());
-        }
+      // Location fields
+      if (formData.division_id) {
+        submitData.append('division', formData.division_id.toString());
+      }
+      if (formData.preferred_district_id) {
+        submitData.append('preferred_districts', formData.preferred_district_id.toString());
+      }
+      if (formData.preferred_upazila_id) {
+        submitData.append('preferred_upazila', formData.preferred_upazila_id.toString());
+      }
+      if (formData.preferred_area_id) {
+        submitData.append('preferred_area', formData.preferred_area_id.toString());
+      }
 
-        // Profile picture
-        if (selectedFile) {
-          submitData.append('profile_picture', selectedFile);
-        } else if (formData.profile_picture === null) {
-          submitData.append('profile_picture', '');
-        }
+      // Profile picture
+      if (selectedFile) {
+        submitData.append('profile_picture', selectedFile);
+      } else if (formData.profile_picture === null) {
+        submitData.append('profile_picture', '');
+      }
 
-        // Update profile via profile API
-        await axios.patch(`${import.meta.env.VITE_API_URL}/api/profile/`, submitData, {
+      // Update profile
+      await axios.patch(`${import.meta.env.VITE_API_URL}/api/profile/`, submitData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Update tutor-specific fields
+      const tutorPayload = {
+        gender: formData.gender,
+        birth_date: formData.birthDate ? format(formData.birthDate, 'yyyy-MM-dd') : null,
+        linkedin_profile: formData.linkedinProfile,
+        description: formData.description,
+      };
+
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/tutors/${formData.uid}/`,
+        tutorPayload,
+        {
           headers: {
             Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
           },
-        });
+        }
+      );
 
-        // Update tutor-specific fields
-        const tutorPayload = {
-          gender: formData.gender,
-          birth_date: formData.birthDate ? format(formData.birthDate, 'yyyy-MM-dd') : null,
-          linkedin_profile: formData.linkedinProfile,
-          description: formData.description,
-        };
-
-        await axios.put(
-          `${import.meta.env.VITE_API_URL}/api/tutors/${formData.uid}/`,
-          tutorPayload,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
       toast({
         title: "Success",
         description: "Personal information updated successfully!",
       });
+
       onNext();
       profileRef.current?.reload();
     } catch (error) {
@@ -361,65 +372,77 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
     }
   };
 
+  // Custom Dropdown Component
+  const CustomDropdown = ({
+    label,
+    items,
+    selectedId,
+    searchValue,
+    onSearchChange,
+    onSelect,
+    showDropdown,
+    setShowDropdown,
+    placeholder
+  }: any) => (
+    <div className="relative">
+      <Label className="text-white">{label}</Label>
+      <div className="relative mt-1">
+        <div
+          className="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded-md cursor-pointer flex items-center justify-between text-white hover:border-slate-500 transition-colors"
+          onClick={() => setShowDropdown(!showDropdown)}
+        >
+          <span className={getSelectedName(selectedId, items, searchValue) ? 'text-white' : 'text-gray-400'}>
+            {getSelectedName(selectedId, items, searchValue) || placeholder}
+          </span>
+          <ChevronDown className="w-4 h-4 text-gray-400" />
+        </div>
+        {showDropdown && (
+          <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-600 rounded-md shadow-xl">
+            <div className="p-2 border-b border-slate-700">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input
+                  placeholder={`Search ${label.toLowerCase()}...`}
+                  value={searchValue}
+                  onChange={(e) => onSearchChange(e.target.value)}
+                  className="pl-10 bg-slate-700 border-slate-600 text-white focus:border-slate-500"
+                />
+              </div>
+            </div>
+            <div className="max-h-60 overflow-y-auto">
+              {filterItems(items, searchValue).map((item) => (
+                <div
+                  key={item.id}
+                  className="px-4 py-2 hover:bg-slate-700 cursor-pointer text-white"
+                  onClick={() => onSelect(item)}
+                >
+                  {item.name}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  if (isLoading) {
+    return <div className="text-center text-gray-400">Loading profile data...</div>;
+  }
+
   return (
     <div className="space-y-6">
-      {isLoading &&
-        <div className="text-center text-gray-400">Loading profile data...</div>
-      }
-
       {/* Profile Picture Section */}
       <div className="flex flex-col items-center space-y-4">
-        <div className="relative">
-          <div className="w-32 h-32 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden border-4 border-slate-600">
-            {previewUrl ? (
-              <img
-                src={previewUrl}
-                alt="Profile preview"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <User className="w-16 h-16 text-gray-400" />
-            )}
-          </div>
-          {previewUrl && (
-            <button
-              type="button"
-              onClick={handleRemoveImage}
-              className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-
-        <div className="flex space-x-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={triggerFileInput}
-            className="flex items-center space-x-2 bg-cyan-400 hover:bg-cyan-500 text-black border-0 font-semibold"
-          >
-            <Camera className="w-4 h-4" />
-            <span>{previewUrl ? 'Change Picture' : 'Upload Picture'}</span>
-          </Button>
-        </div>
-
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="hidden"
+        <ProfilePictureSection
+          previewUrl={previewUrl}
+          onFileSelect={handleFileSelect}
+          onRemoveImage={handleRemoveImage}
         />
-
-        <p className="text-sm text-gray-400 text-center">
-          Supported formats: JPG, PNG, GIF<br />
-          Maximum size: 5MB
-        </p>
       </div>
 
       {/* Basic Info Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="first_name" className="text-white">First Name</Label>
           <Input
@@ -430,6 +453,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
           />
         </div>
+
         <div>
           <Label htmlFor="last_name" className="text-white">Last Name</Label>
           <Input
@@ -440,6 +464,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
           />
         </div>
+
         <div>
           <Label htmlFor="email" className="text-white">Email</Label>
           <Input
@@ -451,6 +476,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             disabled
           />
         </div>
+
         <div>
           <Label htmlFor="phone" className="text-white">Phone <span className="text-red-400">*</span></Label>
           <Input
@@ -462,10 +488,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
             className="mt-1 text-white bg-slate-800/50 border-slate-600 focus:border-slate-500 focus:ring-slate-500"
           />
         </div>
-      </div>
 
-      {/* Gender and Birth Date */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="gender" className="text-white">Gender</Label>
           <Select
@@ -510,17 +533,6 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
         </div>
       </div>
 
-      {/* Description */}
-      <div>
-        <Label htmlFor="description" className="text-white">Description</Label>
-        <Editor
-          containerProps={{ style: { resize: 'vertical' } }}
-          value={formData.description}
-          onChange={(e) => updateFormData({ description: e.target.value })}
-          className="mt-1 text-white bg-slate-800/50 border-slate-600"
-        />
-      </div>
-
       {/* LinkedIn */}
       <div>
         <Label htmlFor="linkedin" className="text-white">LinkedIn Profile</Label>
@@ -538,135 +550,63 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, updateFor
 
       {/* Location Section */}
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Division Selection */}
-          <div className="relative">
-            <Label className="text-white">Division</Label>
-            <div className="relative mt-1">
-              <div
-                className="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded-md cursor-pointer flex items-center justify-between text-white hover:border-slate-500 transition-colors"
-                onClick={() => setShowDivisionDropdown(!showDivisionDropdown)}
-              >
-                <span className={getSelectedDivisionName() ? 'text-white' : 'text-gray-400'}>
-                  {getSelectedDivisionName() || 'Select Division'}
-                </span>
-                <ChevronDown className="w-4 h-4 text-gray-400" />
-              </div>
-              {showDivisionDropdown && (
-                <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-600 rounded-md shadow-xl">
-                  <div className="p-2 border-b border-slate-700">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input
-                        placeholder="Search divisions..."
-                        value={divisionSearch}
-                        onChange={(e) => setDivisionSearch(e.target.value)}
-                        className="pl-10 bg-slate-700 border-slate-600 text-white focus:border-slate-500"
-                      />
-                    </div>
-                  </div>
-                  <div className="max-h-60 overflow-y-auto">
-                    {filteredDivisions.map((division) => (
-                      <div
-                        key={division.id}
-                        className="px-4 py-2 hover:bg-slate-700 cursor-pointer text-white"
-                        onClick={() => handleDivisionSelect(division)}
-                      >
-                        {division.name}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Division */}
+          <CustomDropdown
+            label="Division"
+            items={divisions}
+            selectedId={formData.division_id}
+            searchValue={divisionSearch}
+            onSearchChange={setDivisionSearch}
+            onSelect={handleDivisionSelect}
+            showDropdown={showDivisionDropdown}
+            setShowDropdown={setShowDivisionDropdown}
+            placeholder="Select Division"
+          />
 
-          {/* District Selection */}
+          {/* District */}
           {formData.division_id && (
-            <div className="relative">
-              <Label className="text-white">District</Label>
-              <div className="relative mt-1">
-                <div
-                  className="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded-md cursor-pointer flex items-center justify-between text-white hover:border-slate-500 transition-colors"
-                  onClick={() => setShowDistrictDropdown(!showDistrictDropdown)}
-                >
-                  <span className={getSelectedDistrictName() ? 'text-white' : 'text-gray-400'}>
-                    {getSelectedDistrictName() || 'Select District'}
-                  </span>
-                  <ChevronDown className="w-4 h-4 text-gray-400" />
-                </div>
-                {showDistrictDropdown && (
-                  <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-600 rounded-md shadow-xl">
-                    <div className="p-2 border-b border-slate-700">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <Input
-                          placeholder="Search districts..."
-                          value={districtSearch}
-                          onChange={(e) => setDistrictSearch(e.target.value)}
-                          className="pl-10 bg-slate-700 border-slate-600 text-white focus:border-slate-500"
-                        />
-                      </div>
-                    </div>
-                    <div className="max-h-60 overflow-y-auto">
-                      {filteredDistricts.map((district) => (
-                        <div
-                          key={district.id}
-                          className="px-4 py-2 hover:bg-slate-700 cursor-pointer text-white"
-                          onClick={() => handleDistrictSelect(district)}
-                        >
-                          {district.name}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+            <CustomDropdown
+              label="District"
+              items={districts}
+              selectedId={formData.preferred_district_id}
+              searchValue={districtSearch}
+              onSearchChange={setDistrictSearch}
+              onSelect={handleDistrictSelect}
+              showDropdown={showDistrictDropdown}
+              setShowDropdown={setShowDistrictDropdown}
+              placeholder="Select District"
+            />
           )}
 
-          {/* Upazila Selection */}
+          {/* Upazila */}
           {formData.preferred_district_id && (
-            <div className="relative">
-              <Label className="text-white">Upazila</Label>
-              <div className="relative mt-1">
-                <div
-                  className="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded-md cursor-pointer flex items-center justify-between text-white hover:border-slate-500 transition-colors"
-                  onClick={() => setShowUpazilaDropdown(!showUpazilaDropdown)}
-                >
-                  <span className={getSelectedUpazilaName() ? 'text-white' : 'text-gray-400'}>
-                    {getSelectedUpazilaName() || 'Select Upazila'}
-                  </span>
-                  <ChevronDown className="w-4 h-4 text-gray-400" />
-                </div>
-                {showUpazilaDropdown && (
-                  <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-600 rounded-md shadow-xl">
-                    <div className="p-2 border-b border-slate-700">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <Input
-                          placeholder="Search upazilas..."
-                          value={upazilaSearch}
-                          onChange={(e) => setUpazilaSearch(e.target.value)}
-                          className="pl-10 bg-slate-700 border-slate-600 text-white focus:border-slate-500"
-                        />
-                      </div>
-                    </div>
-                    <div className="max-h-60 overflow-y-auto">
-                      {filteredUpazilas.map((upazila) => (
-                        <div
-                          key={upazila.id}
-                          className="px-4 py-2 hover:bg-slate-700 cursor-pointer text-white"
-                          onClick={() => handleUpazilaSelect(upazila)}
-                        >
-                          {upazila.name}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+            <CustomDropdown
+              label="Upazila"
+              items={upazilas}
+              selectedId={formData.preferred_upazila_id}
+              searchValue={upazilaSearch}
+              onSearchChange={setUpazilaSearch}
+              onSelect={handleUpazilaSelect}
+              showDropdown={showUpazilaDropdown}
+              setShowDropdown={setShowUpazilaDropdown}
+              placeholder="Select Upazila"
+            />
+          )}
+
+          {/* Area */}
+          {formData.preferred_upazila_id && (
+            <CustomDropdown
+              label="Area"
+              items={areas}
+              selectedId={formData.preferred_area_id}
+              searchValue={areaSearch}
+              onSearchChange={setAreaSearch}
+              onSelect={handleAreaSelect}
+              showDropdown={showAreaDropdown}
+              setShowDropdown={setShowAreaDropdown}
+              placeholder="Select Area"
+            />
           )}
         </div>
 

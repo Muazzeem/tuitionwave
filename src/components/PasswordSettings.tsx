@@ -92,12 +92,7 @@ const PasswordSettings = () => {
     }
 
     return (
-        <div className="p-6 space-y-8 bg-background border-0 rounded-lg shadow-xl">
-            <div>
-                <h2 className="text-2xl font-bold mb-6 text-white">Password</h2>
-                <p className="mt-1 text-gray-300">Manage and change your password</p>
-            </div>
-
+        <>
             <div className="space-y-6">
                 <div>
                     <h3 className="font-medium mb-1 text-gray-300">Current Password</h3>
@@ -181,12 +176,12 @@ const PasswordSettings = () => {
             <div className="flex justify-end gap-3 pt-4">
                 <Button variant="outline" className="px-6 border-primary text-white hover:bg-primary-700 hover:text-white">Cancel</Button>
                 <Button className="px-6 bg-cyan-400 hover:bg-cyan-500 text-white"
-                disabled={isSaving}
-                onClick={handleChangePassword}>
+                    disabled={isSaving}
+                    onClick={handleChangePassword}>
                     Save Changes
                 </Button>
             </div>
-        </div>
+        </>
     );
 };
 
