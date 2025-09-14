@@ -2,7 +2,7 @@
 import { Search, Filter } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import TutorGrid from '../../components/FindTutors/TutorGrid';
+// import TutorGrid from '../../components/FindTutors/TutorGrid';
 import { ScrollArea } from '../../components/ui/scroll-area';
 import DashboardHeader from '../../components/DashboardHeader';
 import { useEffect, useState } from 'react';

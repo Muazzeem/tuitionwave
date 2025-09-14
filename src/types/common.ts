@@ -157,5 +157,5 @@ export interface ProfileFormData {
   division_id?: number | null;
   preferred_district_id?: number | null;
   preferred_upazila_id?: number | null;
-  preferred_area_id: number | null;
+  preferred_area_id?: number | null;
 }

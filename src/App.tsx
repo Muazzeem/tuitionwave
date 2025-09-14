@@ -49,7 +49,6 @@ import StudentPackageSettings from "./pages/StudentPackageSettings";
 
 
 import { HelmetProvider } from 'react-helmet-async';
-const helmetContext = {};
 
 
 const queryClient = new QueryClient();
@@ -132,13 +131,14 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <AuthProvider>
-        <UserProfileProvider>
-          <TokenValidationWrapper>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <AuthProvider>
+          <UserProfileProvider>
+            <TokenValidationWrapper>
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<HomePage />} />
@@ -338,11 +338,12 @@ const App = () => (
                 } />
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </TokenValidationWrapper>
-        </UserProfileProvider>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+            </TokenValidationWrapper>
+          </UserProfileProvider>
+        </AuthProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;
