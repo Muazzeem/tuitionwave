@@ -1,7 +1,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Target, FileText } from "lucide-react";
+import { Target, FileText, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Tutor } from "@/types/tutor";
@@ -22,7 +22,6 @@ export default function TutorDetailsModal({
     const [tutorDetails, setTutorDetails] = useState<Tutor | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const { userProfile } = useAuth();
 
     useEffect(() => {
         const fetchTutorDetails = async () => {
@@ -62,29 +61,40 @@ export default function TutorDetailsModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-xl sm:p-3 md:p-5 border-0 bg-gray-900 rounded-lg shadow-lg text-white">
-                <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2 text-white font-unbounded">
-                        <Target className="h-5 w-5" />
-                        Tutor Details
-                    </DialogTitle>
-                </DialogHeader>
+            {loading ? (
+                <DialogContent className="max-w-xl sm:p-3 md:p-5 border-0 bg-gray-900 rounded-lg shadow-lg text-white">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-white text-sm text-center">
+                            <Loader2 className="h-5 w-5" />
+                        </DialogTitle>
+                    </DialogHeader>
+                </DialogContent>
+            ) : (
+                <DialogContent className="max-w-xl sm:p-3 md:p-5 border-0 bg-gray-900 rounded-lg shadow-lg text-white">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-white text-sm">
+                            <Target className="h-5 w-5" />
+                                {tutorDetails?.full_name}
+                            </DialogTitle>
+                        </DialogHeader>
 
-                <div className="p-2 md:p-4 flex-grow overflow-y-auto">
+                        <div className="p-2 md:p-4 flex-grow overflow-y-auto">
 
-                </div>
+                        </div>
 
 
-                <DialogFooter>
-                    <Button variant="outline" onClick={onClose} className='border-blue-500 text-blue-foreground text-white
-          hover:bg-blue-600 hover:text-white mt-2 md:mt-0'>
-                        Cancel
-                    </Button>
-                    <Button onClick={onConfirm} className='text-white bg-blue-500 hover:bg-blue-600'>
-                        Create Contract
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
+                        <DialogFooter>
+                            <Button variant="ghost" onClick={onClose} className='border-0 text-white
+                        hover:bg-red-900 hover:text-white mt-2 md:mt-0'>
+                                Cancel
+                            </Button>
+                            <Button onClick={onConfirm} className='text-white bg-blue-700 hover:bg-blue-900'>
+                                Create Contract
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+            )}
+
         </Dialog>
     );
 }

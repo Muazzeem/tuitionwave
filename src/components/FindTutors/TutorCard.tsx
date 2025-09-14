@@ -29,11 +29,6 @@ const TutorCard: React.FC<TutorCardProps> = ({
   image,
   uid,
 }) => {
-  const isOnline =
-    teaching_type?.toLowerCase().includes("online") ||
-    teaching_type === "ONLINE" ||
-    teaching_type === "BOTH";
-
   const locationText = [upazila, district, division].filter(Boolean).join(", ");
   const subjectsFallback = "English · Bangla · Math";
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -59,16 +54,18 @@ const TutorCard: React.FC<TutorCardProps> = ({
             loading="lazy"
           />
 
-          {isOnline && (
+          {teaching_type && (
             <span
               className={[
                 "absolute left-4 top-4 z-10",
-                "rounded-full px-5 py-2",
+                "rounded-full px-3 py-2",
                 "text-white text-xs",
                 "bg-gradient-to-b from-blue-500 to-blue-600",
               ].join(" ")}
             >
-              Online
+              <span
+                className="capitalize"
+              >{teaching_type}</span>
             </span>
           )}
 
@@ -88,36 +85,28 @@ const TutorCard: React.FC<TutorCardProps> = ({
           </div>
 
           {/* Name */}
-          <h3 className="text-white text-2xl font-semibold leading-tight mb-2 line-clamp-1">
+          <h3 className="text-white text-lg font-semibold leading-tight mb-2 line-clamp-1">
             {name}
           </h3>
 
-          {/* Location */}
           <div className="flex items-center text-slate-300/90 text-sm mb-2">
             <MapPin className="mr-2 h-4 w-4 opacity-90" />
-            <span className="truncate">{locationText || "Address not specified"}</span>
+            <span className="truncate text-xs">{locationText || "Address not specified"}</span>
           </div>
-
-          {/* Subjects (fallback) */}
-          <p className="text-slate-300/90 text-sm mb-5">{subjectsFallback}</p>
-
-          {/* Footer row */}
+          <p className="text-slate-300/90 text-xs mb-5">{subjectsFallback}</p>
           <div className="flex items-center justify-between">
-            {/* Rating */}
             <div className="flex items-center text-slate-200">
               <Star className="h-5 w-5 mr-2 fill-yellow-400 text-yellow-400" />
-              <span className="text-lg font-medium">
+              <span className="text-sm font-medium">
                 {Number.isFinite(rating) ? rating.toFixed(1) : "—"}
               </span>
-              <span className="ml-1 text-slate-400 text-base">
+              <span className="ml-1 text-slate-400 text-base text-sm">
                 ({reviewCount ?? 0})
               </span>
             </div>
-
-            {/* Price pill */}
             <span
               className={[
-                "rounded-full px-6 py-3",
+                "rounded-full px-3 py-2",
                 "text-white text-xs",
                 "bg-blue-600",
                 "whitespace-nowrap",

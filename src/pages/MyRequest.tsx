@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DashboardHeader from "@/components/DashboardHeader";
-import { Search, Filter, Eye, MoreVertical, User } from "lucide-react";
+import { Search, Filter, Eye, MoreVertical, User, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,9 +25,11 @@ import { useQuery } from "@tanstack/react-query";
 import { getAccessToken } from "@/utils/auth";
 import { ContractResponse, Contract } from "@/types/contract";
 import { useAuth } from "@/contexts/AuthContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { set } from "date-fns";
 
 const MyRequest: React.FC = () => {
-  const { userProfile, reloadProfile } = useAuth();
+  const { userProfile } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -47,6 +49,9 @@ const MyRequest: React.FC = () => {
   });
   const [isSearching, setIsSearching] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const onClose = () => setIsOpen(false);
 
   // Debounce search query with 2 second delay
   useEffect(() => {
@@ -215,7 +220,6 @@ const MyRequest: React.FC = () => {
     // Mobile Card Layout
     const MobileCard = () => (
       <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 space-y-4 hover:bg-gray-800/70 transition-all duration-200">
-        {/* Header with ID and Actions */}
         <div className="flex items-center justify-between">
           <div
             className="font-mono text-sm font-semibold text-blue-400 hover:text-blue-300 cursor-pointer transition-colors"
@@ -383,17 +387,17 @@ const MyRequest: React.FC = () => {
 
       <div className="p-4 sm:p-6">
         <div className="mb-4 sm:mb-6">
-          <h1 className="text-xl sm:text-2xl font-bold text-white">My Tuition Request</h1>
+          <h1 className="text-xl md:text-3xl font-bold text-white font-unbounded">Tuition Request</h1>
           <p className="text-sm sm:text-base text-gray-300">
             Explore all the tuition request from guardian
           </p>
         </div>
 
-        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl shadow-xl">
+        <div className='bg-background border-gray-900 rounded-xl p-3'>
           {/* Header */}
-          <div className="p-4 sm:p-6 border-b border-gray-700/50">
+          <div className="p-2 border-b border-gray-700/50">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-              <h2 className="text-xl font-bold text-white">All Tuition Request</h2>
+              <h2 className="text-xl font-bold text-white"></h2>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -408,8 +412,12 @@ const MyRequest: React.FC = () => {
                 </div>
                 <Button
                   variant="outline"
-                  className="bg-transparent border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 transition-colors"
-                  onClick={handleAdvancedSearch}
+                  className="bg-transparent border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 transition-colors hover:text-white text-xs"
+                  onClick={
+                    () => {
+                      setIsOpen(true);
+                    }
+                  }
                 >
                   <Filter className="h-4 w-4 mr-2" />
                   Filters
@@ -419,7 +427,7 @@ const MyRequest: React.FC = () => {
           </div>
 
           {/* Content */}
-          <div className="p-4 sm:p-6">
+          <div className="p-2">
             {isLoading ? (
               <div className="animate-pulse space-y-4">
                 <div className="flex justify-between items-center">
@@ -448,35 +456,35 @@ const MyRequest: React.FC = () => {
                 <p className="text-gray-500">You don't have any tuition requests yet.</p>
               </div>
             ) : (
-              <div className="space-y-4 lg:space-y-0">
+                    <div className="bg-background md:bg-gray-900/50 backdrop-blur-sm rounded-xl">
                 {/* Desktop Layout */}
                 <div className="hidden lg:block">
-                  <div className="overflow-x-auto">
+                        <div className="overflow-x-auto rounded-lg">
                     <table className="min-w-full">
-                      <thead>
+                            <thead className="bg-primary-600">
                         <tr className="border-b border-gray-700/30">
-                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <th className="py-4 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Request ID
                           </th>
-                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <th className="py-4 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Institution
                           </th>
-                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <th className="py-4 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Class
                           </th>
-                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <th className="py-4 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Subjects
                           </th>
-                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <th className="py-4 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Area
                           </th>
-                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <th className="py-4 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Type
                           </th>
-                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <th className="py-4 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Status
                           </th>
-                          <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <th className="py-4 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Actions
                           </th>
                         </tr>
@@ -498,7 +506,7 @@ const MyRequest: React.FC = () => {
                 </div>
 
                 {/* Pagination */}
-                      <div className="pb-10"></div>
+
                       <div className="mt-10">
                   <Pagination>
                     <PaginationContent className="flex-wrap gap-1">
@@ -534,6 +542,7 @@ const MyRequest: React.FC = () => {
                       </PaginationItem>
                     </PaginationContent>
                   </Pagination>
+                        <div className="pb-10"></div>
                 </div>
               </div>
             )}
@@ -541,75 +550,70 @@ const MyRequest: React.FC = () => {
         </div>
       </div>
 
-      {/* Responsive Advanced Search Dialog */}
-      <dialog id="search-dialog" className="p-0 rounded-lg shadow-xl bg-gray-800 max-w-[95vw] w-full sm:max-w-md">
-        <div className="w-full p-4 sm:p-6">
-          <h3 className="text-base sm:text-lg font-semibold mb-4 text-white">Advanced Search</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1 text-gray-200">Subject</label>
-              <Input
-                type="text"
-                className="bg-gray-900 border-primary-200 text-white"
-                placeholder="Math, Science, etc."
-                value={advancedSearch.subject}
-                onChange={(e) =>
-                  setAdvancedSearch({
-                    ...advancedSearch,
-                    subject: e.target.value,
-                  })
-                }
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1 text-gray-200">
-                Institution
-              </label>
-              <Input
-                type="text"
-                className="bg-gray-900 border-primary-200 text-white"
-                placeholder="School, College name"
-                value={advancedSearch.institution}
-                onChange={(e) =>
-                  setAdvancedSearch({
-                    ...advancedSearch,
-                    institution: e.target.value,
-                  })
-                }
-              />
-            </div>
-            <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
-              <Button className="text-gray-300 hover:bg-primary-700 w-full sm:w-auto text-white"
-                variant="outline"
-                onClick={() => {
-                  const searchDialog = document.getElementById(
-                    "search-dialog"
-                  ) as HTMLDialogElement;
-                  if (searchDialog) {
-                    searchDialog.close();
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-xl border-0 bg-gray-900 rounded-lg shadow-lg text-white">
+          <DialogTitle>
+
+          </DialogTitle>
+          <div className="w-full p-0">
+            <h3 className="text-base sm:text-lg font-semibold mb-4 text-white">Advanced Search</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-200">Subject</label>
+                <Input
+                  type="text"
+                  className="bg-gray-900 border-primary-200 text-white"
+                  placeholder="Math, Science, etc."
+                  value={advancedSearch.subject}
+                  onChange={(e) =>
+                    setAdvancedSearch({
+                      ...advancedSearch,
+                      subject: e.target.value,
+                    })
                   }
-                }}
-              >
-                Cancel
-              </Button>
-              <Button className="text-white w-full sm:w-auto text-gray-900"
-                onClick={() => {
-                  setCurrentPage(1);
-                  setIsSearching(true);
-                  const searchDialog = document.getElementById(
-                    "search-dialog"
-                  ) as HTMLDialogElement;
-                  if (searchDialog) {
-                    searchDialog.close();
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-200">
+                  Institution
+                </label>
+                <Input
+                  type="text"
+                  className="bg-gray-900 border-primary-200 text-white"
+                  placeholder="School, College name"
+                  value={advancedSearch.institution}
+                  onChange={(e) =>
+                    setAdvancedSearch({
+                      ...advancedSearch,
+                      institution: e.target.value,
+                    })
                   }
-                }}
-              >
-                Apply Filters
-              </Button>
+                />
+              </div>
+              <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
+                <Button className="border-0 text-white
+                        hover:bg-red-900 hover:text-white mt-2 md:mt-0"
+                  variant="ghost"
+                  onClick={() => {
+                    setIsOpen(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button className="bg-primary-600 text-white hover:bg-primary-700"
+                  onClick={() => {
+                    setCurrentPage(1);
+                    setIsSearching(true);
+                    setIsOpen(false);
+                  }}
+                >
+                  Apply Filters
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </dialog>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

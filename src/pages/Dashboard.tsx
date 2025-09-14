@@ -6,7 +6,6 @@ import RecentRequests from "@/components/RecentRequests";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/contexts/AuthContext";
 import SocialMediaCards from "@/components/SocialMediaCard";
-import { ShieldX, RefreshCw, UserPlus } from "lucide-react";
 import { getAccessToken } from "@/utils/auth";
 import { useToast } from "@/hooks/use-toast";
 import PricingCards from "@/components/PricingCards";
@@ -14,6 +13,7 @@ import { Tutor } from "@/types/tutor";
 import ProfileCompletionAlert from "@/components/ProfileCompletionAlert";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import TutorsList from "@/components/FindTutors/TutorsList";
 
 const Dashboard: React.FC = () => {
   const { userProfile, reloadProfile } = useAuth();
@@ -45,6 +45,8 @@ const Dashboard: React.FC = () => {
     fetchTutorInfo();
   }, []);
 
+  if (!userProfile) return <div>Loading...</div>;
+
   return (
     <div className="flex-1 overflow-auto bg-gray-900 min-h-screen">
       <DashboardHeader userName="John" />
@@ -52,7 +54,7 @@ const Dashboard: React.FC = () => {
       <ScrollArea type="always" style={{ height: "calc(100vh - 100px)" }}>
         {tutor && userProfile.is_tutor && (
           <div className="p-4 sm:p-6">
-            <h2 className="text-3xl font-bold text-foreground text-white">Tutor Dashboard</h2>
+            <h2 className="text-xl md:text-3xl font-bold text-foreground text-white font-unbounded">Tutor Dashboard</h2>
             <p className="text-muted-foreground mb-6">
               Manage your tutor profile and requests
             </p>
@@ -65,11 +67,10 @@ const Dashboard: React.FC = () => {
               <>
                 <StatsCards />
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
-                  <div className="lg:col-span-8">
-                    <RecentRequests />
-                  </div>
-                  <div className="lg:col-span-4">
-                    <TopTutors />
+                  <div className="lg:col-span-12">
+                    <div className='bg-background border-gray-900 rounded-xl p-3'>
+                      <RecentRequests />
+                    </div>
                   </div>
                 </div>
               </>
@@ -77,7 +78,6 @@ const Dashboard: React.FC = () => {
                 <PricingCards category="TUTOR" />
             )}
 
-            <SocialMediaCards />
           </div>
         )}
         {userProfile && !userProfile.is_tutor && (
@@ -146,11 +146,36 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
             <PricingCards />
-
-            <SocialMediaCards />
           </div>
 
         )}
+        <div className="p-4 sm:p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+            <div className="col-span-12 md:col-span-8">
+              <div className="rounded-2xl bg-background-900 p-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0 mb-2">
+                  <h2 className="text-md font-bold text-white font-unbounded">Tutors </h2>
+                  <Link to="/guardian/find-tutors">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="bg-transparent border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 transition-colors hover:text-white text-xs"
+                    >
+                      <u>
+                        View All
+                      </u>
+                    </Button>
+                  </Link>
+                </div>
+                <TutorsList />
+              </div>
+            </div>
+
+            <div className="col-span-12 md:col-span-4">
+              <SocialMediaCards />
+            </div>
+          </div>
+        </div>
         <div className="pb-20"></div>
       </ScrollArea>
     </div>

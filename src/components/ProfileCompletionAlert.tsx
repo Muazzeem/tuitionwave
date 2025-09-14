@@ -73,9 +73,8 @@ const ProfileCompletionAlert = forwardRef<ProfileCompletionAlertRef>((props, ref
 
   return (
     <div
-      className={`bg-${completion_percentage < 80 ? "red" : "green"
-        }-50 border-l-4 border-${completion_percentage < 80 ? "red" : "green"
-        }-500 text-${completion_percentage < 80 ? "red" : "green"}-700 p-3 md:p-4 mb-4 md:mb-6`}
+      className={`bg-background border-l-4 border-${completion_percentage < 80 ? "red" : "green"
+        }-500 p-3 md:p-4 mb-4 md:mb-6 text-white shadow-md rounded-xl`}
     >
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-3 gap-2">
         <div className="flex items-center">
@@ -114,13 +113,13 @@ const ProfileCompletionAlert = forwardRef<ProfileCompletionAlertRef>((props, ref
               />
             </svg>
           )}
-          <h3 className="font-bold text-base sm:text-lg md:text-xl leading-tight">
+          <h3 className="font-bold text-base leading-tight">
             {completion_percentage < 80
               ? "Complete your tutor profile & unlock your potential!"
               : "Your profile is almost complete!"}
           </h3>
         </div>
-        <div className="text-left sm:text-right font-bold text-sm sm:text-base md:text-lg flex-shrink-0">
+        <div className="text-left sm:text-right font-bold text-xs sm:text-base flex-shrink-0 font-unbounded">
           {completion_percentage}% Complete
         </div>
       </div>
@@ -133,7 +132,7 @@ const ProfileCompletionAlert = forwardRef<ProfileCompletionAlertRef>((props, ref
         ></div>
       </div>
 
-      <p className="mb-2 text-sm sm:text-base leading-relaxed">
+      <p className="mb-2 text-sm sm:text-base leading-relaxed text-gray-400">
         {completion_percentage < 80
           ? "Showcase your expertise, attract more students, and stand out by finishing your profile setup!"
           : "You're doing great! Your profile is complete and ready to be shared with potential students."}

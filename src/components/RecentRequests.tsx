@@ -37,7 +37,6 @@ const RequestRow: React.FC<RequestRowProps> = ({
   request,
   showConfirmationDialog,
 }) => {
-  const { userProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -139,7 +138,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
 
   // Mobile Card Layout
   const MobileCard = () => (
-    <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 space-y-4 hover:bg-gray-800/70 transition-all duration-200">
+    <div className="bg-background backdrop-blur-sm border border-1 border-primary-900 rounded-xl p-4 space-y-4 transition-all duration-200 shadow-md">
       {/* Header with ID and Actions */}
       <div className="flex items-center justify-between">
         <div
@@ -308,7 +307,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
             {request.subjects.slice(0, 2).map((subject, index) => (
               <span
                 key={index}
-                className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-500/10 text-blue-300 border border-blue-500/20"
+                className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-500/10 text-blue-300 border border-blue-500/20 text-xs"
               >
                 {subject.subject}
               </span>
@@ -337,7 +336,7 @@ const RequestRow: React.FC<RequestRowProps> = ({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0 hover:bg-gray-700/50 text-gray-300"
+                className="h-8 w-8 p-0 hover:bg-gray-700/50 text-gray-300 hover:text-white"
               >
                 <MoreVertical className="h-4 w-4" />
               </Button>
@@ -347,14 +346,14 @@ const RequestRow: React.FC<RequestRowProps> = ({
               <DropdownMenuSeparator className="bg-gray-700" />
               <DropdownMenuGroup>
                 <DropdownMenuItem
-                  className="cursor-pointer text-gray-200 hover:bg-gray-700 focus:bg-gray-700"
+                  className="cursor-pointer hover:bg-gray-700 focus:bg-gray-700 hover:text-white text-white"
                   onClick={handleDetailsClick}
                 >
                   <Eye className="mr-2 h-4 w-4" />
                   <span>View Details</span>
                 </DropdownMenuItem>
                 {request.status_display === "Pending" && (
-                  <DropdownMenuItem className="cursor-pointer text-gray-200 hover:bg-gray-700 focus:bg-gray-700">
+                  <DropdownMenuItem className="cursor-pointer hover:bg-gray-700 focus:bg-gray-700">
                     <Pen className="mr-2 h-4 w-4" />
                     <span>Edit Request</span>
                   </DropdownMenuItem>
@@ -439,25 +438,25 @@ const RecentRequests: React.FC = () => {
   }
 
   return (
-    <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl shadow-xl">
+    <div className="bg-background md:bg-gray-900/50 backdrop-blur-sm rounded-xl">
       {/* Header */}
-      <div className="p-4 sm:p-6 border-b border-gray-700/50">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-          <h2 className="text-xl font-bold text-white">Recent Requests</h2>
+      <div className="p-2 border-b border-gray-700/50">
+        <div className="flex flex-row items-center justify-between space-y-3 space-y-0">
+          <h2 className="text-md font-bold text-white font-unbounded">Recent Requests</h2>
           <Link to="/requests">
             <Button
               variant="outline"
               size="sm"
-              className="bg-transparent border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 transition-colors"
+              className="bg-transparent border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 transition-colors hover:text-white text-xs"
             >
-              View All Requests
+              View All
             </Button>
           </Link>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-4 sm:p-6">
+      <div className="p-0">
         {!data?.results?.length ? (
           <div className="text-center py-12">
             <div className="mx-auto w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4">
@@ -470,26 +469,26 @@ const RecentRequests: React.FC = () => {
           <div className="space-y-4 lg:space-y-0">
             {/* Desktop Layout */}
             <div className="hidden lg:block">
-              <div className="overflow-x-auto">
-                <table className="min-w-full">
-                  <thead>
-                    <tr className="border-b border-gray-700/30">
-                      <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <div className="overflow-x-auto rounded-lg">
+                  <table className="min-w-full">
+                    <thead className="bg-primary-600">
+                      <tr className="border-0 rounded-lg">
+                        <th className="py-4 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                         Request ID
                       </th>
-                      <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        <th className="py-4 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                         {userTypeFromUrl === 'GUARDIAN' ? 'Tutor' : 'Guardian'}
                       </th>
-                      <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        <th className="py-4 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                         Subjects
                       </th>
-                      <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        <th className="py-4 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                         Amount
                       </th>
-                      <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        <th className="py-4 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="py-4 px-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        <th className="py-4 px-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>

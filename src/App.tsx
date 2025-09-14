@@ -47,6 +47,11 @@ import ExamResultsPage from "./pages/JobPreparation/ExamResultsPage";
 import { Loader2 } from "lucide-react";
 import StudentPackageSettings from "./pages/StudentPackageSettings";
 
+
+import { HelmetProvider } from 'react-helmet-async';
+const helmetContext = {};
+
+
 const queryClient = new QueryClient();
 
 const TokenValidationWrapper = ({ children }: { children: React.ReactNode }) => {
