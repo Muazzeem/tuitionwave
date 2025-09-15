@@ -28,6 +28,11 @@ export default defineConfig(({ mode }) => {
       ? {
         ssr: "src/entry-server.jsx",
         outDir: "dist/server",
+        rollupOptions: {
+          output: {
+            entryFileNames: 'entry-server.js'
+          }
+        }
       }
       : {
         outDir: "dist/client",

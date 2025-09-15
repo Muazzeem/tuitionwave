@@ -24,9 +24,15 @@ async function ensureLoaded() {
     template = await fs.readFile(path.join(distClient, "index.html"), "utf-8");
   }
   if (!render) {
-    // Dynamic import of the server bundle
-    const mod = await import(path.join(distServer, "entry-server.js"));
-    render = mod.render;
+    // Dynamic import of the server bundle - try both .js and .mjs extensions
+    try {
+      const mod = await import(path.join(distServer, "entry-server.js"));
+      render = mod.render;
+    } catch (e) {
+      // Fallback to .mjs if .js doesn't exist
+      const mod = await import(path.join(distServer, "entry-server.mjs"));
+      render = mod.render;
+    }
   }
 }
 
