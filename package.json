@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/dev.js",
-    "build:dev": "vite build --mode development",
+    "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
     "build:server": "VITE_SSR=true vite build",
     "start": "node server.js",
