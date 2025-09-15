@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm ci && npm run build:dev",
+  "buildCommand": "npm ci && node scripts/build-vercel.js",
   "outputDirectory": "dist/client",
   "functions": {
     "api/ssr.js": {
