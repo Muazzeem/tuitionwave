@@ -39,7 +39,7 @@ const TutorsList: React.FC = () => {
         <div className="w-full mx-auto p-0">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 {loading ? (
-                    [...Array(3)].map((_, index) => (
+                    [...Array(4)].map((_, index) => (
                         <Card key={index} className="bg-background border-gray-900 shadow-xl">
                             <div className="p-3">
                                 <Skeleton className="h-48 w-full mb-3 bg-slate-800/40 backdrop-blur-md" />
