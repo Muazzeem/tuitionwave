@@ -117,7 +117,7 @@ const TutorSearchResults: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-10">
           {loading ? (
-            [...Array(4)].map((_, index) => (
+            [...Array(5)].map((_, index) => (
               <Card key={index} className="bg-background border-gray-900 shadow-xl">
                 <div className="p-3">
                   <Skeleton className="h-48 w-full mb-3 bg-slate-800/40 backdrop-blur-md" />
