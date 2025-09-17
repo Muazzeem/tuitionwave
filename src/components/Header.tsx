@@ -24,11 +24,11 @@ const Header = () => {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link to="/">
-            <button
-              className="text-xl sm:text-2xl font-bold text-blue-500 dark:text-primary-400 flex-shrink-0 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
-            >
-              Tuition Wave
-            </button>
+            <img
+              src="/lovable-uploads/header_logo.png"
+              alt="Tutor search background"
+              className="w-auto h-10 object-cover opacity-80"
+            />
           </Link>
 
           {/* Desktop Navigation */}

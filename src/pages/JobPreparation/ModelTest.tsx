@@ -353,6 +353,8 @@ export default function CreateModelTest() {
           duration: 2000,
         });
 
+        navigate(`/job-preparation/model-test/exam/${data.uid}`);
+
         setExamData(prevData =>
           prevData.map(exam =>
             exam.uid === modelTest.uid
@@ -603,8 +605,7 @@ export default function CreateModelTest() {
                           </div>
                         </div>
 
-                        {/* User Exam Status */}
-                        {exam.user_exam && exam.is_active && (
+                        {/* {exam.user_exam && exam.is_active && (
                           <div className={`p-2 sm:p-3 rounded-lg border ${statusInfo.borderColor} ${statusInfo.bgColor}`}>
                             <div className="flex flex-col xs:flex-row xs:justify-between xs:items-center gap-1 xs:gap-0 text-xs sm:text-sm">
                               <span className="font-medium">Your Progress</span>
@@ -618,20 +619,7 @@ export default function CreateModelTest() {
                               </div>
                             </div>
                           </div>
-                        )}
-
-                        {/* Topics */}
-                        {exam.configurations && exam.configurations.length > 0 && (
-                          <div className="pt-2 border-t border-gray-200 border-gray-700">
-                            <div className="text-xs text-muted-foreground">
-                              <span className="font-medium">Topics: </span>
-                              <span className="break-words">
-                                {exam.configurations.slice(0, 2).map(config => config.topic_name).join(', ')}
-                                {exam.configurations.length > 2 && ` +${exam.configurations.length - 2} more`}
-                              </span>
-                            </div>
-                          </div>
-                        )}
+                        )} */}
 
                         {exam.is_active && exam.totalQuestions > 0 && exam.status !== 'upcoming' && (
                           <>
@@ -673,48 +661,7 @@ export default function CreateModelTest() {
               onPageChange={(page) => setCurrentPage(page)}
             />
           )}
-
-          {/* Enhanced Empty State */}
-          {filteredExams.length === 0 && !loading && (
-            <div className="text-center py-16">
-              <div className={`${currentTabInfo?.bgColor} rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6`}>
-                <currentTabInfo.icon className={`h-10 w-10 ${currentTabInfo?.color}`} />
-              </div>
-              <h3 className="text-xl font-semibold mb-3 text-white">
-                No {currentTabInfo?.label.toLowerCase()} available
-              </h3>
-              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                {selectedTab === 'running' && "There are no live exams at the moment. Check back soon or try upcoming exams."}
-                {selectedTab === 'upcoming' && "No upcoming exams scheduled yet. Stay tuned for new opportunities!"}
-                {selectedTab === 'expired' && "You haven't taken any exams yet. Start with a live exam to see your history here."}
-              </p>
-
-              <div className="bg-background border border-gray-200 border-primary-700 rounded-lg p-6 max-w-md mx-auto hidden md:block">
-                <Trophy className="h-8 w-8 text-purple-500 mx-auto mb-3" />
-                <h4 className="font-semibold text-purple-800 text-purple-300 mb-2">
-                  Ready to test your skills?
-                </h4>
-                <p className="text-sm text-purple-600 text-white mb-4">
-                  Challenge yourself with model tests and track your improvement over time
-                </p>
-                {selectedTab !== 'running' && (
-                  <Button
-                    onClick={() => setSelectedTab('running')}
-                    variant="outline"
-                    className="border-primary-300 text-primary-700 hover:bg-primary-50 hover:bg-primary-900/20"
-                  >
-                    View Running Exams
-                  </Button>
-                )}
-              </div>
-            </div>
-          )}
         </div>
-        {!userProfile.contract_packages && (
-          <>
-
-          </>
-        )}
         <div className="h-20 md:h-8"></div>
       </ScrollArea>
     </div>

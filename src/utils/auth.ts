@@ -35,7 +35,6 @@ export const isAuthenticated = () => {
 
 export const isTokenExpired = (): boolean => {
   const expiry = getTokenExpiry();
-  // If current time is past expiry time (with 10 second buffer)
   return Date.now() > expiry - 10000;
 };
 

@@ -449,11 +449,10 @@ const MyRequest: React.FC = () => {
               </div>
             ) : !data?.results?.length ? (
               <div className="text-center py-12">
-                <div className="mx-auto w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                    <div className="mx-auto w-16 h-16 bg-blue-800 rounded-full flex items-center justify-center mb-4">
                   <Eye className="h-8 w-8 text-gray-400" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-300 mb-2">No Requests Found</h3>
-                <p className="text-gray-500">You don't have any tuition requests yet.</p>
+                    <h3 className="text-lg font-medium text-gray-300 mb-2">No Requests Found</h3>
               </div>
             ) : (
                     <div className="bg-background md:bg-gray-900/50 backdrop-blur-sm rounded-xl">

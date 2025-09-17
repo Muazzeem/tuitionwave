@@ -72,11 +72,11 @@ const Sidebar = () => {
       <div className={`${isExpanded ? 'w-60' : 'w-13'} border-0 flex-col h-screen transition-all duration-500 relative z-10 hidden md:flex shadow-lg`} style={{ backgroundColor: "#182641" }}>
         <div className="p-3 flex justify-between items-center align-middle">
           {isExpanded && (
-            <h1 className="text-xl font-bold mt-2 text-white">
-              <Link to="/dashboard" className="flex items-center">
-                Tuition Wave
-              </Link>
-            </h1>
+            <img
+              src="/lovable-uploads/header_logo.png"
+              alt="Tutor search background"
+              className="w-auto h-10 object-cover opacity-80"
+            />
           )}
           <button
             onClick={toggleSidebar}
@@ -134,25 +134,28 @@ const Sidebar = () => {
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-700 z-50">
         <nav className="flex justify-around items-center py-2">
           {currentMenuItems.slice(0, 4).map((item, index) => {
-            const isActive = location.pathname === item.path || location.pathname.startsWith(item.path);
+            const isActive =
+              location.pathname === item.path ||
+              location.pathname.startsWith(item.path);
             const IconComponent = item.icon;
 
             return (
-              <>
-                <Link
-                  key={index}
-                  to={item.path}
-                  className={`flex flex-col items-center py-2 px-3 text-xs ${isActive ? 'text-cyan-400' : 'text-gray-400'
-                    }`}
-                >
-                  <IconComponent size={20} />
-                  <span className="mt-1">{item.text}</span>
-                </Link>
-              </>
+              <Link
+                key={index}
+                to={item.path}
+                className={`flex flex-col items-center py-2 px-3 text-xs ${isActive
+                  ? "bg-primary-500 text-white shadow-md border-gray-900 rounded-xl"
+                  : "text-gray-400"
+                  }`}
+              >
+                <IconComponent size={20} />
+                <span className="mt-1 truncate">{item.text}</span>
+              </Link>
             );
           })}
         </nav>
       </div>
+
     </>
   );
 };

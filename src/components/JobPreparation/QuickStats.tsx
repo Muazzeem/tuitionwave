@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { BookOpen, Trophy, Target, TrendingUp } from 'lucide-react';
 import { getAccessToken } from '@/utils/auth';
 
@@ -9,6 +10,27 @@ interface QuickStatsData {
   averageScore: number;
   currentRank: number;
   totalStudents: number;
+}
+
+/** Skeleton while loading */
+function SummarySkeleton() {
+  return (
+    <Card className="bg-background rounded-2xl border-0 p-5 sm:p-6">
+      <Skeleton className="h-6 w-28 mb-6" />
+
+      <div className="grid grid-cols-2 sm:grid-cols-2 gap-x-10 gap-y-8">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="flex items-center">
+            <Skeleton className="h-12 w-12 rounded-xl mr-5" />
+            <div className="space-y-2">
+              <Skeleton className="h-7 w-20" />
+              <Skeleton className="h-4 w-28" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
 }
 
 export default function QuickStatsSection() {
@@ -22,8 +44,7 @@ export default function QuickStatsSection() {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        // Add auth token if required:
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
       .then((res) => {
@@ -40,58 +61,34 @@ export default function QuickStatsSection() {
       });
   }, []);
 
-  if (loading) return <p className="text-muted-foreground">Loading quick stats...</p>;
+  if (loading) return <SummarySkeleton />;
   if (error) return <p className="text-red-500">Error: {error}</p>;
   if (!data) return null;
 
   const stats = [
-    {
-      title: 'Total Exams',
-      value: data.totalExams,
-      icon: BookOpen,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50'
-    },
-    {
-      title: 'Completed',
-      value: data.completedExams,
-      icon: Target,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50'
-    },
-    {
-      title: 'Average Score',
-      value: `${data.averageScore}%`,
-      icon: TrendingUp,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50'
-    },
-    {
-      title: 'Current Rank',
-      value: `#${data.currentRank}`,
-      icon: Trophy,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50'
-    }
+    { title: 'Total Exams', value: data.totalExams, icon: BookOpen },
+    { title: 'Completed', value: data.completedExams, icon: Target },
+    { title: 'Average Score', value: `${data.averageScore}%`, icon: TrendingUp },
+    { title: 'Current Rank', value: data.currentRank, icon: Trophy },
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      {stats.map((stat, index) => (
-        <Card key={index} className='bg-background border-gray-900 shadow-md'>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className={`p-2 hidden md:block rounded-lg ${stat.bgColor}`}>
-                <stat.icon className={`h-5 w-5 ${stat.color}`} />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">{stat.title}</p>
-                <p className="text-2xl font-bold text-white">{stat.value}</p>
-              </div>
+    <Card className="bg-background rounded-2xl border-0 p-5 sm:p-5 lg:min-h-80">
+      <h2 className="text-lg font-semibold text-white">Summary</h2>
+
+      <div className="grid grid-cols-2 sm:grid-cols-2 gap-y-8 mt-2">
+        {stats.map((s, i) => (
+          <div key={i} className="flex items-center">
+            <div className="h-8 w-8 md:h-12 md:w-12 rounded-xl bg-background-700/80 flex items-center justify-center mr-5">
+              <s.icon className="h-4 w-4 md:h-8 md:w-8 text-blue-600" />
             </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+            <div className="leading-tight">
+              <div className="text-xl md:text-3xl font-bold text-white">{s.value}</div>
+              <div className="mt-1 text-base text-muted-foreground text-xs md:text-sm">{s.title}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
   );
 }

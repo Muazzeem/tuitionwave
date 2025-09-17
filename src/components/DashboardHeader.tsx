@@ -55,11 +55,11 @@ const DashboardHeader: React.FC<HeaderProps> = ({ userName }) => {
       <div className="flex-1 min-w-0">
         {isDashboard && (
           <Link to="/">
-            <button
-              className="text-xl sm:text-2xl font-bold text-primary-600 dark:text-primary-400 flex-shrink-0 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
-            >
-              Tuition Wave
-            </button>
+            <img
+              src="/lovable-uploads/header_logo.png"
+              alt="Tutor search background"
+              className="w-auto h-10 object-cover opacity-80"
+            />
           </Link>
         )}
       </div>

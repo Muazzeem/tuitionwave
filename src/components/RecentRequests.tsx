@@ -462,8 +462,8 @@ const RecentRequests: React.FC = () => {
             <div className="mx-auto w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4">
               <Eye className="h-8 w-8 text-gray-400" />
             </div>
-            <h3 className="text-lg font-medium text-gray-300 mb-2">No Requests Found</h3>
-            <p className="text-gray-500">You don't have any tuition requests yet.</p>
+            <h3 className="text-lg font-medium text-gray-300 mb-2 font-unbounded">No Requests</h3>
+            <p className="text-gray-500 text-xs">You don't have any tuition requests yet.</p>
           </div>
         ) : (
           <div className="space-y-4 lg:space-y-0">

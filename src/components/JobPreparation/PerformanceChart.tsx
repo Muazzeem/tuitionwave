@@ -1,253 +1,160 @@
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent
-} from '@/components/ui/chart';
-import {
+  ResponsiveContainer,
   LineChart,
   Line,
   XAxis,
   YAxis,
   CartesianGrid,
-  ResponsiveContainer,
+  Tooltip,
   BarChart,
-  Bar
-} from 'recharts';
-import { BarChart3, TrendingUp } from 'lucide-react';
-import { getAccessToken } from '@/utils/auth';
+  Bar,
+} from "recharts";
+import { BarChart3, TrendingUp } from "lucide-react";
+import { getAccessToken } from "@/utils/auth";
+
+type MonthlyPoint = { month: string; score: number; exams: number };
+type SubjectPoint = { subject: string; score: number };
+
+function ChartsSkeleton() {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {[0, 1].map((k) => (
+        <Card key={k} className="bg-background border-0 rounded-2xl">
+          <CardHeader className="px-5 pt-5 pb-3">
+            <Skeleton className="h-6 w-40" />
+          </CardHeader>
+          <CardContent className="px-5 pb-5">
+            <Skeleton className="h-64 w-full rounded-xl" />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
 
 export default function PerformanceChart() {
-  const [performanceData, setPerformanceData] = useState([]);
-  const [subjectPerformance, setSubjectPerformance] = useState([]);
+  const [performanceData, setPerformanceData] = useState<MonthlyPoint[]>([]);
+  const [subjectPerformance, setSubjectPerformance] = useState<SubjectPoint[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const accessToken = getAccessToken();
 
-    // Fetch monthly performance
-    fetch(`${import.meta.env.VITE_API_URL}/api/exams/monthly-performance/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const formatted = data.map((item) => ({
-          month: item.month,
-          score: item.average_percentage,
-          exams: item.exam_count
-        }));
-        setPerformanceData(formatted);
+    Promise.all([
+      fetch(`${import.meta.env.VITE_API_URL}/api/exams/monthly-performance/`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
       })
-      .catch((err) => console.error('Monthly performance error:', err));
+        .then((r) => r.json())
+        .then((data) =>
+          (data || []).map((d: any) => ({
+            month: d.month,
+            score: d.average_percentage,
+            exams: d.exam_count,
+          }))
+        ),
 
-    fetch(`${import.meta.env.VITE_API_URL}/api/exams/subject-performance/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const formatted = data.map((item) => ({
-          subject: item.subject_name,
-          score: item.average_percentage,
-          total: 100
-        }));
-        setSubjectPerformance(formatted);
+      fetch(`${import.meta.env.VITE_API_URL}/api/exams/subject-performance/`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
       })
-      .catch((err) => console.error('Subject performance error:', err));
+        .then((r) => r.json())
+        .then((data) =>
+          (data || []).map((d: any) => ({
+            subject: d.subject_name,
+            score: d.average_percentage,
+          }))
+        ),
+    ])
+      .then(([monthly, subjects]) => {
+        setPerformanceData(monthly);
+        setSubjectPerformance(subjects);
+      })
+      .catch(() => setError("Failed to load performance data"))
+      .finally(() => setLoading(false));
   }, []);
 
-  const chartConfig = {
-    score: {
-      label: 'Score',
-      color: 'hsl(var(--primary))'
-    },
-    exams: {
-      label: 'Exams',
-      color: 'hsl(var(--secondary))'
-    }
-  };
+  if (loading) return <ChartsSkeleton />;
+  if (error) return <p className="text-red-500">{error}</p>;
+
+  const lineColor = "var(--color-score, #3b82f6)";
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="bg-background border-gray-900 shadow-md">
-        <CardHeader className="px-4 sm:px-6">
-          <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-blue-500 flex-shrink-0" />
-              <span className="text-base sm:text-lg text-white">
-                Score Trend
-              </span>
-            </div>
+      {/* Score Trend */}
+      <Card className="bg-background border-0 rounded-2xl">
+        <CardHeader className="px-5 pt-5 pb-3">
+          <CardTitle className="flex items-center gap-2 text-white text-lg">
+            Score Trend
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-5 pb-5">
           {performanceData.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 from-green-900/20 to-emerald-900/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="h-8 w-8 text-green-500" />
-              </div>
-              <h3 className="font-semibold text-lg text-white mb-2">No trend data yet</h3>
-              <p className="text-muted-foreground mb-4">
-                Complete a few exams to see your progress over time
-              </p>
-              <div className="hidden sm:block bg-blue-50 bg-blue-900/20 border border-blue-200 border-blue-800 rounded-lg p-4 max-w-sm mx-auto">
-                <p className="text-sm text-blue-700 text-blue-300">
-                  Your performance graph will appear here as you take more exams
-                </p>
-              </div>
-            </div>
+            <p className="text-muted-foreground text-sm">No trend data yet.</p>
           ) : (
-            <>
-                <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 from-green-900/20 to-emerald-900/20 rounded-lg border border-green-200 border-green-800">
-                <div className="flex items-center justify-between text-sm">
-                    <span className="text-green-700 text-green-300 font-medium">
-                    Latest Score: {performanceData[performanceData.length - 1]?.score || 0}
-                  </span>
-                    <span className="text-green-600 text-green-400">
-                    {performanceData.length} data points
-                  </span>
-                </div>
-              </div>
-
-                <ChartContainer config={chartConfig}>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={performanceData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="stroke-gray-700" />
-                      <XAxis
-                        dataKey="month"
-                        tick={{ fontSize: 12 }}
-                        stroke="#6b7280"
-                      />
-                      <YAxis
-                        tick={{ fontSize: 12 }}
-                        stroke="#6b7280"
-                      />
-                      <ChartTooltip
-                        content={<ChartTooltipContent />}
-                        contentStyle={{
-                          backgroundColor: 'white',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '8px',
-                          boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
-                        }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="score"
-                        stroke="var(--color-score)"
-                        strokeWidth={3}
-                        dot={{
-                          fill: 'var(--color-score)',
-                          strokeWidth: 2,
-                          stroke: 'white',
-                          r: 5
-                        }}
-                        activeDot={{
-                          r: 7,
-                          stroke: 'var(--color-score)',
-                          strokeWidth: 2,
-                          fill: 'white'
-                        }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-
-              <div className="mt-3 text-center">
-                <p className="text-xs text-muted-foreground">
-                  🎯 Keep taking exams to track your improvement
-                </p>
-              </div>
-            </>
+              <ResponsiveContainer width="100%" height={280}>
+                <LineChart data={performanceData}>
+                  <CartesianGrid stroke="#374151" strokeDasharray="3 3" />
+                  <XAxis dataKey="month" stroke="#9CA3AF" tick={{ fontSize: 12 }} />
+                  <YAxis stroke="#9CA3AF" tick={{ fontSize: 12 }} />
+                  <Tooltip
+                    contentStyle={{
+                      background: "rgba(17,24,39,0.95)",
+                      border: "1px solid #374151",
+                      borderRadius: 8,
+                      color: "#e5e7eb",
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="score"
+                    stroke={lineColor}
+                    strokeWidth={3}
+                    dot={{ r: 4, stroke: "#111827", strokeWidth: 2, fill: lineColor }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
           )}
         </CardContent>
       </Card>
 
-      <Card className="bg-background border-gray-900 shadow-md">
-        <CardHeader className="px-4 sm:px-6">
-          <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
-            <div className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-blue-500 flex-shrink-0" />
-              <span className="text-base sm:text-lg text-white">
-                Subjects Performance
-              </span>
-            </div>
+      {/* Subjects Performance */}
+      <Card className="bg-background border-0 rounded-2xl">
+        <CardHeader className="px-5 pt-5 pb-3">
+          <CardTitle className="flex items-center gap-2 text-white text-lg">
+            Subjects Performance
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-5 pb-5">
           {subjectPerformance.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="bg-gradient-to-br from-purple-50 to-indigo-50 from-purple-900/20 to-indigo-900/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <BarChart3 className="h-8 w-8 text-purple-500" />
-              </div>
-              <h3 className="font-semibold text-lg mb-2 text-white">No subject data yet</h3>
-              <p className="text-muted-foreground mb-4">
-                Take exams in different subjects to see your performance breakdown
-              </p>
-              <div className="hidden sm:block bg-amber-50 bg-amber-900/20 border border-amber-200 border-amber-800 rounded-lg p-4 max-w-sm mx-auto">
-                <p className="text-sm text-amber-700 text-amber-300">
-                  Your subject strengths will be displayed here
-                </p>
-              </div>
-            </div>
+            <p className="text-muted-foreground text-sm">No subject data yet.</p>
           ) : (
-            <>
-                <div className="mb-4 p-3 bg-gradient-to-r from-purple-50 to-indigo-50 from-purple-900/20 to-indigo-900/20 rounded-lg border border-purple-200 border-purple-800">
-                <div className="flex items-center justify-between text-sm">
-                    <span className="text-purple-700 text-purple-300 font-medium">
-                    Best Subject: {subjectPerformance.reduce((prev, current) => (prev.score > current.score) ? prev : current)?.subject || 'N/A'}
-                  </span>
-                    <span className="text-purple-600 text-purple-400">
-                    {subjectPerformance.length} subjects
-                  </span>
-                </div>
-              </div>
-
-                <ChartContainer config={chartConfig}>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={subjectPerformance} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="stroke-gray-700" />
-                      <XAxis
-                        dataKey="subject"
-                        tick={{ fontSize: 11 }}
-                        stroke="#6b7280"
-                        angle={-45}
-                        textAnchor="end"
-                        height={60}
-                      />
-                      <YAxis
-                        tick={{ fontSize: 12 }}
-                        stroke="#6b7280"
-                      />
-                      <ChartTooltip
-                        content={<ChartTooltipContent />}
-                        contentStyle={{
-                          backgroundColor: 'white',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '8px',
-                          boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
-                        }}
-                      />
-                      <Bar
-                        dataKey="score"
-                        fill="var(--color-score)"
-                        radius={[6, 6, 0, 0]}
-                        stroke="white"
-                        strokeWidth={1}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-
-              <div className="mt-3 text-center">
-                  <p className="text-xs text-muted-foreground text-white">
-                  📊 Identify your strongest and weakest subjects
-                </p>
-              </div>
-            </>
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={subjectPerformance} margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
+                  <CartesianGrid stroke="#374151" strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="subject"
+                    stroke="#9CA3AF"
+                    tick={{ fontSize: 11 }}
+                    angle={-35}
+                    textAnchor="end"
+                    height={50}
+                  />
+                  <YAxis stroke="#9CA3AF" tick={{ fontSize: 12 }} />
+                  <Tooltip
+                    contentStyle={{
+                      background: "rgba(17,24,39,0.95)",
+                      border: "1px solid #374151",
+                      borderRadius: 8,
+                      color: "#e5e7eb",
+                    }}
+                  />
+                  <Bar dataKey="score" fill={lineColor} radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
           )}
         </CardContent>
       </Card>

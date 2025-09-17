@@ -20,8 +20,8 @@ const SocialMediaCards = () => {
     }, []);
 
     return (
-        <div className="rounded-2xl bg-background-900 p-4">
-            <h2 className="text-md font-bold text-white font-unbounded mb-2">
+        <div className="rounded-2xl bg-background-900 p-4 min-h-80 sm:min-h-96">
+            <h2 className="text-md font-bold text-white mb-2">
                 Follow Us On Social Media
             </h2>
             <div className="space-y-3">

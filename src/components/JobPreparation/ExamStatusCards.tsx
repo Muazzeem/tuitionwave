@@ -1,322 +1,220 @@
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { CheckCircle, XCircle, PlayCircle, Clock, FileText, BookOpen } from 'lucide-react';
-import { getAccessToken } from '@/utils/auth';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { CheckCircle, XCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import { getAccessToken } from "@/utils/auth";
 
 interface ExamRecord {
   uid: string;
   subject_names: string[];
   topic_names: string[];
-  status: 'completed' | 'in_progress' | 'not_started' | 'expired';
+  status: "completed" | "in_progress" | "not_started" | "expired";
+  pass_status: string | null;
   percentage: number;
-  total_questions: number;
-  duration_minutes: number;
   created_at: string;
   exam_type_display: string;
 }
 
 const getExamAction = (status: string, uid: string) => {
-  switch (status) {
-    case 'in_progress':
-      return { label: 'View', to: `/job-preparation/exam/${uid}` };
-    case 'completed':
-      return { label: 'View Results', to: `/job-preparation/exam/${uid}/results` };
-    case 'not_started':
-      return { label: 'View', to: `/job-preparation/practice?tab=history` };
-    default:
-      return null;
-  }
+  if (status === "completed") return { label: "View Results", to: `/job-preparation/exam/${uid}/results` };
+  if (status === "in_progress") return { label: "View", to: `/job-preparation/exam/${uid}` };
+  return { label: "View", to: `/job-preparation/practice?tab=history` };
 };
 
-const getStatusIcon = (status: string) => {
-  switch (status) {
-    case 'completed':
-      return <CheckCircle className="h-4 w-4 text-green-500" />;
-    case 'expired':
-      return <XCircle className="h-4 w-4 text-red-500" />;
-    case 'in_progress':
-      return <PlayCircle className="h-4 w-4 text-blue-500" />;
-    case 'not_started':
-      return <Clock className="h-4 w-4 text-orange-500" />;
-    default:
-      return <Clock className="h-4 w-4 text-gray-500" />;
-  }
+const StatusIcon = ({ pass_status }: { pass_status: ExamRecord["pass_status"] }) => {
+  if (pass_status === "pass") return <CheckCircle className="h-4 w-4 text-green-500" />;
+  if (pass_status === "fail") return <XCircle className="h-4 w-4 text-red-500" />;
+  return null;
 };
 
-const getStatusBadge = (status: string) => {
-  const variants = {
-    completed: 'bg-green-100 text-green-800',
-    expired: 'bg-red-100 text-red-800',
-    in_progress: 'bg-blue-100 text-blue-800',
-    not_started: 'bg-orange-100 text-orange-800'
-  };
-  return variants[status as keyof typeof variants] || 'bg-gray-100 text-gray-800';
-};
+const perfLabel = (p: number) =>
+  p >= 80 ? "Excellent" : p >= 60 ? "Good" : p >= 40 ? "Fair" : "Needs Work";
 
+/* -------- Skeleton -------- */
+function ExamListSkeleton() {
+  return (
+    <Card className="w-full bg-background border-0 rounded-2xl">
+      <CardHeader className="px-5 pt-5 pb-3">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-6 w-44" />
+          <Skeleton className="h-6 w-20 rounded-full" />
+        </div>
+      </CardHeader>
+      <CardContent className="px-5 pb-5">
+        <div className="space-y-3">
+          {[...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between gap-4 rounded-xl border border-background-600 bg-background-800/40 px-4 py-4"
+            >
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-5 w-48" />
+                  <Skeleton className="h-4 w-4 rounded-full" />
+                </div>
+                <Skeleton className="h-4 w-36 mt-2" />
+              </div>
+              <div className="flex items-center gap-4 shrink-0">
+                <div className="text-right space-y-2">
+                  <Skeleton className="h-5 w-14 ml-auto" />
+                  <Skeleton className="h-3 w-20 ml-auto" />
+                </div>
+                <Skeleton className="h-9 w-28 rounded-full" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+/* -------- Component -------- */
 export default function ExamStatusCards() {
   const [exams, setExams] = useState<ExamRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  const fetchExams = async () => {
-    const accessToken = getAccessToken();
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/exams/`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      if (!response.ok) throw new Error('Failed to fetch exams');
-      const data = await response.json();
-      setExams(data.results);
-
-    } catch (err: any) {
-      setError('Failed to fetch exams.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchExams();
+    (async () => {
+      try {
+        const accessToken = getAccessToken();
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/exams/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (!res.ok) throw new Error("Failed to fetch exams");
+        const data = await res.json();
+        setExams(data.results || []);
+      } catch {
+        setError("Failed to fetch exams.");
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
-  if (loading) return <p className="text-center p-4">Loading exams...</p>;
-  if (error) return <p className="text-red-600 text-center p-4">{error}</p>;
+  if (loading) return <ExamListSkeleton />;
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <Card className="w-full mx-auto bg-background border-gray-900 shadow-md">
-      <CardHeader className="px-4 sm:px-6">
-        <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
-          <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-blue-500 flex-shrink-0" />
-            <span className="text-base sm:text-lg text-white">Recent Exam Activities</span>
+    <>
+      <Card className="w-full bg-background border-0 rounded-2xl lg:min-h-96 hidden md:block">
+        <CardHeader className="px-5 pt-5 pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-white text-lg">Recent Exam Activities</CardTitle>
+            <button className="px-3 py-1 rounded-full text-xs text-white bg-background-700 border border-background-500">
+              See All
+            </button>
           </div>
-          {exams.length > 0 && (
-            <Badge variant="primary" className="text-xs self-start sm:self-center border-0">
-              {exams.length} total
-            </Badge>
-          )}
-        </CardTitle>
-      </CardHeader>
+        </CardHeader>
 
-      <CardContent className="px-4 sm:px-6">
-        {exams.length === 0 ? (
-          <div className="text-center py-8 sm:py-12">
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 from-blue-900/20 to-indigo-900/20 rounded-full w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center mx-auto mb-4 sm:mb-6">
-              <BookOpen className="h-8 w-8 sm:h-10 sm:w-10 text-blue-500" />
-            </div>
-            <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3 px-4">
-              Ready to start your journey?
-            </h3>
-            <p className="text-muted-foreground mb-6 max-w-sm mx-auto text-sm sm:text-base px-4">
-              Take your first exam and begin tracking your progress. Every expert was once a beginner!
-            </p>
-            <div className="space-y-3 px-4">
-              <Link to="/job-preparation/practice">
-                <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-6 py-2 text-sm sm:text-base font-medium">
-                  Take Your First Exam
-                </Button>
-              </Link>
-              <div className="hidden md:block bg-green-50 bg-green-900/20 border border-green-200 border-green-800 rounded-lg p-3 sm:p-4 max-w-md mx-auto">
-                <p className="text-xs sm:text-sm text-green-700 text-green-300">
-                  Tip: Start with easier topics to build confidence and momentum
-                </p>
-              </div>
-            </div>
-          </div>
-        ) : (
-            <div className="space-y-3 sm:space-y-4">
-              {exams.slice(0, 5).map((exam, index) => (
+        <CardContent className="px-5 pb-5">
+          <div className="space-y-3">
+            {exams.slice(0, 4).map((exam) => {
+              const action = getExamAction(exam.status, exam.uid);
+              const title = exam.subject_names?.length ? exam.subject_names[0] : exam.exam_type_display;
+              const dt = new Date(exam.created_at);
+              const date = dt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+              const time = dt.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+
+              return (
                 <div
                   key={exam.uid}
-                  className={`group relative p-3 sm:p-4 border rounded-lg transition-all hover:shadow-md hover:border-gray-300 hover:border-gray-600 ${index === 0
-                    ? 'bg-gradient-to-r from-blue-50/50 to-indigo-50/50 from-blue-900/10 to-indigo-900/10 border-blue-200 border-blue-800'
-                    : 'border-gray-700'
-                    }`}
+                  className="flex items-center justify-between gap-4 rounded-xl border border-background-600 bg-background-600/40 px-4 py-4"
                 >
-                  {index === 0 && (
-                    <div className="absolute -top-2 -right-2">
-                      <Badge className="bg-blue-500 text-white text-xs px-2 py-1">Latest</Badge>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-white font-medium truncate">{title}</p>
+                      <StatusIcon pass_status={exam.pass_status} />
                     </div>
-                  )}
-
-                  {/* Mobile Layout */}
-                  <div className="block sm:hidden space-y-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-3 flex-1 min-w-0">
-                        <div className="flex-shrink-0 mt-1">
-                          {getStatusIcon(exam.status)}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-sm mb-1 line-clamp-2 text-white">
-                            {exam.subject_names?.length > 0
-                              ? `${exam.subject_names.slice(0, 1).join('')}${exam.subject_names.length > 1 ? ` +${exam.subject_names.length - 1} more` : ''}`
-                              : exam.topic_names?.length > 0
-                                ? `${exam.topic_names.slice(0, 1).join('')}${exam.topic_names.length > 1 ? ` +${exam.topic_names.length - 1} more` : ''}`
-                                : exam.exam_type_display}
-                          </h4>
-                          <Badge
-                            variant="outline"
-                            className={`${getStatusBadge(exam.status)} font-medium hidden sm:block text-xs`}
-                          >
-                            {exam.status.replace('_', ' ').replace(/^\w/, c => c.toUpperCase())}
-                          </Badge>
-                        </div>
-                      </div>
-                      <div className="text-right flex-shrink-0">
-                        <div className={`text-lg font-bold ${exam.percentage >= 80 ? 'text-green-600' :
-                          exam.percentage >= 60 ? 'text-yellow-600' :
-                            exam.percentage >= 40 ? 'text-orange-600' :
-                              'text-red-600'
-                          }`}>
-                          {exam.percentage}%
-                        </div>
-                        <div className="text-xs text-muted-foreground hidden sm:block">
-                          {exam.percentage >= 80 ? 'Excellent' :
-                            exam.percentage >= 60 ? 'Good' :
-                              exam.percentage >= 40 ? 'Fair' :
-                                'Needs Work'}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <div className="flex items-center gap-3">
-                        <span className="flex items-center gap-1">
-                          {new Date(exam.created_at).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                          })}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          {new Date(exam.created_at).toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </span>
-                      </div>
-                      {(() => {
-                        const action = getExamAction(exam.status, exam.uid);
-                        return action ? (
-                          <Link to={action.to}>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-xs bg-gradient-to-r from-blue-500 to-primary-500 text-white border-none hover:from-blue-600 hover:to-primary-600 transition-all h-7 px-3"
-                            >
-                              {action.label}
-                            </Button>
-                          </Link>
-                        ) : null;
-                      })()}
-                    </div>
-                  </div>
-
-                  {/* Desktop/Tablet Layout */}
-                  <div className="hidden sm:flex items-center justify-between">
-                    <div className="flex items-center gap-4 flex-1 min-w-0">
-                      <div className="flex-shrink-0">
-                        {getStatusIcon(exam.status)}
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-base mb-1 truncate text-white">
-                          {exam.subject_names?.length > 0
-                            ? `${exam.subject_names.slice(0, 2).join(' • ')}${exam.subject_names.length > 2 ? ` +${exam.subject_names.length - 2} more` : ''}`
-                            : exam.topic_names?.length > 0
-                              ? `${exam.topic_names.slice(0, 2).join(' • ')}${exam.topic_names.length > 2 ? ` +${exam.topic_names.length - 2} more` : ''}`
-                              : exam.exam_type_display}
-                        </h4>
-
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            {new Date(exam.created_at).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                            })}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            {new Date(exam.created_at).toLocaleTimeString('en-US', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 flex-shrink-0">
-                      <Badge
-                        variant="outline"
-                        className={`${getStatusBadge(exam.status)} font-medium hidden md:inline-flex`}
-                      >
-                        {exam.status.replace('_', ' ').replace(/^\w/, c => c.toUpperCase())}
-                      </Badge>
-
-                      <div className="text-right">
-                        <div className={`text-lg font-bold ${exam.percentage >= 80 ? 'text-green-600' :
-                          exam.percentage >= 60 ? 'text-yellow-600' :
-                            exam.percentage >= 40 ? 'text-orange-600' :
-                              'text-red-600'
-                          }`}>
-                          {exam.percentage}%
-                        </div>
-                        <div className="text-xs text-muted-foreground hidden sm:block">
-                          {exam.percentage >= 80 ? 'Excellent' :
-                            exam.percentage >= 60 ? 'Good' :
-                              exam.percentage >= 40 ? 'Fair' :
-                                'Needs Work'}
-                        </div>
-                      </div>
-
-                      {(() => {
-                        const action = getExamAction(exam.status, exam.uid);
-                        return action ? (
-                          <Link to={action.to}>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="text-sm bg-gradient-to-r from-blue-500 to-primary-500 text-white border-none hover:from-blue-600 hover:to-primary-600 transition-all"
-                            >
-                              {action.label}
-                            </Button>
-                          </Link>
-                        ) : null;
-                      })()}
-                    </div>
-                </div>
-              </div>
-            ))}
-
-              <div className="mt-6 p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-pink-50 from-purple-900/20 to-pink-900/20 rounded-lg border border-purple-200 border-purple-800">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-purple-800 text-purple-300 mb-1 text-sm sm:text-base">
-                      Keep the momentum going! 🎯
-                    </h4>
-                    <p className="text-xs sm:text-sm text-purple-600 text-purple-400">
-                      Take another exam to improve your ranking
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {date} &nbsp; {time}
                     </p>
                   </div>
-                  <Link to="/job-preparation/practice" className="w-full sm:w-auto">
-                    <Button
-                      size="sm"
-                      className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xs sm:text-sm"
-                    >
-                      Take Another Exam
+
+                  <div className="flex items-center gap-4 shrink-0">
+                    <div className="text-right">
+                      <div className="text-white font-semibold">
+                        {Number(exam.percentage).toFixed(2)}%
+                      </div>
+                      <div className="text-xs text-muted-foreground">{perfLabel(exam.percentage)}</div>
+                    </div>
+
+                    <Link to={action.to}>
+                      <Button className="rounded-full px-5 h-9 bg-primary-600 hover:bg-primary-500 text-white">
+                        {action.label}
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="sm:px-5 pb-4 overflow-x-auto block md:hidden">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-lg font-semibold text-white">Recent Exam Activities</h2>
+          <button className="px-3 py-1 rounded-full text-xs text-white bg-background-700 border border-background-500">
+            See All
+          </button>
+        </div>
+        <div className="flex gap-4">
+          {exams.map((exam) => {
+            const action = getExamAction(exam.status, exam.uid);
+            const title = exam.subject_names?.length ? exam.subject_names[0] : exam.exam_type_display;
+            const dt = new Date(exam.created_at);
+            const date = dt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+            const time = dt.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+
+            return (
+              <article
+                key={exam.uid}
+                className="w-72 shrink-0 rounded-2xl border border-slate-800 bg-background p-4"
+              >
+                {/* Progress pill */}
+                <div className="mb-3 flex flex-col items-center justify-center rounded-xl bg-[#2F3B54] text-slate-200 px-3 py-2 w-full">
+                  <span className="text-xl font-semibold">
+                    {Number(exam.percentage).toFixed(2)}%
+                  </span>
+                  <span className="text-sm text-gray-400">Your Progress</span>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-slate-100 text-base font-semibold leading-snug line-clamp-2 text-center">
+                  {title}
+                </h3>
+
+                {/* Status icon + performance */}
+                <div className="mt-2 flex justify-center items-center gap-2">
+                  <StatusIcon pass_status={exam.pass_status} />
+                  <span className="text-xs text-muted-foreground">{perfLabel(exam.percentage)}</span>
+                </div>
+
+                {/* Date */}
+                <p className="mt-2 text-xs text-slate-400 text-center">
+                  {date} &nbsp; {time}
+                </p>
+
+                {/* CTA */}
+                <div className="mt-4">
+                  <Link to={action.to}>
+                    <Button className="w-full rounded-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium px-3 py-2">
+                      {action.label}
                     </Button>
                   </Link>
                 </div>
-              </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </>
   );
 }

@@ -37,7 +37,7 @@ const TutorsList: React.FC = () => {
 
     return (
         <div className="w-full mx-auto p-0">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 {loading ? (
                     [...Array(3)].map((_, index) => (
                         <Card key={index} className="bg-background border-gray-900 shadow-xl">
