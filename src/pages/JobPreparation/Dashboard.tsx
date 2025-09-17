@@ -84,15 +84,9 @@ export default function JobPreparationDashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <div className="lg:col-span-2">
                     <ExamStatusCards />
-                    <div className='mt-5'>
-                      <RoutineTable />
-                    </div>
                   </div>
                   <div className="space-y-6">
                     <WeeklyGoal />
-                    <div className='mt-5'>
-                      <SocialMediaCards />
-                    </div>
                   </div>
                 </div>
               </div>
@@ -109,6 +103,18 @@ export default function JobPreparationDashboard() {
                 <RankingSystem />
               </div>
             )}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <div className='mt-5'>
+                <RoutineTable />
+              </div>
+            </div>
+            <div className="space-y-6">
+              <div className='mt-5'>
+                <SocialMediaCards />
+              </div>
+            </div>
           </div>
         </div>
         <div className="pb-20"></div>

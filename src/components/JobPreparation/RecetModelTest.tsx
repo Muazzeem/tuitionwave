@@ -177,8 +177,8 @@ const LiveModelTests: React.FC = () => {
                             Failed to load live tests. {err}
                         </div>
                     ) : exams.length === 0 ? (
-                        <div className="rounded-xl border border-slate-800 bg-slate-800/40 p-6 text-slate-300 text-sm">
-                            No live tests today.
+                                <div className="rounded-xl text-center border border-slate-800 bg-background-600/40 p-6 text-slate-300 text-sm">
+                                    Not available for today.
                         </div>
                     ) : (
                         <div className="flex flex-col gap-3">
@@ -241,75 +241,82 @@ const LiveModelTests: React.FC = () => {
                     )}
                 </div>
             </section>
+
             <div className="mb-3 flex items-center justify-between block md:hidden">
                 <h2 className="text-lg font-semibold text-white">Live Model Test</h2>
                 <span className="rounded-full bg-blue-600/20 text-blue-300 text-xs font-medium px-3 py-1 ring-1 ring-inset ring-blue-500/30 animate-pulse">
                     {liveCount} Live Exam
                 </span>
             </div>
-            <div className="sm:px-5 pb-4 overflow-x-auto block md:hidden">
-                <div className="flex gap-4">
-                    {exams.map((item) => {
-                        const pct =
-                            typeof item.user_exam?.percentage === "number"
-                                ? item.user_exam!.percentage
-                                : 0;
-                        const status = item.user_exam?.status ?? "not_started";
-                        const isCompleted = status === "completed";
-                        const isInProgress = status === "in_progress";
-                        const ctaText = isCompleted
-                            ? "View Results"
-                            : isInProgress
-                                ? "Resume"
-                                : "Start Exam";
+            {liveCount > 0 ? (
+                <div className="sm:px-5 pb-4 overflow-x-auto block md:hidden">
+                    <div className="flex gap-4">
+                        {exams.map((item) => {
+                            const pct =
+                                typeof item.user_exam?.percentage === "number"
+                                    ? item.user_exam!.percentage
+                                    : 0;
+                            const status = item.user_exam?.status ?? "not_started";
+                            const isCompleted = status === "completed";
+                            const isInProgress = status === "in_progress";
+                            const ctaText = isCompleted
+                                ? "View Results"
+                                : isInProgress
+                                    ? "Resume"
+                                    : "Start Exam";
 
-                        return (
-                            <article
-                                key={item.uid}
-                                className="w-72 shrink-0 rounded-2xl border border-slate-800 bg-background p-4 md:p-5"
-                            >
-                                {/* Progress pill */}
-                                <div className="mb-3 flex flex-col items-center justify-center rounded-xl bg-[#2F3B54] text-slate-200 px-3 py-2 w-full">
-                                    <span className="text-xl font-semibold">
-                                        {pct.toFixed(2)}%
-                                    </span>
-                                    <span className="text-sm text-gray-400">
-                                        Your Progress
-                                    </span>
-                                </div>
+                            return (
+                                <article
+                                    key={item.uid}
+                                    className="w-72 shrink-0 rounded-2xl border border-slate-800 bg-background p-4 md:p-5"
+                                >
+                                    {/* Progress pill */}
+                                    <div className="mb-3 flex flex-col items-center justify-center rounded-xl bg-[#2F3B54] text-slate-200 px-3 py-2 w-full">
+                                        <span className="text-xl font-semibold">
+                                            {pct.toFixed(2)}%
+                                        </span>
+                                        <span className="text-sm text-gray-400">
+                                            Your Progress
+                                        </span>
+                                    </div>
 
-                                {/* Title */}
-                                <h3 className="text-slate-100 text-base sm:text-lg font-semibold leading-snug line-clamp-2 text-center">
-                                    {item.name}
-                                </h3>
+                                        {/* Title */}
+                                        <h3 className="text-slate-100 text-base sm:text-lg font-semibold leading-snug line-clamp-2 text-center">
+                                            {item.name}
+                                        </h3>
 
-                                {/* Badges row */}
-                                <div className="mt-2 flex justify-center items-center gap-2">
-                                    <LivePill />
-                                    {item.category?.category_name && (
-                                        <Tag>{item.category.category_name}</Tag>
-                                    )}
-                                </div>
+                                        {/* Badges row */}
+                                        <div className="mt-2 flex justify-center items-center gap-2">
+                                            <LivePill />
+                                            {item.category?.category_name && (
+                                                <Tag>{item.category.category_name}</Tag>
+                                            )}
+                                        </div>
 
-                                {/* Date */}
-                                <p className="mt-2 text-xs text-slate-400 text-center">
-                                    {formatDateTime(item.scheduled_date)}
-                                </p>
+                                        {/* Date */}
+                                        <p className="mt-2 text-xs text-slate-400 text-center">
+                                            {formatDateTime(item.scheduled_date)}
+                                        </p>
 
-                                {/* CTA */}
-                                <div className="mt-4">
-                                    <button
-                                        onClick={() => handleStartExam(item)}
-                                        className="w-full inline-flex items-center justify-center rounded-full bg-blue-600 text-white text-sm font-medium px-3 py-2 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-blue-400 transition"
-                                    >
-                                        {ctaText}
-                                    </button>
-                                </div>
-                            </article>
-                        );
-                    })}
+                                    {/* CTA */}
+                                    <div className="mt-4">
+                                        <button
+                                            onClick={() => handleStartExam(item)}
+                                            className="w-full inline-flex items-center justify-center rounded-full bg-blue-600 text-white text-sm font-medium px-3 py-2 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-blue-400 transition"
+                                        >
+                                            {ctaText}
+                                        </button>
+                                    </div>
+                                </article>
+                            );
+                        })}
+                    </div>
                 </div>
-            </div>
+            ) : (
+                <div className="block md:hidden rounded-xl text-center border border-slate-800 bg-background-600/40 p-6 text-slate-300 text-sm">
+                    Not available for today.
+                </div>
+            )}
         </>
 
     )

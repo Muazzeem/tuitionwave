@@ -225,7 +225,7 @@ const NotificationDropdown: React.FC<NotificationProps> = () => {
                 className="text-gray-300 hover:text-white relative p-2 transition-colors duration-200"
                 onClick={toggleDropdown}
             >
-                <Bell size={20} />
+                <Bell size={22} className={unreadCount > 0 ? "animate-bounce" : ""} />
                 {unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs">
                         {unreadCount > 99 ? '99+' : unreadCount}

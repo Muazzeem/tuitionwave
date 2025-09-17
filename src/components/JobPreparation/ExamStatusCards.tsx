@@ -71,7 +71,6 @@ function ExamListSkeleton() {
   );
 }
 
-/* -------- Component -------- */
 export default function ExamStatusCards() {
   const [exams, setExams] = useState<ExamRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -158,13 +157,14 @@ export default function ExamStatusCards() {
         </CardContent>
       </Card>
 
+      <div className="flex items-center justify-between mb-2 block md:hidden">
+        <h2 className="text-lg font-semibold text-white">Recent Exam Activities</h2>
+        <button className="px-3 py-1 rounded-full text-xs text-white bg-background-700 border border-background-500">
+          See All
+        </button>
+      </div>
+
       <div className="sm:px-5 pb-4 overflow-x-auto block md:hidden">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-lg font-semibold text-white">Recent Exam Activities</h2>
-          <button className="px-3 py-1 rounded-full text-xs text-white bg-background-700 border border-background-500">
-            See All
-          </button>
-        </div>
         <div className="flex gap-4">
           {exams.map((exam) => {
             const action = getExamAction(exam.status, exam.uid);

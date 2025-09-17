@@ -8,7 +8,7 @@ const RoutineTable = () => {
     ];
 
     return (
-        <div className="bg-background rounded-2xl p-6 border-0 border-background-600">
+        <div className="bg-background rounded-2xl p-6 border-0 border-background-600 min-h-96">
             {/* Header */}
             <div className="flex justify-between items-center mb-3">
                 <h2 className="text-lg font-semibold text-white">Recent Routine</h2>
