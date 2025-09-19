@@ -77,7 +77,7 @@ const TutorCard: React.FC<TutorCardProps> = ({
         </div>
 
         {/* Body */}
-        <div className="relative -mt-6 px-5 pb-5">
+        <div className="relative -mt-6 px-2 pb-3 xl:pb-5">
           {/* University */}
           <div className="flex items-center text-slate-300/85 text-sm mb-1">
             <GraduationCap className="mr-2 h-4 w-4 opacity-80" />
@@ -85,7 +85,7 @@ const TutorCard: React.FC<TutorCardProps> = ({
           </div>
 
           {/* Name */}
-          <h3 className="text-white text-lg font-semibold leading-tight mb-2 line-clamp-1">
+          <h3 className="text-white text-md md:text-lg font-semibold leading-tight mb-2 line-clamp-1">
             {name}
           </h3>
 
@@ -93,20 +93,21 @@ const TutorCard: React.FC<TutorCardProps> = ({
             <MapPin className="mr-2 h-4 w-4 opacity-90" />
             <span className="truncate text-xs">{locationText || "Address not specified"}</span>
           </div>
-          <p className="text-slate-300/90 text-xs mb-5">{subjectsFallback}</p>
+          <p className="text-slate-300/90 text-xs mb-2 md:mb-5">{subjectsFallback}</p>
+          <p className="text-slate-300/90 text-sm mb-3 block md:hidden">{monthlyRate}</p>
           <div className="flex items-center justify-between">
             <div className="flex items-center text-slate-200">
               <Star className="h-5 w-5 mr-2 fill-yellow-400 text-yellow-400" />
-              <span className="text-sm font-medium">
+              <span className="text-xs md:text-sm font-medium">
                 {Number.isFinite(rating) ? rating.toFixed(1) : "—"}
               </span>
-              <span className="ml-1 text-slate-400 text-base text-sm">
+              <span className="ml-1 text-slate-400 text-base text-xs md:text-sm">
                 ({reviewCount ?? 0})
               </span>
             </div>
             <span
               className={[
-                "rounded-full px-3 py-2",
+                "rounded-full px-3 py-2 hidden md:block",
                 "text-white text-xs",
                 "bg-blue-600",
                 "whitespace-nowrap",

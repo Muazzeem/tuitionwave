@@ -115,15 +115,15 @@ const TutorSearchResults: React.FC = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-2 mb-10">
           {loading ? (
             [...Array(5)].map((_, index) => (
               <Card key={index} className="bg-background border-gray-900 shadow-xl">
                 <div className="p-3">
-                  <Skeleton className="h-48 w-full mb-3 bg-slate-800/40 backdrop-blur-md" />
-                  <Skeleton className="h-5 w-1/3 mb-2 bg-slate-800/40 backdrop-blur-md" />
-                  <Skeleton className="h-8 w-2/3 mb-2 bg-slate-800/40 backdrop-blur-md" />
-                  <Skeleton className="h-6 w-full mb-2 bg-slate-800/40 backdrop-blur-md" />
+                  <Skeleton className="h-48 w-full mb-3 backdrop-blur-md" />
+                  <Skeleton className="h-5 w-1/3 mb-2 backdrop-blur-md" />
+                  <Skeleton className="h-8 w-2/3 mb-2 backdrop-blur-md" />
+                  <Skeleton className="h-6 w-full mb-2 backdrop-blur-md" />
                   <Skeleton className="h-6 w-full mb-4 bg-slate-800/40 backdrop-blur-md" />
                   <Skeleton className="h-10 w-full bg-slate-800/40 backdrop-blur-md" />
                 </div>

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Tutor, TutorListResponse } from '@/types/tutor';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
-import { Card } from '../ui/card';
 import TutorCard from './TutorCard';
 
 const TutorsList: React.FC = () => {
@@ -37,19 +36,77 @@ const TutorsList: React.FC = () => {
 
     return (
         <div className="w-full mx-auto p-0">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 mb-10">
                 {loading ? (
                     [...Array(4)].map((_, index) => (
-                        <Card key={index} className="bg-background border-gray-900 shadow-xl">
-                            <div className="p-3">
-                                <Skeleton className="h-48 w-full mb-3 bg-slate-800/40 backdrop-blur-md" />
-                                <Skeleton className="h-5 w-1/3 mb-2 bg-slate-800/40 backdrop-blur-md" />
-                                <Skeleton className="h-8 w-2/3 mb-2 bg-slate-800/40 backdrop-blur-md" />
-                                <Skeleton className="h-6 w-full mb-2 bg-slate-800/40 backdrop-blur-md" />
-                                <Skeleton className="h-6 w-full mb-4 bg-slate-800/40 backdrop-blur-md" />
-                                <Skeleton className="h-10 w-full bg-slate-800/40 backdrop-blur-md" />
+                        <div
+                            key={index}
+                            aria-hidden
+                            className={[
+                                "relative overflow-hidden rounded-3xl",
+                                "bg-slate-800/40 backdrop-blur-md",
+                                "border border-white/10",
+                                "shadow-lg",
+                                "animate-pulse",
+                            ].join(" ")}
+                        >
+                            {/* Image area */}
+                            <div className="relative">
+                                <Skeleton className="h-48 w-full rounded-none bg-slate-800/50" />
+
+                                {/* Badge placeholder (teaching_type) */}
+                                <div className="absolute left-4 top-4">
+                                    <Skeleton className="h-6 w-24 rounded-full bg-slate-700/60" />
+                                </div>
+
+                                {/* Bottom gradient overlay to match real card */}
+                                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-slate-900/90 via-slate-900/60 to-transparent" />
                             </div>
-                        </Card>
+
+                            {/* Body */}
+                            <div className="relative -mt-6 px-2 pb-3 xl:pb-5">
+                                {/* University row (icon + text) */}
+                                <div className="flex items-center mb-1">
+                                    <Skeleton className="h-4 w-4 rounded-full mr-2 bg-slate-700/60" />
+                                    <Skeleton className="h-3.5 w-2/3 bg-slate-700/60" />
+                                </div>
+
+                                {/* Name */}
+                                <Skeleton className="h-5 md:h-6 w-3/4 my-2 bg-slate-700/60" />
+
+                                {/* Location row (icon + text) */}
+                                <div className="flex items-center mb-2">
+                                    <Skeleton className="h-4 w-4 rounded-full mr-2 bg-slate-700/60" />
+                                    <Skeleton className="h-3 w-4/5 bg-slate-700/60" />
+                                </div>
+
+                                {/* Subjects fallback line */}
+                                <Skeleton className="h-3 w-2/3 mb-2 md:mb-5 bg-slate-700/60" />
+
+                                {/* Monthly rate (mobile only) */}
+                                <div className="md:hidden mb-3">
+                                    <Skeleton className="h-4 w-24 bg-slate-700/60" />
+                                </div>
+
+                                {/* Bottom row: rating (left) + chip (right on md+) */}
+                                <div className="flex items-center justify-between">
+                                    {/* Rating */}
+                                    <div className="flex items-center space-x-2">
+                                        <Skeleton className="h-5 w-5 rounded-full bg-slate-700/60" />
+                                        <Skeleton className="h-4 w-10 bg-slate-700/60" />
+                                        <Skeleton className="h-4 w-12 bg-slate-700/60" />
+                                    </div>
+
+                                    {/* Monthly rate chip (hidden on mobile to match real) */}
+                                    <div className="hidden md:block">
+                                        <Skeleton className="h-8 w-28 rounded-full bg-slate-700/60" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Subtle outer ring */}
+                            <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-white/10" />
+                        </div>
                     ))
                 ) : tutors.length > 0 ? (
                     tutors.map((tutor) => (

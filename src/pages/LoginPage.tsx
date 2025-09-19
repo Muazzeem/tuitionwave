@@ -20,6 +20,9 @@ const LoginPage: React.FC = () => {
   const { toast } = useToast();
 
   const lastVisitedUrl = localStorage.getItem("lastVisitedUrl");
+  if (lastVisitedUrl === '/') {
+    localStorage.removeItem("lastVisitedUrl");
+  }
   const from = location.state?.from?.pathname || lastVisitedUrl || '/dashboard';
 
   useEffect(() => {

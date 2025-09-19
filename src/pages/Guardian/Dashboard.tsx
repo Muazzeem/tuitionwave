@@ -21,7 +21,7 @@ export default function GuardianDashboard() {
             <DashboardHeader userName={userProfile?.first_name || 'Guardian'} />
 
             <ScrollArea type="always" style={{ height: "calc(100vh - 100px)" }}>
-                <div className="p-6">
+                <div className="p-2">
                     <h2 className="text-xl md:text-3xl font-bold text-foreground text-white font-unbounded">Guardian Dashboard</h2>
                     <p className="text-muted-foreground mb-6">Manage your Guardian profile and requests</p>
                     <StatsCards />
@@ -33,7 +33,7 @@ export default function GuardianDashboard() {
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
                         <div className="col-span-12 md:col-span-8">
-                            <div className="rounded-2xl bg-background-900 p-4">
+                            <div className="rounded-2xl bg-background-900 p-2 md:p-4">
                                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0 mb-2">
                                     <h2 className="text-md font-bold text-white font-unbounded">Tutors </h2>
                                     <Link to="/guardian/find-tutors">

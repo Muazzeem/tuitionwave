@@ -87,6 +87,8 @@ export default function JobPreparationDashboard() {
                   </div>
                   <div className="space-y-6">
                     <WeeklyGoal />
+
+                    <RoutineTable />
                   </div>
                 </div>
               </div>
@@ -107,7 +109,7 @@ export default function JobPreparationDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <div className='mt-5'>
-                <RoutineTable />
+
               </div>
             </div>
             <div className="space-y-6">

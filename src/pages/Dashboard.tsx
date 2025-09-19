@@ -36,7 +36,6 @@ const Dashboard: React.FC = () => {
       .then((response) => response.json())
       .then((data) => {
         setTutor(data);
-        console.log(data)
       })
       .catch((error) => console.error("Error fetching tutor info:", error));
   }
