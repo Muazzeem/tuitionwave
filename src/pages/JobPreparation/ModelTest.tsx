@@ -10,6 +10,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import TutorPagination from "@/components/FindTutors/TutorPagination";
 import { useAuth } from "@/contexts/AuthContext";
+import ModelTestCard from "@/components/JobPreparation/ModelTestCard";
 
 
 // Custom hook for countdown timer
@@ -140,7 +141,7 @@ export default function CreateModelTest() {
   const [selectedTab, setSelectedTab] = useState(tabFromUrl);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [processingExams, setProcessingExams] = useState(new Set());
+  const [processingExams, setProcessingExams] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
@@ -531,126 +532,43 @@ export default function CreateModelTest() {
 
           {/* Exams Grid */}
           {!loading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filteredExams.map((exam) => {
-                const statusInfo = getStatusInfo(exam);
-                const StatusIcon = statusInfo.icon;
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredExams.map((exam) => (
+                <ModelTestCard
+                  key={exam.uid}
+                  exam={exam}
+                  onStartExam={handleStartExam}
+                  getStatusInfo={getStatusInfo}
+                  processingExams={processingExams}
+                />
+              ))}
+            </div>
+          )}
 
-                return (
-                  <Card
-                    key={exam.uid}
-                    className={`${exam.is_active
-                      ? 'hover:border-primary-300 hover:border-primary-600'
-                      : 'opacity-75 cursor-not-allowed'
-                      } bg-white bg-background border-gray-200 border-gray-900 shadow-md`}
-                  >
-                    <CardContent className="p-3 sm:p-4 md:p-6">
-                      <div className="space-y-3 sm:space-y-4">
-                        {/* Header with Status */}
-                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-                              <h3 className="text-base sm:text-lg font-semibold text-gray-900 text-white line-clamp-2 sm:line-clamp-1">
-                                {exam.title}
-                              </h3>
-                              <Badge className={`${statusInfo.bgColor} ${statusInfo.color} border-0 text-xs self-start sm:self-center flex-shrink-0`}>
-                                <StatusIcon className="w-3 h-3 mr-1" />
-                                <span className="truncate">{statusInfo.label}</span>
-                              </Badge>
-                            </div>
-                            <p className="text-muted-foreground text-xs sm:text-sm line-clamp-2 sm:line-clamp-2">
-                              {exam.description}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Category */}
-                        <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2">
-                          <Badge variant="outline" className="bg-blue-50 bg-blue-900/20 text-blue-700 text-blue-300 border-blue-200 border-blue-800 self-start">
-                            <span className="truncate">{exam.category}</span>
-                          </Badge>
-                        </div>
-
-                        <div className="flex flex-row justify-between gap-2">
-                          <div className="flex items-center gap-1 text-muted-foreground text-xs sm:text-sm">
-                            <Timer className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                            <span>{exam.duration}</span>
-                          </div>
-                          <div className="flex flex-col gap-1">
-                            {/* Countdown Timer - Hidden for expired tests */}
-                            {exam.expired_date && (
-                              <CountdownDisplay
-                                targetDate={exam.expired_date}
-                                className="self-end"
-                                hideForExpired={exam.status === 'expired'}
-                                examStatus={exam.status}
-                              />
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Exam Details */}
-                        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 text-xs sm:text-sm">
-                          <div className="flex items-center gap-2 text-muted-foreground">
-                            <BookOpen className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                            <span className="truncate">{exam.totalQuestions} questions</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-muted-foreground">
-                            <Eye className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                            <span className="truncate">Passing Mark {exam.passing_marks}</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-muted-foreground xs:col-span-2 lg:col-span-1">
-                            <Calendar className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                            <span className="truncate">{exam.scheduled_date}</span>
-                          </div>
-                        </div>
-
-                        {/* {exam.user_exam && exam.is_active && (
-                          <div className={`p-2 sm:p-3 rounded-lg border ${statusInfo.borderColor} ${statusInfo.bgColor}`}>
-                            <div className="flex flex-col xs:flex-row xs:justify-between xs:items-center gap-1 xs:gap-0 text-xs sm:text-sm">
-                              <span className="font-medium">Your Progress</span>
-                              <div className="text-left xs:text-right">
-                                <div className={`font-bold text-sm sm:text-base ${statusInfo.color}`}>
-                                  {exam.user_exam.percentage}%
-                                </div>
-                                <div className="text-xs text-muted-foreground">
-                                  {exam.user_exam.status_display}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )} */}
-
-                        {exam.is_active && exam.totalQuestions > 0 && exam.status !== 'upcoming' && (
-                          <>
-                            {hasStudentExamAccess ? (
-                              <Button
-                                className={`w-full mt-3 sm:mt-4 group-hover:shadow-md transition-all text-xs sm:text-sm ${statusInfo.buttonClass} ${statusInfo.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                size="sm"
-                                onClick={() => handleStartExam(exam)}
-                                disabled={statusInfo.disabled}
-                              >
-                                <StatusIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
-                                <span className="truncate">{statusInfo.action}</span>
-                              </Button>
-                            ) : (
-                              <Button
-                                className="w-full mt-3 sm:mt-4 group-hover:shadow-md transition-all text-xs sm:text-sm bg-red-700/50 hover:bg-red-600 text-white"
-                                size="sm"
-                                onClick={() => {
-                                  navigate(`/job-preparation/package`);
-                                }}
-                              >
-                                <span className="truncate">Upgrade Package</span>
-                              </Button>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+          {/* Loading State */}
+          {loading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, index) => (
+                <Card key={index} className="border-slate-800 bg-slate-900/50 backdrop-blur-sm animate-pulse">
+                  <CardContent className="p-6">
+                    <div className="mb-4 flex items-center justify-center">
+                      <div className="rounded-xl bg-slate-700/60 px-4 py-3 text-center min-w-[120px] h-16"></div>
+                    </div>
+                    <div className="h-6 bg-slate-700/60 rounded mb-2"></div>
+                    <div className="h-4 bg-slate-700/60 rounded mb-4"></div>
+                    <div className="flex justify-center gap-2 mb-4">
+                      <div className="h-6 w-16 bg-slate-700/60 rounded"></div>
+                      <div className="h-6 w-12 bg-slate-700/60 rounded"></div>
+                    </div>
+                    <div className="flex justify-center gap-4 mb-6">
+                      <div className="h-4 w-12 bg-slate-700/60 rounded"></div>
+                      <div className="h-4 w-16 bg-slate-700/60 rounded"></div>
+                      <div className="h-4 w-14 bg-slate-700/60 rounded"></div>
+                    </div>
+                    <div className="h-10 bg-slate-700/60 rounded"></div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           )}
 
