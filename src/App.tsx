@@ -219,7 +219,7 @@ const App = () => (
 
                 <Route path="/job-preparation/exam/:examId/results" element={
                   <AuthGuard>
-                    <MainLayout><ExamResultsPage /></MainLayout>
+                    <ExamResultsPage />
                   </AuthGuard>
                 } />
 

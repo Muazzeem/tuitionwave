@@ -98,3 +98,53 @@ export interface SubjectsResponse extends PaginatedResponse<Subject> {}
 export interface TopicsResponse extends PaginatedResponse<Topic> {}
 export interface SubtopicsResponse extends PaginatedResponse<Subtopic> {}
 export interface QuestionsResponse extends PaginatedResponse<Question> {}
+
+
+export interface ExamResults {
+  result_status: string;
+  uid: string;
+  exam_type: string;
+  status: string;
+  question_limit: number;
+  total_questions: number;
+  total_marks: number;
+  duration_minutes: number;
+  started_at: string;
+  completed_at: string;
+  expires_at: string;
+  obtained_marks: number;
+  percentage: number;
+  correct_answers: number;
+  incorrect_answers: number;
+  unanswered: number;
+  cut_marks: number;
+  subjects_info: { uid: string; title: string; }[];
+  topics_info: { uid: string; name: string; }[];
+  questions: {
+    image: string;
+    uid: string;
+    order: number;
+    topic_name: string;
+    subject_title: string;
+    question_uid: string;
+    question_number: number;
+    question_text: string;
+    marks: number;
+    negative_marks: number;
+    time_limit_seconds: number;
+    options: {
+      uid: string;
+      text: string;
+      label: string;
+      order: number;
+      is_correct: boolean;
+    }[];
+    selected_option?: {
+      uid: string;
+      text: string;
+      label: string;
+    };
+    is_correct?: boolean;
+    explanation?: string;
+  }[];
+}

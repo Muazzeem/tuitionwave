@@ -2,136 +2,14 @@ import { useState, useEffect, useMemo } from "react";
 import DashboardHeader from "@/components/DashboardHeader";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, Calendar, PlayCircle, CheckCircle, Eye, Timer, BookOpen, Trophy, AlertCircle } from "lucide-react";
+import { Clock, PlayCircle, CheckCircle, BookOpen, AlertCircle } from "lucide-react";
 import { getAccessToken } from "@/utils/auth";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import TutorPagination from "@/components/FindTutors/TutorPagination";
 import { useAuth } from "@/contexts/AuthContext";
 import ModelTestCard from "@/components/JobPreparation/ModelTestCard";
-
-
-// Custom hook for countdown timer
-const useCountdown = (targetDate) => {
-  const [timeLeft, setTimeLeft] = useState(null);
-
-  useEffect(() => {
-    if (!targetDate) {
-      setTimeLeft(null);
-      return;
-    }
-
-    const calculateTimeLeft = () => {
-      const now = new Date().getTime();
-      const target = new Date(targetDate).getTime();
-      const difference = target - now;
-
-      if (difference > 0) {
-        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-        return {
-          days,
-          hours,
-          minutes,
-          seconds,
-          total: difference,
-          expired: false
-        };
-      } else {
-        return {
-          days: 0,
-          hours: 0,
-          minutes: 0,
-          seconds: 0,
-          total: 0,
-          expired: true
-        };
-      }
-    };
-
-    // Calculate initial time
-    setTimeLeft(calculateTimeLeft());
-
-    // Set up interval to update every second
-    const interval = setInterval(() => {
-      const newTimeLeft = calculateTimeLeft();
-      setTimeLeft(newTimeLeft);
-
-      // Clear interval if expired
-      if (newTimeLeft.expired) {
-        clearInterval(interval);
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [targetDate]);
-
-  return timeLeft;
-};
-
-// Countdown Display Component
-const CountdownDisplay = ({ targetDate, className = "", hideForExpired = false, examStatus = "running" }) => {
-  const timeLeft = useCountdown(targetDate);
-
-  if (!timeLeft || !targetDate) {
-    return null;
-  }
-
-  // Hide countdown for expired tests if hideForExpired is true
-  if (hideForExpired && (timeLeft.expired || examStatus === "expired")) {
-    return null;
-  }
-
-  const formatTimeUnit = (value, unit) => {
-    return `${value}${unit.charAt(0)}`;
-  };
-
-  const getUrgencyStyle = () => {
-    if (timeLeft.expired) {
-      return "text-red-600 bg-red-50 bg-red-900/20 border-red-200 border-red-800";
-    } else if (timeLeft.total < 2 * 60 * 60 * 1000) { // Less than 2 hours
-      return "text-orange-600 bg-orange-50 bg-orange-900/20 border-orange-200 border-orange-800";
-    } else if (timeLeft.total < 24 * 60 * 60 * 1000) { // Less than 24 hours
-      return "text-green-600 bg-green-50 bg-green-900/20 border-green-200 border-green-800";
-    } else {
-      return "text-green-600 bg-green-50 bg-green-900/20 border-green-200 border-green-800";
-    }
-  };
-
-  const getIcon = () => {
-    if (timeLeft.expired) {
-      return <AlertCircle className="w-3 h-3 mr-1" />;
-    } else if (timeLeft.total < 24 * 60 * 60 * 1000) {
-      return <Clock className="w-3 h-3 mr-1" />;
-    } else {
-      return <Clock className="w-3 h-3 mr-1" />;
-    }
-  };
-
-  if (timeLeft.expired) {
-    return (
-      <Badge className={`${getUrgencyStyle()} border text-xs font-medium ${className}`}>
-        {getIcon()}
-        Expired
-      </Badge>
-    );
-  }
-
-  return (
-    <Badge className={`${getUrgencyStyle()} border text-xs font-medium ${className}`}>
-      {getIcon()}
-      {timeLeft.days > 0 && formatTimeUnit(timeLeft.days, "day")}
-      {(timeLeft.days > 0 || timeLeft.hours > 0) && formatTimeUnit(timeLeft.hours, "hour")}
-      {formatTimeUnit(timeLeft.minutes, "min")}
-      {timeLeft.days === 0 && timeLeft.hours === 0 && formatTimeUnit(timeLeft.seconds, "sec")}
-    </Badge>
-  );
-};
 
 export default function CreateModelTest() {
   const { userProfile } = useAuth();
@@ -264,21 +142,6 @@ export default function CreateModelTest() {
   useEffect(() => {
     fetchModelTests();
   }, [selectedTab, currentPage]);
-
-  const hasStudentExamAccess = useMemo(() => {
-    const pkgs = userProfile?.packages;
-    if (!Array.isArray(pkgs) || pkgs.length === 0) return false;
-
-    return pkgs.some((p) => {
-      const status = p?.status?.toUpperCase?.();
-      const role = p?.role_applied?.toUpperCase?.();
-      const target = p?.package?.target?.toUpperCase?.();
-      const isActive = status === 'ACTIVE';
-      const matchesRole = role === 'STUDENT' || role === 'BOTH';
-      const matchesTarget = target === 'STUDENT' || target === 'BOTH';
-      return isActive && (matchesRole || matchesTarget);
-    });
-  }, [userProfile?.packages]);
 
   const filteredExams = examData;
 
@@ -494,35 +357,32 @@ export default function CreateModelTest() {
       <DashboardHeader userName="John" />
       <ScrollArea type="always" style={{ height: 'calc(100vh - 100px)' }}>
         <div className="p-4 md:p-6">
-          {/* Header Section */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-3">
-              <div className="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg p-2 hidden md:block">
-                <BookOpen className="h-6 w-6 text-white" />
-              </div>
               <div>
-                <h1 className="text-xl md:text-3xl font-bold text-foreground text-white">Model Tests</h1>
+                <h1 className="text-xl md:text-3xl font-bold text-foreground text-white font-unbounded">Model Tests</h1>
                 <p className="text-muted-foreground hidden md:block">Practice with real exam simulations and track your progress</p>
               </div>
             </div>
           </div>
 
-          {/* Enhanced Tabs */}
           <div className="mb-8">
-            <div className="flex flex-wrap gap-2 p-1 bg-gray-100 bg-gray-800 rounded-xl w-fit">
+            <div className="flex flex-wrap gap-3">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = selectedTab === tab.id;
+
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setSelectedTab(tab.id)}
-                    className={`flex items-center md:mb-1 md:mt-1 p-1 md:p-3 gap-2 rounded-lg text-sm font-medium transition-all ${isActive
-                      ? `${tab.bgColor} ${tab.color} shadow-sm border ${tab.borderColor}`
-                      : "text-muted-foreground hover:text-foreground hover:bg-white/50 hover:bg-gray-700"
+                    className={`flex items-center gap-2 px-4 py-2 rounded-3xl text-sm font-medium transition-all
+            ${isActive
+                        ? "bg-primary-600 text-white shadow-md"
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white"
                       }`}
                   >
-                    <Icon className={`w-4 h-4 ${isActive ? tab.color : ''}`} />
+                    <Icon className="w-4 h-4" />
                     {tab.label}
                   </button>
                 );
@@ -532,7 +392,7 @@ export default function CreateModelTest() {
 
           {/* Exams Grid */}
           {!loading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
               {filteredExams.map((exam) => (
                 <ModelTestCard
                   key={exam.uid}
@@ -552,7 +412,7 @@ export default function CreateModelTest() {
                 <Card key={index} className="border-slate-800 bg-slate-900/50 backdrop-blur-sm animate-pulse">
                   <CardContent className="p-6">
                     <div className="mb-4 flex items-center justify-center">
-                      <div className="rounded-xl bg-slate-700/60 px-4 py-3 text-center min-w-[120px] h-16"></div>
+                      <div className="rounded-xl bg-slate-700/60 px-4 py-3 text-center w-full h-16"></div>
                     </div>
                     <div className="h-6 bg-slate-700/60 rounded mb-2"></div>
                     <div className="h-4 bg-slate-700/60 rounded mb-4"></div>
