@@ -108,42 +108,29 @@ const ReadingModePage: React.FC = () => {
       <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(109vh - 160px)' }}>
         <main className="flex-1 pb-6">
           <div className="p-2 sm:p-4 md:p-6 max-w-7xl mx-auto">
-            {/* Breadcrumb */}
-            <div className="mb-4 sm:mb-6 flex items-center space-x-2 text-sm text-gray-600 text-gray-400">
-              <Link to="/job-preparation/questions">
-                <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
-              </Link>
-              <span>/</span>
-              <span className="text-green-600 font-medium">Reading Mode</span>
-            </div>
-
-            {/* Header Section */}
-            <div className="mb-6 sm:mb-8">
+            <div className="mb-4">
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <Button
-                      variant="outline"
-                      onClick={handleBack}
-                      className="hover:bg-green-900/20 border-0 text-white hover:text-white"
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/job-preparation/questions`)}
+                      aria-label="Back to results"
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-600 hover:bg-primary-700 transition-colors"
                     >
-                      <ChevronLeft className="h-4 w-4 mr-1" />
-                      <span className="hidden sm:inline">Back to Topic</span>
-                    </Button>
+                      <ChevronLeft className="h-5 w-5 text-white" />
+                    </button>
                     <div>
-                      <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 text-white flex items-center">
-                        <GraduationCap className="h-5 w-5 sm:h-6 sm:w-6 mr-2 text-green-600" />
+                      <h2 className="text-md md:text-3xl font-bold text-white font-unbounded">
                         Reading Mode
-                      </h1>
+                      </h2>
                       {selectedSubtopic ? (
-                        <p className="text-green-600 font-medium text-sm flex items-center">
-                          <Eye className="h-4 w-4 mr-1" />
+                        <p className="text-blue-600 font-medium text-sm flex items-center">
                           <span className="truncate">{selectedSubtopic.subtopic_name}</span>
                         </p>
                       ) : (
-                        <p className="text-green-600 font-medium text-sm flex items-center">
-                          <Eye className="h-4 w-4 mr-1" />
-                          Study with answers & explanations
+                          <p className="text-blue-600 font-medium text-sm flex items-center">
+                            All Questions
                         </p>
                       )}
                     </div>
@@ -153,14 +140,22 @@ const ReadingModePage: React.FC = () => {
                     <Button
                       onClick={handleModeToggle}
                       size="sm"
-                      className="bg-green-600 hover:bg-green-700 text-white"
+                      className="bg-blue-600 hover:bg-blue-700 text-white rounded-full"
                     >
                       <Target className="h-4 w-4" />
-                      <span className="hidden sm:inline ml-2">Practice Mode</span>
+                      <span className="hidden sm:inline">Practice Mode</span>
                     </Button>
                   </div>
                 </div>                
               </div>
+            </div>
+
+            <div className="flex items-center space-x-2 text-sm text-gray-600 text-gray-400 mb-6">
+              <Link to="/job-preparation/questions">
+                <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
+              </Link>
+              <span>/</span>
+              <span className="text-blue-600 font-medium">Reading Mode</span>
             </div>
 
             {/* Subtopic Filters */}

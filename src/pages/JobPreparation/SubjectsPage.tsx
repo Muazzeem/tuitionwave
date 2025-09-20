@@ -83,45 +83,43 @@ const SubjectsPage: React.FC = () => {
   };
 
   const getQuestionCountColor = (count: number) => {
-    if (count >= 100) return 'bg-green-100 text-green-800 bg-green-900 text-green-200';
-    if (count >= 50) return 'bg-blue-100 text-blue-800 bg-blue-900 text-blue-200';
-    if (count >= 20) return 'bg-yellow-100 text-yellow-800 bg-yellow-900 text-yellow-200';
+    if (count >= 100) return 'text-green-800 bg-primary-900 text-gray-200 border';
     return 'bg-gray-100 text-gray-800 bg-gray-700 text-gray-200';
   };
 
   const renderGridView = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
       {filteredSubjects.map((subject) => (
         <Card
           key={subject.uid}
-          className="group cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-1 shadow-md bg-white bg-background hover:border-primary border-0"
+          className="group cursor-pointer transition-all duration-300 hover:-translate-y-1 bg-background overflow-hidden border-0 rounded-2xl"
           onClick={() => handleSubjectClick(subject)}
         >
           <CardHeader className="pb-3">
             <CardTitle className="flex items-start space-x-3">
-              <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg group-hover:from-purple-500 group-hover:to-blue-600 transition-all duration-300">
+              <div className={`p-2 bg-primary-700/50 rounded-3xl shadow-lg`}>
                 <BookOpen className="h-5 w-5 text-white" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 text-white group-hover:text-primary transition-colors line-clamp-1">
+                <h3 className="text-lg font-semibold text-gray-900 text-white group-hover:text-primary-300 transition-colors truncate">
                   {subject.subject_title}
                 </h3>
+                <div className="flex items-center justify-between mb-4 mt-2">
+                  <Badge
+                    className={`${getQuestionCountColor(subject.total_questions)} border-primary-600 font-medium text-xs hover:bg-primary-600 hover:text-white`}
+                  >
+                    {subject.total_questions} Questions
+                  </Badge>
+                  <div className="flex items-center text-sm text-gray-500 text-gray-400">
+                    <TrendingUp className="h-4 w-4 mr-1" />
+                    <span>Practice</span>
+                  </div>
+                </div>
               </div>
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="flex items-center justify-between mb-4">
-              <Badge
-                className={`${getQuestionCountColor(subject.total_questions)} border-0 font-medium`}
-              >
-                {subject.total_questions} Questions
-              </Badge>
-              <div className="flex items-center text-sm text-gray-500 text-gray-400">
-                <TrendingUp className="h-4 w-4 mr-1" />
-                <span>Practice</span>
-              </div>
-            </div>
-            <div className="pt-2 border-t border-gray-100 border-gray-700">
+            <div className="pt-2 border-t border-primary-700">
               <div className="flex items-center justify-between text-xs text-gray-500 text-gray-400">
                 <span>Click to start practicing</span>
                 <ChevronLeft className="h-3 w-3 rotate-180 group-hover:translate-x-1 transition-transform" />
@@ -130,32 +128,6 @@ const SubjectsPage: React.FC = () => {
           </CardContent>
         </Card>
       ))}
-    </div>
-  );
-
-  const renderEmptyState = () => (
-    <div className="text-center py-16">
-      <div className="mx-auto w-24 h-24 bg-gray-100 bg-gray-800 rounded-full flex items-center justify-center mb-6">
-        <Search className="h-12 w-12 text-gray-400" />
-      </div>
-      <h3 className="text-xl font-semibold text-gray-900 text-white mb-2">
-        No subjects found
-      </h3>
-      <p className="text-gray-500 text-gray-400 max-w-md mx-auto">
-        {searchTerm ?
-          `No subjects match your search "${searchTerm}". Try adjusting your search terms.` :
-          "No subjects are available in this category at the moment."
-        }
-      </p>
-      {searchTerm && (
-        <Button
-          variant="outline"
-          className="mt-4"
-          onClick={() => handleSearchChange('')}
-        >
-          Clear search
-        </Button>
-      )}
     </div>
   );
 
@@ -189,50 +161,47 @@ const SubjectsPage: React.FC = () => {
         <Header />
       }
       <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(109vh - 160px)' }}>
-        <main className="flex-1">
-          <div className={userProfile ? "p-2 md:p-6 max-w-7xl mx-auto" : "p-2 md:p-6 container"}>
-            {/* Breadcrumb */}
+        <main className="flex-1 mx-auto">
+          <div className={userProfile ? "p-2 md:p-10" : "p-2 md:p-10"}>
+            <div className="mt-0">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/job-preparation/questions`)}
+                    aria-label="Back to results"
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-600 hover:bg-primary-700 transition-colors"
+                  >
+                    <ChevronLeft className="h-5 w-5 text-white" />
+                  </button>
+
+                  <div>
+                    <h2 className="text-xl md:text-3xl font-bold text-white font-unbounded">
+                      Subjects
+                    </h2>
+                    <p className="text-muted-foreground hidden md:block">
+                      Choose a subject to start practicing
+                    </p>
+                  </div>
+                </div>
+                <div className="relative max-w-md">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Search Subjects..."
+                    value={searchTerm}
+                    onChange={(e) => handleSearchChange(e.target.value)}
+                    className="pl-10 transition-all border-primary-800 text-white rounded-full"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 text-gray-400">
               <Link to="/job-preparation/questions">
                 <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
               </Link>
               <span>/</span>
               <span className="text-blue-600 font-medium">Subjects</span>
-            </div>
-
-            {/* Header Section */}
-            <div className="mb-8">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                <div className="flex items-center space-x-4">
-                  <Button
-                    variant="outline"
-                    onClick={handleBack}
-                    className="hover:bg-blue-100 hover:bg-blue-900/20 transition-colors text-white border-0"
-                  >
-                    <ChevronLeft className="h-4 w-4 mr-2" />
-                    <span className="hidden sm:inline">Back to Categories</span>
-                  </Button>
-                  <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-white">
-                      Subjects
-                    </h1>
-                    <p className="text-gray-600 text-gray-400 mt-1">
-                      Choose a subject to start practicing
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Search Bar */}
-              <div className="relative max-w-md">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search Subjects..."
-                  value={searchTerm}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                  className="pl-10 focus:ring-2 focus:ring-primary/20 transition-all border-primary-800 text-white"
-                />
-              </div>
             </div>
 
             {/* Content */}
@@ -244,7 +213,7 @@ const SubjectsPage: React.FC = () => {
                 </div>
               </div>
             ) : filteredSubjects.length === 0 ? (
-              renderEmptyState()
+                <div>No subjects found</div>
             ) : (
               <>
                 {renderGridView()}

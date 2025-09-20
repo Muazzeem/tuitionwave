@@ -30,7 +30,7 @@ const Sidebar = () => {
 
   const studentMenuItems = [
     { icon: Home, text: 'Dashboard', path: `/job-preparation/dashboard` },
-    { icon: BookOpenCheck, text: 'Model Test', path: '/job-preparation/create-model-test' },
+    { icon: BookOpenCheck, text: 'Model Test', path: '/job-preparation/model-test' },
     { icon: Landmark, text: 'Question Bank', path: '/job-preparation/questions' },
     { icon: NotebookPen, text: 'Self Test', path: '/job-preparation/practice' },
     { icon: Package, text: 'Packages', path: '/job-preparation/packages' },

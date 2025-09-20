@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { BookOpen, Search, Star, TrendingUp, Users, Target } from 'lucide-react';
+import { BookOpen, Search, Star, TrendingUp, Users, Target, ChevronLeft } from 'lucide-react';
 import JobPreparationService from '@/services/JobPreparationService';
 import { Category } from '@/types/jobPreparation';
 import DashboardHeader from '@/components/DashboardHeader';
@@ -79,40 +79,24 @@ const CategoriesPage: React.FC = () => {
     return IconComponent;
   };
 
-  const getCategoryGradient = (categoryNo: number) => {
-    const gradients = [
-      'from-blue-500 to-purple-600',
-      'from-green-500 to-teal-600',
-      'from-orange-500 to-red-600',
-      'from-purple-500 to-pink-600',
-      'from-indigo-500 to-blue-600',
-      'from-yellow-500 to-orange-600',
-      'from-pink-500 to-rose-600',
-      'from-teal-500 to-cyan-600'
-    ];
-    return gradients[categoryNo % gradients.length];
-  };
-
   const renderGridView = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
       {filteredCategories.map((category) => {
         const IconComponent = getCategoryIcon(category.category_no);
-        const gradient = getCategoryGradient(category.category_no);
 
         return (
           <Card
             key={category.uid}
-            className="group cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-primary
-            shadow-md bg-white bg-background overflow-hidden border-0"
+            className="group cursor-pointer transition-all duration-300 hover:-translate-y-1 bg-background overflow-hidden border-0 rounded-2xl"
             onClick={() => handleCategoryClick(category)}
           >
             <CardHeader className="pb-3">
               <CardTitle className="flex items-start space-x-3">
-                <div className={`p-3 bg-gradient-to-br ${gradient} rounded-lg shadow-lg`}>
+                <div className={`p-2 bg-[#0962D633] rounded-3xl shadow-lg`}>
                   <IconComponent className="h-6 w-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 text-white group-hover:text-primary transition-colors truncate">
+                  <h3 className="text-lg font-semibold text-gray-900 text-white group-hover:text-primary-300 transition-colors truncate">
                     {category.category_name}
                   </h3>
                 </div>
@@ -120,13 +104,14 @@ const CategoriesPage: React.FC = () => {
             </CardHeader>
             <CardContent className="pt-0">
               {/* Category preview info */}
-              <div className="mt-0 pt-3 border-t border-gray-100 border-gray-700">
-                <div className="flex items-center text-xs text-gray-500 text-gray-400 space-x-4">
-                  <div className="flex items-center space-x-1">
+              <div className="mt-0 pt-3 border-t border-primary-700">
+                <div className="flex items-center justify-between text-xs text-gray-400">
+                  <div className="flex items-center gap-1">
                     <BookOpen className="h-3 w-3" />
                     <span>Explore</span>
                   </div>
-                  <div className="flex items-center space-x-1">
+
+                  <div className="flex items-center gap-1">
                     <Target className="h-3 w-3" />
                     <span>Practice</span>
                   </div>
@@ -194,39 +179,22 @@ const CategoriesPage: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-gray-900">
       {userProfile ? <DashboardHeader userName="BCS Candidate" /> : <Header />}
       <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(109vh - 160px)' }}>
-        <main className="flex-1 bg-gray-50 bg-gray-900">
-          <div className={userProfile ? "p-2 md:p-6 max-w-7xl mx-auto" : "p-2 md:p-6 container"}>
+        <main className="flex-1 mx-auto">
+          <div className={userProfile ? "p-4 md:p-6" : "p-4 md:p-6"}>
             {/* Header Section */}
-            <div className="mb-6 flex items-center space-x-2 text-sm text-gray-600 text-gray-400">
-              <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
-              <span>/</span>
-              <span className="text-blue-600 font-medium">Categories</span>
-            </div>
-
             <div className="mb-8">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center gap-3">
                   <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-white">
+                    <h2 className="text-xl md:text-3xl font-bold text-white font-unbounded">
                       Categories
-                    </h1>
-                    <p className="text-gray-600 text-gray-400 mt-1">
+                    </h2>
+                    <p className="text-muted-foreground hidden md:block">
                       Choose a categories to start practicing
                     </p>
                   </div>
                 </div>
-              </div>
-
-              {/* Search Bar */}
-              <div className="relative max-w-md">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search Categories..."
-                  value={searchTerm}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                  className="pl-10 focus:ring-2 focus:ring-primary/20 transition-all border-primary-800 text-white"
-                />
-              </div>
+              </div>              
             </div>
 
             {categoriesLoading ? (

@@ -47,6 +47,8 @@ import ExamResultsPage from "./pages/JobPreparation/ExamResultsPage";
 import { Loader2 } from "lucide-react";
 import StudentPackageSettings from "./pages/StudentPackageSettings";
 
+import ReviewAnswer from "./pages/JobPreparation/ReviewAnswer";
+
 
 import { HelmetProvider } from 'react-helmet-async';
 
@@ -163,7 +165,7 @@ const App = () => (
                     </MainLayout>
                   </AuthGuard>
                 } />
-                <Route path="/job-preparation/create-model-test" element={
+                <Route path="/job-preparation/model-test" element={
                   <AuthGuard>
                     <MainLayout>
                       <CreateModelTest />
@@ -184,25 +186,17 @@ const App = () => (
                 } />
 
                 <Route path="/job-preparation/category/:categoryId" element={
-                    <MainLayout>
-                      <SubjectsPage />
-                  </MainLayout>
+                  <SubjectsPage />
                 } />
                 <Route path="/job-preparation/category/:categoryId/subject/:subjectId" element={
-                    <MainLayout>
-                      <TopicsPage />
-                  </MainLayout>
+                  <TopicsPage />
                 } />
                 <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId" element={
-                    <MainLayout>
-                      <QuestionsPage />
-                  </MainLayout>
+                  <QuestionsPage />
                 } />
 
                 <Route path="/job-preparation/category/:categoryId/subject/:subjectId/topic/:topicId/subtopic/:subtopicId/reading" element={
-                    <MainLayout>
-                      <ReadingModePage />
-                  </MainLayout>
+                  <ReadingModePage />
                 } />
 
                 <Route path="/job-preparation/exam/:examId" element={
@@ -220,6 +214,12 @@ const App = () => (
                 <Route path="/job-preparation/exam/:examId/results" element={
                   <AuthGuard>
                     <ExamResultsPage />
+                  </AuthGuard>
+                } />
+
+                <Route path="/job-preparation/exam/:examId/review-answer" element={
+                  <AuthGuard>
+                    <ReviewAnswer />
                   </AuthGuard>
                 } />
 

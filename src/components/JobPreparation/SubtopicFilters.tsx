@@ -65,7 +65,7 @@ const SubtopicFilters: React.FC<SubtopicFiltersProps> = ({
   }
 
   return (
-    <div className="mb-4 sm:mb-6">
+    <div className="mb-2">
       {/* Mobile Filter Toggle */}
       <div className="sm:hidden mb-3">
         <Button

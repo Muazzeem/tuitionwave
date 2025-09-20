@@ -18,7 +18,6 @@ import LiveModelTests from '@/components/JobPreparation/RecetModelTest';
 
 
 export default function JobPreparationDashboard() {
-  const { userProfile, clearProfile } = useAuth();
   useEffect(() => {
     document.title = "Tuition Wave | Candidate Dashboard";
   }, []);

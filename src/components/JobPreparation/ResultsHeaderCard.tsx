@@ -33,6 +33,34 @@ export default function ResultsHeaderCard({
         <div className="w-full rounded-3xl border-0 bg-background p-5 sm:p-6 lg:p-5 text-slate-100">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                 {/* Left badges */}
+                <div className="text-center">
+                    <div className="text-3xl font-bold text-white">
+                        {examResults.percentage.toFixed(1)}%
+                    </div>
+
+                    <div className="mt-3 flex items-center justify-center gap-6 text-slate-300/80">
+                        <div className="flex items-center gap-2">
+                            <Target className="h-4 w-4 opacity-80" />
+                            <span className="text-sm">
+                                {examResults.obtained_marks}/{examResults.total_marks} Marks
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Clock className="h-4 w-4 opacity-80" />
+                            <span className="text-sm">{timeTakenLabel} Taken</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex justify-center">
+                    <button
+                        onClick={onReview}
+                        className="rounded-full bg-[#1767FF] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#1259db]"
+                    >
+                        Review Answers
+                    </button>
+                </div>
+
                 <div className="grid grid-cols-2 gap-3">
                     <Badge
                         icon={<CheckCircle2 className="h-6 w-6" />}
@@ -66,34 +94,6 @@ export default function ResultsHeaderCard({
                         value={`${accuracyRate}%`}
                         label="Accuracy"
                     />
-                </div>
-
-                <div className="flex justify-center">
-                    <button
-                        onClick={onReview}
-                        className="rounded-full bg-[#1767FF] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#1259db]"
-                    >
-                        Review Answers
-                    </button>
-                </div>
-
-                <div className="text-center">
-                    <div className="text-3xl font-bold text-white">
-                        {examResults.percentage.toFixed(1)}%
-                    </div>
-
-                    <div className="mt-3 flex items-center justify-center gap-6 text-slate-300/80">
-                        <div className="flex items-center gap-2">
-                            <Target className="h-4 w-4 opacity-80" />
-                            <span className="text-sm">
-                                {examResults.obtained_marks}/{examResults.total_marks} Marks
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 opacity-80" />
-                            <span className="text-sm">{timeTakenLabel} Taken</span>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

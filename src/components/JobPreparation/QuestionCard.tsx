@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, XCircle, AlertCircle, HelpCircle, Lightbulb } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { Question } from '@/types/jobPreparation';
 import { AnswerResult } from '@/types/common';
 
@@ -31,30 +31,19 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
     }
   };
 
-  const isLongOptionText = (options) => {
-    const averageLength = options.reduce((sum, option) => sum + option.option_text.length, 0) / options.length;
-    const hasLongOption = options.some(option => option.option_text.length > 100); // Adjust threshold as needed
-    return averageLength > 50 || hasLongOption; // Adjust thresholds as needed
-  };
-
-  const gridCols = isLongOptionText(question.options) ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2 sm:grid-cols-4';
-
 
   return (
-    <Card className="border-0 shadow-md bg-gray-800 overflow-hidden transition-all duration-300 hover:shadow-lg">
-      <CardHeader className="bg-background border-b p-3 sm:p-4 border-gray-700">
+    <Card className="border-0 shadow-md bg-gray-800 overflow-hidden bg-background rounded-xl">
+      <CardHeader className="bg-background border-b p-2 sm:p-3 border-gray-700">
         <CardTitle className="flex items-start justify-between gap-3">  
           <div className="flex items-start space-x-3 min-w-0 flex-1">
-            <div className="w-6 h-6 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-              {questionNumber}
-            </div>
-            <span className="text-sm sm:text-base leading-relaxed text-white">
-              {question.question_text}
+            <span className="text-xs lg:text-lg leading-relaxed text-white">
+              {questionNumber}. {question.question_text}
             </span>
           </div>
 
           {mode === 'reading' ? (
-            <Badge className="bg-green-800 text-green-100 flex-shrink-0">
+            <Badge className="bg-green-800 text-green-100 flex-shrink-0 hidden">
               Reading
             </Badge>
           ) : (
@@ -69,14 +58,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                 {result?.is_correct ? (
                   <>
                     <CheckCircle className="h-3 w-3 mr-1" />
-                    <span className="hidden sm:inline">Correct</span>
-                    <span className="sm:hidden">✓</span>
+                      <span className="hidden sm:inline">Correct</span>
                   </>
                 ) : (
                   <>
                     <XCircle className="h-3 w-3 mr-1" />
-                    <span className="hidden sm:inline">Incorrect</span>
-                    <span className="sm:hidden">✗</span>
+                        <span className="hidden sm:inline">Incorrect</span>
                   </>
                 )}
               </Badge>
@@ -96,9 +83,9 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           </div>
         )}
 
-        <div className={`grid ${gridCols} gap-2 sm:gap-3 mb-4`}>
+        <div className={`grid grid-cols-2 gap-2 sm:gap-3 mb-4`}>
           {question.options.map((option) => {
-            let optionClassName = 'p-1 lg:p-2 border-2 rounded-lg transition-all duration-200';
+            let optionClassName = 'p-1 lg:pl-2 lg:pb-2 lg:pt-2 border rounded-lg transition-all duration-200';
 
             if (mode === 'reading') {
               if (option.is_correct) {
@@ -135,13 +122,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-start space-x-2 sm:space-x-3 min-w-0 flex-1">
-                    <div className={`w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-sm text-xs sm:text-sm flex-shrink-0 ${mode === 'reading' && option.is_correct
-                      ? 'bg-green-600 text-white'
-                      : 'bg-gray-600 text-white'
-                      }`}>
+                    <div className='text-white text-xs'>
                       {option.option_label}
                     </div>
-                    <span className="text-gray-200 text-xs sm:text-sm leading-relaxed">
+                    <span className="text-white text-xs">
                       {option.option_text}
                     </span>
                   </div>

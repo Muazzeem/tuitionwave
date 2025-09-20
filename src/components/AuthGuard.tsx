@@ -47,7 +47,7 @@ const AuthGuard = ({
   }, [userProfile, loading, navigate, fallbackPath, allowedRoles, location]);
 
   if (loading || isChecking) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center h-screen bg-gray-900"></div>;
   }
 
   return <>{children}</>;

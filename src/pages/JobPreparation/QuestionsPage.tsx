@@ -204,41 +204,28 @@ const QuestionsPage: React.FC = () => {
       <ScrollArea type="always" style={{ height: userProfile ? 'calc(100vh - 80px)' : 'calc(109vh - 160px)' }}>
         <main className="flex-1 pb-6">
           <div className="p-2 sm:p-4 md:p-6 max-w-7xl mx-auto">
-            {/* Breadcrumb */}
-            <div className="mb-4 sm:mb-6 flex items-center space-x-2 text-sm text-gray-600 text-gray-400">
-              <Link to="/job-preparation/questions">
-                <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
-              </Link>
-              <span>/</span>
-              <span className="text-blue-600 font-medium">Practice Questions</span>
-            </div>
-
-            {/* Header Section */}
-            <div className="mb-6 sm:mb-8">
+            <div className="mb-2">
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <Button
-                      variant="outline"
-                      onClick={handleBack}
-                      className="hover:bg-blue-50 hover:bg-blue-900/20 border-0 text-white"
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/job-preparation/questions`)}
+                      aria-label="Back to results"
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-600 hover:bg-primary-700 transition-colors"
                     >
-                      <ChevronLeft className="h-4 w-4 mr-1" />
-                      <span className="hidden sm:inline">Back to Topic</span>
-                    </Button>
+                      <ChevronLeft className="h-5 w-5 text-white" />
+                    </button>
                     <div>
-                      <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 text-white flex items-center">
-                        <Brain className="h-5 w-5 sm:h-6 sm:w-6 mr-2 text-blue-600" />
+                      <h2 className="text-md md:text-3xl font-bold text-white font-unbounded">
                         Practice Questions
-                      </h1>
+                      </h2>
                       {selectedSubtopic ? (
                         <p className="text-blue-600 font-medium text-sm flex items-center">
-                          <Target className="h-4 w-4 mr-1" />
                           <span className="truncate">{selectedSubtopic.subtopic_name}</span>
                         </p>
                       ) : (
-                        <p className="text-blue-600 font-medium text-sm flex items-center">
-                          <BookOpen className="h-4 w-4 mr-1" />
+                          <p className="text-blue-600 font-medium text-sm flex items-center">
                           All Questions
                         </p>
                       )}
@@ -250,7 +237,7 @@ const QuestionsPage: React.FC = () => {
                       onClick={handleRefresh}
                       variant="outline"
                       size="sm"
-                      className="border-blue-200 text-blue-700 border-blue-700 text-blue-300"
+                      className="border-blue-200 text-blue-700 border-blue-700 text-blue-300 rounded-full"
                     >
                       <RefreshCw className="h-4 w-4" />
                       <span className="hidden sm:inline ml-2">Reset</span>
@@ -258,7 +245,7 @@ const QuestionsPage: React.FC = () => {
                     <Button
                       onClick={handleModeToggle}
                       size="sm"
-                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                      className="bg-blue-600 hover:bg-blue-700 text-white rounded-full"
                     >
                       <BookOpen className="h-4 w-4" />
                       <span className="hidden sm:inline ml-2">Reading</span>
@@ -266,17 +253,25 @@ const QuestionsPage: React.FC = () => {
                   </div>
                 </div>
 
+                <div className="flex items-center space-x-2 text-sm text-gray-600 text-gray-400 mb-4">
+                  <Link to="/job-preparation/questions">
+                    <span className="hover:text-blue-600 cursor-pointer transition-colors">Job Preparation</span>
+                  </Link>
+                  <span>/</span>
+                  <span className="text-blue-600 font-medium">Practice Questions</span>
+                </div>
+
                 {/* Progress Stats for Mobile */}
                 {progressStats.total > 0 && (
-                  <div className="sm:hidden bg-white bg-gray-800 rounded-lg p-3 shadow-sm border">
+                  <div className="sm:hidden bg-gray-800 rounded-lg p-3 shadow-sm border-0">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700 text-gray-300">Progress</span>
+                      <span className="text-sm font-medium text-gray-300">Progress</span>
                       <span className="text-sm font-bold text-blue-600">{progressStats.accuracy}%</span>
                     </div>
                     <div className="flex gap-4 text-xs">
-                      <span className="text-green-600">✓ {progressStats.correct}</span>
-                      <span className="text-red-600">✗ {progressStats.incorrect}</span>
-                      <span className="text-gray-600">Total: {progressStats.total}</span>
+                      <span className="text-green-400">✓ {progressStats.correct}</span>
+                      <span className="text-red-400">✗ {progressStats.incorrect}</span>
+                      <span className="text-gray-400">Total: {progressStats.total}</span>
                     </div>
                     <div className="w-full bg-gray-200 bg-gray-700 rounded-full h-2 mt-2">
                       <div
